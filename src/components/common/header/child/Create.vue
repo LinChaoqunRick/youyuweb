@@ -17,6 +17,7 @@
         </a-menu-item>
       </a-menu>
     </template>
+    <template #icon><icon-down/></template>
   </a-dropdown-button>
 </template>
 

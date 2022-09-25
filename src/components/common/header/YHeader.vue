@@ -19,6 +19,7 @@
     </div>
     <ThemeSwitch/>
     <Create/>
+    <Login/>
   </header>
 </template>
 
@@ -28,6 +29,7 @@
 
   import ThemeSwitch from "@/components/common/theme/ThemeSwitch.vue";
   import Create from "@/components/common/header/child/Create.vue";
+  import Login from "@/components/common/header/child/Login.vue";
 
   const routes = router.options.routes;
   let _routes = [];
