@@ -1,5 +1,5 @@
 <template>
-  <a-popover trigger="click" overlayClassName="login-container">
+  <a-popover v-model:visible="visible" trigger="click" overlayClassName="login-container">
     <template #content>
       <h3 class="login-tips">您尚未登录，登录后您可以：</h3>
       <ul class="login-guide-list">
@@ -12,15 +12,22 @@
           </div>
         </li>
       </ul>
-      <a-button type="primary" class="guide-login-button">立即登录</a-button>
+      <a-button type="primary" block class="guide-login-button" @click="handleLogin">立即登录</a-button>
       <div class="register-tips">首次使用？<a type="text">点我注册</a></div>
     </template>
     <button class="login-button">登录&ensp;|&ensp;注册</button>
   </a-popover>
+  <transition name="fade">
+    <LoginPanel v-if="loginPanelStatus"/>
+  </transition>
 </template>
 
 <script setup lang="ts">
   import {ref} from 'vue';
+  import {computed} from 'vue';
+  import {useStore} from "vuex";
+
+  import LoginPanel from "./LoginPanel.vue";
 
   const guideList = ref([
     {
@@ -47,7 +54,17 @@
       label: "其他更多功能",
       icon: "icon-more"
     },
-  ])
+  ]);
+
+  const visible = ref<boolean>(false);
+
+  let {getters, commit} = useStore();
+  let loginPanelStatus = computed(() => getters['loginPanelStatus'])
+
+  const handleLogin = () => {
+    visible.value = false;
+    commit("changeLogin", true);
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -110,7 +127,7 @@
   }
 
   .guide-login-button {
-    width: 100%;
+    /*width: 100%;*/
     height: 38px;
   }
 
