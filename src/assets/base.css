@@ -15,7 +15,7 @@ body, html {
 }
 
 * {
-  transition: color 0.5s, background-color 0.5s, border 0.5s;
+  transition: color 0.1s, background-color 0.5s, border 0.5s;
 }
 
 #app {

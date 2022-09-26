@@ -9,13 +9,13 @@
           <template #overlay>
             <a-menu>
               <a-menu-item v-for="child in route.children">
-                <router-link :to="child.path" tag="div">{{child.name}}</router-link>
+                <router-link :to="child.path">{{child.name}}</router-link>
               </a-menu-item>
             </a-menu>
           </template>
         </a-dropdown>
       </div>
-      <router-link class="route-item" :to="route.path" v-else tag="div">{{route.name}}</router-link>
+      <router-link class="route-item" :to="route.path" v-else>{{route.name}}</router-link>
     </div>
     <ThemeSwitch/>
     <Create/>

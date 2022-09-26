@@ -6,12 +6,26 @@
       </div>
       <div class="login-panel-content">
         <transition name="fade" mode="out-in">
-          <div class="login-panel-content-header" v-if="!type">
-            <div class="login-header-type">账密登录</div>
-            <div class="login-header-type">手机登录</div>
+          <div class="login-panel-content-body" v-if="!type">
+            <div class="login-panel-content-header">
+              <div class="login-header-type" :class="{'type-active': loginType === 0}" @click="handleLoginChange(0)">
+                账密登录
+              </div>
+              <div class="login-header-type" :class="{'type-active': loginType === 1}" @click="handleLoginChange(1)">
+                手机登录
+              </div>
+            </div>
+            <div class="login-panel-content-form">
+              <LoginAccount v-if="loginType === 0"/>
+            </div>
           </div>
-          <div class="login-panel-content-header" v-else>
-            <div class="login-header-type">注册</div>
+          <div class="login-panel-content-body" v-else>
+            <div class="login-panel-content-header">
+              <div class="login-header-type type-active">注册</div>
+            </div>
+            <div class="login-panel-content-form">
+
+            </div>
           </div>
         </transition>
       </div>
@@ -24,12 +38,17 @@
 
 <script>
   import {mapMutations} from 'vuex';
+  import LoginAccount from './LoginAccount.vue'
 
   export default {
     name: "LoginPanel",
+    components: {
+      LoginAccount
+    },
     data() {
       return {
         type: 0, // 0:login, 1:register,
+        loginType: 0 // 0:账密登录 2:手机登录
       }
     },
     methods: {
@@ -39,6 +58,9 @@
       },
       handleClose() {
         this.changeLogin(false);
+      },
+      handleLoginChange(loginType) {
+        this.loginType = loginType;
       }
     },
   }
@@ -88,21 +110,44 @@
         width: 520px;
         transition: .6s;
 
-        .login-panel-content-header {
+        .login-panel-content-body {
+          height: 100%;
           display: flex;
-          justify-content: space-around;
-          align-items: center;
-          width: 100%;
-          height: 50px;
-          background-color: #fbfbfc;
+          flex-direction: column;
 
-          .login-header-type {
+          .login-panel-content-header {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
             width: 100%;
-            cursor: pointer;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            color: #637792;
+            height: 50px;
+            background-color: #fbfbfc;
+
+            .login-header-type {
+              flex: 1;
+              height: 100%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              cursor: pointer;
+              text-align: center;
+              font-size: 18px;
+              font-weight: bold;
+              color: #637792;
+
+              &.type-active {
+                background-color: #edeeef;
+                /*color: white;*/
+              }
+            }
+          }
+
+          .login-panel-content-form {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
           }
         }
       }

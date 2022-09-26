@@ -13,17 +13,17 @@
         </li>
       </ul>
       <a-button type="primary" block class="guide-login-button" @click="handleLogin">立即登录</a-button>
-      <div class="register-tips">首次使用？<a type="text">点我注册</a></div>
+      <div class="register-tips">首次使用？<a @click="handleRegister">点我注册</a></div>
     </template>
     <button class="login-button">登录&ensp;|&ensp;注册</button>
   </a-popover>
   <transition name="fade">
-    <LoginPanel v-if="loginPanelStatus"/>
+    <LoginPanel ref="LoginPanelRef" v-if="loginPanelStatus"/>
   </transition>
 </template>
 
 <script setup lang="ts">
-  import {ref} from 'vue';
+  import {ref, onMounted} from 'vue';
   import {computed} from 'vue';
   import {useStore} from "vuex";
 
@@ -55,16 +55,27 @@
       icon: "icon-more"
     },
   ]);
-
+  const LoginPanelRef = ref(null);
   const visible = ref<boolean>(false);
 
   let {getters, commit} = useStore();
   let loginPanelStatus = computed(() => getters['loginPanelStatus'])
 
   const handleLogin = () => {
+    // LoginPanelRef.value.type = 0;
     visible.value = false;
     commit("changeLogin", true);
   }
+
+  const handleRegister = () => {
+    // LoginPanelRef.value.type = 1;
+    visible.value = false;
+    commit("changeLogin", true);
+  }
+
+  onMounted(() => {
+    console.log();
+  })
 </script>
 
 <style lang="scss" scoped>

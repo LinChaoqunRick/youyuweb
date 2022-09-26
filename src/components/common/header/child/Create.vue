@@ -3,28 +3,40 @@
     创作盒
     <template #overlay>
       <a-menu>
-        <a-menu-item key="1">
-          <icon-write/>
-          写博客
-        </a-menu-item>
-        <a-menu-item key="2">
-          <icon-notes/>
-          写随笔
-        </a-menu-item>
-        <a-menu-item key="3">
-          <icon-newspaper-folding/>
-          草稿箱
-        </a-menu-item>
+        <router-link v-for="(item, index) in menu" :to="item.path">
+          <a-menu-item :key="index">
+            <component :is="item.icon"/>
+            {{item.label}}
+          </a-menu-item>
+        </router-link>
       </a-menu>
     </template>
-    <template #icon><icon-down/></template>
+    <template #icon>
+      <icon-down/>
+    </template>
   </a-dropdown-button>
 </template>
 
-<script>
-  export default {
-    name: "Create"
-  }
+<script setup lang="ts">
+  import {ref} from 'vue';
+
+  const menu = ref([
+    {
+      label: "写博客",
+      path: "/create/blog",
+      icon: "icon-write"
+    },
+    {
+      label: "发动态",
+      path: "/create/",
+      icon: "icon-notes"
+    },
+    {
+      label: "草稿箱",
+      path: "/draft",
+      icon: "icon-newspaper-folding"
+    }
+  ])
 </script>
 
 <style lang="scss">
@@ -35,6 +47,14 @@
 
       .ant-dropdown-menu {
         border-radius: 6px;
+        padding: 4px 6px;
+
+        .router-link-active {
+          .ant-dropdown-menu-item {
+            color: #1890ff;
+            font-weight: bold;
+          }
+        }
       }
 
       .ant-dropdown-menu-title-content {
