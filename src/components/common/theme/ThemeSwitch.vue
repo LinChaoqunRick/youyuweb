@@ -2,59 +2,39 @@
   <div class="theme-switch">
     <div class="switch-button" @click="handleSwitch">
       <transition name="fade" mode="out-in">
-        <icon-sun-one v-if="theme === 'light'" type="AddText" theme="filled"/>
-        <icon-moon v-else type="AddText" theme="filled"/>
+        <a-switch v-model:checked="checked">
+          <template #checkedChildren>
+            <icon-sun-one/>
+          </template>
+          <template #unCheckedChildren>
+            <icon-moon/>
+          </template>
+        </a-switch>
       </transition>
     </div>
   </div>
 </template>
 
-<script>
-  import {mapMutations, mapGetters} from 'vuex';
+<script setup>
+  import {ref, computed} from "vue";
+  import {useStore} from "vuex";
 
-  export default {
-    name: "ThemeSwitch",
-    computed: {
-      ...mapGetters(['currentTheme'])
-    },
-    data() {
-      return {
-        theme: "light"
-      }
-    },
-    methods: {
-      ...mapMutations(['changeTheme']),
-      initData() {
-        this.theme = localStorage.getItem("theme") || 'light';
-        document.documentElement.setAttribute("theme", this.theme);
-      },
-      handleSwitch() {
-        this.theme = this.theme === 'light' ? 'dark' : 'light';
-        this.changeTheme(this.theme);
-      }
-    },
-    created() {
-      this.initData();
-    }
+  const theme = ref("light");
+  const {commit} = useStore();
+  const checked = computed(() => theme.value === 'light');
+
+  theme.value = localStorage.getItem("theme") || 'light';
+  document.documentElement.setAttribute("theme", theme.value);
+
+  const handleSwitch = () => {
+    theme.value = theme.value === 'light' ? 'dark' : 'light';
+    commit("changeTheme", theme.value)
   }
 </script>
 
 <style lang="scss" scoped>
-  .theme-switch {
-    .switch-button {
-      height: 28px;
-      width: 28px;
-      border-radius: 50%;
-      background-color: skyblue;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 18px;
-
-      .i-icon-sun-one {
-        color: yellow;
-      }
-    }
+  ::v-deep(.ant-switch) {
+    box-sizing: content-box;
+    border: var(--theme-switch-border);
   }
 </style>

@@ -7,12 +7,17 @@ const route = [
     children: [
       {
         path: 'blog',
-        name: '博客',
+        name: '创作-文章',
+        component: () => import("@/views/create/child/Blog.vue"),
+      },
+      {
+        path: 'moment',
+        name: '创作-时刻',
         component: () => import("@/views/create/child/Blog.vue"),
       },
       {
         path: 'sketch',
-        name: '随笔',
+        name: '创作-随笔',
         component: () => import("@/views/create/child/Sketch.vue"),
       }
     ]

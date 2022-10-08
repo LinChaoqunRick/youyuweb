@@ -12,7 +12,8 @@
   "dependencies": {
     "@icon-park/vue-next": "^1.4.2",
     "ant-design-vue": "^3.2.12",
-    "axios": "^0.27.2",
+    "axios": "^0.26.0",
+    "js-cookie": "^3.0.1",
     "vue": "^3.2.38",
     "vue-router": "^4.1.5",
     "vuex": "^4.0.2"

@@ -1,12 +1,10 @@
 <template>
-  <div v-for="item in 100">
-    {{item}}
-  </div>
+  Moment
 </template>
 
 <script>
   export default {
-    name: "Home"
+    name: "Moment"
   }
 </script>
 

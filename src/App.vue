@@ -1,22 +1,23 @@
 <template>
-  <div class="main-app">
+  <a-config-provider :locale="zhCN">
     <YHeader/>
-    <router-view/>
-  </div>
+    <div class="main-app">
+      <router-view/>
+    </div>
+    <YFooter/>
+  </a-config-provider>
 </template>
 
 <script setup lang="ts">
-  import YHeader from '@/components/common/header/YHeader.vue'
+  import zhCN from 'ant-design-vue/es/locale/zh_CN'
 
-  let theme = localStorage.getItem("theme") || 'light';
-  // theme === "dark" ? setChecked(true) : setChecked(false);
-  document.documentElement.setAttribute("theme", theme);
+  import YHeader from '@/components/common/header/YHeader.vue';
+  import YFooter from "@/components/common/footer/YFooter.vue";
 </script>
 
 <style lang="scss" scoped>
   .main-app {
-    height: 100%;
-    width: 100%;
+    min-height: 100%;
     background-color: var(--youyu-body-background);
     padding-top: 60px;
     box-sizing: border-box;

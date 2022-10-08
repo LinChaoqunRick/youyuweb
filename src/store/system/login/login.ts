@@ -1,6 +1,6 @@
 export default {
   state: () => ({
-    showLogin: true
+    showLogin: false
   }),
   mutations: {
     changeLogin(state: any, status: boolean) {

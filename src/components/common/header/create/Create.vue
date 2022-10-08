@@ -1,6 +1,6 @@
 <template>
-  <a-dropdown-button type="primary" :trigger="['click']" overlayClassName="create-container">
-    创作盒
+  <a-dropdown-button type="primary" :trigger="['click']" class="create" overlayClassName="create-container">
+    创作中心
     <template #overlay>
       <a-menu>
         <router-link v-for="(item, index) in menu" :to="item.path">
@@ -43,15 +43,20 @@
   .create-container {
 
     .ant-dropdown-content {
-      width: 106px !important;
+      width: 105px !important;
 
       .ant-dropdown-menu {
         border-radius: 6px;
         padding: 4px 6px;
+        /*background-color: var(--youyu-body-background);*/
+
+        .ant-dropdown-menu-title-content {
+          color: #515767;
+        }
 
         .router-link-active {
-          .ant-dropdown-menu-item {
-            color: #1890ff;
+          .ant-dropdown-menu-title-content {
+            color: #1890ff !important;
             font-weight: bold;
           }
         }

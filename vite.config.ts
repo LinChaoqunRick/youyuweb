@@ -1,6 +1,6 @@
-import { fileURLToPath, URL } from 'node:url'
+import {fileURLToPath, URL} from 'node:url'
 
-import { defineConfig } from 'vite'
+import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 
@@ -12,9 +12,17 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  // server: {
-  //   host: '0.0.0.0', //ip地址
-  //   port: 3000, //端口号
-  //   open: false //启动后是否自动打开浏览器
-  // }
+  server: {
+    host: '0.0.0.0', //ip地址
+    port: 3000, //端口号
+    open: false, //启动后是否自动打开浏览器,
+    proxy: {
+      '/plat': {
+        target: "http://localhost:8090",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/plat/, '')
+      }
+    }
+  },
+
 })
