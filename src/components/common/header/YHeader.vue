@@ -54,6 +54,10 @@
     padding: 5px 30px !important;;
   }
 
+  header {
+    z-index: 100;
+  }
+
   .menu-nav {
     .main-logo {
       margin-right: 10px;

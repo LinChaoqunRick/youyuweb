@@ -13,10 +13,14 @@ body, html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   position: relative;
+  background-image: url(https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/snow3.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 * {
-  transition: color 0.1s, background-color 0.5s, border 0.5s;
+  transition: background-color 0.5s, border 0.5s;
 }
 
 #app {
@@ -34,6 +38,23 @@ body, html {
   color: #1890ff !important;
   font-weight: bold;
 }
+
+.mt-10 {
+  margin-top: 10px;
+}
+
+.mr-10 {
+  margin-right: 10px;
+}
+
+.mb-10 {
+  margin-bottom: 10px;
+}
+
+.ml-10 {
+  margin-left: 10px;
+}
+
 
 .fade-enter-active,
 .fade-leave-active {

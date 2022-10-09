@@ -1,10 +1,10 @@
 :root {
   // globe
-  --youyu-body-background: #f4f5f5;
+  --youyu-body-background: rgba(244, 245, 245, 0.8);
   --youyu-body-text: #000;
 
   // navigation
-  --youyu-navigation: #fff;
+  --youyu-navigation: rgba(255, 255, 255, 0.95);
   --youyu-navigation-border: 1px solid #f1f1f1;
 
   // login
@@ -14,4 +14,8 @@
   //theme-switch
   --theme-switch-border: 1px solid #1890ff;
 
+  // article
+  --article-background: rgba(255, 255, 255, 0.68);
+  --article-border: 1px solid #bfbfbf;
+  --article-info-color: #666;
 }

@@ -1,7 +1,11 @@
 <template>
   <div class="y-table">
     <div class="table-body">
-      <slot name="content"></slot>
+      <slot :dataList="dataList">
+        <div class="table-spin">
+          <a-spin/>
+        </div>
+      </slot>
     </div>
     <div class="table-pagination">
       <a-pagination v-model:current="current" :total="total" @change="handleChange" @showSizeChange="handleSizeChange"/>
@@ -10,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-  import {ref} from 'vue';
+  import {ref, reactive} from 'vue';
   import {useStore} from "vuex";
   import Cookies from 'js-cookie';
 
@@ -29,6 +33,7 @@
   const current = ref(1);
   const size = ref(10);
   const total = ref(0);
+  const dataList = ref([]);
 
   Cookies.set("token", "666666", {expires: 7});
 
@@ -38,6 +43,7 @@
       count: size.value
     }, props.params)).then(res => {
       total.value = res.total;
+      dataList.value = res.list;
     })
   }
 
@@ -51,6 +57,20 @@
   }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+  .y-table {
+    .table-body {
+      .table-spin {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 200px;
+      }
+    }
 
+    .table-pagination {
+      display: flex;
+      justify-content: center;
+    }
+  }
 </style>
