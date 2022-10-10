@@ -1,14 +1,6 @@
 <template>
   <div class="article-container">
-    <div class="article-list">
-      <YTable listUrl="getArticleList">
-        <template #default="{dataList}">
-          <div v-for="(item, index) in dataList" class="article-body" :key="item.blogID">
-            <ArticleItem :data="item" :index="index"/>
-          </div>
-        </template>
-      </YTable>
-    </div>
+    <ArticleLayout/>
     <div class="article-aside">
       aside
     </div>
@@ -16,8 +8,7 @@
 </template>
 
 <script setup>
-  import YTable from "@/components/common/table/YTable.vue";
-  import ArticleItem from "@/components/content/article/ArticleItem.vue";
+  import ArticleLayout from "@/views/article/layout/ArticleLayout.vue"
 </script>
 
 <style lang="scss" scoped>
@@ -26,15 +17,6 @@
     justify-content: center;
     margin: 8px auto;
     max-width: 1150px;
-
-    .article-list {
-      width: 72%;
-
-      .article-body {
-        margin-bottom: 8px;
-        width: 100%;
-      }
-    }
 
     .article-aside {
       width: 260px;

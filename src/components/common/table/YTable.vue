@@ -2,12 +2,15 @@
   <div class="y-table">
     <div class="table-body">
       <slot :dataList="dataList">
-        <div class="table-spin">
-          <a-spin/>
+        <div class="table-no-data" v-if="finished && dataList.length === 0">
+          暂无数据
+        </div>
+        <div class="table-skeleton" v-else>
+          <a-skeleton active avatar></a-skeleton>
         </div>
       </slot>
     </div>
-    <div class="table-pagination">
+    <div class="table-pagination" v-if="finished">
       <a-pagination v-model:current="current" :total="total" @change="handleChange" @showSizeChange="handleSizeChange"/>
     </div>
   </div>
@@ -34,6 +37,7 @@
   const size = ref(10);
   const total = ref(0);
   const dataList = ref([]);
+  const finished = ref(false);
 
   Cookies.set("token", "666666", {expires: 7});
 
@@ -42,6 +46,7 @@
       page: current.value,
       count: size.value
     }, props.params)).then(res => {
+      finished.value = true;
       total.value = res.total;
       dataList.value = res.list;
     })
@@ -60,11 +65,17 @@
 <style lang="scss" scoped>
   .y-table {
     .table-body {
-      .table-spin {
+      .table-no-data {
         display: flex;
         justify-content: center;
         align-items: center;
         min-height: 200px;
+      }
+
+      .table-skeleton {
+        padding: 16px 24px;
+        /*background-color: var(--youyu-body-background1);*/
+        border-radius: 8px;
       }
     }
 

@@ -16,6 +16,9 @@
         <span>{{data.viewCount}}&ensp;阅读</span>
       </div>
     </div>
+    <div class="hover-tag">
+
+    </div>
   </div>
 </template>
 
@@ -40,7 +43,8 @@
     background-color: var(--article-background);
     display: flex;
     align-items: center;
-    border-radius: 4px;
+    border-radius: 8px;
+    position: relative;
 
     .image-wrapper {
       width: 240px;
@@ -121,10 +125,27 @@
         }
       }
     }
+
+    .hover-tag {
+      position: absolute;
+      left: 0;
+      width: 4px;
+      height: 0;
+      background-color: #1980ff;
+      border-radius: 4px;
+      transition: .3s;
+    }
+
+    &:hover {
+      .hover-tag {
+        height: 60%;
+      }
+    }
   }
 
   .flex-revert {
     flex-direction: row-reverse;
+
     .image-wrapper {
       padding: 16px 16px 16px 0;
     }
