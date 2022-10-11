@@ -3,18 +3,18 @@
     <div class="route-item" v-if="route.children?.length">
       <a-dropdown placement="bottom">
         <router-link :to="route.path" class="ant-dropdown-link" @click.prevent>
-          {{route.name}}
+          {{route.title}}
         </router-link>
         <template #overlay>
           <a-menu>
             <a-menu-item v-for="child in route.children">
-              <router-link :to="child.path">{{child.name}}</router-link>
+              <router-link :to="child.path">{{child.title}}</router-link>
             </a-menu-item>
           </a-menu>
         </template>
       </a-dropdown>
     </div>
-    <router-link class="route-item" :to="route.path" v-else>{{route.name}}</router-link>
+    <router-link class="route-item" :to="route.path" v-else>{{route.title}}</router-link>
   </div>
 </template>
 
@@ -28,21 +28,23 @@
   function generateRoute(routes, routesObj, parent) {
     routes.forEach((route) => {
       let obj = {
-        name: route.name,
+        title: route.meta?.title,
         path: `${parent ? parent.path + '/' + route.path : route.path}`,
         children: []
       };
       route.children?.length && generateRoute(route.children, obj.children, route);
-      routesObj.push(obj);
+      console.log(route);
+      route.meta?.hide !== true && routesObj.push(obj);
     })
   }
 
   function filterEmptyRouter() {
-    _routes.value = _routes.value.filter(item => item.name);
+    _routes.value = _routes.value.filter(item => item.title);
   }
 
   generateRoute(routes, _routes.value);
   filterEmptyRouter();
+  console.log(_routes.value);
 </script>
 
 <style lang="scss" scoped>

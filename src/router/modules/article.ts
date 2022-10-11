@@ -1,22 +1,37 @@
 const route = [
   {
     path: '/article',
-    name: '文章',
+    name: 'article',
+    meta: {
+      title: "文章",
+    },
     component: () => import('@/views/article/Article.vue'),
     children: [
       {
         path: "",
-        name: "推荐",
+        name: "articleDefault",
+        meta: {
+          title: "推荐",
+          hide: true
+        },
         component: () => import("@/views/article/list/ArticleDefault.vue")
       },
       {
         path: "new",
-        name: "最新",
+        name: "articleNew",
+        meta: {
+          title: "最新",
+          hide: true
+        },
         component: () => import("@/views/article/list/ArticleDefault.vue")
       },
       {
         path: "hot",
-        name: "热榜",
+        name: "articleHot",
+        meta: {
+          title: "热榜",
+          hide: true
+        },
         component: () => import("@/views/article/list/ArticleDefault.vue")
       }
     ]

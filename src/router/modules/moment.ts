@@ -1,7 +1,10 @@
 const route = [
   {
     path: '/moment',
-    name: '时刻',
+    name: 'moment',
+    meta: {
+      title: "时刻",
+    },
     component: () => import('@/views/moment/Moment.vue')
   }
 ]

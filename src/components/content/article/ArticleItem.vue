@@ -7,7 +7,7 @@
     </div>
     <div class="content-wrapper">
       <div class="article-title"><p>{{data.title}}</p></div>
-      <div class="article-caption">{{data.caption}}</div>
+      <div class="article-caption" v-html="data.caption"></div>
       <div class="article-info">
         <span>{{(data.firstPubDate).substr(0, 10)}}</span>
         <span class="separator">/</span>

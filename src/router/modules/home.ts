@@ -1,7 +1,10 @@
 const route = [
   {
     path: '/',
-    name: '首页',
+    name: 'home',
+    meta: {
+      title: "首页",
+    },
     component: () => import("@/views/home/Home.vue")
   },
 ]
