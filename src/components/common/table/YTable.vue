@@ -11,16 +11,29 @@
       </slot>
     </div>
     <div class="table-pagination" v-if="finished">
-      <a-pagination v-model:current="current" :total="total" @change="handleChange" @showSizeChange="handleSizeChange"/>
+      <a-pagination v-model:current="current"
+                    :total="total"
+                    :show-total="total => `共${total}条`"
+                    @change="handleChange"
+                    @showSizeChange="handleSizeChange">
+        <template #itemRender="{ type, originalElement }">
+          <a v-if="type === 'prev'">上一页</a>
+          <a v-else-if="type === 'next'">下一页</a>
+          <component :is="originalElement" v-else></component>
+        </template>
+      </a-pagination>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import {ref, reactive} from 'vue';
+  import {ref, toRef} from 'vue';
   import {useStore} from "vuex";
+  import {useRoute, useRouter} from "vue-router";
   import Cookies from 'js-cookie';
 
+  const route = useRoute();
+  const router = useRouter();
   const {dispatch} = useStore();
   const props = defineProps({
     listUrl: {
@@ -32,8 +45,9 @@
       default: () => ({})
     }
   });
+  const page = Number(route.params.page);
 
-  const current = ref(1);
+  const current = ref(page || 1);
   const size = ref(10);
   const total = ref(0);
   const dataList = ref([]);
@@ -46,6 +60,7 @@
       page: current.value,
       count: size.value
     }, props.params)).then(res => {
+      router.push({params: {page: res.pageNum}})
       finished.value = true;
       total.value = res.total;
       dataList.value = res.list;
@@ -82,6 +97,31 @@
     .table-pagination {
       display: flex;
       justify-content: center;
+
+      ::v-deep(.ant-pagination) {
+        .ant-pagination-item {
+          background-color: var(--pagination-background);
+          border: var(--pagination-border);
+          border-radius: 2px;
+
+          a {
+            color: var(--pagination-text);
+          }
+
+          &.ant-pagination-item-active {
+            a {
+              color: #1980ff;
+            }
+          }
+        }
+
+        .ant-pagination-total-text, .ant-pagination-prev, .ant-pagination-next, .ant-pagination-item-container, .ant-select-selector {
+          padding: 0 6px;
+          background-color: var(--pagination-background);
+          border: var(--pagination-border);
+          color: var(--pagination-text);
+        }
+      }
     }
   }
 </style>

@@ -2,9 +2,7 @@
   <div class="article-layout">
     <div class="article-nav">
       <div class="article-nav-item">
-        <router-link to="/article" custom v-slot="{ href, route, navigate, isActive, isExactActive }">
-          <a :href="href" :active="isActive" @click="navigate" :isExactActive="true">推荐</a>
-        </router-link>
+        <router-link to="/article/default">推荐</router-link>
       </div>
       <div class="article-nav-separator">|</div>
       <div class="article-nav-item">

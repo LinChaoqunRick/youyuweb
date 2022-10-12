@@ -13,7 +13,8 @@ body, html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   position: relative;
-  background-image: url(https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/snow3.jpg);
+  /*background-image: url(https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/snow3.jpg);*/
+  background-image: url(https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/flower.jpg);
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
