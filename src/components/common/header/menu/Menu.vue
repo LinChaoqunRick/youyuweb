@@ -1,7 +1,7 @@
 <template>
   <div class="route-items" v-for="route in _routes">
     <div class="route-item" v-if="route.children?.length">
-      <a-dropdown placement="bottom">
+      <a-dropdown placement="bottom" overlayClassName="youyu-menu-dropdown">
         <router-link :to="route.path" class="ant-dropdown-link" @click.prevent>
           {{route.title}}
         </router-link>
@@ -33,7 +33,6 @@
         children: []
       };
       route.children?.length && generateRoute(route.children, obj.children, route);
-      console.log(route);
       route.meta?.hide !== true && routesObj.push(obj);
     })
   }
@@ -44,7 +43,6 @@
 
   generateRoute(routes, _routes.value);
   filterEmptyRouter();
-  console.log(_routes.value);
 </script>
 
 <style lang="scss" scoped>
@@ -60,6 +58,14 @@
       a {
         color: #909090;
       }
+    }
+  }
+</style>
+
+<style lang="scss">
+  .youyu-menu-dropdown{
+    .ant-dropdown-menu-item {
+      padding: 5px 30px!important;
     }
   }
 </style>

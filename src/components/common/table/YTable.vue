@@ -29,7 +29,7 @@
 <script setup lang="ts">
   import {ref, toRef} from 'vue';
   import {useStore} from "vuex";
-  import {useRoute, useRouter} from "vue-router";
+  import {onBeforeRouteUpdate, useRoute, useRouter} from "vue-router";
   import Cookies from 'js-cookie';
 
   const route = useRoute();
@@ -74,7 +74,10 @@
   };
   const handleSizeChange = (current, newSize) => {
     size.value = newSize;
-  }
+  };
+  onBeforeRouteUpdate(({params}) => {
+
+  })
 </script>
 
 <style lang="scss" scoped>

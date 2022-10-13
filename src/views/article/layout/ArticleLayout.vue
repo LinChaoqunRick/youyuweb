@@ -2,7 +2,7 @@
   <div class="article-layout">
     <div class="article-nav">
       <div class="article-nav-item">
-        <router-link to="/article/default">推荐</router-link>
+        <router-link :to="{ path: '/article/default'}">推荐</router-link>
       </div>
       <div class="article-nav-separator">|</div>
       <div class="article-nav-item">
