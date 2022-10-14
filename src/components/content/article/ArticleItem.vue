@@ -1,13 +1,16 @@
 <template>
   <div class="article-item" :class="{'flex-revert': !!(index % 2)}">
     <div class="image-wrapper">
-      <div class="image-link">
+      <div class="image-link" @click="$router.push({name:'articleDetail',params:{blogId:data.blogID}})">
         <img :src="data.firstPicture">
       </div>
     </div>
     <div class="content-wrapper">
-      <div class="article-title"><p v-html="data.title"></p></div>
-      <div class="article-caption" v-html="data.caption"></div>
+      <div class="article-title">
+        <p v-html="data.title" @click="$router.push({name:'articleDetail',params:{blogId:data.blogID}})"/>
+      </div>
+      <div class="article-caption" v-html="data.caption"
+           @click="$router.push({name:'articleDetail',params:{blogId:data.blogID}})"/>
       <div class="article-info">
         <span>{{(data.firstPubDate).substr(0, 10)}}</span>
         <span class="separator">/</span>

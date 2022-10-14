@@ -60,6 +60,7 @@
       page: current.value,
       count: size.value
     }, props.params)).then(res => {
+      document.documentElement.scrollTop = 0;
       router.push({params: {page: res.pageNum}})
       finished.value = true;
       total.value = res.total;
@@ -75,9 +76,12 @@
   const handleSizeChange = (current, newSize) => {
     size.value = newSize;
   };
-  onBeforeRouteUpdate(({params}) => {
-
-  })
+  // onBeforeRouteUpdate(({params}) => {
+  //   if (params.page === '1') {
+  //     current.value = 1;
+  //     initData();
+  //   }
+  // })
 </script>
 
 <style lang="scss" scoped>
@@ -118,7 +122,7 @@
           }
         }
 
-        .ant-pagination-total-text, .ant-pagination-prev, .ant-pagination-next, .ant-pagination-item-container, .ant-select-selector {
+        .ant-pagination-total-text, .ant-pagination-prev, .ant-pagination-next, .ant-select-selector {
           padding: 0 6px;
           background-color: var(--pagination-background);
           border: var(--pagination-border);

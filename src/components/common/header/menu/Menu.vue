@@ -14,7 +14,7 @@
         </template>
       </a-dropdown>
     </div>
-    <router-link class="route-item" :to="route.path" v-else>{{route.title}}</router-link>
+    <router-link class="route-item" :to={path:route.path} v-else>{{route.title}}</router-link>
   </div>
 </template>
 

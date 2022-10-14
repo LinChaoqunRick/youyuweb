@@ -5,48 +5,32 @@ const route = [
   {
     path: '/article',
     name: 'article',
-    redirect: "/article/default",
+    redirect: "/article/list/1",
     meta: {
       title: "文章",
     },
-    component: () => import('@/views/article/Article.vue'),
+    component: () => import("@/views/article/Article.vue"),
     children: [
       {
-        path: "default",
-        redirect: "/article/default/1",
-        name: "articleDefault",
+        path: "list/:page(\\d*)",
+        name: "articleList",
         meta: {
           title: "推荐",
           hide: true
         },
-        component: {render: () => h(RouterView)},
-        children: [
-          {
-            path: ":page(\\d*)",
-            component: () => import("@/views/article/list/ArticleDefault.vue")
-          },
-        ]
+        component: () => import("@/views/article/list/ArticleList.vue")
       },
       {
-        path: "new/:page(\\d+)?",
-        name: "articleNew",
+        path: 'detail/:blogId(\\d*)',
+        name: 'articleDetail',
         meta: {
-          title: "最新",
+          title: "文章详情",
           hide: true
         },
-        component: () => import("@/views/article/list/ArticleNew.vue")
-      },
-      {
-        path: "hot/:page(\\d+)?",
-        name: "articleHot",
-        meta: {
-          title: "热榜",
-          hide: true
-        },
-        component: () => import("@/views/article/list/ArticleHot.vue")
+        component: () => import('@/views/article/detail/ArticleDetail.vue'),
       }
     ]
-  }
+  },
 ]
 
 export default route;

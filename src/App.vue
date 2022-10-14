@@ -18,7 +18,7 @@
 <style lang="scss" scoped>
   .main-app {
     min-height: 100%;
-    /*background-color: var(--youyu-body-background);*/
+    background-color: var(--youyu-body-background);
     padding-top: 60px;
     padding-bottom: 40px;
     box-sizing: border-box;
