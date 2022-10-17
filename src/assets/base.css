@@ -24,12 +24,6 @@ body, html {
   transition: background-color 0.5s, border 0.5s;
 }
 
-#app {
-  /*height: 100%;*/
-  width: 100%;
-  min-height: 100vh;
-}
-
 .router-link-active {
   color: #1890ff !important;
   font-weight: bold;

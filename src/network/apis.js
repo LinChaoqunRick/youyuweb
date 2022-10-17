@@ -2,6 +2,7 @@ const ApiBase = '/plat';
 const FrontApiBase = '/api';
 
 export const GET_ARTICLE_LIST = ApiBase + "/blog/list";
+export const GET_ARTICLE_DETAIL = FrontApiBase + "/article/details";
 
 
 const Api = {

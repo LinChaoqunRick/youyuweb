@@ -3,14 +3,17 @@
     <div class="article-list">
       <YTable listUrl="getArticleList">
         <template #default="{dataList}">
-          <div v-for="(item, index) in dataList" class="article-body" :key="item.blogID">
-            <ArticleItem :data="item" :index="index"/>
+          <!--          <div v-for="(item, index) in dataList" class="article-body" :key="item.blogID">-->
+          <!--            <ArticleItem :data="item" :index="index"/>-->
+          <!--          </div>-->
+          <div v-for="item in 200">
+            {{item}}
           </div>
         </template>
       </YTable>
     </div>
-    <div class="article-aside">
-      aside
+    <div class="article-right">
+      <ArticleAside/>
     </div>
   </div>
 </template>
@@ -18,6 +21,7 @@
 <script setup>
   import YTable from "@/components/common/table/YTable.vue";
   import ArticleItem from "@/components/content/article/ArticleItem.vue";
+  import ArticleAside from "../aside/ArticleAside.vue";
 </script>
 
 <style lang="scss" scoped>
@@ -36,11 +40,10 @@
       }
     }
 
-    .article-aside {
+    .article-right {
       width: 25%;
-      background-color: deepskyblue;
       margin-left: 8px;
-      padding: 10px;
+      position: relative;
     }
   }
 </style>

@@ -16,7 +16,16 @@
 </template>
 
 <script setup>
-  import PercentCounter from "@/components/common/utils/percentCounter/PercentCounter.vue"
+  import {useRoute} from "vue-router";
+  import {useStore} from 'vuex';
+  import PercentCounter from "@/components/common/utils/percentCounter/PercentCounter.vue";
+
+  const route = useRoute();
+  const {dispatch} = useStore();
+
+  dispatch("getArticleDetail", {blogID: route.params.blogId}).then(res => {
+    console.log(res);
+  })
 
 </script>
 

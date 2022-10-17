@@ -18,7 +18,7 @@ axios.interceptors.request.use((config) => {
 
 axios.interceptors.response.use((response) => {
   // 如果是前台的接口，就不做逻辑判断，原因：前台的API没有统一结果格式
-  if (response.config.url.split("/")[1] === "api"){
+  if (response.config.url.split("/")[1] === "api") {
     return response.data;
   }
   const res = response.data;
@@ -43,7 +43,7 @@ axios.interceptors.response.use((response) => {
  * @param {String} url [请求的url地址]
  * @param {Object} params [请求时携带的参数]
  */
-function get(url, params={}) {
+function get(url, params = {}) {
   return new Promise((resolve, reject) => {
     axios.get(url, {
       params: params
@@ -60,9 +60,9 @@ function get(url, params={}) {
  * @param {String} url [请求的url地址]
  * @param {Object} params [请求时携带的参数]
  */
-function post(url, params={}) {
+function post(url, params = {}, config = {}) {
   return new Promise((resolve, reject) => {
-    axios.post(url, params).then(res => {
+    axios.post(url, params, config).then(res => {
       resolve(res)
     }).catch(err => {
       reject(err)

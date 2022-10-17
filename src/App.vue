@@ -1,11 +1,17 @@
 <template>
-  <a-config-provider :locale="zhCN">
-    <YHeader/>
-    <div class="main-app">
-      <router-view/>
-    </div>
-    <YFooter/>
-  </a-config-provider>
+  <div class="app">
+    <a-config-provider :locale="zhCN">
+      <div class="header">
+        <YHeader/>
+      </div>
+      <div class="main-app">
+        <router-view/>
+      </div>
+      <div class="footer">
+        <YFooter/>
+      </div>
+    </a-config-provider>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -16,11 +22,26 @@
 </script>
 
 <style lang="scss" scoped>
-  .main-app {
-    min-height: 100%;
+  .app {
+    min-height: 100vh;
     background-color: var(--youyu-body-background);
-    padding-top: 60px;
-    padding-bottom: 40px;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+
+    .header {
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .main-app {
+      flex: 1;
+    }
+
+    .footer {
+      height: 40px;
+    }
   }
 </style>

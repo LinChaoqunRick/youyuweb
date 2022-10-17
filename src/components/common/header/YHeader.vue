@@ -24,9 +24,6 @@
 
 <style lang="scss" scoped>
   header {
-    position: fixed;
-    top: 0;
-    left: 0;
     background-color: var(--youyu-navigation);
     border-bottom: var(--youyu-navigation-border);
     color: #909090;
@@ -40,6 +37,7 @@
     .menu-nav {
       display: flex;
       align-items: center;
+      height: 100%;
     }
 
     .right-nav {
@@ -52,10 +50,6 @@
 <style lang="scss" scoped>
   ::v-deep(.ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title) {
     padding: 5px 30px !important;;
-  }
-
-  header {
-    z-index: 100;
   }
 
   .menu-nav {
