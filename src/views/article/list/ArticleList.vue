@@ -3,17 +3,14 @@
     <div class="article-list">
       <YTable listUrl="getArticleList">
         <template #default="{dataList}">
-          <!--          <div v-for="(item, index) in dataList" class="article-body" :key="item.blogID">-->
-          <!--            <ArticleItem :data="item" :index="index"/>-->
-          <!--          </div>-->
-          <div v-for="item in 200">
-            {{item}}
+          <div v-for="(item, index) in dataList" class="article-body" :key="item.blogID">
+            <ArticleItem :data="item" :index="index"/>
           </div>
         </template>
       </YTable>
     </div>
     <div class="article-right">
-      <ArticleAside/>
+      <ArticleAside v-aside2/>
     </div>
   </div>
 </template>
@@ -28,20 +25,20 @@
   .article-container {
     display: flex;
     justify-content: center;
-    margin: 8px auto;
+    margin: 8px auto 0 auto;
     max-width: 1100px;
 
     .article-list {
-      width: 75%;
+      flex: 1;
+      margin-bottom: 8px;
 
       .article-body {
-        margin-bottom: 8px;
         width: 100%;
       }
     }
 
     .article-right {
-      width: 25%;
+      width: 300px;
       margin-left: 8px;
       position: relative;
     }

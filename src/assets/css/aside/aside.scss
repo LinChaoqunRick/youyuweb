@@ -1,0 +1,20 @@
+#y-aside {
+  position: relative;
+  width: 300px;
+  margin-bottom: 8px;
+
+  &.phase-2 {
+    position: fixed;
+    bottom: 0;
+  }
+
+  &.phase-3 {
+    position: sticky;
+    top: 0;
+  }
+
+  &.phase-4 {
+    position: sticky;
+    top: 68px;
+  }
+}

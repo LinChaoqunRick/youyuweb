@@ -1,13 +1,13 @@
 <template>
   <div class="app">
     <a-config-provider :locale="zhCN">
-      <div class="header">
+      <div class="header" id="header">
         <YHeader/>
       </div>
       <div class="main-app">
         <router-view/>
       </div>
-      <div class="footer">
+      <div class="footer" id="footer">
         <YFooter/>
       </div>
     </a-config-provider>
