@@ -67,10 +67,6 @@
           object-fit: cover;
           cursor: pointer;
           transition: .4s;
-
-          &:hover {
-            transform: scale(1.05);
-          }
         }
       }
     }
@@ -142,6 +138,12 @@
     &:hover {
       .hover-tag {
         height: 60%;
+      }
+
+      .image-wrapper {
+        img {
+          transform: scale(1.05);
+        }
       }
     }
   }
