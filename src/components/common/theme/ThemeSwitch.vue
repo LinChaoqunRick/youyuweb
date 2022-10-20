@@ -19,16 +19,17 @@
   import {ref, computed} from "vue";
   import {useStore} from "vuex";
 
-  const theme = ref("light");
-  const {commit} = useStore();
-  const checked = computed(() => theme.value === 'light');
+  const {state, commit} = useStore();
 
-  theme.value = localStorage.getItem("theme") || 'light';
-  document.documentElement.setAttribute("theme", theme.value);
+  let theme = state.theme.theme;
+  const checked = ref(theme === 'light');
+
+  document.documentElement.setAttribute("theme", theme);
 
   const handleSwitch = () => {
-    theme.value = theme.value === 'light' ? 'dark' : 'light';
-    commit("changeTheme", theme.value)
+    theme = theme === 'light' ? 'dark' : 'light';
+    checked.value = theme === 'light';
+    commit("changeTheme", theme);
   }
 </script>
 
