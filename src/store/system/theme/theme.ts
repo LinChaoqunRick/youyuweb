@@ -1,9 +1,10 @@
 export default {
   state: () => ({
-    theme: "light"
+    theme: localStorage.getItem("theme")
   }),
   mutations: {
     changeTheme(state, theme) {
+      state.theme = theme;
       document.documentElement.setAttribute("theme", theme);
       localStorage.setItem("theme", theme);
     }
