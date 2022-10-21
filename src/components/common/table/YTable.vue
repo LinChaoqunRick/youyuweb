@@ -7,6 +7,8 @@
         </div>
         <div class="table-skeleton" v-else>
           <a-skeleton active avatar></a-skeleton>
+          <a-skeleton active avatar></a-skeleton>
+          <a-skeleton active avatar></a-skeleton>
         </div>
       </slot>
     </div>
@@ -26,7 +28,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
   import {ref, toRef} from 'vue';
   import {useStore} from "vuex";
   import {onBeforeRouteUpdate, useRoute, useRouter} from "vue-router";
@@ -62,9 +64,10 @@
     }, props.params)).then(res => {
       document.documentElement.scrollTop = 0;
       router.push({params: {page: res.pageNum}})
-      finished.value = true;
       total.value = res.total;
       dataList.value = res.list;
+    }).finally(() => {
+      finished.value = true;
     })
   }
 

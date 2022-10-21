@@ -3,6 +3,7 @@
     <router-link :to="route.path" custom v-slot="{isActive, isExactActive, navigate}">
       <span :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}">{{route.title}}</span>
       <div class="route-dropdown">
+        <div class="dropdown-arrow"></div>
         <div v-for="item in route.children" class="route-dropdown-item">
           <router-link :to="item.path" custom v-slot="{isActive, isExactActive, navigate}">
           <span :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}"
@@ -61,6 +62,16 @@
         &:last-child {
           padding-bottom: 6px;
         }
+      }
+
+      .dropdown-arrow {
+        position: absolute;
+        top: -12px;
+        left: calc(50% - 6px);
+        height: 0;
+        width: 0;
+        border: 6px solid transparent;
+        border-bottom-color: var(--youyu-navigation);;
       }
     }
 

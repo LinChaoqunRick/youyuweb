@@ -2,14 +2,21 @@
   <dropdown-toolbar title="emoji" :visible="state.visible" @on-change="onChange">
     <template #overlay>
       <div class="emoji-container">
-        <ol class="emojis">
-          <li
-            v-for="(emoji, index) of emojis"
-            :key="`emoji-${index}`"
-            @click="emojiHandler(emoji)"
-            v-text="emoji"
-          ></li>
-        </ol>
+        <div class="carousel-indicators">
+          <div class="carousel-button" :class="{active:index === curIndex}" @click="clickItem(index)"
+               v-for="(item,index) in emojis">{{item.label}}
+          </div>
+        </div>
+        <div class="emoji-items" @click.stop="emojiHandler">
+          <div class="emoji-list" v-show="curIndex === index" v-for="(item,index) in emojis">
+            <div class="emoji-item" v-for="item in item.emojis"
+                 :title="item.name"
+                 :key="item.codes"
+                 :class="item.codes">
+              {{item.char}}
+            </div>
+          </div>
+        </div>
       </div>
     </template>
     <template #trigger>
@@ -19,9 +26,9 @@
 </template>
 
 <script lang="ts" setup>
-  import {reactive} from 'vue';
+  import {ref, reactive} from 'vue';
   import type {PropType} from 'vue';
-  import {emojis} from './data';
+  import emojis from './data';
   import MdEditor from 'md-editor-v3';
 
   const DropdownToolbar = MdEditor.DropdownToolbar;
@@ -39,7 +46,10 @@
     visible: true
   });
 
-  const emojiHandler = (emoji: string) => {
+  const curIndex = ref(0);
+
+  const emojiHandler = (event: Event) => {
+    let emoji = event.target.innerHTML;
     // 获取输入框
     const textarea = document.querySelector(
       `#${props.editorId}-textarea`
@@ -66,6 +76,10 @@
   const onChange = (visible: boolean) => {
     state.visible = visible;
   };
+
+  function clickItem(index: number) {
+    curIndex.value = index;
+  }
 </script>
 
 <script lang="ts">
@@ -73,6 +87,61 @@
     name: 'EmojiExtension'
   };
 </script>
+
+<style lang="scss" scoped>
+  .emoji-container {
+    border: 1px solid var(--md-border-color);
+    height: 196px;
+    width: 305px;
+    border-radius: 4px;
+
+    .carousel-indicators {
+      padding: 3px 4px;
+      display: flex;
+      align-items: center;
+
+      .carousel-button {
+        padding: 2px 3px;
+        cursor: pointer;
+      }
+
+      .active {
+        background-color: #dedede;
+        /*color: #595959;*/
+        color: black;
+        pointer-events: none;
+        font-weight: bold;
+      }
+    }
+
+    .emoji-items {
+      height: 170px;
+      overflow: scroll;
+      padding: 0 4px 4px 4px;
+
+      .emoji-list {
+        display: flex;
+        flex-wrap: wrap;
+        list-style: none;
+
+        .emoji-item {
+          height: 32px;
+          width: 32px;
+          cursor: pointer;
+          font-size: 24px;
+          border-radius: 6px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          &:hover {
+            background-color: #eaeaea;
+          }
+        }
+      }
+    }
+  }
+</style>
 
 <style>
   .md-toolbar-item {

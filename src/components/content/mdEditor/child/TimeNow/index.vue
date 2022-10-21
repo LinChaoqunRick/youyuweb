@@ -22,7 +22,7 @@ const text = computed(() => {
 });
 
 const timerId = setInterval(() => {
-  time.value = dayjs().format('YYYY/MM/DD HH:mm:ss');
+  time.value = dayjs().format('YYYY-MM-DD HH:mm:ss');
 }, 1_000);
 
 onBeforeUnmount(() => {
