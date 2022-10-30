@@ -6,13 +6,11 @@
           暂无数据
         </div>
         <div class="table-skeleton" v-else>
-          <a-skeleton active avatar></a-skeleton>
-          <a-skeleton active avatar></a-skeleton>
-          <a-skeleton active avatar></a-skeleton>
+          <a-skeleton active avatar v-for="item in 10"></a-skeleton>
         </div>
       </slot>
     </div>
-    <div class="table-pagination" v-if="finished">
+    <div class="table-pagination" v-if="!!dataList.length">
       <a-pagination v-model:current="current"
                     :total="total"
                     :show-total="total => `共${total}条`"
@@ -101,6 +99,14 @@
         padding: 16px 24px;
         /*background-color: var(--youyu-body-background1);*/
         border-radius: 8px;
+
+        ::v-deep(.ant-skeleton) {
+          margin-bottom: 24px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
       }
     }
 

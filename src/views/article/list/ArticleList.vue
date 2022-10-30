@@ -38,7 +38,7 @@
     }
 
     .article-right {
-      width: 300px;
+      width: 290px;
       margin-left: 8px;
       position: relative;
     }

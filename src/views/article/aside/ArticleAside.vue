@@ -1,20 +1,18 @@
 <template>
   <div id="y-aside">
-    <div v-for="item in 60">
-      ArticleAside{{item}}
-    </div>
+    <CustomerCalendar/>
   </div>
 </template>
 
 <script setup lang="ts">
-
+  import CustomerCalendar from "@/components/common/utils/customerCalendar/CustomerCalendar.vue";
 
 </script>
 
+
 <style lang="scss" scoped>
   #y-aside {
-    background-color: var(--article-background);
-    padding: 10px;
-    border-radius: 8px;
+    /*background-color: var(--article-background);*/
+    /*border-radius: 8px;*/
   }
 </style>
