@@ -1,5 +1,5 @@
 <template>
-  <a-popover v-model:visible="visible" trigger="click" overlayClassName="login-container">
+  <a-popover v-model:visible="visible" trigger="click" overlayClassName="login-container" placement="bottomRight">
     <template #content>
       <h3 class="login-tips">您尚未登录，登录后您可以：</h3>
       <ul class="login-guide-list">

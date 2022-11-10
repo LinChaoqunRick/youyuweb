@@ -4,6 +4,7 @@ const route = [
     name: 'moment',
     meta: {
       title: "时刻",
+      code: "MOMENT"
     },
     component: () => import('@/views/moment/Moment.vue')
   }

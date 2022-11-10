@@ -1,5 +1,5 @@
 <template>
-  <div class="route-items" v-for="route in _routes">
+  <div class="route-items" v-for="route in showRoutes">
     <div class="route-item">
       <NavLink :route="route"/>
     </div>
@@ -7,27 +7,31 @@
 </template>
 
 <script setup>
-  import {ref} from 'vue';
-  import router from "@/router";
+  import {ref, toRef, watchEffect} from 'vue';
+  import {_routes} from "@/router/config/useGenerateRoutes";
+  import NavLink from "./child/NavLink.vue";
 
-  import NavLink from "./child/NavLink.vue"
+  const routes = toRef(_routes, "value");
+  const showRoutes = ref([])
 
-  const routes = router.options.routes;
-  let _routes = ref([]);
+  watchEffect(() => {
+    if (routes.value.length) {
+      generateRoutes(routes.value, showRoutes.value);
+    }
+  })
 
-  function generateRoute(routes, routesObj, parent) {
-    routes.forEach((route) => {
+  function generateRoutes(routes, _routes) {
+    routes.forEach(route => {
       let obj = {
+        name: route.name,
         title: route.meta?.title,
-        path: `${parent ? parent.path + '/' + route.path : route.path}`,
+        path: route.path,
         children: []
-      };
-      route.children?.length && generateRoute(route.children, obj.children, route);
-      !route.meta?.hide && route.meta?.title && routesObj.push(obj);
+      }
+      route.children?.length && generateRoutes(route.children, obj.children)
+      !route.meta?.hide && route.meta?.title && _routes.push(obj);
     })
   }
-
-  generateRoute(routes, _routes.value);
 </script>
 
 <style lang="scss" scoped>
