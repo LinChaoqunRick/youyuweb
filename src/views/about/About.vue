@@ -1,11 +1,11 @@
 <template>
-  About
+  <div>
+    <MusicPlayer/>
+  </div>
 </template>
 
-<script>
-    export default {
-        name: "About"
-    }
+<script setup>
+  import MusicPlayer from "@/components/common/utils/player/MusicPlayer.vue"
 </script>
 
 <style scoped>

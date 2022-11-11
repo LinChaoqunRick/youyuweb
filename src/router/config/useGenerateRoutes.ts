@@ -121,5 +121,5 @@ export async function generateAuthRoutes(router: Router): void {
   let codeList = await getAuthRoutes();
   generateRoutes(permissionList, codeList, _routes.value, null);
   handleAddRoutes(router, _routes.value);
-  console.log(_routes.value);
+  // console.log(_routes.value);
 }
