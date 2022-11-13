@@ -5,6 +5,7 @@ import album from "./modules/album";
 import about from "./modules/about";
 import article from "./modules/article";
 import moment from "./modules/moment";
+import lab from "./modules/lab"
 
 const routes = [
   ...home,
@@ -12,8 +13,9 @@ const routes = [
   ...magazine,
   ...moment,
   ...album,
-  ...about,
   ...create,
+  ...lab,
+  ...about,
   {
     path: '/:pathMatch(.*)',
     redirect: '/404',

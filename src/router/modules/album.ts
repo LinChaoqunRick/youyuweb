@@ -4,7 +4,6 @@ const route = [
     name: 'album',
     meta: {
       title: "相册",
-      hide: true,
       code: "ALBUM"
     },
     component: () => import('@/views/album/Album.vue')
