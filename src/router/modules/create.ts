@@ -30,11 +30,32 @@ const route = [
       {
         path: 'sketch',
         name: 'createSketch',
+        redirect: '/create/sketch/test1',
         meta: {
           title: "随笔",
           code: "CREATE_SKETCH"
         },
         component: () => import("@/views/create/child/Sketch.vue"),
+        children: [
+          {
+            path: 'test1',
+            name: 'test1',
+            meta: {
+              title: "Test1",
+              code: "CREATE_SKETCH_TEST1"
+            },
+            component: () => import("@/views/create/child/Test1.vue")
+          },
+          {
+            path: 'test2',
+            name: 'test2',
+            meta: {
+              title: "Test2",
+              /*code: "CREATE_SKETCH"*/
+            },
+            component: () => import("@/views/create/child/Test2.vue")
+          }
+        ]
       }
     ]
   },

@@ -12,13 +12,12 @@ export const _routes: Ref = ref([]); // 用于addRoutes
  * 参数：list: 需要检查的路由列表
  **/
 function isNeedAuth(list: RouteRecordRaw[]) {
-  let need = false;
   for (const item of list) {
     if (item.meta?.code) {
-      need = true;
+      return true;
     }
   }
-  return need;
+  return false;
 }
 
 /**
@@ -33,8 +32,10 @@ function generateRoutes(permissionList: RouteRecordRaw[], codeList: [], _routes:
     if (codeList.findIndex(item => item.code === route.meta?.code) > -1) {
       route.path = `${parent ? parent.path + '/' + route.path : route.path}`;
       let copyRoute = cloneDeep(route);
-      copyRoute.children = [];
-      route.children?.length && isNeedAuth(route.children) && generateRoutes(route.children, codeList, copyRoute.children, route);
+      if (route.children?.length && isNeedAuth(route.children)) {
+        copyRoute.children = [];
+        generateRoutes(route.children, codeList, copyRoute.children, route);
+      }
       route.meta?.title && _routes.push(copyRoute);
     }
   })
@@ -122,5 +123,5 @@ export async function generateAuthRoutes(router: Router): void {
   let codeList = await getAuthRoutes();
   generateRoutes(permissionList, codeList, _routes.value, null);
   handleAddRoutes(router, _routes.value);
-  // console.log(_routes.value);
+  console.log(_routes.value);
 }

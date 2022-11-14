@@ -1,12 +1,11 @@
 <template>
-  Sketch
-  <router-view/>
+  Test1
 </template>
 
 <script>
-  export default {
-    name: "Sketch"
-  }
+    export default {
+        name: "Test1"
+    }
 </script>
 
 <style scoped>

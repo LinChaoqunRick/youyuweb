@@ -1,11 +1,10 @@
 <template>
-  Sketch
-  <router-view/>
+  Test2
 </template>
 
 <script>
   export default {
-    name: "Sketch"
+    name: "Test2"
   }
 </script>
 
