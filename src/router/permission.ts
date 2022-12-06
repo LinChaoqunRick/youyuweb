@@ -5,12 +5,14 @@ import album from "./modules/album";
 import about from "./modules/about";
 import article from "./modules/article";
 import moment from "./modules/moment";
-import lab from "./modules/lab"
+import lab from "./modules/lab";
+import note from "./modules/note";
 
 const routes = [
   ...home,
   ...article,
   ...magazine,
+  ...note,
   ...moment,
   ...album,
   ...create,

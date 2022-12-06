@@ -107,6 +107,9 @@ function getAuthRoutes() {
           {id: 10, title: "随笔", code: "CREATE_SKETCH"},
           {id: 11, title: "关于", code: "ABOUT"},
           {id: 12, title: "实验室", code: "LAB"},
+          {id: 13, title: "笔记", code: "NOTE"},
+          {id: 14, title: "笔记列表", code: "NOTE_LIST"},
+          {id: 15, title: "笔记详情", code: "NOTE_DETAIL"},
         ]
       }
       return resolve(res);
