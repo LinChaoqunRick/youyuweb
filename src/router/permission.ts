@@ -3,14 +3,14 @@ import create from "./modules/create";
 import magazine from "./modules/magazine";
 import album from "./modules/album";
 import about from "./modules/about";
-import article from "./modules/article";
+import post from "./modules/post";
 import moment from "./modules/moment";
 import lab from "./modules/lab";
 import note from "./modules/note";
 
 const routes = [
   ...home,
-  ...article,
+  ...post,
   ...magazine,
   ...note,
   ...moment,

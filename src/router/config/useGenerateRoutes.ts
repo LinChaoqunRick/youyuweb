@@ -65,9 +65,9 @@ function getAuthRoutes() {
       if (userType === 0) {
         res = [
           {id: 0, title: "首页", code: "HOME"},
-          {id: 1, title: "文章", code: "ARTICLE"},
-          {id: 2, title: "文章列表", code: "ARTICLE_LIST"},
-          {id: 3, title: "文章详情", code: "ARTICLE_DETAIL"},
+          {id: 1, title: "文章", code: "POST"},
+          {id: 2, title: "文章列表", code: "POST_LIST"},
+          {id: 3, title: "文章详情", code: "POST_DETAIL"},
           {id: 4, title: "期刊", code: "MAGAZINE"},
           {id: 5, title: "时刻", code: "MOMENT"},
           // {id: 6, title: "相册", code: "ALBUM"},
@@ -80,9 +80,9 @@ function getAuthRoutes() {
       } else if (userType === 1) {
         res = [
           {id: 0, title: "首页", code: "HOME"},
-          {id: 1, title: "文章", code: "ARTICLE"},
-          {id: 2, title: "文章列表", code: "ARTICLE_LIST"},
-          {id: 3, title: "文章详情", code: "ARTICLE_DETAIL"},
+          {id: 1, title: "文章", code: "POST"},
+          {id: 2, title: "文章列表", code: "POST_LIST"},
+          {id: 3, title: "文章详情", code: "POST_DETAIL"},
           {id: 4, title: "期刊", code: "MAGAZINE"},
           {id: 5, title: "时刻", code: "MOMENT"},
           {id: 6, title: "相册", code: "ALBUM"},
@@ -95,9 +95,9 @@ function getAuthRoutes() {
       } else if (userType === 2) {
         res = [
           {id: 0, title: "首页", code: "HOME"},
-          {id: 1, title: "文章", code: "ARTICLE"},
-          {id: 2, title: "文章列表", code: "ARTICLE_LIST"},
-          {id: 3, title: "文章详情", code: "ARTICLE_DETAIL"},
+          {id: 1, title: "文章", code: "POST"},
+          {id: 2, title: "文章列表", code: "POST_LIST"},
+          {id: 3, title: "文章详情", code: "POST_DETAIL"},
           {id: 4, title: "期刊", code: "MAGAZINE"},
           {id: 5, title: "时刻", code: "MOMENT"},
           {id: 6, title: "相册", code: "ALBUM"},
@@ -126,5 +126,5 @@ export async function generateAuthRoutes(router: Router): void {
   let codeList = await getAuthRoutes();
   generateRoutes(permissionList, codeList, _routes.value, null);
   handleAddRoutes(router, _routes.value);
-  console.log(_routes.value);
+  // console.log(_routes.value);
 }
