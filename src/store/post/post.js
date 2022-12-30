@@ -6,10 +6,10 @@ import {
 
 export default {
   actions: {
-    getArticleList(state: any, params: object) {
+    getArticleList(state, params) {
       return http.post(GET_ARTICLE_LIST, params);
     },
-    getArticleDetail(state: any, params: object) {
+    getArticleDetail(state, params) {
       return http.post(GET_ARTICLE_DETAIL, params, {headers: {'content-type': "application/x-www-form-urlencoded"}});
     }
   },

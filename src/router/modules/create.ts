@@ -30,7 +30,7 @@ const route = [
       {
         path: 'sketch',
         name: 'createSketch',
-        redirect: '/create/sketch/test1',
+        // redirect: '/create/sketch/test1',
         meta: {
           title: "随笔",
           code: "CREATE_SKETCH"

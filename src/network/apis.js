@@ -4,6 +4,7 @@ const FrontApiBase = '/api';
 export const GET_ARTICLE_LIST = ApiBase + "/blog/list";
 export const GET_ARTICLE_DETAIL = FrontApiBase + "/article/details";
 
+export const ACCOUNT_LOGIN = ApiBase + "/login/accountLogin";
 
 const Api = {
   // 登录

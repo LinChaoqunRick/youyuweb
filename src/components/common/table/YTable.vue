@@ -53,7 +53,7 @@
   const dataList = ref([]);
   const finished = ref(false);
 
-  Cookies.set("token", "666666", {expires: 7});
+  // Cookies.set("token", "666666", {expires: 7});
 
   const initData = () => {
     dispatch(props.listUrl, Object.assign({}, {

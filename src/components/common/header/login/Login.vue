@@ -1,22 +1,29 @@
 <template>
-  <a-popover v-model:visible="visible" trigger="click" overlayClassName="login-container" placement="bottomRight">
-    <template #content>
-      <h3 class="login-tips">您尚未登录，登录后您可以：</h3>
-      <ul class="login-guide-list">
-        <li class="login-guide-list-item" v-for="item in guideList">
-          <div class="login-guide-icon-wrap">
-            <component :is="item.icon" size="16" fill="#1e80ff"/>
-          </div>
-          <div class="login-guide-text">
-            {{item.label}}
-          </div>
-        </li>
-      </ul>
-      <a-button type="primary" block class="guide-login-button" @click="handleLogin">立即登录</a-button>
-      <div class="register-tips">首次使用？<a @click="handleRegister">点我注册</a></div>
-    </template>
-    <button class="login-button">登录&ensp;|&ensp;注册</button>
-  </a-popover>
+  <div class="user-info">
+    <div class="user-login" v-if="isLogin">
+      <UserInfo/>
+    </div>
+    <div class="user-unlogin" v-else>
+      <a-popover v-model:visible="visible" trigger="click" overlayClassName="login-container" placement="bottomRight">
+        <template #content>
+          <h3 class="login-tips">您尚未登录，登录后您可以：</h3>
+          <ul class="login-guide-list">
+            <li class="login-guide-list-item" v-for="item in guideList">
+              <div class="login-guide-icon-wrap">
+                <component :is="item.icon" size="16" fill="#1e80ff"/>
+              </div>
+              <div class="login-guide-text">
+                {{item.label}}
+              </div>
+            </li>
+          </ul>
+          <a-button type="primary" block class="guide-login-button" @click="handleLogin">立即登录</a-button>
+          <div class="register-tips">首次使用？<a @click="handleRegister">点我注册</a></div>
+        </template>
+        <button class="login-button">登录&ensp;|&ensp;注册</button>
+      </a-popover>
+    </div>
+  </div>
   <transition name="fade">
     <LoginPanel ref="LoginPanelRef" v-if="loginPanelStatus"/>
   </transition>
@@ -28,6 +35,7 @@
   import {useStore} from "vuex";
 
   import LoginPanel from "./LoginPanel.vue";
+  import UserInfo from "./UserInfo.vue";
 
   const guideList = ref([
     {
@@ -59,7 +67,9 @@
   const visible = ref<boolean>(false);
 
   let {getters, commit} = useStore();
-  let loginPanelStatus = computed(() => getters['loginPanelStatus'])
+  let loginPanelStatus = computed(() => getters['loginPanelStatus']);
+  let isLogin = computed(() => getters['isLogin']);
+
 
   const handleLogin = () => {
     // LoginPanelRef.value.type = 0;

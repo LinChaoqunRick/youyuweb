@@ -88,6 +88,7 @@
       color: var(--youyu-login-color);
       transition: .6s;
 
+
       .login-panel-image {
         background-image: url('https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/login/loginImg.jpg');
         background-size: contain;

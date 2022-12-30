@@ -1,5 +1,6 @@
 import axios from "axios";
 import {message} from 'ant-design-vue';
+import Cookies from "js-cookie";
 
 if (process.env.NODE_ENV === 'development') {
   // axios.defaults.baseURL = '/api'
@@ -11,6 +12,9 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 axios.interceptors.request.use((config) => {
+  const token = Cookies.get("token") || '';
+  // config.headers.Authorization = token //  如果要求携带在请求头中
+  config.headers.token = token;   //如果要求携带在请求头中
   return config
 }, (err) => {
   console.log(err);
@@ -18,13 +22,13 @@ axios.interceptors.request.use((config) => {
 
 axios.interceptors.response.use((response) => {
   // 如果是前台的接口，就不做逻辑判断，原因：前台的API没有统一结果格式
-  if (response.config.url.split("/")[1] === "api") {
+  /*if (response.config.url.split("/")[1] === "api") {
     return response.data;
-  }
+  }*/
   const res = response.data;
   if (res.code == null || res.code !== 200) {
-    message.error('系统异常,请联系管理员');
-    return Promise.reject('error')
+    // message.error('系统异常,请联系管理员');
+    return Promise.reject(res)
   } else if (res.code === 407) {
     // console.log("Token失效跳转登陆页面");
     // sessionStorage.clear();
@@ -33,9 +37,8 @@ axios.interceptors.response.use((response) => {
     return res.data
   }
 }, (err) => {
-  console.log(err);
   message.error('系统异常,请联系管理员');
-  return Promise.reject('error')
+  return Promise.reject(err)
 })
 
 /**
