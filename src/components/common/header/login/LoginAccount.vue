@@ -84,10 +84,10 @@
 
   function handleLogin(form) {
     dispatch('accountLogin', form).then(res => {
-      const {user, token} = res;
-      message.success(`欢迎回来，${user.nickname}`);
+      const {userInfo, token} = res;
+      message.success(`欢迎回来，${userInfo.nickname}`);
       commit("changeLogin", false);
-      commit("changeUser", user);
+      commit("changeUser", userInfo);
       Cookies.set("token", token, {expires: 7});
     }).catch(e => {
       tip.showTip = true;
@@ -116,6 +116,9 @@
       position: absolute;
       width: 320px;
       top: 70px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .other-tips {
