@@ -1,6 +1,7 @@
 import http from "@/network/https";
 import {
-  ACCOUNT_LOGIN
+  ACCOUNT_LOGIN,
+  ACCOUNT_LOGOUT
 } from "@/network/apis";
 
 export default {
@@ -22,7 +23,7 @@ export default {
       return state.showLogin;
     },
     isLogin(state) {
-      return state.user !== {}
+      return JSON.stringify(state.user) !== '{}'
     },
     userInfo(state) {
       return state.user;
@@ -31,6 +32,9 @@ export default {
   actions: {
     accountLogin(state, params) {
       return http.post(ACCOUNT_LOGIN, params);
+    },
+    logout(state, params) {
+      return http.post(ACCOUNT_LOGOUT, params);
     },
   },
 }

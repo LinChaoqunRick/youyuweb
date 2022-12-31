@@ -1,6 +1,7 @@
 import axios from "axios";
 import {message} from 'ant-design-vue';
 import Cookies from "js-cookie";
+import store from "../store";
 
 if (process.env.NODE_ENV === 'development') {
   // axios.defaults.baseURL = '/api'
@@ -26,15 +27,15 @@ axios.interceptors.response.use((response) => {
     return response.data;
   }*/
   const res = response.data;
-  if (res.code == null || res.code !== 200) {
+  if (res.code === 200) {
+    return res.data
+  } else if (res.code === 401) { // token过期
+    message.warning('登录凭证已过期，请重新登录！');
+    Cookies.set("token", "");
+    store.commit("changeUser", {});
+  } else {
     // message.error('系统异常,请联系管理员');
     return Promise.reject(res)
-  } else if (res.code === 407) {
-    // console.log("Token失效跳转登陆页面");
-    // sessionStorage.clear();
-    // location.href="/ecloud-sp/logout";
-  } else {
-    return res.data
   }
 }, (err) => {
   message.error('系统异常,请联系管理员');

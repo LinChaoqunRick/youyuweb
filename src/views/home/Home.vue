@@ -1,12 +1,16 @@
 <template>
-  <div v-for="item in 100">
-    {{item}}
-  </div>
+  <button @click="handleClick">请求一次Hello</button>
 </template>
 
-<script>
-  export default {
-    name: "Home"
+<script setup>
+  import {useStore} from 'vuex';
+
+  const {dispatch} = useStore();
+
+  function handleClick() {
+    dispatch("helloTest1").then(res => {
+      console.log(res);
+    })
   }
 </script>
 
