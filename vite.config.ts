@@ -22,11 +22,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/plat/, '')
       },
-      '/api': {
+      /*'/api': {
         target: "https://116.62.114.102:8081",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
-      }
+      }*/
     }
   },
 })

@@ -1,12 +1,15 @@
 const ApiBase = '/plat';
 const FrontApiBase = '/api';
 
-export const GET_ARTICLE_LIST = ApiBase + "/blog/list";
-export const GET_ARTICLE_DETAIL = FrontApiBase + "/article/details";
+export const GET_POST_LIST = ApiBase + "/post/list";
+export const GET_POST_DETAIL = FrontApiBase + "/post/details";
 
 export const ACCOUNT_LOGIN = ApiBase + "/login/accountLogin"; // 登录
 export const ACCOUNT_LOGOUT = ApiBase + "/login/logout"; // 注销
 export const HELLO_TEST1 = ApiBase + "/hello/test1"; //
+
+// 分类
+export const CATEGORY_LIST = ApiBase + "/category/list"; //
 
 const Api = {
   // 登录

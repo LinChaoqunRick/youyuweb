@@ -31,7 +31,7 @@ export default {
   },
   actions: {
     accountLogin(state, params) {
-      return http.post(ACCOUNT_LOGIN, params);
+      return http.post(ACCOUNT_LOGIN, params, {headers: {'content-type': "application/json"}});
     },
     logout(state, params) {
       return http.post(ACCOUNT_LOGOUT, params);

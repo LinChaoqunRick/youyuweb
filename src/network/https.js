@@ -11,6 +11,8 @@ if (process.env.NODE_ENV === 'development') {
   // axios.defaults.baseURL = '/api'
   axios.defaults.timeout = 50000
 }
+// 配置axios默认Content-type
+axios.defaults.headers["Content-Type"] = "application/x-www-form-urlencoded";
 
 axios.interceptors.request.use((config) => {
   const token = Cookies.get("token") || '';
@@ -22,13 +24,9 @@ axios.interceptors.request.use((config) => {
 })
 
 axios.interceptors.response.use((response) => {
-  // 如果是前台的接口，就不做逻辑判断，原因：前台的API没有统一结果格式
-  /*if (response.config.url.split("/")[1] === "api") {
-    return response.data;
-  }*/
   const res = response.data;
   if (res.code === 200) {
-    return res.data
+    return res;
   } else if (res.code === 401) { // token过期
     message.warning('登录凭证已过期，请重新登录！');
     Cookies.set("token", "");

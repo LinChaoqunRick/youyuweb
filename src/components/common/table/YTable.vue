@@ -57,13 +57,13 @@
 
   const initData = () => {
     dispatch(props.listUrl, Object.assign({}, {
-      page: current.value,
-      count: size.value
+      pageNum: current.value,
+      pageSize: size.value
     }, props.params)).then(res => {
       document.documentElement.scrollTop = 0;
-      router.push({params: {page: res.pageNum}})
-      total.value = res.total;
-      dataList.value = res.list;
+      router.push({params: {page: res.data.current}})
+      total.value = res.data.total;
+      dataList.value = res.data.list;
     }).finally(() => {
       finished.value = true;
     })

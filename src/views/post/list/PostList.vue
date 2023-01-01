@@ -1,7 +1,7 @@
 <template>
   <div class="article-container">
     <div class="article-list">
-      <YTable listUrl="getArticleList">
+      <YTable listUrl="getPostList">
         <template #default="{dataList}">
           <div v-for="(item, index) in dataList" class="article-body" :key="item.blogID">
             <PostItem :data="item" :index="index"/>

@@ -84,7 +84,7 @@
 
   function handleLogin(form) {
     dispatch('accountLogin', form).then(res => {
-      const {userInfo, token} = res;
+      const {userInfo, token} = res.data;
       message.success(`欢迎回来，${userInfo.nickname}`);
       commit("changeLogin", false);
       commit("changeUser", userInfo);
