@@ -11,9 +11,9 @@ export default {
     getPostList(state, params) {
       return http.get(GET_POST_LIST, params);
     },
-    getArticleDetail(state, params) {
+    getPostDetail(state, params) {
       // return http.post(GET_POST_DETAIL, params, {headers: {'content-type': "application/x-www-form-urlencoded"}});
-      return http.post(GET_POST_DETAIL, params);
+      return http.get(GET_POST_DETAIL, params);
     },
     getCategoryList(state, params) {
       return http.get(CATEGORY_LIST, params);

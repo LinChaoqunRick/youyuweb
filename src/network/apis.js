@@ -1,8 +1,9 @@
 const ApiBase = '/plat';
 const FrontApiBase = '/api';
 
+// 帖子
 export const GET_POST_LIST = ApiBase + "/post/list";
-export const GET_POST_DETAIL = FrontApiBase + "/post/details";
+export const GET_POST_DETAIL = ApiBase + "/post/get";
 
 export const ACCOUNT_LOGIN = ApiBase + "/login/accountLogin"; // 登录
 export const ACCOUNT_LOGOUT = ApiBase + "/login/logout"; // 注销

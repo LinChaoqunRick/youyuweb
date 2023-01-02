@@ -71,11 +71,11 @@ function getAuthRoutes() {
           {id: 4, title: "期刊", code: "MAGAZINE"},
           {id: 5, title: "时刻", code: "MOMENT"},
           // {id: 6, title: "相册", code: "ALBUM"},
-          {id: 7, title: "创作", code: "CREATE"},
+          // {id: 7, title: "创作", code: "CREATE"},
           // {id: 8, title: "文章", code: "CREATE_BLOG"},
-          {id: 9, title: "时刻", code: "CREATE_MOMENT"},
-          {id: 10, title: "随笔", code: "CREATE_SKETCH"},
-          // {id: 11, title: "关于", code: "ABOUT"},
+          // {id: 9, title: "时刻", code: "CREATE_MOMENT"},
+          // {id: 10, title: "随笔", code: "CREATE_SKETCH"},
+          {id: 11, title: "关于", code: "ABOUT"},
         ]
       } else if (userType === 1) {
         res = [

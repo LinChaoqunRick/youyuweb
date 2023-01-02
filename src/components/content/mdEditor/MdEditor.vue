@@ -1,6 +1,6 @@
 <template>
   <div id="editor">
-    <md-editor v-model="text" v-bind="editorProps">
+    <md-editor v-model="text" v-bind="editorConfig">
       <template #defToolbars>
         <mark-extension :editor-id="editorId" @on-change="onChange"/>
         <emoji-extension :editor-id="editorId" @on-change="onChange"/>
@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-  import {ref, reactive, toRef} from 'vue';
+  import {ref, reactive, toRef, computed} from 'vue';
   import {useStore} from "vuex";
   import MdEditor from 'md-editor-v3';
   import 'md-editor-v3/lib/style.css';
@@ -24,6 +24,7 @@
   import MarkExtension from '@/components/content/mdEditor/child/MarkExtension/index.vue';
   import ReadExtension from '@/components/content/mdEditor/child/ReadExtension/index.vue';
   import TimeNow from '@/components/content/mdEditor/child/TimeNow/index.vue';
+  import {extend} from "dayjs";
 
   MdEditor.config({
     markedExtensions: [MarkExtensionConfig],
@@ -49,12 +50,17 @@
 
   const store = useStore();
 
-  console.log(store.state.theme.theme);
-
   const prop = defineProps({
     editorId: {
       type: String,
       default: 'md-editor'
+    },
+    extend: {
+      type: Object
+    },
+    text: {
+      type: String,
+      default: ''
     }
   })
 
@@ -63,8 +69,6 @@
     modalVisible: false,
     modalFullscreen: false
   });
-
-  const text = ref('# Hello Editor');
 
   const editorProps = reactive({
     theme: toRef(store.state.theme, "theme"),
@@ -107,11 +111,17 @@
     footers: ['markdownTotal', '=', 0, 'scrollSwitch']
   })
 
+  const editorConfig = computed(() => {
+    console.log(prop.extend);
+    console.log(Object.assign({}, editorProps, prop.extend));
+    return Object.assign({}, editorProps, prop.extend);
+  })
+
   const onChange = (v: string) => (text.value = v);
 </script>
 
 <style lang="scss" scoped>
   #md-editor {
-    height: 660px;
+    /*height: 660px;*/
   }
 </style>
