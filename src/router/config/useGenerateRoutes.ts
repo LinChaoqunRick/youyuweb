@@ -3,6 +3,9 @@ import type {Ref} from 'vue';
 import type {RouteRecordRaw, Router} from "vue-router";
 import permissionList from "../permission";
 import {cloneDeep} from 'lodash';
+import http from "@/network/https";
+import {GET_AUTH_ROUTES} from "@/network/apis";
+import {router} from "@/router";
 
 // 这两个不一样，因为可能存在菜单中不存在的路由，但它实际存在，如：文章->文章详情
 export const _routes: Ref = ref([]); // 用于addRoutes
@@ -30,6 +33,7 @@ function isNeedAuth(list: RouteRecordRaw[]) {
 function generateRoutes(permissionList: RouteRecordRaw[], codeList: [], _routes: [], parent: object) {
   permissionList.forEach(route => {
     if (codeList.findIndex(item => item.code === route.meta?.code) > -1) {
+      // console.log(route?.path);
       route.path = `${parent ? parent.path + '/' + route.path : route.path}`;
       let copyRoute = cloneDeep(route);
       if (route.children?.length && isNeedAuth(route.children)) {
@@ -47,7 +51,7 @@ function generateRoutes(permissionList: RouteRecordRaw[], codeList: [], _routes:
  * 参数：router: 路由器对象
  * 参数：route: 需要添加的路由集合
  **/
-function handleAddRoutes(router: Router, route: RouteRecordRaw) {
+function handleAddRoutes(route: RouteRecordRaw) {
   route.forEach(item => {
     router.addRoute(item);
   })
@@ -56,64 +60,12 @@ function handleAddRoutes(router: Router, route: RouteRecordRaw) {
   router.addRoute(notFoundRouter);
 }
 
-// 模拟路由接口数据
+/**
+ * 获取权限路由信息
+ */
 function getAuthRoutes() {
-  const userType: number = 2; // 0: 未登录 1: 普通用户 2: 管理员
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      let res: [] = [];
-      if (userType === 0) {
-        res = [
-          {id: 0, title: "首页", code: "HOME"},
-          {id: 1, title: "文章", code: "POST"},
-          {id: 2, title: "文章列表", code: "POST_LIST"},
-          {id: 3, title: "文章详情", code: "POST_DETAIL"},
-          {id: 4, title: "期刊", code: "MAGAZINE"},
-          {id: 5, title: "时刻", code: "MOMENT"},
-          // {id: 6, title: "相册", code: "ALBUM"},
-          // {id: 7, title: "创作", code: "CREATE"},
-          // {id: 8, title: "文章", code: "CREATE_BLOG"},
-          // {id: 9, title: "时刻", code: "CREATE_MOMENT"},
-          // {id: 10, title: "随笔", code: "CREATE_SKETCH"},
-          {id: 11, title: "关于", code: "ABOUT"},
-        ]
-      } else if (userType === 1) {
-        res = [
-          {id: 0, title: "首页", code: "HOME"},
-          {id: 1, title: "文章", code: "POST"},
-          {id: 2, title: "文章列表", code: "POST_LIST"},
-          {id: 3, title: "文章详情", code: "POST_DETAIL"},
-          {id: 4, title: "期刊", code: "MAGAZINE"},
-          {id: 5, title: "时刻", code: "MOMENT"},
-          {id: 6, title: "相册", code: "ALBUM"},
-          {id: 7, title: "创作", code: "CREATE"},
-          {id: 8, title: "文章", code: "CREATE_BLOG"},
-          {id: 9, title: "时刻", code: "CREATE_MOMENT"},
-          // {id: 10, title: "随笔", code: "CREATE_SKETCH"},
-          {id: 11, title: "关于", code: "ABOUT"},
-        ]
-      } else if (userType === 2) {
-        res = [
-          {id: 0, title: "首页", code: "HOME"},
-          {id: 1, title: "文章", code: "POST"},
-          {id: 2, title: "文章列表", code: "POST_LIST"},
-          {id: 3, title: "文章详情", code: "POST_DETAIL"},
-          {id: 4, title: "期刊", code: "MAGAZINE"},
-          {id: 5, title: "时刻", code: "MOMENT"},
-          {id: 6, title: "相册", code: "ALBUM"},
-          {id: 7, title: "创作", code: "CREATE"},
-          {id: 8, title: "文章", code: "CREATE_BLOG"},
-          {id: 9, title: "时刻", code: "CREATE_MOMENT"},
-          {id: 10, title: "随笔", code: "CREATE_SKETCH"},
-          {id: 11, title: "关于", code: "ABOUT"},
-          {id: 12, title: "实验室", code: "LAB"},
-          {id: 13, title: "笔记", code: "NOTE"},
-          {id: 14, title: "笔记列表", code: "NOTE_LIST"},
-          {id: 15, title: "笔记详情", code: "NOTE_DETAIL"},
-        ]
-      }
-      return resolve(res);
-    }, 1000)
+  return http.get(GET_AUTH_ROUTES).then(res => {
+    return res.data;
   })
 }
 
@@ -121,10 +73,11 @@ function getAuthRoutes() {
  * 方法：handleAddRoutes: 生成路由，权限路由请求回来后进行路由匹配
  * 参数：router: 路由器对象
  **/
-export async function generateAuthRoutes(router: Router): void {
+export async function generateAuthRoutes(): void {
   _routes.value = [];
   let codeList = await getAuthRoutes();
-  generateRoutes(permissionList, codeList, _routes.value, null);
-  handleAddRoutes(router, _routes.value);
-  // console.log(_routes.value);
+  // 这边需要用cloneDeep，否则登录后路由会出现类似`/post//list`这样的路由,原因是未登录时已经拼接过一次`/`了
+  generateRoutes(cloneDeep(permissionList), codeList, _routes.value, null);
+  console.log(_routes.value);
+  handleAddRoutes(_routes.value);
 }

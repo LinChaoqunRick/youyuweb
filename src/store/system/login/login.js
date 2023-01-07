@@ -1,7 +1,8 @@
 import http from "@/network/https";
 import {
   ACCOUNT_LOGIN,
-  ACCOUNT_LOGOUT
+  ACCOUNT_LOGOUT,
+  GET_AUTH_ROUTES
 } from "@/network/apis";
 
 export default {
@@ -36,5 +37,8 @@ export default {
     logout(state, params) {
       return http.post(ACCOUNT_LOGOUT, params);
     },
+    getAuthRoutes(state, params) {
+      return http.get(GET_AUTH_ROUTES, params);
+    }
   },
 }

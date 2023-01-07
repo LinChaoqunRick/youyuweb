@@ -126,6 +126,8 @@
       Cookies.set("token", "");
       store.commit("changeUser", {});
       message.success('注销成功!');
+      // 刷新页面
+      location.reload();
     })
   }
 </script>

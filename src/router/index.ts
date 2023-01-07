@@ -3,7 +3,7 @@ import whiteList from "./whiteList";
 import {generateAuthRoutes} from "@/router/config/useGenerateRoutes";
 
 
-const router = createRouter({
+export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     ...whiteList,
@@ -23,7 +23,7 @@ const router = createRouter({
 let isInit = false;
 router.beforeEach(async (to, from, next) => {
   if (!isInit) {
-    await generateAuthRoutes(router);
+    await generateAuthRoutes();
     next({...to});
   } else {
     next();

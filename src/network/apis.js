@@ -7,6 +7,7 @@ export const GET_POST_DETAIL = ApiBase + "/post/get";
 
 export const ACCOUNT_LOGIN = ApiBase + "/login/accountLogin"; // 登录
 export const ACCOUNT_LOGOUT = ApiBase + "/login/logout"; // 注销
+export const GET_AUTH_ROUTES = ApiBase + "/login/getAuthRoutes"; // 注销
 export const HELLO_TEST1 = ApiBase + "/hello/test1"; //
 
 // 分类

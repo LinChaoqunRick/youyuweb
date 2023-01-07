@@ -47,6 +47,7 @@
   import {useStore} from 'vuex';
   import {message} from 'ant-design-vue';
   import Cookies from "js-cookie";
+  import {generateAuthRoutes} from "@/router/config/useGenerateRoutes";
 
   const {commit, dispatch} = useStore();
   import {Form} from 'ant-design-vue';
@@ -89,6 +90,8 @@
       commit("changeLogin", false);
       commit("changeUser", userInfo);
       Cookies.set("token", token, {expires: 7});
+      // 生成权限路由
+      generateAuthRoutes();
     }).catch(e => {
       tip.showTip = true;
       tip.message = e.message;

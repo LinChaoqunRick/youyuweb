@@ -8,14 +8,17 @@
 
 <script setup>
   import {ref, toRef, watchEffect} from 'vue';
+  import {useStore} from 'vuex';
   import {_routes} from "@/router/config/useGenerateRoutes";
   import NavLink from "./child/NavLink.vue";
 
   const routes = toRef(_routes, "value");
-  const showRoutes = ref([])
+  const showRoutes = ref([]);
+  const {dispatch} = useStore();
 
   watchEffect(() => {
     if (routes.value.length) {
+      showRoutes.value = [];
       generateRoutes(routes.value, showRoutes.value);
     }
   })
@@ -32,6 +35,7 @@
       !route.meta?.hide && route.meta?.title && _routes.push(obj);
     })
   }
+
 </script>
 
 <style lang="scss" scoped>
