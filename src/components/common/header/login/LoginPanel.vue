@@ -24,7 +24,7 @@
               <div class="login-header-type type-active">注册</div>
             </div>
             <div class="login-panel-content-form">
-
+              <RegisterPanel/>
             </div>
           </div>
         </transition>
@@ -38,12 +38,20 @@
 
 <script>
   import {mapMutations} from 'vuex';
-  import LoginAccount from './LoginAccount.vue'
+  import LoginAccount from './LoginAccount.vue';
+  import RegisterPanel from './RegisterPanel.vue';
 
   export default {
     name: "LoginPanel",
+    provide() {
+      // 使用函数的形式，可以访问到 `this`
+      return {
+        handleSwitch: this.handleSwitch
+      }
+    },
     components: {
-      LoginAccount
+      LoginAccount,
+      RegisterPanel
     },
     data() {
       return {

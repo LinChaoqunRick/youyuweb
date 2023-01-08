@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-  import {ref, onMounted} from 'vue';
+  import {ref, onMounted, nextTick} from 'vue';
   import {computed} from 'vue';
   import {useStore} from "vuex";
 
@@ -72,15 +72,19 @@
 
 
   const handleLogin = () => {
-    // LoginPanelRef.value.type = 0;
     visible.value = false;
     commit("changeLogin", true);
+    nextTick(() => {
+      LoginPanelRef.value.type = 0;
+    })
   }
 
   const handleRegister = () => {
-    // LoginPanelRef.value.type = 1;
     visible.value = false;
     commit("changeLogin", true);
+    nextTick(() => {
+      LoginPanelRef.value.type = 1;
+    })
   }
 
   onMounted(() => {

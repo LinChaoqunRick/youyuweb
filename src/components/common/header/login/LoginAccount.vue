@@ -6,19 +6,24 @@
       </div>
       <a-form
         :model="formState"
-        name="normal_login"
         class="login-form">
         <a-form-item label="" v-bind="validateInfos.username">
-          <a-input v-model:value="formState.username" size="large" :maxlength="30">
+          <a-input v-model:value="formState.username"
+                   size="large"
+                   :maxlength="30"
+                   placeholder="手机号/邮箱">
             <template #prefix>
-              <icon-user/>
+              <icon-user fill="#c0c4cc"/>
             </template>
           </a-input>
         </a-form-item>
         <a-form-item label="" v-bind="validateInfos.password">
-          <a-input-password v-model:value="formState.password" size="large" :maxlength="30">
+          <a-input-password v-model:value="formState.password"
+                            size="large"
+                            :maxlength="30"
+                            placeholder="密码">
             <template #prefix>
-              <icon-lock/>
+              <icon-lock fill="#c0c4cc"/>
             </template>
           </a-input-password>
         </a-form-item>
@@ -33,7 +38,7 @@
             登录
           </a-button>
           <div class="other-tips">
-            <a class="forget-password">注册账号？</a>或者
+            <a class="forget-password" @click="handleSwitch">注册账号？</a>或者
             <a class="forget-password">忘记密码？</a>
           </div>
         </a-form-item>
@@ -43,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-  import {ref, reactive, toRaw} from 'vue';
+  import {ref, reactive, toRaw, inject} from 'vue';
   import {useStore} from 'vuex';
   import {message} from 'ant-design-vue';
   import Cookies from "js-cookie";
@@ -53,6 +58,7 @@
   import {Form} from 'ant-design-vue';
 
   const useForm = Form.useForm;
+  const handleSwitch = inject('handleSwitch')
 
   const formState = reactive({
     username: '',

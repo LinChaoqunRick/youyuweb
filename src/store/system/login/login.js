@@ -2,7 +2,8 @@ import http from "@/network/https";
 import {
   ACCOUNT_LOGIN,
   ACCOUNT_LOGOUT,
-  GET_AUTH_ROUTES
+  GET_AUTH_ROUTES,
+  GET_REGISTER_CODE
 } from "@/network/apis";
 
 export default {
@@ -39,6 +40,9 @@ export default {
     },
     getAuthRoutes(state, params) {
       return http.get(GET_AUTH_ROUTES, params);
+    },
+    getRegisterCode(state, params) {
+      return http.post(GET_REGISTER_CODE, params, {headers: {'content-type': "application/json"}});
     }
   },
 }
