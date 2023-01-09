@@ -78,6 +78,5 @@ export async function generateAuthRoutes(): void {
   let codeList = await getAuthRoutes();
   // 这边需要用cloneDeep，否则登录后路由会出现类似`/post//list`这样的路由,原因是未登录时已经拼接过一次`/`了
   generateRoutes(cloneDeep(permissionList), codeList, _routes.value, null);
-  console.log(_routes.value);
   handleAddRoutes(_routes.value);
 }

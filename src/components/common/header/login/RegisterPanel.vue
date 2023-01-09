@@ -13,7 +13,8 @@
                    size="large"
                    :maxlength="30"
                    type="email"
-                   placeholder="邮箱">
+                   placeholder="邮箱"
+                   @blur="validate('email', { trigger: 'blur' }).catch(() => {})">
             <template #prefix>
               <icon-mail fill="#c0c4cc"/>
             </template>
@@ -104,7 +105,7 @@
     verificationCode: '',
     nickname: '',
     password: '',
-    confirmPassword: ''
+    // confirmPassword: ''
   });
 
   const tip = reactive({
@@ -116,20 +117,29 @@
   const form = ref(null);
 
   const rulesRef = reactive({
-    email: [{required: true, type: 'email', message: '请输入正确的邮箱'}],
+    email: [
+      {required: true, message: '请输入的邮箱'},
+      {type: 'email', message: '请输入正确的邮箱', trigger: 'blur'}
+    ],
     verificationCode: [{required: true, message: '请输入验证码'}],
     nickname: [{required: true, message: '请输入昵称'}],
     password: [{required: true, message: '请输入密码'}],
-    confirmPassword: [{required: true, message: '请确认密码'}],
+    // confirmPassword: [{required: true, message: '请确认密码'}],
   });
 
   const {resetFields, validate, validateInfos} = useForm(formState, rulesRef);
 
   const onSubmit = () => {
+    loading.value = true;
     validate().then(() => {
-
+      dispatch('register', toRaw(formState)).then(res => {
+        message.success("注册成功!");
+        handleSwitch()
+      })
     }).catch(err => {
       console.log('error', err);
+    }).finally(_ => {
+      loading.value = false;
     });
   };
 
@@ -139,8 +149,6 @@
         console.log(res);
       }).catch(e => {
 
-      }).finally(_ => {
-        loading.value = false;
       })
     }).catch(console.log)
   }

@@ -40,7 +40,6 @@
   function getCategoryList() {
     dispatch("getCategoryList").then(res => {
       treeData.value = transferData(res.data);
-      console.log(treeData.value);
     })
   }
 

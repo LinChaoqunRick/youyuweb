@@ -3,7 +3,8 @@ import {
   ACCOUNT_LOGIN,
   ACCOUNT_LOGOUT,
   GET_AUTH_ROUTES,
-  GET_REGISTER_CODE
+  GET_REGISTER_CODE,
+  ACCOUNT_REGISTER
 } from "@/network/apis";
 
 export default {
@@ -43,6 +44,10 @@ export default {
     },
     getRegisterCode(state, params) {
       return http.post(GET_REGISTER_CODE, params, {headers: {'content-type': "application/json"}});
-    }
+    },
+    register(state, params) {
+      return http.post(ACCOUNT_REGISTER, params, {headers: {'content-type': "application/json"}});
+    },
+
   },
 }
