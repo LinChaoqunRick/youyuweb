@@ -31,6 +31,9 @@ axios.interceptors.response.use((response) => {
     message.warning('登录凭证已过期，请重新登录！');
     Cookies.set("token", "");
     store.commit("changeUser", {});
+    setTimeout(() => {
+      location.reload();
+    }, 3000)
   } else {
     // message.error('系统异常,请联系管理员');
     return Promise.reject(res)
