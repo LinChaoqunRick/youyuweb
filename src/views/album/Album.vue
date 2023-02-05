@@ -1,5 +1,5 @@
 <template>
-  Album
+  <router-view/>
 </template>
 
 <script>

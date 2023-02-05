@@ -1,5 +1,5 @@
 <template>
-
+  AlbumDetail
 </template>
 
 <script>

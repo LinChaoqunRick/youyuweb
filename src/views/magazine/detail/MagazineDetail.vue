@@ -1,5 +1,5 @@
 <template>
-
+  MagazineDetail
 </template>
 
 <script>

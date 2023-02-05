@@ -1,5 +1,5 @@
 <template>
-  Moment
+  <router-view/>
 </template>
 
 <script>

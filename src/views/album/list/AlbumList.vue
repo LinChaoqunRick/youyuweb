@@ -1,5 +1,5 @@
 <template>
-
+  AlbumList
 </template>
 
 <script>

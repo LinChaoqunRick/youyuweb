@@ -1,5 +1,5 @@
 <template>
-  Magazine
+  <router-view/>
 </template>
 
 <script>
