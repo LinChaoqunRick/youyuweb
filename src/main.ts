@@ -11,10 +11,10 @@ import aside2 from "@/libs/directives/aside2.js";
 
 // css
 import './assets/main.scss';
-import 'ant-design-vue/dist/antd.css';
 import './assets/css/theme/dark.scss';
 import './assets/css/theme/default.scss';
 import '@icon-park/vue-next/styles/index.css'; //icon-park
+import 'ant-design-vue/dist/antd.variable.min.css'
 
 const app = createApp(App);
 

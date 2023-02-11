@@ -23,7 +23,7 @@ const route = [
         component: () => import("@/views/post/list/postList.vue")
       },
       {
-        path: 'details/:blogId(\\d*)',
+        path: 'details/:postId(\\d*)',
         name: 'postDetail',
         meta: {
           title: "文章详情",

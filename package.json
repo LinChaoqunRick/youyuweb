@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@icon-park/vue-next": "^1.4.2",
+    "@vueuse/components": "^9.12.0",
+    "@vueuse/core": "^9.12.0",
     "ant-design-vue": "^3.2.12",
     "axios": "^0.26.0",
     "dat.gui": "^0.7.9",

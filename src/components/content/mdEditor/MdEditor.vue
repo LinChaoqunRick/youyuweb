@@ -112,8 +112,8 @@
   })
 
   const editorConfig = computed(() => {
-    console.log(prop.extend);
-    console.log(Object.assign({}, editorProps, prop.extend));
+    // console.log(prop.extend);
+    // console.log(Object.assign({}, editorProps, prop.extend));
     return Object.assign({}, editorProps, prop.extend);
   })
 

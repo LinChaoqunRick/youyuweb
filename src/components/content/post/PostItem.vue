@@ -2,16 +2,16 @@
   <div class="post-item">
     <div class="article-item" :class="{'flex-revert': !!(index % 2)}" v-if="thumbnails.length < 3">
       <div class="image-wrapper">
-        <div class="image-link" @click="$router.push({name:'postDetail',params:{blogId:data.id}})">
+        <div class="image-link" @click="$router.push({name:'postDetail',params:{postId:data.id}})">
           <img :src="thumbnails[0]">
         </div>
       </div>
       <div class="content-wrapper">
         <div class="article-title">
-          <p v-html="data.title" @click="$router.push({name:'postDetail',params:{blogId:data.id}})"/>
+          <p v-html="data.title" @click="$router.push({name:'postDetail',params:{postId:data.id}})"/>
         </div>
         <div class="article-caption" v-html="data.summary"
-             @click="$router.push({name:'articleDetail',params:{blogId:data.id}})"/>
+             @click="$router.push({name:'articleDetail',params:{postId:data.id}})"/>
         <div class="article-info">
           <span>{{(data.createTime).substr(0, 10)}}</span>
           <span class="separator">/</span>
@@ -24,11 +24,11 @@
     <div class="article-item article-item-more-pic" v-else>
       <div class="content-wrapper">
         <div class="article-title">
-          <p v-html="data.title" @click="$router.push({name:'postDetail',params:{blogId:data.id}})"/>
+          <p v-html="data.title" @click="$router.push({name:'postDetail',params:{postId:data.id}})"/>
         </div>
       </div>
       <div class="image-wrapper">
-        <div class="image-link" @click="$router.push({name:'postDetail',params:{blogId:data.id}})">
+        <div class="image-link" @click="$router.push({name:'postDetail',params:{postId:data.id}})">
           <div class="img-container" v-for="img in thumbnails">
             <img :src="img">
           </div>

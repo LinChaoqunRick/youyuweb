@@ -10,6 +10,10 @@ export const ACCOUNT_LOGOUT = ApiBase + "/login/logout"; // 注销
 export const GET_AUTH_ROUTES = ApiBase + "/login/getAuthRoutes"; // 注销
 export const ACCOUNT_REGISTER = ApiBase + "/login/register"; // 注销
 
+// 用户
+export const GET_USER_BY_ID = ApiBase + "/user/getUserById"; // 根据id获取用户信息
+export const GET_LIMIT_POST = ApiBase + "/user/getLimitPost"; // 获取指定数量条帖子记录
+
 export const GET_REGISTER_CODE = ApiBase + "/mail/sendRegisterCode"; // 获取注册验证码
 export const HELLO_TEST1 = ApiBase + "/hello/test1"; //
 

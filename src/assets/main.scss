@@ -1,2 +1,14 @@
 @import "./base.css";
 @import "./css/aside/aside.scss";
+//@import 'ant-design-vue/dist/antd.css';
+//@import 'ant-design-vue/dist/antd.dark.css';
+@import 'ant-design-vue/dist/antd.variable.min.css';
+
+.fixed {
+  position: fixed;
+}
+
+.z-10 {
+  z-index: 10;
+}
+

@@ -2,7 +2,7 @@
   <div class="post-detail">
     <div class="post-aside">
       <div v-aside2 class="post-aside-body">
-        <div v-for="item in 100">{{item}}</div>
+        <UserInfoPanel :id="post.userId"/>
       </div>
     </div>
     <div class="post-body">
@@ -59,8 +59,8 @@
             <div class="creative-commons">
               本文链接：
               <a
-                :href="'https://www.youyul.com/post/details/'+route.params.blogId">
-                https://www.youyul.com/post/details/{{route.params.blogId}}
+                :href="'https://www.youyul.com/post/details/'+route.params.postId">
+                https://www.youyul.com/post/details/{{route.params.postId}}
               </a>
             </div>
           </div>
@@ -78,21 +78,23 @@
         <div class="post-summary-summary" v-html="post.summary"></div>
       </div>
       <div class="post-content">
-        <MdEditor
+        <MdEditorComponent
           :text="post.content"
+          editorId="md-editor"
           :extend="{
             previewOnly: true,
             previewTheme: 'cyanosis',
             showCodeRowNumber: true
           }"/>
       </div>
-    </div>
-    <div class="post-left-aside">
-      点赞
+      <div class="post-category">
+        <MdCatalogPanel editorId="md-editor"/>
+      </div>
     </div>
     <Teleport to="#header">
       <PercentCounter/>
     </Teleport>
+
   </div>
 </template>
 
@@ -101,17 +103,19 @@
   import {useRoute} from 'vue-router';
   import {useStore} from 'vuex';
   import PercentCounter from "@/components/common/utils/percentCounter/PercentCounter.vue";
-  import MdEditor from "@/components/content/mdEditor/MdEditor.vue"
-  import Spin from "@/components/common/utils/spin/Spin.vue"
+  import MdEditorComponent from "@/components/content/mdEditor/MdEditor.vue"
+  import Spin from "@/components/common/utils/spin/Spin.vue";
+  import UserInfoPanel from "./child/UserInfoPanel.vue";
+  import MdCatalogPanel from "./child/MdCatalogPanel.vue";
 
   const route = useRoute();
-  const {dispatch, getters} = useStore();
+  const {state, dispatch, getters} = useStore();
   const post = ref({});
   const fold = ref(true);
   let userInfo = computed(() => getters['userInfo']);
 
   function getPostDetail() {
-    dispatch("getPostDetail", {id: route.params.blogId}).then(res => {
+    dispatch("getPostDetail", {id: route.params.postId}).then(res => {
       post.value = res.data;
       document.title = res.data.title;
     })
@@ -138,7 +142,6 @@
 
       .post-aside-body {
         width: 300px;
-        background-color: var(--youyu-body-background2);
       }
     }
 
@@ -293,6 +296,12 @@
 
       .post-content {
         padding: 0 24px;
+      }
+
+      .post-category {
+        /*position: fixed;*/
+        /*right: 0;*/
+        /*top: 10%;*/
       }
     }
 
