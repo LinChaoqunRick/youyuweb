@@ -1,52 +1,39 @@
 <template>
   <div class="md-catalog-panel">
-    <div class="fold-panel" ref="panel" v-if="!move">
-      <a-tooltip placement="leftTop"
-                 trigger="click"
-                 overlayClassName="catalog-tooltip"
-                 color="var(--post-detail-background)"
-                 :getPopupContainer="()=>panel">
-        <template #title>
+    <div class="fold-panel" ref="panel">
+      <div class="switch" @click="handleShow" v-show="!move">
+        <i-list-middle theme="outline" size="22" fill="#000"/>
+      </div>
+      <div class="drag-container" v-show="show">
+        <UseDraggable
+          class="bg-$vp-c-bg select-none cursor-move z-20"
+          :class="{'fixed':move}"
+          :initialValue="{ x: innerWidth - 360, y: 100 }"
+          :handle="handle"
+        >
           <div class="md-catalog-wrapper">
             <div ref="handle" class="catalog-title">
-              目录
-              <i-pushpin theme="outline" size="16" fill="#000"/>
+              <div>目录</div>
+              <div class="move-switch" @click="handleMove">
+                <i-direction-adjustment-two theme="outline" size="18" fill="#000"/>
+              </div>
             </div>
             <div class="catalog-body">
               <md-catalog
                 :editor-id="editorId"
                 :scroll-element="scrollElement"
+                :offsetTop="headerClientHeight"
               />
             </div>
           </div>
-        </template>
-        <div class="switch">
-          <i-list-middle theme="outline" size="22" fill="#000"/>
-        </div>
-      </a-tooltip>
-    </div>
-    <UseDraggable
-      v-else
-      class="move-panel fixed bg-$vp-c-bg select-none cursor-move z-24"
-      :initialValue="{ x: innerWidth - 360, y: 100 }"
-      :handle="handle"
-    >
-      <div class="md-catalog-wrapper">
-        <div ref="handle" class="catalog-title">目录</div>
-        <div class="catalog-body">
-          <md-catalog
-            :editor-id="editorId"
-            :scroll-element="scrollElement"
-          />
-        </div>
+        </UseDraggable>
       </div>
-    </UseDraggable>
+    </div>
   </div>
-
 </template>
 
 <script setup lang="ts">
-  import {ref} from 'vue';
+  import {ref, onMounted} from 'vue';
   import {UseDraggable} from '@vueuse/components';
   import MdEditor from 'md-editor-v3';
 
@@ -62,51 +49,30 @@
   const handle = ref<HTMLElement | null>(null);
   const panel = ref<HTMLElement | null>(null);
   const move = ref<boolean>(false);
+  const show = ref<boolean>(false);
   const MdCatalog = MdEditor.MdCatalog;
   const scrollElement = document.documentElement;
+  const headerClientHeight = ref<number>(0)
+
+  function handleShow() {
+    show.value = !show.value;
+  }
+
+  function handleMove() {
+    move.value = !move.value;
+  }
+
+  onMounted(() => {
+    const header = document.getElementById("header");
+    headerClientHeight.value = header?.clientHeight ?? 20;
+  })
 </script>
 
 <style lang="scss" scoped>
   .md-catalog-panel {
-    position: fixed;
-    top: 100px;
-    right: 20px;
 
     .fold-panel {
-      .catalog-tooltip {
-        top: 15px !important;
-
-        .ant-tooltip-inner {
-          color: var(--youyu-body-text);
-        }
-
-        .md-catalog-wrapper {
-          background-color: var(--post-detail-background);
-          color: var(--youyu-body-text);
-          border-radius: 6px;
-          padding-left: 6px;
-
-          .catalog-title {
-            font-size: 18px;
-            font-weight: bold;
-            padding-bottom: 8px;
-            box-shadow: var(--un-ring-offset-shadow), var(--un-ring-shadow), var(--un-shadow);
-          }
-
-          .catalog-body {
-            height: 300px;
-            overflow: auto;
-          }
-
-          ::v-deep(.md-catalog) {
-            .md-catalog-active {
-              border-left: 3px solid #42b983;
-              font-weight: 700;
-              color: #42b983;
-            }
-          }
-        }
-      }
+      position: relative;
 
       .switch {
         height: 50px;
@@ -118,34 +84,61 @@
         justify-content: center;
         align-items: center;
       }
-    }
 
-    .move-panel {
-      .md-catalog-wrapper {
-        width: 260px;
-        background-color: var(--post-detail-background);
-        border: 1px solid #9ca3af4d;
-        border-radius: 6px;
+      .drag-container {
+        position: absolute;
+        left: -265px;
+        top: 0;
 
-        .catalog-title {
-          font-size: 18px;
-          font-weight: bold;
-          padding: 8px 16px;
-          cursor: move;
-          box-shadow: var(--un-ring-offset-shadow), var(--un-ring-shadow), var(--un-shadow);
+        .md-catalog-wrapper {
+          width: 260px;
+          background-color: var(--post-detail-background);
+          border: 1px solid #9ca3af4d;
+          border-radius: 6px;
+
+          .catalog-title {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 8px 16px;
+            box-shadow: var(--un-ring-offset-shadow), var(--un-ring-shadow), var(--un-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .move-switch {
+              cursor: pointer;
+              height: 26px;
+              width: 26px;
+              background-color: #ebebeb;
+              border-radius: 50%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+
+              &:hover {
+                background-color: #d2d2d2;
+              }
+            }
+          }
+
+          .catalog-body {
+            height: 300px;
+            overflow: auto;
+            padding: 8px 16px;
+          }
+
+          ::v-deep(.md-catalog) {
+            .md-catalog-active {
+              border-left: 3px solid #42b983;
+              font-weight: 700;
+              color: #42b983;
+            }
+          }
         }
 
-        .catalog-body {
-          height: 300px;
-          overflow: auto;
-          padding: 8px 16px;
-        }
-
-        ::v-deep(.md-catalog) {
-          .md-catalog-active {
-            border-left: 3px solid #42b983;
-            font-weight: 700;
-            color: #42b983;
+        .fixed {
+          .catalog-title {
+            cursor: move;
           }
         }
       }

@@ -14,6 +14,7 @@ function handleScroll() {
     let footerTop = getElementTop(footer);
     let asideBottom = getElementTop(aside) + aside.clientHeight;
 
+    // 如果aside高度比较小，直接sticky
     if (aside.clientHeight < document.documentElement.clientHeight - footer.clientHeight - header.clientHeight) {
       aside.style.cssText = `position: sticky;top: ${asideTop}px`
       return;
@@ -21,8 +22,11 @@ function handleScroll() {
 
     if ((windowScrollBottom > asideBottom) && dir) { // 如果超过了下限
       aside.style.cssText = `position: absolute;bottom: ${(footerTop - windowScrollBottom) > 0 ? footerTop - windowScrollBottom : 0}px`;
-    } else if (windowScrollTop < getElementTop(aside) && !dir) { // 如果超过了上限
+    } else if (windowScrollTop < getElementTop(aside) - header.clientHeight && !dir) { // 如果超过了上限
       aside.style.cssText = `position: absolute;top: ${windowScrollTop}px`;
+      console.log(123123);
+    } else {
+      // console.log(123123);
     }
   }
 }

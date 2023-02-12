@@ -90,6 +90,9 @@
       <div class="post-category">
         <MdCatalogPanel editorId="md-editor"/>
       </div>
+      <div class="post-operation">
+        <PostOperation/>
+      </div>
     </div>
     <Teleport to="#header">
       <PercentCounter/>
@@ -102,11 +105,13 @@
   import {ref, reactive, computed} from 'vue';
   import {useRoute} from 'vue-router';
   import {useStore} from 'vuex';
+
   import PercentCounter from "@/components/common/utils/percentCounter/PercentCounter.vue";
   import MdEditorComponent from "@/components/content/mdEditor/MdEditor.vue"
   import Spin from "@/components/common/utils/spin/Spin.vue";
   import UserInfoPanel from "./child/UserInfoPanel.vue";
   import MdCatalogPanel from "./child/MdCatalogPanel.vue";
+  import PostOperation from "./child/PostOperation.vue";
 
   const route = useRoute();
   const {state, dispatch, getters} = useStore();
@@ -299,9 +304,15 @@
       }
 
       .post-category {
-        /*position: fixed;*/
-        /*right: 0;*/
-        /*top: 10%;*/
+        position: fixed;
+        top: 100px;
+        right: 20px;
+      }
+
+      .post-operation {
+        position: fixed;
+        top: 260px;
+        right: 20px;
       }
     }
 
