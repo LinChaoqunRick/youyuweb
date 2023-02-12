@@ -14,7 +14,8 @@ import './assets/main.scss';
 import './assets/css/theme/dark.scss';
 import './assets/css/theme/default.scss';
 import '@icon-park/vue-next/styles/index.css'; //icon-park
-import 'ant-design-vue/dist/antd.variable.min.css'
+import dayjs from "dayjs";
+import zhcn from 'dayjs/locale/zh-cn';
 
 const app = createApp(App);
 
@@ -24,6 +25,8 @@ app.use(store);
 
 app.directive("aside", aside);
 app.directive("aside2", aside2);
+
+dayjs.locale('zh-cn') // use loaded locale globally
 
 // Install
 install(app); // use default prefix 'icon', eg: icon is People, name is icon-people.

@@ -5,6 +5,9 @@ const FrontApiBase = '/api';
 export const GET_POST_LIST = ApiBase + "/post/list";
 export const GET_POST_DETAIL = ApiBase + "/post/get";
 
+// 评论
+export const GET_COMMENTS_BY_POSTID = ApiBase + "/comment/getCommentsByPostId";
+
 export const ACCOUNT_LOGIN = ApiBase + "/login/accountLogin"; // 登录
 export const ACCOUNT_LOGOUT = ApiBase + "/login/logout"; // 注销
 export const GET_AUTH_ROUTES = ApiBase + "/login/getAuthRoutes"; // 注销

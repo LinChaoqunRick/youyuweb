@@ -25,11 +25,13 @@
   const checked = ref(theme === 'light');
 
   document.documentElement.setAttribute("theme", theme);
+  document.documentElement.className = (theme === 'light') ? 'light-theme' : 'dark-theme';
 
   const handleSwitch = () => {
     theme = theme === 'light' ? 'dark' : 'light';
     checked.value = theme === 'light';
     commit("changeTheme", theme);
+    document.documentElement.className = (theme === 'light') ? 'light-theme' : 'dark-theme';
   }
 </script>
 

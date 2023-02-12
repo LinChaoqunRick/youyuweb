@@ -3,7 +3,8 @@ import {
   GET_POST_LIST,
   GET_POST_DETAIL,
   HELLO_TEST1,
-  CATEGORY_LIST
+  CATEGORY_LIST,
+  GET_COMMENTS_BY_POSTID
 } from "@/network/apis";
 
 export default {
@@ -18,7 +19,13 @@ export default {
     getCategoryList(state, params) {
       return http.get(CATEGORY_LIST, params);
     },
-    helloTest1(state, params){
+    getCommentsByPostId(state, params) {
+      return http.get(GET_COMMENTS_BY_POSTID, params);
+    },
+
+
+
+    helloTest1(state, params) {
       return http.post(HELLO_TEST1, params)
     }
   },
