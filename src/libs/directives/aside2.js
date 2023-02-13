@@ -24,7 +24,6 @@ function handleScroll() {
       aside.style.cssText = `position: absolute;bottom: ${(footerTop - windowScrollBottom) > 0 ? footerTop - windowScrollBottom : 0}px`;
     } else if (windowScrollTop < getElementTop(aside) - header.clientHeight && !dir) { // 如果超过了上限
       aside.style.cssText = `position: absolute;top: ${windowScrollTop}px`;
-      console.log(123123);
     } else {
       // console.log(123123);
     }

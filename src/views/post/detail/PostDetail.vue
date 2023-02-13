@@ -39,7 +39,7 @@
               </div>
               <div class="post-info-category">
                 <span class="category-label">分类专栏：</span>
-                <div class="category-name">
+                <div class="category-name" v-if="post.categoryName">
                   {{post.categoryName}}
                 </div>
               </div>
@@ -99,7 +99,7 @@
       </div>
       <div class="post-comment">
         <div class="post-comment-list">
-          <PostComment :postId="post.id"/>
+          <PostComment :postId="post.id" :authorId="post.userId"/>
         </div>
       </div>
     </div>
@@ -116,7 +116,7 @@
   import {useStore} from 'vuex';
 
   import PercentCounter from "@/components/common/utils/percentCounter/PercentCounter.vue";
-  import MdEditorComponent from "@/components/content/mdEditor/MdEditor.vue"
+  import MdEditorComponent from "@/components/content/mdEditor/MdEditor.vue";
   import Spin from "@/components/common/utils/spin/Spin.vue";
   import UserInfoPanel from "./child/UserInfoPanel.vue";
   import MdCatalogPanel from "./child/MdCatalogPanel.vue";

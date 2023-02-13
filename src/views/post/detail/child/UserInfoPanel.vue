@@ -86,7 +86,7 @@
     },
     {
       value: 'viewCount',
-      label: '查看'
+      label: '阅读'
     },
     {
       value: 'likeCount',
@@ -106,11 +106,11 @@
     const {value} = item;
     if (value === 'viewCount') {
       Modal.info({
-        content: `Ta的文章已被浏览${user.value.extraInfo[item.value]}次`,
+        content: `Ta的文章已被阅读${user.value.extraInfo[item.value]}次`,
       });
     } else if (value === 'likeCount') {
       Modal.info({
-        content: `Ta收到了${user.value.extraInfo[item.value]}个点赞`,
+        content: `Ta共获得${user.value.extraInfo[item.value]}个点赞`,
       });
     }
   }
