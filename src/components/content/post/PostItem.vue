@@ -34,6 +34,13 @@
           </div>
         </div>
       </div>
+      <div class="article-info">
+        <span>{{(data.createTime).substr(0, 10)}}</span>
+        <span class="separator">/</span>
+        <span>{{data.commentCount}}&ensp;评论</span>
+        <span class="separator">/</span>
+        <span>{{data.viewCount}}&ensp;阅读</span>
+      </div>
     </div>
     <div class="hover-tag"></div>
   </div>
@@ -77,7 +84,7 @@
 
       .image-wrapper {
         width: 240px;
-        height: 100%;
+        /*height: 100%;*/
         padding: 16px 0 16px 16px;
         overflow: hidden;
 
@@ -154,6 +161,7 @@
 
     .article-item-more-pic {
       display: block;
+      height: 238px;
 
       .content-wrapper {
         width: 100%;
@@ -167,18 +175,32 @@
 
         .image-link {
           width: 100%;
-          height: 125px;
+          height: 150px;
           display: flex;
 
           .img-container {
             width: 250px;
-            height: 125px;
+            height: 150px;
             overflow: hidden;
 
             &:nth-child(n+2) {
               margin-left: 10px;
             }
           }
+        }
+      }
+
+      .article-info {
+        height: 20px;
+        border-top: var(--article-border);
+        color: var(--article-info-color);
+        font-size: 12px;
+        padding-top: 6px;
+        margin: 8px 16px 0 16px;
+
+        .separator {
+          color: #e1e1e1;
+          padding: 0 5px;
         }
       }
     }

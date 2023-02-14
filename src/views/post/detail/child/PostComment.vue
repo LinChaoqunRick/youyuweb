@@ -7,8 +7,11 @@
       <div>12341412341</div>
       <div>12341412341</div>
     </a-card>
-    <a-card :title="`全部评论(${commentList.length})`" style="width: 100%">
+    <a-card :title="`全部评论(${total})`" style="width: 100%">
       <CommentItem v-for="item in commentList" :data="item" v-bind="$attrs"/>
+      <div class="more-btn" v-if="total - commentList.length> 0" @click="handleLoadALl">继续加载 {{total -
+        commentList.length}} 条评论
+      </div>
     </a-card>
   </div>
 </template>
@@ -27,13 +30,22 @@
     }
   })
 
+  const total = ref(0);
   const commentList = ref([]);
 
   watch(() => props.postId, (val) => {
-    dispatch("getCommentsByPostId", {postId: val}).then(res => {
-      commentList.value = res.data;
+    dispatch("getCommentsPage", {postId: val}).then(res => {
+      total.value = res.data.total;
+      commentList.value = res.data.list;
     });
   })
+
+  function handleLoadALl() {
+    dispatch("getCommentsAll", {postId: props.postId}).then(res => {
+      total.value = res.data.length;
+      commentList.value = res.data;
+    })
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -61,7 +73,17 @@
 
       &:last-child {
         border-radius: 0 0 2px 2px;
+        padding-bottom: 10px;
       }
+    }
+
+    .more-btn {
+      margin-top: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 22px;
+      color: #1e80ff;
+      text-align: center;
     }
   }
 </style>
