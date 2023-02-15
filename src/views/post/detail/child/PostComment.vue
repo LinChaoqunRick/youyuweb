@@ -25,9 +25,9 @@
           </div>
         </div>
       </template>
-      <CommentItem v-for="item in commentList" :data="item" v-bind="$attrs"/>
-      <div class="more-btn" v-if="total - commentList.length> 0" @click="handleLoadALl">继续加载 {{total -
-        commentList.length}} 条评论
+      <CommentItem v-for="item in commentList" :data="item" :key="item.id" v-bind="$attrs"/>
+      <div class="more-btn" v-if="total - commentList.length> 0" @click="handleLoadALl">
+        加载剩余 {{total - commentList.length}} 条评论
       </div>
     </a-card>
   </div>
@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
   import {useStore} from 'vuex';
-  import {ref, watch} from "vue";
+  import {computed, ref, watch} from "vue";
   import CommentItem from "@/components/content/comment/CommentItem.vue"
 
   const {dispatch} = useStore();
@@ -48,18 +48,24 @@
   })
 
   const total = ref(0);
-  const sort = ref(true); // true:最热 false:最新
+  const sort = ref(true); // true:最新 false:最热
   const commentList = ref([]);
 
+  const order = computed(() => sort.value ? 'create_time' : 'support_count');
+
   watch(() => props.postId, (val) => {
-    dispatch("getCommentsPage", {postId: val}).then(res => {
+    handlePage(val);
+  })
+
+  function handlePage(postId: string | number) {
+    dispatch("getCommentsPage", {postId, orderBy: order.value}).then(res => {
       total.value = res.data.total;
       commentList.value = res.data.list;
     });
-  })
+  }
 
   function handleLoadALl() {
-    dispatch("getCommentsAll", {postId: props.postId}).then(res => {
+    dispatch("getCommentsAll", {postId: props.postId, orderBy: order.value}).then(res => {
       total.value = res.data.length;
       commentList.value = res.data;
     })
@@ -67,6 +73,15 @@
 
   function handleSort() {
     sort.value = !sort.value;
+    // 如果已经加载完全部的，就不再进行分页查询
+    console.log(commentList.value.length);
+    console.log(total.value);
+    if (commentList.value.length >= total.value) {
+      handleLoadALl();
+    } else {
+      handlePage(props.postId);
+    }
+
   }
 </script>
 

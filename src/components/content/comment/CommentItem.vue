@@ -1,12 +1,12 @@
 <template>
   <div class="comment-item">
     <div class="user-avatar">
-      <img :src="data.avatar"/>
+      <img :src="data.user.avatar"/>
     </div>
     <div class="content-box">
       <div class="user-box">
         <div class="user-nickname">
-          <div class="nickname-text">{{data.nickname}}</div>
+          <div class="nickname-text">{{data.user.nickname}}</div>
           <div class="author-text" v-if="authorId === data.userId">(作者)</div>
         </div>
         <div class="create-time" :title="data.createTime">{{dayjs().to(dayjs(data.createTime))}}</div>
@@ -24,7 +24,9 @@
       <div class="comment-operation">
         <div class="limit-btn" @click="expand = true" v-show="row>7 && !expand">展开</div>
         <div class="limit-btn" @click="expand = false" v-show="row>7 && expand">收起</div>
-        <div class="more-btn" @click="expand = false" v-if="data.subCount>0">共{{data.subCount}}条回复&ensp;&gt;</div>
+        <div class="more-btn" @click="loadSubComment" v-if="data.subCount>0 && !replies.length">
+          共{{data.subCount}}条回复&ensp;&gt;
+        </div>
       </div>
       <div class="comment-operation">
         <div class="ope-item">
@@ -39,6 +41,9 @@
           删除
         </div>
       </div>
+      <div class="sub-comment-wrapper" v-if="replies.length">
+        <ReplyItem class="reply-item" v-for="item in replies" :data="item"/>
+      </div>
     </div>
   </div>
 </template>
@@ -48,9 +53,13 @@
   import RelativeTime from 'dayjs/plugin/relativeTime';
   import MdEditorComponent from "@/components/content/mdEditor/MdEditor.vue";
   import {ref} from 'vue';
+  import {useStore} from "vuex";
+  import ReplyItem from "@/components/content/comment/ReplyItem.vue"
+
 
   dayjs.extend(RelativeTime);
 
+  const {dispatch} = useStore();
 
   const props = defineProps({
     data: {
@@ -62,11 +71,19 @@
     }
   })
 
-  const expand = ref(false);
-  const row = ref(0);
+  const expand = ref<boolean>(false);
+  const row = ref<number>(0);
+  const replies = ref([]);
 
-  function set(value) {
+  function set(value: number) {
     row.value = value;
+  }
+
+  function loadSubComment() {
+    const commentId = props.data.id;
+    dispatch("getSubCommentsAll", {commentId}).then(res => {
+      replies.value = res.data;
+    })
   }
 </script>
 
@@ -75,6 +92,10 @@
     /*border-bottom: 1px solid #f0f0f0;*/
     display: flex;
     padding: 16px 0;
+
+    &:first-child {
+      padding-top: 0;
+    }
 
     .user-avatar {
       img {
@@ -193,6 +214,19 @@
 
         }
       }
+
+      .sub-comment-wrapper {
+        padding: 16px;
+        background-color: var(--subcomment-background);
+        border-radius: 4px;
+        margin-top: 10px;
+
+        .reply-item {
+          &:nth-child(n + 2) {
+            margin-top: 2rem;
+          }
+        }
+      }
     }
 
     &:hover {
@@ -203,6 +237,12 @@
             display: inherit;
           }
         }
+      }
+    }
+
+    ::v-deep(#md-editor) {
+      pre {
+        margin: 10px 0 !important;
       }
     }
   }
