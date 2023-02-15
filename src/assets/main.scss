@@ -17,10 +17,18 @@ html {
   font-size: 12px;
 }
 
-.ant-card-head-title {
+.ant-card-self{
+  .ant-card-head-title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+}
+
+.large-font {
   font-size: 18px;
   font-weight: bold;
 }
+
 
 
 .light-theme {

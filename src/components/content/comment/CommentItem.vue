@@ -28,12 +28,15 @@
       </div>
       <div class="comment-operation">
         <div class="ope-item">
-          <i-good-two theme="outline" size="18" fill="#8a919f"/>
+          <i-good-two theme="outline" size="16" fill="currentColor"/>
           点赞
         </div>
         <div class="ope-item">
-          <i-comment theme="outline" size="18" fill="#8a919f"/>
-          评论
+          <i-comment theme="outline" size="16" fill="currentColor"/>
+          回复
+        </div>
+        <div class="ope-item delete-ope">
+          删除
         </div>
       </div>
     </div>
@@ -154,7 +157,7 @@
           cursor: pointer;
           font-size: 14px;
           line-height: 22px;
-          color: #1e80ff;
+          color: #1890ff;
         }
 
         .ope-item {
@@ -166,6 +169,16 @@
           padding-top: 6px;
           cursor: pointer;
 
+          &:hover {
+            color: #1890ff;
+          }
+
+          &.delete-ope {
+            color: #ff4d4f;
+            margin-left: auto;
+            display: none;
+          }
+
           ::v-deep(.i-icon) {
             margin-right: 3px;
 
@@ -173,6 +186,21 @@
               position: relative;
               top: 2px;
             }
+          }
+        }
+
+        &:hover {
+
+        }
+      }
+    }
+
+    &:hover {
+      .comment-operation {
+        .ope-item {
+
+          &.delete-ope {
+            display: inherit;
           }
         }
       }

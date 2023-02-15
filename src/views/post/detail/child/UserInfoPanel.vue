@@ -209,6 +209,7 @@
           flex: 1;
           position: relative;
           text-align: center;
+          cursor: pointer;
 
           &:nth-child(n+2) {
             &:before {
@@ -224,7 +225,6 @@
           .data-value {
             font-size: 20px;
             font-weight: bold;
-            cursor: pointer;
           }
 
           .data-label {
