@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-  import MdEditor from "@/components/content/mdEditor/MdEditor.vue"
+  import MdEditor from "@/components/content/mdEditor/MdEditorCom.vue"
 </script>
 
 <style scoped>

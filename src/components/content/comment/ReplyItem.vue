@@ -2,13 +2,33 @@
   <div class="reply-container">
     <div class="reply-info">
       <div class="user-info">
-        <img :src="data.user.avatar"/>
-        <div class="user-nickname">{{data.user.nickname}}</div>
+        <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+          <template #content>
+            <UserCard :user="data.user"/>
+          </template>
+          <img :src="data.user.avatar"/>
+        </a-popover>
+        <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+          <template #content>
+            <UserCard :user="data.user"/>
+          </template>
+          <div class="user-nickname">{{data.user.nickname}}</div>
+        </a-popover>
       </div>
-      <p class="reply-text">回复</p>
-      <div class="user-info">
-        <img :src="data.userTo.avatar"/>
-        <div class="user-nickname">{{data.userTo.nickname}}</div>
+      <p class="reply-text" v-if="data.userTo">回复</p>
+      <div class="user-info" v-if="data.userTo">
+        <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+          <template #content>
+            <UserCard :user="data.userTo"/>
+          </template>
+          <img :src="data.userTo.avatar"/>
+        </a-popover>
+        <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+          <template #content>
+            <UserCard :user="data.user"/>
+          </template>
+          <div class="user-nickname">{{data.userTo.nickname}}</div>
+        </a-popover>
       </div>
     </div>
     <div class="reply-content" v-html="data.content">
@@ -17,7 +37,7 @@
     <div class="reply-operation">
       <div class="ope-item">
         <i-good-two theme="outline" size="16" fill="currentColor"/>
-        点赞
+        点赞<span v-if="data.supportCount">({{data.supportCount}})</span>
       </div>
       <div class="ope-item">
         <i-comment theme="outline" size="16" fill="currentColor"/>
@@ -31,6 +51,8 @@
 </template>
 
 <script setup lang="ts">
+  import UserCard from "@/components/content/comment/UserCard.vue";
+
   const props = defineProps({
     data: {
       type: Object
@@ -50,6 +72,7 @@
         align-items: center;
 
         img {
+          cursor: pointer;
           height: 30px;
           width: 30px;
           border-radius: 50%;
@@ -57,6 +80,7 @@
         }
 
         .user-nickname {
+          cursor: pointer;
           font-weight: bold;
         }
       }
@@ -70,11 +94,14 @@
     .reply-content {
       font-size: 16px;
       margin: 8px 0;
+      margin-left: 30px;
     }
 
     .reply-operation {
       display: flex;
       align-items: center;
+      margin-left: 30px;
+
 
       .ope-item {
         display: flex;
@@ -100,7 +127,7 @@
 
           &.i-icon-comment {
             position: relative;
-            top: 2px;
+            top: 1.5px;
           }
         }
       }

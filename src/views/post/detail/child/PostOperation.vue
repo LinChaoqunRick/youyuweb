@@ -1,37 +1,46 @@
 <template>
   <div class="post-operation">
     <div class="ope-item">
-      <i-good-two theme="filled" size="20" fill="currentColor"/>
+      <i-good-two theme="filled" size="21" fill="currentColor"/>
+    </div>
+    <div class="ope-item" @click="scrollToComment">
+      <i-comment theme="filled" size="19" fill="currentColor"/>
     </div>
     <div class="ope-item">
-      <i-comment theme="filled" size="18" fill="#8a919f"/>
+      <i-star theme="filled" size="21" fill="currentColor"/>
     </div>
     <div class="ope-item">
-      <i-star theme="filled" size="20" fill="#8a919f"/>
+      <i-share-one theme="filled" size="21" fill="currentColor"/>
     </div>
     <div class="ope-item">
-      <i-share-one theme="filled" size="20" fill="#8a919f"/>
-    </div>
-    <div class="ope-item">
-      <i-caution theme="filled" size="18" fill="#8a919f"/>
+      <i-caution theme="filled" size="19" fill="currentColor"/>
     </div>
     <a-back-top>
-      <div class="ope-item">
-        <i-to-top-one theme="filled" size="20" fill="#8a919f"/>
+      <div class="ope-item" ref="item">
+        <i-to-top-one theme="filled" size="21" fill="currentColor"/>
       </div>
     </a-back-top>
   </div>
 </template>
 
 <script lang="ts" setup>
+  import {scrollToEle} from "@/assets/utils/utils";
+  import {ref} from "vue";
+
+  const item = ref(null);
+
+  function scrollToComment() {
+    const commentEl: HTMLElement | null = document.querySelector("#post-comment-id");
+    commentEl && scrollToEle(commentEl.offsetTop - 100);
+  }
 
 </script>
 
 <style lang="scss" scoped>
   .post-operation {
     .ope-item {
-      height: 44px;
-      width: 44px;
+      height: 4rem;
+      width: 4rem;
       background-color: var(--youyu-body-background3);
       border-radius: 50%;
       display: flex;
@@ -39,14 +48,12 @@
       align-items: center;
       margin-bottom: 7px;
       cursor: pointer;
-      fill: #8a919f;
-
-      svg {
-        fill: #8a919f;
-      }
+      color: #8a919f;
 
       &:hover {
-
+        .i-icon {
+          color: #545457;
+        }
       }
     }
 

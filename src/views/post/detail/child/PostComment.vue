@@ -1,11 +1,9 @@
 <template>
-  <div class="post-comment-container">
-    <a-card title="评论" style="width: 100%" class="ant-card-self">
-      <div>12341412341</div>
-      <div>12341412341</div>
-      <div>12341412341</div>
-      <div>12341412341</div>
-      <div>12341412341</div>
+  <div class="post-comment-container" id="post-comment-id">
+    <a-card title="评论" style="width: 100%" class="ant-card-self write-comment-card">
+      <div class="write-comment">
+        <MdEditorCom :toolbars="toolbars" v-model:text="text"/>
+      </div>
     </a-card>
     <a-card style="width: 100%">
       <template #title>
@@ -36,7 +34,8 @@
 <script setup lang="ts">
   import {useStore} from 'vuex';
   import {computed, ref, watch} from "vue";
-  import CommentItem from "@/components/content/comment/CommentItem.vue"
+  import CommentItem from "@/components/content/comment/CommentItem.vue";
+  import MdEditorCom from "@/components/content/mdEditor/MdEditorCom.vue";
 
   const {dispatch} = useStore();
 
@@ -50,6 +49,33 @@
   const total = ref(0);
   const sort = ref(true); // true:最新 false:最热
   const commentList = ref([]);
+  const text = ref('');
+
+  const toolbars = [
+    'bold',
+    'underline',
+    'italic',
+    '-',
+    'title',
+    'unorderedList',
+    'orderedList',
+    '-',
+    'codeRow',
+    'code',
+    'link',
+    0,
+    1,
+    2,
+    '-',
+    'revoke',
+    'next',
+    '=',
+    'prettier',
+    'preview',
+    'htmlPreview',
+  ]
+
+  const footers = ['markdownTotal', 0, 'scrollSwitch']
 
   const order = computed(() => sort.value ? 'create_time' : 'support_count');
 
@@ -88,6 +114,16 @@
 <style lang="scss" scoped>
   .post-comment-container {
 
+    .write-comment-card {
+      ::v-deep(.ant-card-body) {
+        padding: 10px 24px;
+      }
+    }
+
+    .write-comment {
+      height: 240px;
+    }
+
     .title-container {
       display: flex;
       justify-content: space-between;
@@ -99,7 +135,7 @@
         color: #4e5969;
         font-weight: 400;
         cursor: pointer;
-        background: #f2f3f5;
+        background: var(--youyu-body-background-ligth);
         border-radius: 2px;
         padding: 3px;
 
@@ -119,7 +155,7 @@
         .active {
           color: #1890ff;
           border-radius: 2px;
-          background: #fff;
+          background: var(--youyu-body-background2);
 
           ::v-deep(svg) {
             margin-right: 4px;

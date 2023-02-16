@@ -56,11 +56,56 @@
       default: 'md-editor'
     },
     extend: {
-      type: Object
+      type: Object,
+      default: {
+        previewTheme: 'cyanosis',
+      }
     },
     text: {
       type: String,
       default: ''
+    },
+    toolbars: {
+      type: Array,
+      default: [
+        'bold',
+        'underline',
+        'italic',
+        'strikeThrough',
+        '-',
+        'title',
+        'sub',
+        'sup',
+        'quote',
+        'unorderedList',
+        'orderedList',
+        '-',
+        'codeRow',
+        'code',
+        'link',
+        'image',
+        'table',
+        'mermaid',
+        'katex',
+        0,
+        1,
+        2,
+        '-',
+        'revoke',
+        'next',
+        'save',
+        '=',
+        'prettier',
+        'pageFullscreen',
+        'fullscreen',
+        'preview',
+        'htmlPreview',
+        'catalog',
+      ]
+    },
+    footers: {
+      type: Array,
+      default: ['markdownTotal', '=', 0, 'scrollSwitch']
     }
   })
 
@@ -73,43 +118,11 @@
   const editorProps = reactive({
     theme: toRef(store.state.theme, "theme"),
     editorId: prop.editorId,
-    toolbars: [
-      'bold',
-      'underline',
-      'italic',
-      'strikeThrough',
-      '-',
-      'title',
-      'sub',
-      'sup',
-      'quote',
-      'unorderedList',
-      'orderedList',
-      '-',
-      'codeRow',
-      'code',
-      'link',
-      'image',
-      'table',
-      'mermaid',
-      'katex',
-      0,
-      1,
-      2,
-      '-',
-      'revoke',
-      'next',
-      'save',
-      '=',
-      'prettier',
-      'pageFullscreen',
-      'fullscreen',
-      'preview',
-      'htmlPreview',
-      'catalog',
-    ],
-    footers: ['markdownTotal', '=', 0, 'scrollSwitch']
+    toolbars: prop.toolbars,
+    footers: prop.footers
   })
+
+  const emit = defineEmits(["update:text"])
 
   const editorConfig = computed(() => {
     // console.log(prop.extend);
@@ -117,11 +130,15 @@
     return Object.assign({}, editorProps, prop.extend);
   })
 
-  const onChange = (v: string) => (text.value = v);
+  const onChange = (v: string) => (emit("update:text", v));
 </script>
 
 <style lang="scss" scoped>
-  #md-editor {
-    /*height: 660px;*/
+  #editor {
+    height: 100%;
+
+    #md-editor {
+      height: 100%;
+    }
   }
 </style>

@@ -1,4 +1,4 @@
-import {getElementTop} from "@/assets/utils/utils.js";
+import {getElementTop} from "@/assets/utils/utils";
 
 let header, footer, aside, asideTop;
 

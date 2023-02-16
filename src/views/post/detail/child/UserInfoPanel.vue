@@ -158,7 +158,7 @@
             width: 100%;
             height: 100%;
             border-radius: 50px;
-            border: 6px solid #ebebeb;
+            border: 6px solid var(--youyu-border-color);
             overflow: hidden;
           }
 
@@ -168,7 +168,7 @@
             position: absolute;
             top: 3px;
             right: 3px;
-            border: 3px solid #ebebeb;
+            border: 3px solid var(--youyu-border-color);
             border-radius: 50%;
             text-align: center;
             display: flex;

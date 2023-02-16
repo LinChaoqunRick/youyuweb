@@ -1,18 +1,28 @@
 <template>
   <div class="comment-item">
     <div class="user-avatar">
-      <img :src="data.user.avatar"/>
+      <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+        <template #content>
+          <UserCard :user="data.user"/>
+        </template>
+        <img :src="data.user.avatar"/>
+      </a-popover>
     </div>
     <div class="content-box">
       <div class="user-box">
         <div class="user-nickname">
-          <div class="nickname-text">{{data.user.nickname}}</div>
+          <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+            <template #content>
+              <UserCard :user="data.user"/>
+            </template>
+            <div class="nickname-text">{{data.user.nickname}}</div>
+          </a-popover>
           <div class="author-text" v-if="authorId === data.userId">(作者)</div>
         </div>
         <div class="create-time" :title="data.createTime">{{dayjs().to(dayjs(data.createTime))}}</div>
       </div>
       <div class="comment-content" :class="{'content-expand': expand}" v-row="{set: set}">
-        <MdEditorComponent
+        <MdEditorCom
           :text="data.content"
           editorId="md-editor"
           :extend="{
@@ -24,18 +34,18 @@
       <div class="comment-operation">
         <div class="limit-btn" @click="expand = true" v-show="row>7 && !expand">展开</div>
         <div class="limit-btn" @click="expand = false" v-show="row>7 && expand">收起</div>
-        <div class="more-btn" @click="loadSubComment" v-if="data.subCount>0 && !replies.length">
-          共{{data.subCount}}条回复&ensp;&gt;
+        <div class="more-btn" @click="loadSubComment" v-if="data.replyCount>0 && !replies.length">
+          共{{data.replyCount}}条回复&ensp;&gt;
         </div>
       </div>
       <div class="comment-operation">
         <div class="ope-item">
           <i-good-two theme="outline" size="16" fill="currentColor"/>
-          点赞
+          点赞<span v-if="data.supportCount">({{data.supportCount}})</span>
         </div>
         <div class="ope-item">
           <i-comment theme="outline" size="16" fill="currentColor"/>
-          回复
+          回复<span v-if="data.replyCount">({{data.replyCount}})</span>
         </div>
         <div class="ope-item delete-ope">
           删除
@@ -51,10 +61,11 @@
 <script setup lang="ts">
   import dayjs from 'dayjs';
   import RelativeTime from 'dayjs/plugin/relativeTime';
-  import MdEditorComponent from "@/components/content/mdEditor/MdEditor.vue";
+  import MdEditorCom from "@/components/content/mdEditor/MdEditorCom.vue";
   import {ref} from 'vue';
   import {useStore} from "vuex";
-  import ReplyItem from "@/components/content/comment/ReplyItem.vue"
+  import ReplyItem from "@/components/content/comment/ReplyItem.vue";
+  import UserCard from "@/components/content/comment/UserCard.vue";
 
 
   dayjs.extend(RelativeTime);
@@ -205,7 +216,7 @@
 
             &.i-icon-comment {
               position: relative;
-              top: 2px;
+              top: 1px;
             }
           }
         }
