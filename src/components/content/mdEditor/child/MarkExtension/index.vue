@@ -1,7 +1,7 @@
 <template>
   <normal-toolbar title="mark" @on-click="markHandler">
     <template #trigger>
-      <i-mark theme="outline" size="19" fill="#333"/>
+      <i-mark theme="outline" size="17" fill="#333" style="padding: 0 3.5px"/>
     </template>
   </normal-toolbar>
 </template>

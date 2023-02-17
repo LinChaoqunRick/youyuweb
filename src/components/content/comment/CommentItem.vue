@@ -22,7 +22,7 @@
         <div class="create-time" :title="data.createTime">{{dayjs().to(dayjs(data.createTime))}}</div>
       </div>
       <div class="comment-content" :class="{'content-expand': expand}" v-row="{set: set}">
-        <MdEditorCom
+        <MdPreview
           :text="data.content"
           editorId="md-editor"
           :extend="{
@@ -61,7 +61,7 @@
 <script setup lang="ts">
   import dayjs from 'dayjs';
   import RelativeTime from 'dayjs/plugin/relativeTime';
-  import MdEditorCom from "@/components/content/mdEditor/MdEditorCom.vue";
+  import MdPreview from "@/components/content/mdEditor/MdPreview.vue";
   import {ref} from 'vue';
   import {useStore} from "vuex";
   import ReplyItem from "@/components/content/comment/ReplyItem.vue";

@@ -79,14 +79,11 @@
           <div class="post-summary-summary" v-html="post.summary"></div>
         </div>
         <div class="post-content">
-          <MdEditorCom
+          <MdPreview
             :text="post.content"
-            editorId="md-editor"
             :extend="{
-            previewOnly: true,
-            previewTheme: 'cyanosis',
-            showCodeRowNumber: true
-          }"/>
+              showCodeRowNumber: true
+            }"/>
         </div>
       </div>
       <div class="post-aside">
@@ -106,7 +103,6 @@
     <Teleport to="#header">
       <PercentCounter/>
     </Teleport>
-
   </div>
 </template>
 
@@ -116,7 +112,7 @@
   import {useStore} from 'vuex';
 
   import PercentCounter from "@/components/common/utils/percentCounter/PercentCounter.vue";
-  import MdEditorCom from "@/components/content/mdEditor/MdEditorCom.vue";
+  import MdPreview from "@/components/content/mdEditor/MdPreview.vue";
   import Spin from "@/components/common/utils/spin/Spin.vue";
   import UserInfoPanel from "./child/UserInfoPanel.vue";
   import MdCatalogPanel from "./child/MdCatalogPanel.vue";

@@ -23,7 +23,7 @@
       />
     </div>
     <template #trigger>
-      <i-help theme="outline" size="18" fill="#333"/>
+      <i-help theme="outline" size="17" fill="#333" style="padding: 0 3.5px"/>
     </template>
   </modal-toolbar>
 </template>

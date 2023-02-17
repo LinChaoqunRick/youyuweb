@@ -1,8 +1,19 @@
 <template>
   <div class="post-comment-container" id="post-comment-id">
     <a-card title="评论" style="width: 100%" class="ant-card-self write-comment-card">
-      <div class="write-comment">
-        <MdEditorCom :toolbars="toolbars" v-model:text="text"/>
+      <div class="write-comment" v-if="isLogin">
+        <MdEditorCom :toolbars="toolbars"
+                     :footers="footers"
+                     :extend="{
+                       maxLength: 500
+                     }"
+                     class="write-comment-editor" ref="commentEditor"/>
+        <div class="action-box">
+          <a-button type="primary" :disabled="submittable" @click="handleSubmit">发表评论</a-button>
+        </div>
+      </div>
+      <div class="comment-hint-wrapper" v-else>
+        <CommentHint/>
       </div>
     </a-card>
     <a-card style="width: 100%">
@@ -12,11 +23,11 @@
             全部评论({{total}})
           </div>
           <div class="sort-type">
-            <div class="sort-item" :class="{'active': sort}" @click="handleSort">
+            <div class="sort-item" :class="{'active': sort}" @click="handleSort(true)">
               <i-time theme="filled" size="13" fill="currentColor"/>
               最新
             </div>
-            <div class="sort-item" :class="{'active': !sort}" @click="handleSort">
+            <div class="sort-item" :class="{'active': !sort}" @click="handleSort(false)">
               <i-fire theme="filled" size="13" fill="currentColor"/>
               最热
             </div>
@@ -34,10 +45,15 @@
 <script setup lang="ts">
   import {useStore} from 'vuex';
   import {computed, ref, watch} from "vue";
+  import {message} from 'ant-design-vue';
+  import {notification} from 'ant-design-vue';
   import CommentItem from "@/components/content/comment/CommentItem.vue";
   import MdEditorCom from "@/components/content/mdEditor/MdEditorCom.vue";
+  import CommentHint from "./CommentHint.vue";
 
-  const {dispatch} = useStore();
+  const isLogin = computed(() => getters['isLogin']);
+
+  const {getters, dispatch} = useStore();
 
   const props = defineProps({
     postId: {
@@ -46,11 +62,14 @@
     }
   })
 
+  const commentEditor = ref(null);
   const total = ref(0);
   const sort = ref(true); // true:最新 false:最热
   const commentList = ref([]);
   const text = ref('');
-
+  const submittable = computed(() => !commentEditor?.value?.text);
+  const order = computed(() => sort.value ? 'create_time' : 'support_count');
+  const userInfo = computed(() => getters['userInfo']);
   const toolbars = [
     'bold',
     'underline',
@@ -72,12 +91,9 @@
     '=',
     'prettier',
     'preview',
-    'htmlPreview',
-  ]
+  ];
+  const footers = ['markdownTotal', '=', 'scrollSwitch']
 
-  const footers = ['markdownTotal', 0, 'scrollSwitch']
-
-  const order = computed(() => sort.value ? 'create_time' : 'support_count');
 
   watch(() => props.postId, (val) => {
     handlePage(val);
@@ -97,17 +113,27 @@
     })
   }
 
-  function handleSort() {
-    sort.value = !sort.value;
+  function handleSort(value: boolean) {
+    sort.value = value;
     // 如果已经加载完全部的，就不再进行分页查询
-    console.log(commentList.value.length);
-    console.log(total.value);
     if (commentList.value.length >= total.value) {
       handleLoadALl();
     } else {
       handlePage(props.postId);
     }
+  }
 
+  function handleSubmit() {
+    dispatch("createComment", {
+      postId: props.postId,
+      userId: userInfo.value.id,
+      content: commentEditor.value.text
+    }).then(res => {
+      message.success('评论成功');
+      commentEditor.value.onChange("");
+    }).catch(e => {
+      message.error("评论失败")
+    })
   }
 </script>
 
@@ -116,12 +142,20 @@
 
     .write-comment-card {
       ::v-deep(.ant-card-body) {
-        padding: 10px 24px;
+        padding: 0 24px 10px 24px;
       }
     }
 
     .write-comment {
-      height: 240px;
+      .write-comment-editor {
+        height: 240px !important;
+      }
+
+      .action-box {
+        padding-top: 6px;
+        display: flex;
+        justify-content: flex-end;
+      }
     }
 
     .title-container {

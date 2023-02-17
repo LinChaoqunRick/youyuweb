@@ -7,7 +7,7 @@
         <read-extension :md-text="state.text"/>
       </template>
       <template #defFooters>
-        <time-now/>
+        <time-now :editor-id="editorId"/>
       </template>
     </md-editor>
   </div>
@@ -61,10 +61,6 @@
         previewTheme: 'cyanosis',
       }
     },
-    text: {
-      type: String,
-      default: ''
-    },
     toolbars: {
       type: Array,
       default: [
@@ -106,8 +102,10 @@
     footers: {
       type: Array,
       default: ['markdownTotal', '=', 0, 'scrollSwitch']
-    }
-  })
+    },
+  });
+
+  const text = ref<string>("");
 
   const state = reactive({
     text: 'zh-CN',
@@ -125,12 +123,15 @@
   const emit = defineEmits(["update:text"])
 
   const editorConfig = computed(() => {
-    // console.log(prop.extend);
-    // console.log(Object.assign({}, editorProps, prop.extend));
     return Object.assign({}, editorProps, prop.extend);
   })
 
-  const onChange = (v: string) => (emit("update:text", v));
+  const onChange = (v: string) => (text.value = v);
+
+  defineExpose({
+    text,
+    onChange
+  })
 </script>
 
 <style lang="scss" scoped>

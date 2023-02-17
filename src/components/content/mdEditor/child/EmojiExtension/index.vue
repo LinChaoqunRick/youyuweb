@@ -20,7 +20,7 @@
       </div>
     </template>
     <template #trigger>
-      <i-grinning-face-with-open-mouth theme="outline" size="18" fill="#333"/>
+      <i-grinning-face-with-open-mouth theme="outline" size="17" fill="#333" style="padding: 0 3.5px"/>
     </template>
   </dropdown-toolbar>
 </template>

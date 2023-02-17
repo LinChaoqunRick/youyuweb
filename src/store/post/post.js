@@ -6,7 +6,8 @@ import {
   CATEGORY_LIST,
   GET_COMMENTS_PAGE,
   GET_COMMENTS_ALL,
-  GET_SUB_COMMENTS_ALL
+  GET_SUB_COMMENTS_ALL,
+  CREATE_COMMENT
 } from "@/network/apis";
 
 export default {
@@ -30,7 +31,9 @@ export default {
     getSubCommentsAll(state, params) {
       return http.get(GET_SUB_COMMENTS_ALL, params);
     },
-
+    createComment(state, params) {
+      return http.get(CREATE_COMMENT, params);
+    },
 
 
     helloTest1(state, params) {
