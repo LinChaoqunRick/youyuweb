@@ -35,7 +35,8 @@
         <div class="limit-btn" @click="expand = true" v-show="row>7 && !expand">展开</div>
         <div class="limit-btn" @click="expand = false" v-show="row>7 && expand">收起</div>
         <div class="more-btn" @click="loadSubComment" v-if="data.replyCount>0 && !replies.length">
-          共{{data.replyCount}}条回复&ensp;&gt;
+          共{{data.replyCount}}条回复
+          <i-down theme="outline" size="14" fill="#1890ff"/>
         </div>
       </div>
       <div class="comment-operation">
@@ -43,13 +44,16 @@
           <i-good-two theme="outline" size="16" fill="currentColor"/>
           点赞<span v-if="data.supportCount">({{data.supportCount}})</span>
         </div>
-        <div class="ope-item">
-          <i-comment theme="outline" size="16" fill="currentColor"/>
-          回复<span v-if="data.replyCount">({{data.replyCount}})</span>
+        <div class="ope-item" :class="{'ope-active': active}" @click="handleReply">
+          <i-comment :theme="active?'filled':'outline'" size="16" fill="currentColor"/>
+          {{active?'取消回复':'回复'}}<span v-if="data.replyCount">({{data.replyCount}})</span>
         </div>
         <div class="ope-item delete-ope">
           删除
         </div>
+      </div>
+      <div class="reply-editor" v-if="active">
+        <ReplyEditor :placeholder="`回复${data.user.nickname}`"/>
       </div>
       <div class="sub-comment-wrapper" v-if="replies.length">
         <ReplyItem class="reply-item" v-for="item in replies" :data="item"/>
@@ -62,15 +66,16 @@
   import dayjs from 'dayjs';
   import RelativeTime from 'dayjs/plugin/relativeTime';
   import MdPreview from "@/components/content/mdEditor/MdPreview.vue";
-  import {ref} from 'vue';
+  import {ref, computed} from 'vue';
   import {useStore} from "vuex";
   import ReplyItem from "@/components/content/comment/ReplyItem.vue";
   import UserCard from "@/components/content/comment/UserCard.vue";
-
+  import ReplyEditor from "@/components/content/comment/ReplyEditor.vue";
 
   dayjs.extend(RelativeTime);
 
-  const {dispatch} = useStore();
+  const {getters, commit, dispatch} = useStore();
+  const isLogin = computed(() => getters['isLogin']);
 
   const props = defineProps({
     data: {
@@ -79,12 +84,18 @@
     },
     authorId: {
       type: [String, Number]
+    },
+    activeId: {
+      type: [String, Number]
     }
   })
 
   const expand = ref<boolean>(false);
   const row = ref<number>(0);
   const replies = ref([]);
+  const active = computed(() => props.activeId === props.data.id)
+
+  const emit = defineEmits(['update:activeId'])
 
   function set(value: number) {
     row.value = value;
@@ -95,6 +106,18 @@
     dispatch("getSubCommentsAll", {commentId}).then(res => {
       replies.value = res.data;
     })
+  }
+
+  function handleReply() {
+    if (!isLogin.value) {
+      commit("changeLogin", true);
+      return;
+    }
+    if (!active.value) {
+      emit("update:activeId", props.data.id);
+    } else {
+      emit("update:activeId", -1);
+    }
   }
 </script>
 
@@ -205,6 +228,10 @@
             color: #1890ff;
           }
 
+          &.ope-active {
+            color: #1890ff;
+          }
+
           &.delete-ope {
             color: #ff4d4f;
             margin-left: auto;
@@ -224,6 +251,10 @@
         &:hover {
 
         }
+      }
+
+      .reply-editor {
+        margin-top: 10px;
       }
 
       .sub-comment-wrapper {

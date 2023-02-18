@@ -33,7 +33,7 @@ axios.interceptors.response.use((response) => {
     store.commit("changeUser", {});
     setTimeout(() => {
       location.reload();
-    }, 3000)
+    }, 1500)
   } else {
     // message.error('系统异常,请联系管理员');
     return Promise.reject(res)

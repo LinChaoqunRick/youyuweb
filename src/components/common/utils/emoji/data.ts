@@ -139,22 +139,6 @@ const emojis = [
         "subgroup": "face-affection"
       },
       {
-        "codes": "1F617",
-        "char": "😗",
-        "name": "kissing face",
-        "category": "Smileys & Emotion (face-affection)",
-        "group": "Smileys & Emotion",
-        "subgroup": "face-affection"
-      },
-      {
-        "codes": "1F61A",
-        "char": "😚",
-        "name": "kissing face with closed eyes",
-        "category": "Smileys & Emotion (face-affection)",
-        "group": "Smileys & Emotion",
-        "subgroup": "face-affection"
-      },
-      {
         "codes": "1F619",
         "char": "😙",
         "name": "kissing face with smiling eyes",
@@ -166,30 +150,6 @@ const emojis = [
         "codes": "1F60B",
         "char": "😋",
         "name": "face savoring food",
-        "category": "Smileys & Emotion (face-tongue)",
-        "group": "Smileys & Emotion",
-        "subgroup": "face-tongue"
-      },
-      {
-        "codes": "1F61B",
-        "char": "😛",
-        "name": "face with tongue",
-        "category": "Smileys & Emotion (face-tongue)",
-        "group": "Smileys & Emotion",
-        "subgroup": "face-tongue"
-      },
-      {
-        "codes": "1F61C",
-        "char": "😜",
-        "name": "winking face with tongue",
-        "category": "Smileys & Emotion (face-tongue)",
-        "group": "Smileys & Emotion",
-        "subgroup": "face-tongue"
-      },
-      {
-        "codes": "1F92A",
-        "char": "🤪",
-        "name": "zany face",
         "category": "Smileys & Emotion (face-tongue)",
         "group": "Smileys & Emotion",
         "subgroup": "face-tongue"
@@ -270,14 +230,6 @@ const emojis = [
         "codes": "1F611",
         "char": "😑",
         "name": "expressionless face",
-        "category": "Smileys & Emotion (face-neutral-skeptical)",
-        "group": "Smileys & Emotion",
-        "subgroup": "face-neutral-skeptical"
-      },
-      {
-        "codes": "1F636",
-        "char": "😶",
-        "name": "face without mouth",
         "category": "Smileys & Emotion (face-neutral-skeptical)",
         "group": "Smileys & Emotion",
         "subgroup": "face-neutral-skeptical"

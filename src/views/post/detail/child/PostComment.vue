@@ -34,7 +34,11 @@
           </div>
         </div>
       </template>
-      <CommentItem v-for="item in commentList" :data="item" :key="item.id" v-bind="$attrs"/>
+      <CommentItem v-for="item in commentList"
+                   v-model:activeId="activeId"
+                   :data="item"
+                   :key="item.id"
+                   v-bind="$attrs"/>
       <div class="more-btn" v-if="total - commentList.length> 0" @click="handleLoadALl">
         加载剩余 {{total - commentList.length}} 条评论
       </div>
@@ -64,6 +68,7 @@
 
   const commentEditor = ref(null);
   const total = ref(0);
+  const activeId = ref(-1);
   const sort = ref(true); // true:最新 false:最热
   const commentList = ref([]);
   const text = ref('');
@@ -131,6 +136,7 @@
     }).then(res => {
       message.success('评论成功');
       commentEditor.value.onChange("");
+      handleSort(true);
     }).catch(e => {
       message.error("评论失败")
     })
