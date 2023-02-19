@@ -4,6 +4,7 @@ const FrontApiBase = '/api';
 // 帖子
 export const GET_POST_LIST = ApiBase + "/post/list";
 export const GET_POST_DETAIL = ApiBase + "/post/get";
+export const IS_POST_LIKE = ApiBase + "/post/isPostLike";
 
 // 评论
 export const GET_COMMENTS_PAGE = ApiBase + "/comment/getCommentsPage";

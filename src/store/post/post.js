@@ -8,7 +8,8 @@ import {
   GET_COMMENTS_ALL,
   GET_SUB_COMMENTS_ALL,
   CREATE_COMMENT,
-  DELETE_COMMENT
+  DELETE_COMMENT,
+  IS_POST_LIKE
 } from "@/network/apis";
 
 export default {
@@ -37,6 +38,9 @@ export default {
     },
     deleteComment(state, params) {
       return http.get(DELETE_COMMENT, params);
+    },
+    isPostLike(state, params) {
+      return http.get(IS_POST_LIKE, params);
     },
 
 

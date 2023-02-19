@@ -20,7 +20,7 @@
       <template #title>
         <div class="title-container">
           <div class="title-text large-font">
-            全部评论({{total}})
+            全部评论({{post.commentCount}})
           </div>
           <div class="sort-type">
             <div class="sort-item" :class="{'active': sort}" @click="handleSort(true)">
@@ -37,7 +37,6 @@
       <CommentItem v-for="item in commentList"
                    :data="item"
                    :key="item.id"
-                   v-bind="$attrs"
                    @deleteSuccess="handleSort(true)"/>
       <div class="more-btn" v-if="total - commentList.length> 0" @click="handleLoadALl">
         加载剩余 {{total - commentList.length}} 条评论
@@ -48,7 +47,7 @@
 
 <script setup lang="ts">
   import {useStore} from 'vuex';
-  import {computed, provide, ref, watch} from "vue";
+  import {computed, provide, ref, watch, inject} from "vue";
   import {message} from 'ant-design-vue';
   import {notification} from 'ant-design-vue';
   import CommentItem from "@/components/content/comment/CommentItem.vue";
@@ -58,13 +57,6 @@
   const isLogin = computed(() => getters['isLogin']);
 
   const {getters, dispatch} = useStore();
-
-  const props = defineProps({
-    postId: {
-      type: [String, Number],
-      required: true
-    }
-  })
 
   const commentEditor = ref(null);
   const total = ref(0);
@@ -98,6 +90,7 @@
     'preview',
   ];
   const footers = ['markdownTotal', '=', 'scrollSwitch'];
+  const post = inject('post');
 
   function updateActiveId(value) {
     activeId.value = value;
@@ -105,9 +98,8 @@
 
   provide('active', {activeId, updateActiveId});
 
-
-  watch(() => props.postId, (val) => {
-    handlePage(val);
+  watch(() => post.value, ({id}) => {
+    handlePage(id);
   })
 
   function handlePage(postId: string | number) {
@@ -118,7 +110,7 @@
   }
 
   function handleLoadALl() {
-    dispatch("getCommentsAll", {postId: props.postId, orderBy: order.value}).then(res => {
+    dispatch("getCommentsAll", {postId: post.value.postId, orderBy: order.value}).then(res => {
       total.value = res.data.length;
       commentList.value = res.data;
     })
@@ -130,13 +122,13 @@
     if (commentList.value.length >= total.value) {
       handleLoadALl();
     } else {
-      handlePage(props.postId);
+      handlePage(post.value.postId);
     }
   }
 
   function handleSubmit() {
     dispatch("createComment", {
-      postId: props.postId,
+      postId: post.value.postId,
       userId: userInfo.value.id,
       content: commentEditor.value.text
     }).then(res => {

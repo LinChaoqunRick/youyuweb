@@ -17,7 +17,7 @@
             </template>
             <div class="nickname-text">{{data.user.nickname}}</div>
           </a-popover>
-          <div class="author-text" v-if="authorId === data.userId">(作者)</div>
+          <div class="author-text" v-if="post.userId === data.userId">(作者)</div>
         </div>
         <div class="create-time" :title="data.createTime">{{dayjs().to(dayjs(data.createTime))}}</div>
       </div>
@@ -90,9 +90,6 @@
       type: Object,
       required: true
     },
-    authorId: {
-      type: [String, Number]
-    },
   })
 
   const expand = ref<boolean>(false);
@@ -100,7 +97,8 @@
   const replies = ref([]);
   const replyEditor = ref(null);
   const {activeId, updateActiveId} = inject('active');
-  const active = computed(() => activeId.value === props.data.id)
+  const active = computed(() => activeId.value === props.data.id);
+  const post = inject('post');
 
   const emit = defineEmits(['deleteSuccess'])
 

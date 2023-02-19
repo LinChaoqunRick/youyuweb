@@ -91,12 +91,12 @@
           <MdCatalogPanel editorId="md-editor"/>
         </div>
         <div class="post-operation">
-          <PostOperation/>
+          <PostOperation v-if="post"/>
         </div>
       </div>
       <div class="post-comment">
         <div class="post-comment-list">
-          <PostComment :postId="post.id" :authorId="post.userId"/>
+          <PostComment ref="postComment"/>
         </div>
       </div>
     </div>
@@ -107,7 +107,7 @@
 </template>
 
 <script setup>
-  import {ref, reactive, computed} from 'vue';
+  import {ref, reactive, computed, provide, readonly} from 'vue';
   import {useRoute} from 'vue-router';
   import {useStore} from 'vuex';
 
@@ -121,12 +121,13 @@
 
   const route = useRoute();
   const {state, dispatch, getters} = useStore();
-  const post = ref({});
+  const post = ref('');
   const fold = ref(true);
-  let userInfo = computed(() => getters['userInfo']);
+  const userInfo = computed(() => getters['userInfo']);
+  const postComment = ref(null);
 
   function getPostDetail() {
-    dispatch("getPostDetail", {id: route.params.postId}).then(res => {
+    dispatch("getPostDetail", {postId: route.params.postId}).then(res => {
       post.value = res.data;
       document.title = res.data.title;
     })
@@ -136,7 +137,9 @@
 
   function handleFold() {
     fold.value = !fold.value;
-  }
+  };
+
+  provide('post', readonly(post));
 
 </script>
 

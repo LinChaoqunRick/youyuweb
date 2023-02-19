@@ -1,11 +1,15 @@
 <template>
   <div class="post-operation">
-    <div class="ope-item">
-      <i-good-two theme="filled" size="21" fill="currentColor"/>
-    </div>
-    <div class="ope-item" @click="scrollToComment">
-      <i-comment theme="filled" size="19" fill="currentColor"/>
-    </div>
+    <a-badge :count="post.likeCount" color="#1890ff" :overflow-count="99">
+      <div class="ope-item" :class="{'active':state.isLike}">
+        <i-good-two theme="filled" size="21" fill="currentColor"/>
+      </div>
+    </a-badge>
+    <a-badge :count="post.commentCount" color="#1890ff" :overflow-count="99">
+      <div class="ope-item" @click="scrollToComment">
+        <i-comment theme="filled" size="19" fill="currentColor"/>
+      </div>
+    </a-badge>
     <div class="ope-item">
       <i-star theme="filled" size="21" fill="currentColor"/>
     </div>
@@ -25,22 +29,38 @@
 
 <script lang="ts" setup>
   import {scrollToEle} from "@/assets/utils/utils";
-  import {ref} from "vue";
+  import {computed, inject, reactive, ref} from "vue";
+  import {useStore} from "vuex";
 
+  const {getters, dispatch} = useStore();
+
+  const post = inject('post');
   const item = ref(null);
+
+  const userInfo = computed(() => getters['userInfo']);
+  const isLogin = computed(() => getters['isLogin']);
+  const state = reactive({
+    isLike: false,
+    isCollect: false
+  })
 
   function scrollToComment() {
     const commentEl: HTMLElement | null = document.querySelector("#post-comment-id");
     commentEl && scrollToEle(commentEl.offsetTop - 100);
   }
 
+  if (isLogin.value) {
+    dispatch("isPostLike", {postId: post.value.id, userId: userInfo.value.id}).then(res => {
+      state.isLike = !!res.data;
+    })
+  }
 </script>
 
 <style lang="scss" scoped>
   .post-operation {
     .ope-item {
-      height: 4rem;
-      width: 4rem;
+      height: 3.8rem;
+      width: 3.8rem;
       background-color: var(--youyu-body-background3);
       border-radius: 50%;
       display: flex;
@@ -49,6 +69,12 @@
       margin-bottom: 7px;
       cursor: pointer;
       color: #8a919f;
+
+      &.active {
+        .i-icon {
+          color: #1890ff !important;
+        }
+      }
 
       &:hover {
         .i-icon {
@@ -61,6 +87,15 @@
       position: relative;
       top: 0;
       left: 0;
+    }
+
+    ::v-deep(.ant-badge) {
+      display: block;
+
+      .ant-badge-count {
+        top: 5px;
+        right: 2px;
+      }
     }
   }
 </style>

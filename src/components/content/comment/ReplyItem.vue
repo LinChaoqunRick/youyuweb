@@ -14,6 +14,7 @@
           </template>
           <div class="user-nickname">{{data.user.nickname}}</div>
         </a-popover>
+        <div class="author-text" v-if="post.userId === data.userId">(作者)</div>
       </div>
       <p class="reply-text" v-if="data.userTo">回复</p>
       <div class="user-info" v-if="data.userTo">
@@ -29,6 +30,7 @@
           </template>
           <div class="user-nickname">{{data.userTo.nickname}}</div>
         </a-popover>
+        <div class="author-text" v-if="post.userId === data.userId">(作者)</div>
       </div>
     </div>
     <div class="reply-content" v-html="data.content"></div>
@@ -68,13 +70,14 @@
     data: {
       type: Object
     },
-    root: {
+    root: { // 子评论的父评论
       type: Object
     },
   })
 
   const {activeId, updateActiveId} = inject('active');
   const active = computed(() => activeId.value === props.data.id);
+  const post = inject('post');
 
   function handleReply() {
     if (!isLogin.value) {
@@ -144,6 +147,13 @@
         .user-nickname {
           cursor: pointer;
           font-weight: bold;
+        }
+
+        .author-text {
+          font-size: 13px;
+          font-weight: normal;
+          color: #8a919f;
+          margin-left: 5px;
         }
       }
 
