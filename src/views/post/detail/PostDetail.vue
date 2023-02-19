@@ -137,9 +137,14 @@
 
   function handleFold() {
     fold.value = !fold.value;
-  };
+  }
+
+  function setPostLikeCount(count) {
+    post.value.likeCount = count;
+  }
 
   provide('post', readonly(post));
+  provide('setPostLikeCount', setPostLikeCount);
 
 </script>
 

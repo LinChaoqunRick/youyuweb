@@ -9,7 +9,9 @@ import {
   GET_SUB_COMMENTS_ALL,
   CREATE_COMMENT,
   DELETE_COMMENT,
-  IS_POST_LIKE
+  IS_POST_LIKE,
+  SET_POST_LIKE,
+  CANCEL_POST_LIKE
 } from "@/network/apis";
 
 export default {
@@ -39,8 +41,14 @@ export default {
     deleteComment(state, params) {
       return http.get(DELETE_COMMENT, params);
     },
+    setPostLike(state, params) {
+      return http.get(SET_POST_LIKE, params);
+    },
     isPostLike(state, params) {
       return http.get(IS_POST_LIKE, params);
+    },
+    cancelPostLike(state, params) {
+      return http.get(CANCEL_POST_LIKE, params);
     },
 
 

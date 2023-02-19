@@ -1,7 +1,7 @@
 <template>
   <div class="post-operation">
     <a-badge :count="post.likeCount" color="#1890ff" :overflow-count="99">
-      <div class="ope-item" :class="{'active':state.isLike}">
+      <div class="ope-item" :class="{'active':state.isLike}" @click="handleSetLike">
         <i-good-two theme="filled" size="21" fill="currentColor"/>
       </div>
     </a-badge>
@@ -35,6 +35,7 @@
   const {getters, dispatch} = useStore();
 
   const post = inject('post');
+  const setPostLikeCount = inject('setPostLikeCount');
   const item = ref(null);
 
   const userInfo = computed(() => getters['userInfo']);
@@ -50,8 +51,42 @@
   }
 
   if (isLogin.value) {
-    dispatch("isPostLike", {postId: post.value.id, userId: userInfo.value.id}).then(res => {
+    dispatch("isPostLike", {
+      postId: post.value.id,
+      userId: userInfo.value.id,
+      userIdTo: post.value.userId
+    }).then(res => {
       state.isLike = !!res.data;
+    })
+  }
+
+  function handleSetLike() {
+    if (state.isLike) {
+      handleCancel();
+    } else {
+      handleLike();
+    }
+  }
+
+  function handleLike() {
+    dispatch("setPostLike", {
+      postId: post.value.id,
+      userId: userInfo.value.id,
+      userIdTo: post.value.userId
+    }).then(res => {
+      state.isLike = true;
+      setPostLikeCount(post.value.likeCount + 1);
+    })
+  }
+
+  function handleCancel() {
+    dispatch("cancelPostLike", {
+      postId: post.value.id,
+      userId: userInfo.value.id,
+      userIdTo: post.value.userId
+    }).then(res => {
+      state.isLike = false;
+      setPostLikeCount(post.value.likeCount - 1);
     })
   }
 </script>
