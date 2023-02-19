@@ -35,10 +35,10 @@
         </div>
       </template>
       <CommentItem v-for="item in commentList"
-                   v-model:activeId="activeId"
                    :data="item"
                    :key="item.id"
-                   v-bind="$attrs"/>
+                   v-bind="$attrs"
+                   @deleteSuccess="handleSort(true)"/>
       <div class="more-btn" v-if="total - commentList.length> 0" @click="handleLoadALl">
         加载剩余 {{total - commentList.length}} 条评论
       </div>
@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
   import {useStore} from 'vuex';
-  import {computed, ref, watch} from "vue";
+  import {computed, provide, ref, watch} from "vue";
   import {message} from 'ant-design-vue';
   import {notification} from 'ant-design-vue';
   import CommentItem from "@/components/content/comment/CommentItem.vue";
@@ -97,7 +97,13 @@
     'prettier',
     'preview',
   ];
-  const footers = ['markdownTotal', '=', 'scrollSwitch']
+  const footers = ['markdownTotal', '=', 'scrollSwitch'];
+
+  function updateActiveId(value) {
+    activeId.value = value;
+  }
+
+  provide('active', {activeId, updateActiveId});
 
 
   watch(() => props.postId, (val) => {

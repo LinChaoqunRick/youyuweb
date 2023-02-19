@@ -10,6 +10,7 @@ export const GET_COMMENTS_PAGE = ApiBase + "/comment/getCommentsPage";
 export const GET_COMMENTS_ALL = ApiBase + "/comment/getCommentsAll";
 export const GET_SUB_COMMENTS_ALL = ApiBase + "/comment/getSubCommentsAll";
 export const CREATE_COMMENT = ApiBase + "/comment/createComment";
+export const DELETE_COMMENT = ApiBase + "/comment/deleteComment";
 
 export const ACCOUNT_LOGIN = ApiBase + "/login/accountLogin"; // 登录
 export const ACCOUNT_LOGOUT = ApiBase + "/login/logout"; // 注销

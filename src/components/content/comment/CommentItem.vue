@@ -32,14 +32,6 @@
           }"/>
       </div>
       <div class="comment-operation">
-        <div class="limit-btn" @click="expand = true" v-show="row>7 && !expand">展开</div>
-        <div class="limit-btn" @click="expand = false" v-show="row>7 && expand">收起</div>
-        <div class="more-btn" @click="loadSubComment" v-if="data.replyCount>0 && !replies.length">
-          共{{data.replyCount}}条回复
-          <i-down theme="outline" size="14" fill="#1890ff"/>
-        </div>
-      </div>
-      <div class="comment-operation">
         <div class="ope-item">
           <i-good-two theme="outline" size="16" fill="currentColor"/>
           点赞<span v-if="data.supportCount">({{data.supportCount}})</span>
@@ -48,15 +40,29 @@
           <i-comment :theme="active?'filled':'outline'" size="16" fill="currentColor"/>
           {{active?'取消回复':'回复'}}<span v-if="data.replyCount">({{data.replyCount}})</span>
         </div>
-        <div class="ope-item delete-ope">
+        <div class="ope-item delete-ope" v-if="userInfo.id === data.userId" @click="handleDelete">
           删除
         </div>
       </div>
       <div class="reply-editor" v-if="active">
-        <ReplyEditor :placeholder="`回复${data.user.nickname}`"/>
+        <ReplyEditor :placeholder="`回复${data.user.nickname}`" @handleSubmit="handleSubmit" ref="replyEditor"/>
+      </div>
+      <div class="comment-operation">
+        <div class="limit-btn" @click="expand = true" v-show="row>7 && !expand">展开</div>
+        <div class="limit-btn" @click="expand = false" v-show="row>7 && expand">收起</div>
+        <div class="more-btn" @click="loadReply" v-if="data.replyCount>0 && !replies.length">
+          共{{data.replyCount}}条回复
+          <i-down theme="outline" size="14" fill="#1890ff"/>
+        </div>
       </div>
       <div class="sub-comment-wrapper" v-if="replies.length">
-        <ReplyItem class="reply-item" v-for="item in replies" :data="item"/>
+        <ReplyItem class="reply-item"
+                   :activeId="activeId"
+                   v-for="item in replies"
+                   :data="item"
+                   :root="data"
+                   @saveSuccess="loadReply"
+                   @deleteSuccess="loadReply"/>
       </div>
     </div>
   </div>
@@ -66,16 +72,18 @@
   import dayjs from 'dayjs';
   import RelativeTime from 'dayjs/plugin/relativeTime';
   import MdPreview from "@/components/content/mdEditor/MdPreview.vue";
-  import {ref, computed} from 'vue';
+  import {ref, computed, inject} from 'vue';
   import {useStore} from "vuex";
   import ReplyItem from "@/components/content/comment/ReplyItem.vue";
   import UserCard from "@/components/content/comment/UserCard.vue";
   import ReplyEditor from "@/components/content/comment/ReplyEditor.vue";
+  import {message, Modal} from "ant-design-vue";
 
   dayjs.extend(RelativeTime);
 
   const {getters, commit, dispatch} = useStore();
   const isLogin = computed(() => getters['isLogin']);
+  const userInfo = computed(() => getters['userInfo']);
 
   const props = defineProps({
     data: {
@@ -85,26 +93,26 @@
     authorId: {
       type: [String, Number]
     },
-    activeId: {
-      type: [String, Number]
-    }
   })
 
   const expand = ref<boolean>(false);
   const row = ref<number>(0);
   const replies = ref([]);
-  const active = computed(() => props.activeId === props.data.id)
+  const replyEditor = ref(null);
+  const {activeId, updateActiveId} = inject('active');
+  const active = computed(() => activeId.value === props.data.id)
 
-  const emit = defineEmits(['update:activeId'])
+  const emit = defineEmits(['deleteSuccess'])
 
   function set(value: number) {
     row.value = value;
   }
 
-  function loadSubComment() {
+  function loadReply() {
     const commentId = props.data.id;
     dispatch("getSubCommentsAll", {commentId}).then(res => {
       replies.value = res.data;
+      props.data.replyCount = res.data.length;
     })
   }
 
@@ -114,10 +122,39 @@
       return;
     }
     if (!active.value) {
-      emit("update:activeId", props.data.id);
+      updateActiveId(props.data.id);
     } else {
-      emit("update:activeId", -1);
+      updateActiveId(-1);
     }
+  }
+
+  function handleSubmit(content: string) {
+    dispatch("createComment", {
+      postId: props.data.postId,
+      userId: userInfo.value.id,
+      rootId: props.data.id,
+      content: content
+    }).then(res => {
+      message.success('评论成功');
+      loadReply();
+      updateActiveId(-1);
+    }).catch(e => {
+      message.error("评论失败")
+    })
+  }
+
+  function handleDelete() {
+    Modal.confirm({
+      title: '删除评论',
+      icon: '', // <help theme="outline" size="24" fill="#1890ff"/>
+      content: '确定删除这条评论吗？',
+      onOk() {
+        return dispatch("deleteComment", {commentId: props.data.id}).then(res => {
+          message.success('删除成功');
+          emit("deleteSuccess");
+        }).catch(console.log)
+      },
+    });
   }
 </script>
 
@@ -265,7 +302,7 @@
 
         .reply-item {
           &:nth-child(n + 2) {
-            margin-top: 2rem;
+            margin-top: 1rem;
           }
         }
       }

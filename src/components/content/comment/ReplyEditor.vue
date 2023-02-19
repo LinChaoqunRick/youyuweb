@@ -11,7 +11,7 @@
           <template #content>
             <Emoji @emojiHandler="emojiHandler"/>
           </template>
-          <i-smiling-face theme="outline" size="17" fill="#333" style="padding: 0 3.5px"/>
+          <i-smiling-face theme="outline" size="17" fill="#333" style="padding: 0 3.5px;cursor: pointer;"/>
         </a-popover>
       </div>
       <div class="right-box">
@@ -22,8 +22,9 @@
 </template>
 
 <script setup lang="ts">
-  import {ref, computed} from 'vue';
+  import {ref, computed, onMounted} from 'vue';
   import Emoji from '@/components/common/utils/emoji/index.vue';
+  import {insert} from "@/assets/utils/utils";
 
   const props = defineProps({
     placeholder: {
@@ -32,36 +33,44 @@
     }
   })
 
+  const emit = defineEmits(['handleSubmit']);
+
+  defineExpose({
+    focus
+  })
+
   const disabled = computed(() => !value.value)
 
   const value = ref<string>("");
 
   function handleSubmit() {
+    emit("handleSubmit", value.value, clearContent);
+  }
 
+  function clearContent() {
+    value.value = "";
+  }
+
+  function focus() {
+    const textarea = document.querySelector(".reply-editor")?.querySelector("textarea");
+    if (textarea) {
+      textarea.focus();
+    }
   }
 
   function emojiHandler(emoji) {
     const textarea = document.querySelector(".reply-editor")?.querySelector("textarea");
-    if (textarea) {// 获取鼠标位置
-      // 获取选中的内容
-      const selection = window.getSelection()?.toString();
-      // 获取鼠标位置
-      let endPoint = textarea.selectionStart;
-
-      // 根据鼠标位置分割旧文本
-      // 前半部分
-      const prefixStr = textarea.value.substring(0, endPoint);
-      // 后半部分
-      const suffixStr = textarea.value.substring(endPoint + (selection?.length || 0));
-
-      textarea.value = `${prefixStr}${emoji}${suffixStr}`;
-      setTimeout(() => {
-        endPoint = endPoint + 1;
-        textarea.setSelectionRange(endPoint, endPoint);
-        textarea.focus();
-      }, 0);
+    if (textarea) {
+      value.value = insert(textarea, emoji, {});
     }
   }
+
+  onMounted(() => {
+    const textarea = document.querySelector(".reply-editor")?.querySelector("textarea");
+    if (textarea) {
+      textarea.focus();
+    }
+  })
 </script>
 
 <style lang="scss" scoped>

@@ -7,11 +7,11 @@
                                         @click="handleLogin">登录</span></div>
       </div>
       <div class="hint-item">
-        <i-check-one theme="filled" size="20" fill="#5f9ea0"/>
+        <i-check-one theme="filled" size="20" fill="#67c23a"/>
         <div class="hint-text">登录后参与交流、发表评论</div>
       </div>
       <div class="hint-item">
-        <i-check-one theme="filled" size="20" fill="#5f9ea0"/>
+        <i-check-one theme="filled" size="20" fill="#67c23a"/>
         <div class="hint-text">获取后续更新提醒</div>
       </div>
     </div>

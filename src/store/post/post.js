@@ -7,7 +7,8 @@ import {
   GET_COMMENTS_PAGE,
   GET_COMMENTS_ALL,
   GET_SUB_COMMENTS_ALL,
-  CREATE_COMMENT
+  CREATE_COMMENT,
+  DELETE_COMMENT
 } from "@/network/apis";
 
 export default {
@@ -33,6 +34,9 @@ export default {
     },
     createComment(state, params) {
       return http.get(CREATE_COMMENT, params);
+    },
+    deleteComment(state, params) {
+      return http.get(DELETE_COMMENT, params);
     },
 
 

@@ -4,8 +4,10 @@
 
 <script setup lang="ts">
   import MdEditor from 'md-editor-v3';
-  import {computed} from "vue";
+  import {computed, reactive, toRef} from "vue";
+  import {useStore} from "vuex";
 
+  const store = useStore();
   const props = defineProps({
     text: {
       type: String
@@ -14,12 +16,14 @@
       type: Object,
     },
   })
+  const editorProps = reactive({
+    theme: toRef(store.state.theme, "theme"),
+    previewTheme: 'cyanosis',
+    previewOnly: true,
+  })
 
   const editorConfig = computed(() => {
-    return Object.assign({}, {
-      previewTheme: 'cyanosis',
-      previewOnly: true,
-    }, props.extend);
+    return Object.assign({}, editorProps, props.extend);
   })
 </script>
 
