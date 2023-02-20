@@ -11,11 +11,11 @@
         <div class="post-info">
           <div class="post-info-detail">
             <div class="create-type">
-              <p v-if="post.createType==='0'" style="color: #67bb55;background-color: rgba(103,187,85,0.1);">
+              <p v-if="post.createType==='0'" style="color: #67bb55;">
                 {{post.createTypeDesc}}</p>
-              <p v-if="post.createType==='1'" style="color: #fc5531;background-color: #fff5f2;">
+              <p v-if="post.createType==='1'" style="color: #fc5531;">
                 {{post.createTypeDesc}}</p>
-              <p v-if="post.createType==='2'" style="color: #6a87f1;background-color: #f2f4ff;">
+              <p v-if="post.createType==='2'" style="color: #6a87f1;">
                 {{post.createTypeDesc}}</p>
             </div>
             <div class="post-info-data-category">
@@ -27,14 +27,6 @@
                 <div class="post-info-data-item">
                   <i-preview-open theme="filled" size="14" fill="#797979"/>
                   <span>{{post.viewCount}}</span>Views
-                </div>
-                <div class="post-info-data-item">
-                  <i-good-two theme="filled" size="12" fill="#797979"/>
-                  <span>{{post.likeCount}}</span>Times
-                </div>
-                <div class="post-info-data-item">
-                  <i-comment theme="filled" size="12" fill="#797979"/>
-                  <span>{{post.commentCount}}</span>Comments
                 </div>
               </div>
               <div class="post-info-category">
@@ -143,8 +135,13 @@
     post.value.likeCount = count;
   }
 
+  function setPostCommentCount(count) {
+    post.value.commentCount = count;
+  }
+
   provide('post', readonly(post));
   provide('setPostLikeCount', setPostLikeCount);
+  provide('setPostCommentCount', setPostCommentCount);
 
 </script>
 
@@ -237,9 +234,9 @@
                   font-size: 13px;
                   margin-right: 5px;
                   padding: 0 5px;
-                  background-color: #fff;
+                  background-color: var(--youyu-body-background3);
                   color: #4a88c4;
-                  border: 1px solid #eaeaef;
+                  border: 1px solid var(--youyu-border-color);
                   border-radius: 4px;
                   cursor: pointer;
                 }
@@ -286,7 +283,7 @@
             overflow: hidden;
             max-height: 0;
             transition: .3s ease-out;
-            border-bottom: 2px solid #eaeaef;
+            border-bottom: 2px solid var(--youyu-border-color);
 
             .copyright-original {
               padding: 6px 0;

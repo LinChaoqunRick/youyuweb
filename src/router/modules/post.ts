@@ -20,7 +20,7 @@ const route = [
           hide: true,
           code: "POST_LIST"
         },
-        component: () => import("@/views/post/list/postList.vue")
+        component: () => import("@/views/post/list/PostList.vue")
       },
       {
         path: 'details/:postId(\\d*)',

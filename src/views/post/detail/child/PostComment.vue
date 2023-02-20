@@ -91,6 +91,7 @@
   ];
   const footers = ['markdownTotal', '=', 'scrollSwitch'];
   const post = inject('post');
+  const setPostCommentCount = inject('setPostCommentCount');
 
   function updateActiveId(value) {
     activeId.value = value;
@@ -110,7 +111,7 @@
   }
 
   function handleLoadALl() {
-    dispatch("getCommentsAll", {postId: post.value.postId, orderBy: order.value}).then(res => {
+    dispatch("getCommentsAll", {postId: post.value.id, orderBy: order.value}).then(res => {
       total.value = res.data.length;
       commentList.value = res.data;
     })
@@ -122,19 +123,20 @@
     if (commentList.value.length >= total.value) {
       handleLoadALl();
     } else {
-      handlePage(post.value.postId);
+      handlePage(post.value.id);
     }
   }
 
   function handleSubmit() {
     dispatch("createComment", {
-      postId: post.value.postId,
+      postId: post.value.id,
       userId: userInfo.value.id,
       content: commentEditor.value.text
     }).then(res => {
       message.success('评论成功');
       commentEditor.value.onChange("");
       handleSort(true);
+      setPostCommentCount(post.value.commentCount + 1);
     }).catch(e => {
       message.error("评论失败")
     })
