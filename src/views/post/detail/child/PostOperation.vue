@@ -32,7 +32,7 @@
   import {computed, inject, reactive, ref} from "vue";
   import {useStore} from "vuex";
 
-  const {getters, dispatch} = useStore();
+  const {getters, commit, dispatch} = useStore();
 
   const post = inject('post');
   const setPostLikeCount = inject('setPostLikeCount');
@@ -61,6 +61,10 @@
   }
 
   function handleSetLike() {
+    if (!isLogin.value) {
+      commit("changeLogin", true);
+      return;
+    }
     if (state.isLike) {
       handleCancel();
     } else {
