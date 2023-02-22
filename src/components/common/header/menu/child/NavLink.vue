@@ -18,7 +18,7 @@
   <div class="nav-link" v-else>
     <router-link :to="route.path" custom v-slot="{isActive, isExactActive, navigate}">
       <span :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}"
-            @click="handleNavigate(isActive,navigate)">{{route.title}}</span>
+            @click="handleNavigate(isActive,isExactActive,navigate)">{{route.title}}</span>
     </router-link>
   </div>
 </template>
@@ -31,8 +31,8 @@
     }
   })
 
-  function handleNavigate(isActive, navigate) {
-    if (!isActive) {
+  function handleNavigate(isActive, isExactActive, navigate) {
+    if (!isExactActive) {
       navigate();
     }
   }

@@ -50,6 +50,7 @@
   import {computed, provide, ref, watch, inject} from "vue";
   import {message} from 'ant-design-vue';
   import {notification} from 'ant-design-vue';
+  import {keepScrollTop} from '@/assets/utils/utils';
   import CommentItem from "@/components/content/comment/CommentItem.vue";
   import MdEditorCom from "@/components/content/mdEditor/MdEditorCom.vue";
   import CommentHint from "./CommentHint.vue";
@@ -114,6 +115,7 @@
     dispatch("getCommentsAll", {postId: post.value.id, orderBy: order.value}).then(res => {
       total.value = res.data.length;
       commentList.value = res.data;
+      keepScrollTop();
     })
   }
 

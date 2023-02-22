@@ -61,10 +61,10 @@
   }
 
   function handleSetLike() {
-    if (!isLogin.value) {
-      commit("changeLogin", true);
-      return;
-    }
+    // if (!isLogin.value) {
+    //   commit("changeLogin", true);
+    //   return;
+    // }
     if (state.isLike) {
       handleCancel();
     } else {

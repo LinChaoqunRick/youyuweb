@@ -16,7 +16,7 @@ const route = [
         path: "list/:page(\\d+)?",
         name: "postList",
         meta: {
-          title: "推荐",
+          title: "帖子列表",
           hide: true,
           code: "POST_LIST"
         },
@@ -30,6 +30,7 @@ const route = [
           hide: true,
           code: "POST_DETAIL"
         },
+        alias: ':postId(\\d*)',
         component: () => import('@/views/post/detail/PostDetail.vue'),
       }
     ]

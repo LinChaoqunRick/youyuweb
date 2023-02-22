@@ -45,3 +45,12 @@ export default {
     window.removeEventListener("scroll", scrollFn, false);
   }
 }
+
+// const observer = new MutationObserver((mutationList) => {
+//   // if (height !== contentRef.current?.clientHeight) {
+//   console.log("高度变化了！");
+//   //   setHeight(contentRef.current.clientHeight);
+//   // }
+// });
+//
+// observer.observe(document);

@@ -1,3 +1,5 @@
+import {nextTick} from 'vue';
+
 export function getElementLeft(element: HTMLElement) {
   let actualLeft: number = element.offsetLeft;
   let current: HTMLElement | null = element.offsetParent;
@@ -77,7 +79,7 @@ export const insert = (
     subfixVal?: string; // 后半部分内容
   }
 ) => {
-  const { deviationStart = 0, deviationEnd = 0, direct = false, select = false } = params;
+  const {deviationStart = 0, deviationEnd = 0, direct = false, select = false} = params;
   // 返回值
   let res = '';
   if (dom.selectionStart || dom.selectionStart === 0) {
@@ -108,3 +110,12 @@ export const insert = (
 
   return res;
 };
+
+/**
+ * 保持原来的滚动高度
+ */
+export async function keepScrollTop() {
+  const originScrollTop = document.documentElement.scrollTop;
+  await nextTick();
+  document.documentElement.scrollTop = originScrollTop;
+}
