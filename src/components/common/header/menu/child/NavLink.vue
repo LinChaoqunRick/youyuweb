@@ -7,7 +7,7 @@
         <div v-for="item in route.children" class="route-dropdown-item">
           <router-link :to="item.path" custom v-slot="{isActive, isExactActive, navigate}">
           <span :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}"
-                @click="handleNavigate(isActive,navigate)">
+                @click="handleNavigate(isActive,isExactActive,navigate)">
             {{item.title}}
           </span>
           </router-link>

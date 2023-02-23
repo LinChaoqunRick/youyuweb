@@ -3,36 +3,36 @@ const route = [
     path: '/create',
     name: 'create',
     component: () => import("@/views/create/Create.vue"),
-    redirect: "/create/blog",
+    redirect: "/create/post",
     meta: {
       title: "创作",
       code: "CREATE"
     },
     children: [
       {
-        path: 'blog',
-        name: 'createBlog',
+        path: 'post',
+        name: 'createPost',
         meta: {
-          title: "文章",
-          code: "CREATE_BLOG"
+          title: "写文章",
+          code: "CREATE_POST"
         },
-        component: () => import("@/views/create/child/Blog.vue"),
+        component: () => import("@/views/create/child/Post.vue"),
       },
       {
         path: 'moment',
         name: 'createMoment',
         meta: {
-          title: "时刻",
+          title: "发时刻",
           code: "CREATE_MOMENT"
         },
-        component: () => import("@/views/create/child/Blog.vue"),
+        component: () => import("@/views/create/child/Post.vue"),
       },
       {
         path: 'sketch',
         name: 'createSketch',
         // redirect: '/create/sketch/test1',
         meta: {
-          title: "随笔",
+          title: "写随笔",
           code: "CREATE_SKETCH"
         },
         component: () => import("@/views/create/child/Sketch.vue"),

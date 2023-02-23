@@ -50,6 +50,7 @@
 
     .main-app {
       flex: 1;
+      position: relative;
     }
 
     .footer {

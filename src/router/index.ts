@@ -31,8 +31,12 @@ router.beforeEach(async (to, from, next) => {
   isInit = true;
 })
 
-router.afterEach((to, from): any => {
+router.beforeResolve((to) => {
   document.title = <string>to.meta.title;
+})
+
+router.afterEach((to, from): any => {
+  // document.title = <string>to.meta.title;
 })
 
 export default router

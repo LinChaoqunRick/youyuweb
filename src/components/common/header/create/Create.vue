@@ -23,7 +23,7 @@
   const menu = ref([
     {
       label: "写博客",
-      path: "/create/blog",
+      path: "/create/post",
       icon: "icon-write"
     },
     {
