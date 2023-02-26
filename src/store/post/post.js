@@ -12,9 +12,9 @@ import {
   IS_POST_LIKE,
   SET_POST_LIKE,
   CANCEL_POST_LIKE,
+  GET_CREATE_TYPES,
   OSS_POLICY,
   OSS_STS,
-  OSS_VOID
 } from "@/network/apis";
 
 export default {
@@ -53,14 +53,14 @@ export default {
     cancelPostLike(state, params) {
       return http.get(CANCEL_POST_LIKE, params);
     },
+    getCreateTypes(state, params) {
+      return http.get(GET_CREATE_TYPES, params);
+    },
     getOssPolicy(state, params) {
       return http.get(OSS_POLICY, params);
     },
     getOssSts(state, params) {
       return http.get(OSS_STS, params);
-    },
-    getOssVoid(state, params) {
-      return http.get(OSS_VOID, params);
     },
 
 

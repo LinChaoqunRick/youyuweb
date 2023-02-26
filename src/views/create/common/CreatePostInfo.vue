@@ -1,47 +1,46 @@
 <template>
-  <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
-    <a-form-item label="文章分类" v-bind="validateInfos.categoryId">
-      <a-tree-select
-        v-model:value="modelRef.categoryId"
-        show-search
-        style="width: 100%"
-        :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-        placeholder="请选择"
-        allow-clear
-        tree-default-expand-all
-        :tree-data="treeData"
-        :fieldNames="{ value: 'id' }"
-      >
-        <template #title="{ value: val, title }">
-          <b v-if="val === 'parent 1-1'" style="color: #08c">sss</b>
-          <template v-else>{{ title }}</template>
-        </template>
-      </a-tree-select>
-    </a-form-item>
-    <a-form-item label="Activity name" v-bind="validateInfos.name">
-      <a-input
-        v-model:value="modelRef.name"
-        @blur="validate('name', { trigger: 'blur' }).catch(() => {})"
-      />
-    </a-form-item>
-    <a-form-item label="Activity zone" v-bind="validateInfos.region">
-      <a-select v-model:value="modelRef.region" placeholder="please select your zone">
-        <a-select-option value="shanghai">Zone one</a-select-option>
-        <a-select-option value="beijing">Zone two</a-select-option>
-      </a-select>
-    </a-form-item>
-    <a-form-item label="文章类别" v-bind="validateInfos.categoryId">
-      <a-radio-group v-model:value="value1" button-style="solid">
-        <a-radio-button value="a">Hangzhou</a-radio-button>
-        <a-radio-button value="b">Shanghai</a-radio-button>
-        <a-radio-button value="c">Beijing</a-radio-button>
-        <a-radio-button value="d">Chengdu</a-radio-button>
-      </a-radio-group>
-    </a-form-item>
-    <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-      <a-button type="primary" @click.prevent="onSubmit">Create</a-button>
-    </a-form-item>
-  </a-form>
+  <div class="create-post-info">
+    <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form-item label="文章分类" v-bind="validateInfos.categoryId">
+        <a-tree-select
+          v-model:value="modelRef.categoryId"
+          show-search
+          style="width: 100%"
+          :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+          placeholder="请选择"
+          allow-clear
+          tree-default-expand-all
+          :tree-data="treeData"
+          :fieldNames="{ value: 'id' }"
+        >
+          <template #title="{ value: val, title }">
+            <b v-if="val === 'parent 1-1'" style="color: #08c">sss</b>
+            <template v-else>{{ title }}</template>
+          </template>
+        </a-tree-select>
+      </a-form-item>
+      <a-form-item label="封面" v-bind="validateInfos.thumbnail">
+        <UploadFile @uploadSuccess="uploadSuccess"/>
+      </a-form-item>
+      <a-form-item label="摘要" v-bind="validateInfos.summary">
+        <a-textarea
+          v-model:value="modelRef.summary"
+          :rows="4"
+        />
+      </a-form-item>
+      <a-form-item label="文章类型" v-bind="validateInfos.createType">
+        <a-radio-group v-model:value="modelRef.createType" button-style="solid">
+          <a-radio-button v-for="item in createTypes" :value="item.code">{{item.desc}}</a-radio-button>
+        </a-radio-group>
+      </a-form-item>
+      <a-form-item label="原文连接" v-bind="validateInfos.originalLink" v-if="modelRef.createType!=='0'">
+        <a-input v-model:value="modelRef.originalLink"/>
+      </a-form-item>
+      <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
+        <a-button type="primary" @click.prevent="onSubmit">Create</a-button>
+      </a-form-item>
+    </a-form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -49,9 +48,9 @@
   import {Form} from 'ant-design-vue';
   import {useStore} from 'vuex';
   import type {TreeSelectProps} from 'ant-design-vue';
+  import UploadFile from '@/components/common/utils/upload/UploadFile.vue'
 
   const {dispatch} = useStore();
-
 
   const treeData = ref<TreeSelectProps['treeData']>([]);
   const useForm = Form.useForm;
@@ -59,10 +58,13 @@
   const labelCol = {span: 6};
   const wrapperCol = {span: 16};
 
+  const createTypes = ref([]);
   const modelRef = reactive({
     categoryId: '',
-    name: '',
-    region: undefined,
+    summary: '',
+    createType: '0',
+    originalLink: '',
+    thumbnail: []
   });
   const rulesRef = reactive({
     categoryId: [
@@ -71,22 +73,22 @@
         message: '请选择文章分类',
       },
     ],
-    name: [
+    summary: [
       {
         required: true,
-        message: 'Please input Activity name',
-      },
-      {
-        min: 3,
-        max: 5,
-        message: 'Length should be 3 to 5',
-        trigger: 'blur',
+        message: '请输入文章摘要',
       },
     ],
-    region: [
+    createType: [
       {
         required: true,
-        message: 'Please select region',
+        message: '请选择文章类型',
+      },
+    ],
+    originalLink: [
+      {
+        required: true,
+        message: '请输入原文链接',
       },
     ],
   });
@@ -107,7 +109,18 @@
     })
   }
 
+  function getCreateTypes() {
+    dispatch("getCreateTypes").then(res => {
+      createTypes.value = res.data;
+    })
+  }
+
+  function uploadSuccess(fileList) {
+    console.log(fileList);
+  }
+
   getCategoryList();
+  getCreateTypes();
 
   function transferData(data) {
     data.forEach(item => {
@@ -126,6 +139,9 @@
   }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+  .create-post-info {
 
+
+  }
 </style>

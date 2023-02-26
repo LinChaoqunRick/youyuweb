@@ -113,7 +113,7 @@
   const onChange = (v: string) => (text.value = v);
 
   const onUploadImg = async (files: File[], callback: Function) => {
-    const res = await uploadToOss(files, '/post/images')
+    const res = await uploadToOss(files)
     callback(res.map((item) => item.url));
   };
 

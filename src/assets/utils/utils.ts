@@ -142,7 +142,7 @@ interface policy {
   success_action_status: string
 }
 
-export async function uploadToOss(files: File[], base: string = '/post/images') {
+export async function uploadToOss(files: File[]) {
   let data: object = {}
 
   await store.dispatch("getOssPolicy").then(res => {
@@ -155,7 +155,7 @@ export async function uploadToOss(files: File[], base: string = '/post/images') 
       const form = new FormData();
       form.append('policy', data.policy);
       form.append('signature', data.signature);
-      form.append('ossaccessKeyId', data.accessKeyId);
+      form.append('ossaccessKeyId', data.OSSAccessKeyId);
       form.append('key', data.dir + file_name);
       form.append('dir', data.dir);
       form.append('host', data.host);
