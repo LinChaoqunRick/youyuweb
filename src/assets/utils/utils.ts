@@ -1,4 +1,7 @@
 import {nextTick} from 'vue';
+import dayjs from "dayjs";
+import axios from "axios";
+import store from "@/store/index";
 
 export function getElementLeft(element: HTMLElement) {
   let actualLeft: number = element.offsetLeft;
@@ -118,4 +121,56 @@ export async function keepScrollTop() {
   const originScrollTop = document.documentElement.scrollTop;
   await nextTick();
   document.documentElement.scrollTop = originScrollTop;
+}
+
+/**
+ * 创建文件存储路径
+ * @param rootDir bucket的根目录
+ * @param fileName 文件名
+ */
+export function createFileName(fileName: string) {
+  return dayjs(new Date()).format('YYYYMMDDHHmmss') + '_' + fileName;
+}
+
+interface policy {
+  policy: string
+  signature: string
+  accessKeyId: string
+  key: string
+  dir: string
+  host: string
+  success_action_status: string
+}
+
+export async function uploadToOss(files: File[], base: string = '/post/images') {
+  let data: object = {}
+
+  await store.dispatch("getOssPolicy").then(res => {
+    data = res.data;
+  })
+
+  return await Promise.all(
+    files.map((file) => {
+      const file_name = createFileName(file.name);
+      const form = new FormData();
+      form.append('policy', data.policy);
+      form.append('signature', data.signature);
+      form.append('ossaccessKeyId', data.accessKeyId);
+      form.append('key', data.dir + file_name);
+      form.append('dir', data.dir);
+      form.append('host', data.host);
+      form.append('success_action_status', '200');
+      // form.append('callback', '');
+      form.append('file', file);
+
+      return axios
+        .post(data.host, form, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        .then((res) => ({url: `${data.host}/${data.dir}${file_name}`}))
+        .catch((error) => error);
+    })
+  );
 }

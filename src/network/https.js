@@ -3,18 +3,26 @@ import {message} from 'ant-design-vue';
 import Cookies from "js-cookie";
 import store from "../store";
 
-if (process.env.NODE_ENV === 'development') {
-  // axios.defaults.baseURL = '/api'
-  axios.defaults.timeout = 50000
-} else {
-  // 生产环境下
-  // axios.defaults.baseURL = '/api'
-  axios.defaults.timeout = 50000
-}
-// 配置axios默认Content-type
-axios.defaults.headers["Content-Type"] = "application/x-www-form-urlencoded";
+// if (process.env.NODE_ENV === 'development') {
+//   // axios.defaults.baseURL = '/api'
+//   axios.defaults.timeout = 50000
+// } else {
+//   // 生产环境下
+//   // axios.defaults.baseURL = '/api'
+//   axios.defaults.timeout = 50000
+// }
+// // 配置axios默认Content-type
+// axios.defaults.headers["Content-Type"] = "application/x-www-form-urlencoded";
 
-axios.interceptors.request.use((config) => {
+// 创建axios的对象
+const instance = axios.create({
+  baseURL: "",  //配置固定域名
+  timeout: 5000,
+  headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+})
+
+
+instance.interceptors.request.use((config) => {
   const token = Cookies.get("token") || '';
   // config.headers.Authorization = token //  如果要求携带在请求头中
   config.headers.token = token;   //如果要求携带在请求头中
@@ -23,7 +31,7 @@ axios.interceptors.request.use((config) => {
   console.log(err);
 })
 
-axios.interceptors.response.use((response) => {
+instance.interceptors.response.use((response) => {
   const res = response.data;
   if (res.code === 200) {
     return res;
@@ -50,7 +58,7 @@ axios.interceptors.response.use((response) => {
  */
 function get(url, params = {}) {
   return new Promise((resolve, reject) => {
-    axios.get(url, {
+    instance.get(url, {
       params: params
     }).then(res => {
       resolve(res)
@@ -67,7 +75,7 @@ function get(url, params = {}) {
  */
 function post(url, params = {}, config = {}) {
   return new Promise((resolve, reject) => {
-    axios.post(url, params, config).then(res => {
+    instance.post(url, params, config).then(res => {
       resolve(res)
     }).catch(err => {
       reject(err)

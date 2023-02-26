@@ -16,7 +16,7 @@ const route = [
           title: "写文章",
           code: "CREATE_POST"
         },
-        component: () => import("@/views/create/child/Post.vue"),
+        component: () => import("@/views/create/child/CreatePost.vue"),
       },
       {
         path: 'moment',

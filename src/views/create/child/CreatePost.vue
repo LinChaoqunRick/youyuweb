@@ -12,13 +12,11 @@
       <template #closeIcon>
         <i-close theme="outline" size="20" fill="#909090"/>
       </template>
-      <p>Some contents...</p>
-      <p>Some contents...</p>
-      <p>Some contents...</p>
+      <CreatePostInfo/>
       <template #footer>
         <div class="drawer-footer">
-          <a-button style="margin-right: 8px" @click="onClose">Cancel</a-button>
-          <a-button type="primary" @click="onClose">Submit</a-button>
+          <a-button style="margin-right: 8px" @click="onClose">取消</a-button>
+          <a-button type="primary" @click="onClose">发布</a-button>
         </div>
       </template>
     </a-drawer>
@@ -29,6 +27,7 @@
   import {ref} from 'vue';
   import {onBeforeRouteLeave} from 'vue-router';
   import MdEditorCom from "@/components/content/mdEditor/MdEditorCom.vue";
+  import CreatePostInfo from "../common/CreatePostInfo.vue";
 
   const title = ref<string>('');
   const visible = ref<boolean>(false);
@@ -83,6 +82,7 @@
 
     .write-post-editor {
       flex: 1;
+      overflow: hidden;
     }
   }
 </style>
@@ -92,6 +92,14 @@
 
     .ant-drawer-header {
       padding: 16px 10px;
+
+      .ant-drawer-close {
+        margin-right: 6px;
+      }
+
+      .ant-drawer-title {
+        font-weight: bold;
+      }
     }
 
     .drawer-footer {

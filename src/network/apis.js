@@ -30,6 +30,11 @@ export const HELLO_TEST1 = ApiBase + "/hello/test1"; //
 // 分类
 export const CATEGORY_LIST = ApiBase + "/category/list"; //
 
+// oss
+export const OSS_POLICY = ApiBase + "/oss/policy"; //
+export const OSS_STS = ApiBase + "/oss/sts"; //
+export const OSS_VOID = ApiBase + "/oss/void"; //
+
 const Api = {
   // 登录
   getLogin: ApiBase + "/login/getLogin",

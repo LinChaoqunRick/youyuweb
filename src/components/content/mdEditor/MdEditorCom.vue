@@ -1,10 +1,13 @@
 <template>
   <div id="editor">
-    <md-editor v-model="text" v-bind="editorConfig" ref="editorRef">
+    <md-editor v-model="text"
+               v-bind="editorConfig"
+               @on-upload-img="onUploadImg"
+               ref="editorRef">
       <template #defToolbars>
         <mark-extension :on-insert="insert"/>
         <emoji-extension :on-insert="insert"/>
-        <read-extension :md-text="state.text"/>
+        <read-extension :md-text="extendState.text"/>
       </template>
       <template #defFooters>
         <time-now :editor-id="editorId"/>
@@ -17,16 +20,16 @@
   import {ref, reactive, toRef, computed} from 'vue';
   import {useStore} from "vuex";
   import MdEditor from 'md-editor-v3';
-  import type { ExposeParam, InsertContentGenerator } from 'md-editor-v3';
-
+  import type {ExposeParam, InsertContentGenerator} from 'md-editor-v3';
 
   import EmojiExtension from '@/components/content/mdEditor/child/EmojiExtension/index.vue';
   import MarkExtension from '@/components/content/mdEditor/child/MarkExtension/index.vue';
   import ReadExtension from '@/components/content/mdEditor/child/ReadExtension/index.vue';
   import TimeNow from '@/components/content/mdEditor/child/TimeNow/index.vue';
   import {extend} from "dayjs";
+  import {uploadToOss} from "@/assets/utils/utils";
 
-  const store = useStore();
+  const {state, dispatch} = useStore();
 
   const prop = defineProps({
     editorId: {
@@ -85,13 +88,13 @@
 
   const editorRef = ref<ExposeParam>();
   const text = ref<string>("");
-  const state = reactive({
+  const extendState = reactive({
     text: 'zh-CN',
     modalVisible: false,
     modalFullscreen: false
   });
   const editorProps = reactive({
-    theme: toRef(store.state.theme, "theme"),
+    theme: toRef(state.theme, "theme"),
     editorId: prop.editorId,
     toolbars: prop.toolbars,
     footers: prop.footers
@@ -108,6 +111,11 @@
   };
 
   const onChange = (v: string) => (text.value = v);
+
+  const onUploadImg = async (files: File[], callback: Function) => {
+    const res = await uploadToOss(files, '/post/images')
+    callback(res.map((item) => item.url));
+  };
 
   defineExpose({
     text,
