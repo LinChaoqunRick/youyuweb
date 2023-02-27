@@ -19,13 +19,38 @@
           </template>
         </a-tree-select>
       </a-form-item>
+      <a-form-item label="标签" v-bind="validateInfos.tags">
+        <template v-for="(tag, index) in modelRef.tags" :key="tag">
+          <a-tag closable color="#1890ff" @close="handleClose(tag)">
+            {{ tag }}
+          </a-tag>
+        </template>
+        <a-input
+          v-if="state.inputVisible"
+          ref="inputRef"
+          v-model:value="state.inputValue"
+          :maxlength="10"
+          type="text"
+          :style="{ width: '78px' }"
+          @blur="handleInputConfirm"
+          @keyup.enter="handleInputConfirm"
+        />
+        <a-tag v-if="!state.inputVisible && modelRef.tags.length<3"
+               @click="showInput"
+               class="new-tag">
+          <i-plus theme="outline" size="14" fill="#000"/>
+          新建
+        </a-tag>
+      </a-form-item>
       <a-form-item label="封面" v-bind="validateInfos.thumbnail">
-        <UploadFile @uploadSuccess="uploadSuccess"/>
+        <UploadFile multiple @uploadSuccess="uploadSuccess"/>
       </a-form-item>
       <a-form-item label="摘要" v-bind="validateInfos.summary">
         <a-textarea
           v-model:value="modelRef.summary"
           :rows="4"
+          show-count
+          :maxlength="100"
         />
       </a-form-item>
       <a-form-item label="文章类型" v-bind="validateInfos.createType">
@@ -36,19 +61,16 @@
       <a-form-item label="原文连接" v-bind="validateInfos.originalLink" v-if="modelRef.createType!=='0'">
         <a-input v-model:value="modelRef.originalLink"/>
       </a-form-item>
-      <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-        <a-button type="primary" @click.prevent="onSubmit">Create</a-button>
-      </a-form-item>
     </a-form>
   </div>
 </template>
 
 <script setup lang="ts">
-  import {ref, reactive, toRaw} from 'vue';
+  import {nextTick, reactive, ref, toRaw} from 'vue';
+  import type {TreeSelectProps} from 'ant-design-vue';
   import {Form} from 'ant-design-vue';
   import {useStore} from 'vuex';
-  import type {TreeSelectProps} from 'ant-design-vue';
-  import UploadFile from '@/components/common/utils/upload/UploadFile.vue'
+  import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
 
   const {dispatch} = useStore();
 
@@ -61,6 +83,7 @@
   const createTypes = ref([]);
   const modelRef = reactive({
     categoryId: '',
+    tags: [],
     summary: '',
     createType: '0',
     originalLink: '',
@@ -93,6 +116,14 @@
     ],
   });
   const {validate, validateInfos} = useForm(modelRef, rulesRef);
+
+  const inputRef = ref();
+  const state = reactive({
+    inputVisible: false,
+    inputValue: '',
+  });
+
+
   const onSubmit = () => {
     validate()
       .then(() => {
@@ -137,11 +168,60 @@
     })
     return data.filter(item => item.pid === -1)
   }
+
+  const showInput = () => {
+    state.inputVisible = true;
+    nextTick(() => {
+      inputRef.value.focus();
+    });
+  };
+
+  const handleClose = (removedTag: string) => {
+    console.log(removedTag);
+    console.log(modelRef.tags);
+    modelRef.tags = modelRef.tags.filter(tag => tag !== removedTag);
+  };
+
+  const handleInputConfirm = () => {
+    const inputValue = state.inputValue;
+    if (inputValue && modelRef.tags.indexOf(inputValue) === -1) {
+      modelRef.tags = [...modelRef.tags, inputValue];
+    }
+    Object.assign(state, {
+      inputVisible: false,
+      inputValue: '',
+    });
+  };
+
+  defineExpose({
+    onSubmit
+  })
 </script>
 
 <style lang="scss" scoped>
   .create-post-info {
+    ::v-deep(.ant-form) {
+      .ant-form-item-control-input-content {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+      }
 
+      .ant-tag {
+        padding: 1px 7px;
+        /*margin-bottom: 6px;*/
+      }
 
+      .ant-input-textarea {
+        width: 100%;
+      }
+
+      .new-tag {
+        background: #fff;
+        border-style: dashed;
+        height: 24px;
+        cursor: pointer;
+      }
+    }
   }
 </style>

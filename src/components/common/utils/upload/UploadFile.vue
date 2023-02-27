@@ -8,20 +8,25 @@
       :show-upload-list="false"
       :action="data.host"
       :before-upload="beforeUpload"
+      :disabled="files.length>2"
+      :multiple="multiple"
       @change="handleChange"
     >
-      <img v-if="imageUrl" :src="imageUrl" alt="avatar"/>
+      <div v-if="files.length" class="file-list">
+        <img v-for="(file, index) in files" :src="file.url" alt="avatar"
+             :style="{left: 40 * index + 'px',top: 8 * index + 'px'}"/>
+      </div>
       <div v-else>
         <i-upload-one theme="outline" size="24" fill="#000" v-if="!loading"/>
         <div class="ant-upload-text">
           点击上传
         </div>
       </div>
-<!--      <div v-if="loading">-->
-<!--        <div class="percentage">-->
-<!--          <div class="progress" :style="{'width': `${percent}%`}"></div>-->
-<!--        </div>-->
-<!--      </div>-->
+      <div v-if="loading">
+        <div class="percentage">
+          <div class="progress" :style="{'width': `${percent}%`}"></div>
+        </div>
+      </div>
     </a-upload>
   </div>
 </template>
@@ -31,22 +36,26 @@
   import {message} from "ant-design-vue";
   import type {UploadChangeParam, UploadProps} from 'ant-design-vue';
   import {useStore} from 'vuex';
+  import {createFileName} from "@/assets/utils/utils";
 
   const {dispatch} = useStore();
-
+  const props = defineProps({
+    max: {
+      type: Number,
+      default: 3
+    },
+    multiple: {
+      type: Boolean,
+      default: false
+    }
+  })
   const fileList = ref([]);
+  const files = ref([]);
   const loading = ref<boolean>(false);
   const data = ref<object>({});
-  const imageUrl = ref<string>('');
   const percent = ref<number>(0);
 
   const emit = defineEmits('uploadSuccess');
-
-  function getBase64(img: Blob, callback: (base64Url: string) => void) {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result as string));
-    reader.readAsDataURL(img);
-  }
 
   const handleChange = (info: UploadChangeParam) => {
     console.log(info);
@@ -56,14 +65,12 @@
       return;
     }
     if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      // getBase64(info.file.originFileObj, (base64Url: string) => {
-      //   imageUrl.value = base64Url;
-      //   loading.value = false;
-      // });
-      imageUrl.value = `${data.value.host}/${data.value.dir}${info.file.name}`;
+      const newFile = fileList.value[fileList.value.length - 1];
+      newFile.url = `${data.value.host}/${data.value.dir}${createFileName(info.file.name)}`;
       loading.value = false;
       emit('uploadSuccess', fileList.value);
+      files.value.push(newFile);
+      console.log(files.value);
     }
     if (info.file.status === 'error') {
       loading.value = false;
@@ -72,6 +79,10 @@
   };
 
   const beforeUpload = async (file: UploadProps['fileList'][number]) => {
+    if (files.value.length >= 3) {
+      message.error("最多支持上传3张封面");
+      return false;
+    }
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
       message.error('只能上传JPG或者PNG文件');
@@ -82,8 +93,9 @@
     }
 
     await dispatch("getOssPolicy").then(res => {
-      res.data.key = res.data.dir + file.name
-      res.data.success_action_status = 200
+      res.data.key = res.data.dir + createFileName(file.name);
+      res.data.success_action_status = 200;
+      console.log(res.data);
       data.value = res.data;
       return isJpgOrPng && isLt2M;
     }).catch(() => {
@@ -114,9 +126,21 @@
       width: 200px;
       height: 120px;
 
-      img {
+      .file-list {
         height: 100%;
         width: 100%;
+        position: relative;
+
+        img {
+          height: 100%;
+          width: 100%;
+          position: absolute;
+          transition: .3s;
+
+          &:hover {
+            transform: scale(1.1);
+          }
+        }
       }
     }
   }

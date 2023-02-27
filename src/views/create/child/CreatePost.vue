@@ -12,11 +12,11 @@
       <template #closeIcon>
         <i-close theme="outline" size="20" fill="#909090"/>
       </template>
-      <CreatePostInfo/>
+      <CreatePostInfo ref="postInfo"/>
       <template #footer>
         <div class="drawer-footer">
           <a-button style="margin-right: 8px" @click="onClose">取消</a-button>
-          <a-button type="primary" @click="onClose">发布</a-button>
+          <a-button type="primary" @click="onSubmit">发布</a-button>
         </div>
       </template>
     </a-drawer>
@@ -31,6 +31,7 @@
 
   const title = ref<string>('');
   const visible = ref<boolean>(false);
+  const postInfo = ref(null);
 
   onBeforeRouteLeave((to, from) => {
     const answer = window.confirm(
@@ -40,9 +41,13 @@
     if (!answer) return false
   })
 
+  function onSubmit() {
+    postInfo.value.onSubmit();
+  }
+
   function onClose() {
     visible.value = false;
-  };
+  }
 </script>
 
 <style lang="scss" scoped>
