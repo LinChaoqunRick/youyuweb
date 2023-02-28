@@ -8,6 +8,7 @@ export const SET_POST_LIKE = ApiBase + "/post/setPostLike";
 export const IS_POST_LIKE = ApiBase + "/post/isPostLike";
 export const CANCEL_POST_LIKE = ApiBase + "/post/cancelPostLike";
 export const GET_CREATE_TYPES = ApiBase + "/post/getCreateTypes"; // 获取文章类型
+export const CREATE_POST = ApiBase + "/post/create"; // 发布文章
 
 
 // 评论

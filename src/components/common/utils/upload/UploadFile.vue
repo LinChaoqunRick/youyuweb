@@ -54,11 +54,11 @@
   const loading = ref<boolean>(false);
   const data = ref<object>({});
   const percent = ref<number>(0);
+  const filename = ref<string>('');
 
   const emit = defineEmits('uploadSuccess');
 
   const handleChange = (info: UploadChangeParam) => {
-    console.log(info);
     if (info.file.status === 'uploading') {
       percent.value = info?.event?.percent ?? 0;
       loading.value = true;
@@ -66,11 +66,10 @@
     }
     if (info.file.status === 'done') {
       const newFile = fileList.value[fileList.value.length - 1];
-      newFile.url = `${data.value.host}/${data.value.dir}${createFileName(info.file.name)}`;
+      newFile.url = `${data.value.host}/${data.value.dir}${filename.value}`;
       loading.value = false;
       emit('uploadSuccess', fileList.value);
       files.value.push(newFile);
-      console.log(files.value);
     }
     if (info.file.status === 'error') {
       loading.value = false;
@@ -93,7 +92,8 @@
     }
 
     await dispatch("getOssPolicy").then(res => {
-      res.data.key = res.data.dir + createFileName(file.name);
+      filename.value = createFileName(file.name);
+      res.data.key = res.data.dir + filename.value;
       res.data.success_action_status = 200;
       console.log(res.data);
       data.value = res.data;

@@ -13,6 +13,9 @@ import {
   SET_POST_LIKE,
   CANCEL_POST_LIKE,
   GET_CREATE_TYPES,
+  CREATE_POST,
+
+
   OSS_POLICY,
   OSS_STS,
 } from "@/network/apis";
@@ -56,6 +59,11 @@ export default {
     getCreateTypes(state, params) {
       return http.get(GET_CREATE_TYPES, params);
     },
+    createPost(state, params) {
+      return http.get(CREATE_POST, params);
+    },
+
+
     getOssPolicy(state, params) {
       return http.get(OSS_POLICY, params);
     },

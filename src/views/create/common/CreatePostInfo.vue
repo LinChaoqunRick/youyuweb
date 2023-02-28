@@ -65,6 +65,12 @@
   </div>
 </template>
 
+<script lang="ts">
+  export default {
+    name: 'CreatePostInfo'
+  }
+</script>
+
 <script setup lang="ts">
   import {nextTick, reactive, ref, toRaw} from 'vue';
   import type {TreeSelectProps} from 'ant-design-vue';
@@ -87,7 +93,7 @@
     summary: '',
     createType: '0',
     originalLink: '',
-    thumbnail: []
+    thumbnail: ''
   });
   const rulesRef = reactive({
     categoryId: [
@@ -124,14 +130,12 @@
   });
 
 
-  const onSubmit = () => {
-    validate()
-      .then(() => {
-        console.log(toRaw(modelRef));
-      })
-      .catch(err => {
-        console.log('error', err);
-      });
+  const onSubmit = async () => {
+    return await validate().then(res => {
+      return toRaw(modelRef);
+    }).catch(err => {
+      return false;
+    });
   };
 
   function getCategoryList() {
@@ -147,7 +151,7 @@
   }
 
   function uploadSuccess(fileList) {
-    console.log(fileList);
+    modelRef.thumbnail = fileList.map(file => file.url).join(",")
   }
 
   getCategoryList();
@@ -177,8 +181,6 @@
   };
 
   const handleClose = (removedTag: string) => {
-    console.log(removedTag);
-    console.log(modelRef.tags);
     modelRef.tags = modelRef.tags.filter(tag => tag !== removedTag);
   };
 
@@ -194,7 +196,8 @@
   };
 
   defineExpose({
-    onSubmit
+    onSubmit,
+    modelRef: toRaw(modelRef)
   })
 </script>
 

@@ -132,6 +132,14 @@ export function createFileName(fileName: string) {
   return dayjs(new Date()).format('YYYYMMDDHHmmss') + '_' + fileName;
 }
 
+/**
+ * 创建文件前缀
+ * @param fileName
+ */
+// export function createFileName(fileName: string) {
+//   return dayjs(new Date()).format('YYYYMMDDHHmmss') + '_';
+// }
+
 interface policy {
   policy: string
   signature: string

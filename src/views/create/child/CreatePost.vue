@@ -6,7 +6,7 @@
       <a-button type="primary">草稿箱</a-button>
       <a-button type="primary" @click="visible = true">发布</a-button>
     </div>
-    <MdEditorCom class="write-post-editor"/>
+    <MdEditorCom class="write-post-editor" ref="editor"/>
 
     <a-drawer title="发布文章" width="500" :visible="visible" @close="onClose" class="create-post-drawer">
       <template #closeIcon>
@@ -24,14 +24,19 @@
 </template>
 
 <script lang="ts" setup>
-  import {ref} from 'vue';
+  import {computed, ref} from 'vue';
   import {onBeforeRouteLeave} from 'vue-router';
+  import {useStore} from 'vuex';
+  import {notification} from 'ant-design-vue';
   import MdEditorCom from "@/components/content/mdEditor/MdEditorCom.vue";
   import CreatePostInfo from "../common/CreatePostInfo.vue";
 
+  const {getters, dispatch} = useStore();
   const title = ref<string>('');
   const visible = ref<boolean>(false);
   const postInfo = ref(null);
+  const editor = ref(null);
+  const userInfo = computed(() => getters['userInfo']);
 
   onBeforeRouteLeave((to, from) => {
     const answer = window.confirm(
@@ -41,8 +46,25 @@
     if (!answer) return false
   })
 
-  function onSubmit() {
-    postInfo.value.onSubmit();
+  async function onSubmit() {
+    const form = await postInfo.value.onSubmit();
+    if (form) {
+      const post = Object.assign({}, form, {title: title.value, content: editor.value.text, /*userId: userInfo.value.id*/})
+      post.tags = post.tags.join(",");
+      if (!post.title || !post.content) {
+        notification.error({
+          message: '发布失败',
+          description: '文章标题与内容不能为空'
+        })
+        return;
+      }
+      dispatch("createPost", post).then(res => {
+        notification.success({
+          message: '发布成功',
+          description: '你的文章已经成功发布'
+        })
+      })
+    }
   }
 
   function onClose() {
