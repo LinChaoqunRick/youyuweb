@@ -51,13 +51,13 @@
     if (form) {
       const post = Object.assign({}, form, {title: title.value, content: editor.value.text, /*userId: userInfo.value.id*/})
       post.tags = post.tags.join(",");
-      if (!post.title || !post.content) {
-        notification.error({
-          message: '发布失败',
-          description: '文章标题与内容不能为空'
-        })
-        return;
-      }
+      // if (!post.title || !post.content) {
+      //   notification.error({
+      //     message: '发布失败',
+      //     description: '文章标题与内容不能为空'
+      //   })
+      //   return;
+      // }
       dispatch("createPost", post).then(res => {
         notification.success({
           message: '发布成功',

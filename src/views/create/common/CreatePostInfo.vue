@@ -1,7 +1,7 @@
 <template>
   <div class="create-post-info">
-    <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
-      <a-form-item label="文章分类" v-bind="validateInfos.categoryId">
+    <a-form :model="modelRef" :rules="rulesRef" :label-col="labelCol" :wrapper-col="wrapperCol" ref="formValidate">
+      <a-form-item label="文章分类" name="categoryId">
         <a-tree-select
           v-model:value="modelRef.categoryId"
           show-search
@@ -19,7 +19,7 @@
           </template>
         </a-tree-select>
       </a-form-item>
-      <a-form-item label="标签" v-bind="validateInfos.tags">
+      <a-form-item label="标签" name="tags">
         <template v-for="(tag, index) in modelRef.tags" :key="tag">
           <a-tag closable color="#1890ff" @close="handleClose(tag)">
             {{ tag }}
@@ -42,10 +42,10 @@
           新建
         </a-tag>
       </a-form-item>
-      <a-form-item label="封面" v-bind="validateInfos.thumbnail">
+      <a-form-item label="封面" name="thumbnail">
         <UploadFile multiple @uploadSuccess="uploadSuccess"/>
       </a-form-item>
-      <a-form-item label="摘要" v-bind="validateInfos.summary">
+      <a-form-item label="摘要" name="summary">
         <a-textarea
           v-model:value="modelRef.summary"
           :rows="4"
@@ -53,12 +53,12 @@
           :maxlength="100"
         />
       </a-form-item>
-      <a-form-item label="文章类型" v-bind="validateInfos.createType">
+      <a-form-item label="文章类型" name="createType">
         <a-radio-group v-model:value="modelRef.createType" button-style="solid">
           <a-radio-button v-for="item in createTypes" :value="item.code">{{item.desc}}</a-radio-button>
         </a-radio-group>
       </a-form-item>
-      <a-form-item label="原文连接" v-bind="validateInfos.originalLink" v-if="modelRef.createType!=='0'">
+      <a-form-item label="原文连接" name="originalLink" v-if="modelRef.createType!=='0'">
         <a-input v-model:value="modelRef.originalLink"/>
       </a-form-item>
     </a-form>
@@ -121,8 +121,9 @@
       },
     ],
   });
-  const {validate, validateInfos} = useForm(modelRef, rulesRef);
+  // const {validate, validateInfos} = useForm(modelRef, rulesRef);
 
+  const formValidate = ref(null);
   const inputRef = ref();
   const state = reactive({
     inputVisible: false,
@@ -131,11 +132,14 @@
 
 
   const onSubmit = async () => {
-    return await validate().then(res => {
-      return toRaw(modelRef);
-    }).catch(err => {
-      return false;
-    });
+    formValidate.value.validate().then(res => {
+      console.log(res);
+    })
+    // return await validate().then(res => {
+    //   return toRaw(modelRef);
+    // }).catch(err => {
+    //   return false;
+    // });
   };
 
   function getCategoryList() {

@@ -42,6 +42,10 @@ instance.interceptors.response.use((response) => {
     setTimeout(() => {
       location.reload();
     }, 1500)
+    return Promise.reject(res)
+  } else if (res.code === 508){ // 后端参数校验错误
+    message.error(res.message);
+    return Promise.reject(res)
   } else {
     // message.error('系统异常,请联系管理员');
     return Promise.reject(res)
