@@ -16,7 +16,17 @@ const route = [
           title: "写文章",
           code: "CREATE_POST"
         },
-        component: () => import("@/views/create/child/CreatePost.vue"),
+        component: () => import("@/views/create/post/PostCreate.vue"),
+      },
+      {
+        path: 'edit',
+        name: 'editPost',
+        meta: {
+          title: "写文章",
+          code: "CREATE_POST", // 如果有写文章的权限，那么一定有编辑文章的权限，沿用CREATE_POST,
+          hide: true
+        },
+        component: () => import("@/views/create/post/PostCreate.vue"),
       },
       {
         path: 'moment',

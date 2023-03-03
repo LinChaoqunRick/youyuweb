@@ -1,9 +1,9 @@
 <template>
   <div class="create-post-info">
-    <a-form :model="modelRef" :rules="rulesRef" :label-col="labelCol" :wrapper-col="wrapperCol" ref="formValidate">
+    <a-form :model="formValidate" :rules="rulesRef" :label-col="labelCol" :wrapper-col="wrapperCol" ref="formRef">
       <a-form-item label="文章分类" name="categoryId">
         <a-tree-select
-          v-model:value="modelRef.categoryId"
+          v-model:value="formValidate.categoryId"
           show-search
           style="width: 100%"
           :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
@@ -20,7 +20,7 @@
         </a-tree-select>
       </a-form-item>
       <a-form-item label="标签" name="tags">
-        <template v-for="(tag, index) in modelRef.tags" :key="tag">
+        <template v-for="(tag, index) in formValidate.tags" :key="tag">
           <a-tag closable color="#1890ff" @close="handleClose(tag)">
             {{ tag }}
           </a-tag>
@@ -35,7 +35,7 @@
           @blur="handleInputConfirm"
           @keyup.enter="handleInputConfirm"
         />
-        <a-tag v-if="!state.inputVisible && modelRef.tags.length<3"
+        <a-tag v-if="!state.inputVisible && formValidate.tags.length<3"
                @click="showInput"
                class="new-tag">
           <i-plus theme="outline" size="14" fill="#000"/>
@@ -47,19 +47,19 @@
       </a-form-item>
       <a-form-item label="摘要" name="summary">
         <a-textarea
-          v-model:value="modelRef.summary"
+          v-model:value="formValidate.summary"
           :rows="4"
           show-count
           :maxlength="100"
         />
       </a-form-item>
       <a-form-item label="文章类型" name="createType">
-        <a-radio-group v-model:value="modelRef.createType" button-style="solid">
+        <a-radio-group v-model:value="formValidate.createType" button-style="solid">
           <a-radio-button v-for="item in createTypes" :value="item.code">{{item.desc}}</a-radio-button>
         </a-radio-group>
       </a-form-item>
-      <a-form-item label="原文连接" name="originalLink" v-if="modelRef.createType!=='0'">
-        <a-input v-model:value="modelRef.originalLink"/>
+      <a-form-item label="原文连接" name="originalLink" v-if="formValidate.createType!=='0'">
+        <a-input v-model:value="formValidate.originalLink"/>
       </a-form-item>
     </a-form>
   </div>
@@ -67,34 +67,33 @@
 
 <script lang="ts">
   export default {
-    name: 'CreatePostInfo'
+    name: 'PostDrawer'
   }
 </script>
 
 <script setup lang="ts">
-  import {nextTick, reactive, ref, toRaw} from 'vue';
+  import {nextTick, type PropType, reactive, ref, toRaw} from 'vue';
   import type {TreeSelectProps} from 'ant-design-vue';
   import {Form} from 'ant-design-vue';
   import {useStore} from 'vuex';
   import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
+  import type {postData} from "@/types/create";
 
   const {dispatch} = useStore();
 
+  const props = defineProps({
+    formValidate: {
+      type: Object as PropType<postData>,
+    }
+  })
+
+  const emit = defineEmits(['handleSubmit'])
+
   const treeData = ref<TreeSelectProps['treeData']>([]);
-  const useForm = Form.useForm;
 
   const labelCol = {span: 6};
   const wrapperCol = {span: 16};
-
   const createTypes = ref([]);
-  const modelRef = reactive({
-    categoryId: '',
-    tags: [],
-    summary: '',
-    createType: '0',
-    originalLink: '',
-    thumbnail: ''
-  });
   const rulesRef = reactive({
     categoryId: [
       {
@@ -121,9 +120,7 @@
       },
     ],
   });
-  // const {validate, validateInfos} = useForm(modelRef, rulesRef);
-
-  const formValidate = ref(null);
+  const formRef = ref();
   const inputRef = ref();
   const state = reactive({
     inputVisible: false,
@@ -132,14 +129,9 @@
 
 
   const onSubmit = async () => {
-    formValidate.value.validate().then(res => {
-      console.log(res);
+    formRef.value.validate().then(res => {
+      emit("handleSubmit");
     })
-    // return await validate().then(res => {
-    //   return toRaw(modelRef);
-    // }).catch(err => {
-    //   return false;
-    // });
   };
 
   function getCategoryList() {
@@ -155,7 +147,7 @@
   }
 
   function uploadSuccess(fileList) {
-    modelRef.thumbnail = fileList.map(file => file.url).join(",")
+    props.formValidate.thumbnail = fileList.map(file => file.url)
   }
 
   getCategoryList();
@@ -185,13 +177,13 @@
   };
 
   const handleClose = (removedTag: string) => {
-    modelRef.tags = modelRef.tags.filter(tag => tag !== removedTag);
+    props.formValidate.tags = props.formValidate.tags.filter(tag => tag !== removedTag);
   };
 
   const handleInputConfirm = () => {
     const inputValue = state.inputValue;
-    if (inputValue && modelRef.tags.indexOf(inputValue) === -1) {
-      modelRef.tags = [...modelRef.tags, inputValue];
+    if (inputValue && props.formValidate.tags.indexOf(inputValue) === -1) {
+      props.formValidate.tags = [...props.formValidate.tags, inputValue];
     }
     Object.assign(state, {
       inputVisible: false,
@@ -201,7 +193,6 @@
 
   defineExpose({
     onSubmit,
-    modelRef: toRaw(modelRef)
   })
 </script>
 

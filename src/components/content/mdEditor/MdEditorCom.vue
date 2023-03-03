@@ -1,8 +1,9 @@
 <template>
   <div id="editor">
-    <md-editor v-model="text"
+    <md-editor :modelValue="props.modelValue"
                v-bind="editorConfig"
                @on-upload-img="onUploadImg"
+               @update:modelValue="onChange"
                ref="editorRef">
       <template #defToolbars>
         <mark-extension :on-insert="insert"/>
@@ -31,7 +32,10 @@
 
   const {state, dispatch} = useStore();
 
-  const prop = defineProps({
+  const props = defineProps({
+    modelValue: {
+      type: String
+    },
     editorId: {
       type: String,
       default: 'md-editor'
@@ -86,8 +90,9 @@
     },
   });
 
+  const emit = defineEmits(['update:modelValue'])
+
   const editorRef = ref<ExposeParam>();
-  const text = ref<string>("");
   const extendState = reactive({
     text: 'zh-CN',
     modalVisible: false,
@@ -95,22 +100,20 @@
   });
   const editorProps = reactive({
     theme: toRef(state.theme, "theme"),
-    editorId: prop.editorId,
-    toolbars: prop.toolbars,
-    footers: prop.footers
+    editorId: props.editorId,
+    toolbars: props.toolbars,
+    footers: props.footers
   })
 
-  const emit = defineEmits(["update:text"])
-
   const editorConfig = computed(() => {
-    return Object.assign({}, editorProps, prop.extend);
+    return Object.assign({}, editorProps, props.extend);
   })
 
   const insert = (generator: InsertContentGenerator) => {
     editorRef.value?.insert(generator);
   };
 
-  const onChange = (v: string) => (text.value = v);
+  const onChange = (v: string) => (emit("update:modelValue", v));
 
   const onUploadImg = async (files: File[], callback: Function) => {
     const res = await uploadToOss(files)
@@ -118,7 +121,6 @@
   };
 
   defineExpose({
-    text,
     onChange
   })
 </script>

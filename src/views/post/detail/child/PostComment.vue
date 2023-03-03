@@ -2,7 +2,8 @@
   <div class="post-comment-container" id="post-comment-id">
     <a-card title="评论" style="width: 100%" class="ant-card-self write-comment-card">
       <div class="write-comment" v-if="isLogin">
-        <MdEditorCom :toolbars="toolbars"
+        <MdEditorCom v-model="content"
+                     :toolbars="toolbars"
                      :footers="footers"
                      :extend="{
                        maxLength: 500
@@ -59,13 +60,13 @@
 
   const {getters, dispatch} = useStore();
 
-  const commentEditor = ref(null);
+  const content = ref('');
   const total = ref(0);
   const activeId = ref(-1);
   const sort = ref(true); // true:最新 false:最热
   const commentList = ref([]);
   const text = ref('');
-  const submittable = computed(() => !commentEditor?.value?.text);
+  const submittable = computed(() => !content.value);
   const order = computed(() => sort.value ? 'create_time' : 'support_count');
   const userInfo = computed(() => getters['userInfo']);
   const toolbars = [
@@ -133,10 +134,10 @@
     dispatch("createComment", {
       postId: post.value.id,
       userId: userInfo.value.id,
-      content: commentEditor.value.text
+      content: content.value
     }).then(res => {
       message.success('评论成功');
-      commentEditor.value.onChange("");
+      content.value = '';
       handleSort(true);
       setPostCommentCount(post.value.commentCount + 1);
     }).catch(e => {

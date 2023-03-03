@@ -28,7 +28,7 @@
     },
     {
       label: "发动态",
-      path: "/create/",
+      path: "/create/moment",
       icon: "icon-notes"
     },
     {

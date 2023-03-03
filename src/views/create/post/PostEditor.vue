@@ -1,18 +1,18 @@
 <template>
   <div class="create-post">
     <div class="top-box">
-      <input v-model="title" placeholder="请输入文章标题" maxlength="60"/>
+      <input v-model="formValidate.title" placeholder="请输入文章标题" maxlength="60"/>
       <span class="top-tips">文章将自动保存至草稿箱</span>
       <a-button type="primary">草稿箱</a-button>
       <a-button type="primary" @click="visible = true">发布</a-button>
     </div>
-    <MdEditorCom class="write-post-editor" ref="editor"/>
+    <MdEditorCom v-model="formValidate.content" class="write-post-editor" ref="editor"/>
 
     <a-drawer title="发布文章" width="500" :visible="visible" @close="onClose" class="create-post-drawer">
       <template #closeIcon>
         <i-close theme="outline" size="20" fill="#909090"/>
       </template>
-      <CreatePostInfo ref="postInfo"/>
+      <PostDrawer ref="postInfo" :formValidate="formValidate" v-bind="$attrs"/>
       <template #footer>
         <div class="drawer-footer">
           <a-button style="margin-right: 8px" @click="onClose">取消</a-button>
@@ -23,19 +23,31 @@
   </div>
 </template>
 
+<script lang="ts">
+  export default {
+    inheritAttrs: false
+  }
+</script>
+
 <script lang="ts" setup>
   import {computed, ref} from 'vue';
+  import type {PropType} from 'vue';
   import {onBeforeRouteLeave} from 'vue-router';
   import {useStore} from 'vuex';
   import {notification} from 'ant-design-vue';
+  import type {postData} from "@/types/create";
   import MdEditorCom from "@/components/content/mdEditor/MdEditorCom.vue";
-  import CreatePostInfo from "../common/CreatePostInfo.vue";
+  import PostDrawer from "../common/PostDrawer.vue";
 
   const {getters, dispatch} = useStore();
-  const title = ref<string>('');
+  const props = defineProps({
+    formValidate: {
+      type: Object as PropType<postData>,
+    }
+  })
+
   const visible = ref<boolean>(false);
   const postInfo = ref(null);
-  const editor = ref(null);
   const userInfo = computed(() => getters['userInfo']);
 
   onBeforeRouteLeave((to, from) => {
@@ -49,15 +61,15 @@
   async function onSubmit() {
     const form = await postInfo.value.onSubmit();
     if (form) {
-      const post = Object.assign({}, form, {title: title.value, content: editor.value.text, /*userId: userInfo.value.id*/})
+      const post = Object.assign({}, form, {title: title.value, content: editor.value.text, userId: userInfo.value.id})
       post.tags = post.tags.join(",");
-      // if (!post.title || !post.content) {
-      //   notification.error({
-      //     message: '发布失败',
-      //     description: '文章标题与内容不能为空'
-      //   })
-      //   return;
-      // }
+      if (!post.title || !post.content) {
+        notification.error({
+          message: '发布失败',
+          description: '文章标题与内容不能为空'
+        })
+        return;
+      }
       dispatch("createPost", post).then(res => {
         notification.success({
           message: '发布成功',
