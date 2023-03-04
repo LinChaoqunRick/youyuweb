@@ -3,31 +3,28 @@
     <a-upload
       v-model:file-list="fileList"
       :data="data"
-      list-type="picture-card"
       class="avatar-uploader"
       :show-upload-list="false"
       :action="data.host"
       :before-upload="beforeUpload"
-      :disabled="files.length>2"
+      :disabled="fileList.length>=maxCount"
       :multiple="multiple"
+      :max-count="maxCount"
       @change="handleChange"
     >
-      <div v-if="files.length" class="file-list">
-        <img v-for="(file, index) in files" :src="file.url" alt="avatar"
-             :style="{left: 40 * index + 'px',top: 8 * index + 'px'}"/>
-      </div>
-      <div v-else>
-        <i-upload-one theme="outline" size="24" fill="#000" v-if="!loading"/>
-        <div class="ant-upload-text">
-          点击上传
-        </div>
-      </div>
-      <div v-if="loading">
-        <div class="percentage">
-          <div class="progress" :style="{'width': `${percent}%`}"></div>
+      <div class="upload-box" :class="{'disabled':fileList.length>=maxCount}">
+        <div class="progress-box" :style="{'width': `${percent}%`}"></div>
+        <div class="upload-button">
+          <i-upload-one theme="outline" size="20" fill="currentColor"/>
+          <div class="ant-upload-text">
+            点击上传
+          </div>
         </div>
       </div>
     </a-upload>
+    <div class="slot-content">
+      <slot></slot>
+    </div>
   </div>
 </template>
 
@@ -40,9 +37,9 @@
 
   const {dispatch} = useStore();
   const props = defineProps({
-    max: {
+    maxCount: {
       type: Number,
-      default: 3
+      default: 1
     },
     multiple: {
       type: Boolean,
@@ -50,13 +47,12 @@
     }
   })
   const fileList = ref([]);
-  const files = ref([]);
   const loading = ref<boolean>(false);
   const data = ref<object>({});
-  const percent = ref<number>(0);
+  const percent = ref<number>(100);
   const filename = ref<string>('');
 
-  const emit = defineEmits('uploadSuccess');
+  const emit = defineEmits(['uploadSuccess']);
 
   const handleChange = (info: UploadChangeParam) => {
     if (info.file.status === 'uploading') {
@@ -69,7 +65,6 @@
       newFile.url = `${data.value.host}/${data.value.dir}${filename.value}`;
       loading.value = false;
       emit('uploadSuccess', fileList.value);
-      files.value.push(newFile);
     }
     if (info.file.status === 'error') {
       loading.value = false;
@@ -78,10 +73,6 @@
   };
 
   const beforeUpload = async (file: UploadProps['fileList'][number]) => {
-    if (files.value.length >= 3) {
-      message.error("最多支持上传3张封面");
-      return false;
-    }
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
       message.error('只能上传JPG或者PNG文件');
@@ -95,7 +86,6 @@
       filename.value = createFileName(file.name);
       res.data.key = res.data.dir + filename.value;
       res.data.success_action_status = 200;
-      console.log(res.data);
       data.value = res.data;
       return isJpgOrPng && isLt2M;
     }).catch(() => {
@@ -106,42 +96,58 @@
 
 <style lang="scss" scoped>
   .upload-file {
+    .upload-box {
+      position: relative;
+      display: inline-flex;
+      height: 36px;
+      width: 120px;
+      justify-content: center;
+      align-items: center;
+      border-radius: 2px;
+      overflow: hidden;
+      background-color: rgba(217, 217, 217, 0.6);
 
-    .percentage {
-      position: absolute;
-      left: 30px;
-      top: 40px;
-      height: 4px;
-      width: 140px;
-      background-color: #cccccc;
-
-      .progress {
+      .upload-button {
+        position: absolute;
+        left: 0;
+        top: 0;
         height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        cursor: pointer;
+
+        .ant-upload-text {
+          padding-left: 4px;
+        }
+      }
+
+      .progress-box {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
         background-color: #1890ff;
         transition: .2s;
       }
-    }
 
-    ::v-deep(.ant-upload) {
-      width: 200px;
-      height: 120px;
+      &.disabled {
+        .upload-button {
+          cursor: not-allowed !important;
+          color: #00000040 !important;
+        }
 
-      .file-list {
-        height: 100%;
-        width: 100%;
-        position: relative;
-
-        img {
-          height: 100%;
-          width: 100%;
-          position: absolute;
-          transition: .3s;
-
-          &:hover {
-            transform: scale(1.1);
-          }
+        .progress-box {
+          background: #f5f5f5 !important;
         }
       }
+    }
+
+    .slot-content {
+
     }
   }
 </style>

@@ -7,19 +7,7 @@
       <a-button type="primary" @click="visible = true">发布</a-button>
     </div>
     <MdEditorCom v-model="formValidate.content" class="write-post-editor" ref="editor"/>
-
-    <a-drawer title="发布文章" width="500" :visible="visible" @close="onClose" class="create-post-drawer">
-      <template #closeIcon>
-        <i-close theme="outline" size="20" fill="#909090"/>
-      </template>
-      <PostDrawer ref="postInfo" :formValidate="formValidate" v-bind="$attrs"/>
-      <template #footer>
-        <div class="drawer-footer">
-          <a-button style="margin-right: 8px" @click="onClose">取消</a-button>
-          <a-button type="primary" @click="onSubmit">发布</a-button>
-        </div>
-      </template>
-    </a-drawer>
+    <PostDrawer v-model:visible="visible" :formValidate="formValidate" v-bind="$attrs"/>
   </div>
 </template>
 
@@ -47,8 +35,6 @@
   })
 
   const visible = ref<boolean>(false);
-  const postInfo = ref(null);
-  const userInfo = computed(() => getters['userInfo']);
 
   onBeforeRouteLeave((to, from) => {
     const answer = window.confirm(
@@ -58,30 +44,7 @@
     if (!answer) return false
   })
 
-  async function onSubmit() {
-    const form = await postInfo.value.onSubmit();
-    if (form) {
-      const post = Object.assign({}, form, {title: title.value, content: editor.value.text, userId: userInfo.value.id})
-      post.tags = post.tags.join(",");
-      if (!post.title || !post.content) {
-        notification.error({
-          message: '发布失败',
-          description: '文章标题与内容不能为空'
-        })
-        return;
-      }
-      dispatch("createPost", post).then(res => {
-        notification.success({
-          message: '发布成功',
-          description: '你的文章已经成功发布'
-        })
-      })
-    }
-  }
 
-  function onClose() {
-    visible.value = false;
-  }
 </script>
 
 <style lang="scss" scoped>
