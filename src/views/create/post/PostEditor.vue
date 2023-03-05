@@ -18,12 +18,10 @@
 </script>
 
 <script lang="ts" setup>
-  import {computed, ref} from 'vue';
+  import {ref} from 'vue';
   import type {PropType} from 'vue';
-  import {onBeforeRouteLeave} from 'vue-router';
   import {useStore} from 'vuex';
-  import {notification} from 'ant-design-vue';
-  import type {postData} from "@/types/create";
+  import type {postData} from "@/types/post";
   import MdEditorCom from "@/components/content/mdEditor/MdEditorCom.vue";
   import PostDrawer from "../common/PostDrawer.vue";
 
@@ -35,16 +33,6 @@
   })
 
   const visible = ref<boolean>(false);
-
-  onBeforeRouteLeave((to, from) => {
-    const answer = window.confirm(
-      '确定离开此页面？请确保您的变更已被保存!'
-    )
-    // 取消导航并停留在同一页面上
-    if (!answer) return false
-  })
-
-
 </script>
 
 <style lang="scss" scoped>

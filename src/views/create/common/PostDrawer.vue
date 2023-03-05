@@ -42,21 +42,36 @@
           <a-tag v-if="!state.inputVisible && formValidate.tags.length<3"
                  @click="showInput"
                  class="new-tag">
-            <i-plus theme="outline" size="14" fill="#000"/>
+            <i-plus theme="outline" size="14" fill="currentColor"/>
             新建
           </a-tag>
         </a-form-item>
         <a-form-item label="封面" name="thumbnail" class="post-thumbnails">
-          <UploadFile :max-count="3" multiple @uploadSuccess="uploadSuccess">
+          <UploadFile :disabled="formValidate.thumbnail.length>=3" @uploadSuccess="uploadSuccess">
             <div class="file-list">
-              <div v-for="(file, index) in formValidate.thumbnail"
+              <div v-for="(file, index) in formValidate.thumbnail" :key="file"
                    :style="{left: 40 * index + 'px',top: 8 * index + 'px'}" class="image-preview">
-                <a-image
-                  :width="200"
-                  :height="120"
-                  :src="file"
-                />
+                <img :src="file"/>
+                <div class="image-mask">
+                  <div class="image-mask-content content-preview" @click="handlePreview(file)">
+                    <i-preview-open theme="outline" size="16" fill="currentColor"/>
+                    <div class="content-name">预览</div>
+                  </div>
+                  <div class="image-mask-content content-delete" @click="handleDelete(index)">
+                    <i-delete-four theme="outline" size="16" fill="currentColor"/>
+                    <div class="content-name">删除</div>
+                  </div>
+                </div>
               </div>
+              <a-image
+                :width="200"
+                :style="{ display: 'none' }"
+                :preview="{
+                    visible: previewVisible,
+                    onVisibleChange: setPreviewVisible,
+                }"
+                :src="image"
+              />
             </div>
           </UploadFile>
         </a-form-item>
@@ -97,10 +112,10 @@
   import {nextTick, reactive, ref} from 'vue';
   import type {PropType,} from 'vue';
   import type {TreeSelectProps} from 'ant-design-vue';
-  import {Form, notification} from 'ant-design-vue';
+  import {Form, message, notification} from 'ant-design-vue';
   import {useStore} from 'vuex';
   import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
-  import type {postData} from "@/types/create";
+  import type {postData} from "@/types/post";
 
   const {dispatch} = useStore();
 
@@ -152,6 +167,7 @@
     inputVisible: false,
     inputValue: '',
   });
+  const image = ref<string>('');
 
   async function onSubmit() {
     const form = await formRef.value.validate().catch(console.log);
@@ -173,8 +189,7 @@
   }
 
   function uploadSuccess(fileList) {
-    console.log(fileList.map(file => file.url));
-    props.formValidate.thumbnail = fileList.map(file => file.url)
+    props.formValidate.thumbnail.push(fileList[0].url);
   }
 
   getCategoryList();
@@ -223,6 +238,24 @@
     });
   };
 
+  const handlePreview = (item): void => {
+    image.value = item;
+    setPreviewVisible(true)
+  }
+
+  const handleDelete = (index): void => {
+    if (props.formValidate.thumbnail.length === 1) {
+      message.error("至少保留一张图片");
+      return;
+    }
+    props.formValidate.thumbnail.splice(index, 1)
+  }
+
+  const previewVisible = ref<boolean>(false);
+  const setPreviewVisible = (value): void => {
+    previewVisible.value = value;
+  };
+
   defineExpose({
     onSubmit,
   })
@@ -262,25 +295,71 @@
       position: relative;
 
       .file-list {
-        position: relative;
-        width: 200px;
+        width: 180px;
         height: 120px;
+        position: relative;
 
         .image-preview {
+          height: 100%;
+          width: 100%;
           position: absolute;
-        }
-
-        .ant-image {
           transition: .3s;
 
           &:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
             z-index: 10;
+
+            .image-mask {
+              opacity: 1;
+            }
           }
 
           img {
             height: 100%;
             width: 100%;
+          }
+
+          .image-mask {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            background: rgba(0, 0, 0, .5);
+            opacity: 0;
+            transition: opacity .2s;
+
+            .image-mask-content {
+              display: flex;
+              align-items: center;
+              color: #fff;
+              cursor: pointer;
+              transition: .3s;
+
+              &:nth-child(n+2) {
+                margin-left: 10px;
+              }
+
+              &.content-preview {
+                &:hover {
+                  color: #1890ff;
+                }
+              }
+
+              &.content-delete {
+                &:hover {
+                  color: #ee2626;
+                }
+              }
+
+              .content-name {
+                margin-left: 3px;
+              }
+            }
           }
         }
       }

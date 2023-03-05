@@ -38,7 +38,8 @@
             </div>
             <div class="post-operation">
               <span class="operation-item" v-if="userInfo.id && (userInfo.id === post.userId)">隐藏</span>
-              <span class="operation-item" v-if="userInfo.id && (userInfo.id === post.userId)">编辑</span>
+              <span class="operation-item" v-if="userInfo.id && (userInfo.id === post.userId)"
+                    @click="handleEdit">编辑</span>
               <span class="operation-item" @click="handleFold">{{fold?'展开':'收起'}}</span>
             </div>
           </div>
@@ -100,7 +101,7 @@
 
 <script setup>
   import {ref, reactive, computed, provide, readonly} from 'vue';
-  import {useRoute} from 'vue-router';
+  import {useRoute, useRouter} from 'vue-router';
   import {useStore} from 'vuex';
 
   import PercentCounter from "@/components/common/utils/percentCounter/PercentCounter.vue";
@@ -112,6 +113,7 @@
   import PostComment from "./child/PostComment.vue";
 
   const route = useRoute();
+  const router = useRouter();
   const {state, dispatch, getters} = useStore();
   const post = ref('');
   const fold = ref(true);
@@ -126,6 +128,10 @@
   }
 
   getPostDetail();
+
+  function handleEdit() {
+    router.push({path: '/editPost', query: {postId: post.value.id}})
+  }
 
   function handleFold() {
     fold.value = !fold.value;

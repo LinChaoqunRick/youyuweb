@@ -9,6 +9,8 @@ export const IS_POST_LIKE = ApiBase + "/post/isPostLike";
 export const CANCEL_POST_LIKE = ApiBase + "/post/cancelPostLike";
 export const GET_CREATE_TYPES = ApiBase + "/post/getCreateTypes"; // 获取文章类型
 export const CREATE_POST = ApiBase + "/post/create"; // 发布文章
+export const GET_POST_EDIT_DETAIL = ApiBase + "/post/edit/detail"; // 获取编辑文章详情
+export const UPDATE_POST = ApiBase + "/post/update"; // 获取编辑文章详情
 
 
 // 评论
@@ -28,7 +30,6 @@ export const GET_USER_BY_ID = ApiBase + "/user/getUserById"; // 根据id获取�
 export const GET_LIMIT_POST = ApiBase + "/user/getLimitPost"; // 获取指定数量条帖子记录
 
 export const GET_REGISTER_CODE = ApiBase + "/mail/sendRegisterCode"; // 获取注册验证码
-export const HELLO_TEST1 = ApiBase + "/hello/test1"; //
 
 // 分类
 export const CATEGORY_LIST = ApiBase + "/category/list"; //

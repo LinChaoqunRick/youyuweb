@@ -5,12 +5,13 @@
 <script lang="ts" setup>
   import {computed, ref, toRaw} from 'vue';
   import {useStore} from "vuex";
-  import {onBeforeRouteLeave, useRouter} from "vue-router";
+  import {onBeforeRouteLeave, useRoute, useRouter} from "vue-router";
   import PostEditor from "./PostEditor.vue";
   import type {postData} from "@/types/post";
   import {notification} from "ant-design-vue";
 
   const {getters, dispatch} = useStore();
+  const route = useRoute();
   const router = useRouter();
 
   const userInfo = computed(() => getters['userInfo']);
@@ -27,6 +28,15 @@
   });
   const isSave = ref(false);
 
+  const initData = () => {
+    dispatch("getPostEditDetail", {postId: route.query.postId}).then(res => {
+      formValidate.value = res.data;
+      formValidate.value.tags = formValidate.value.tags?.split(",") ?? [];
+      formValidate.value.thumbnail = formValidate.value.thumbnail?.split(",") ?? [];
+    })
+  }
+  initData();
+
   const handleSubmit = () => {
     const form = JSON.parse(JSON.stringify(toRaw(formValidate.value)));
     form.tags = form.tags.join(",");
@@ -38,16 +48,15 @@
       })
       return;
     }
-    form.userId = userInfo.value.id;
-    dispatch("createPost", form).then(res => {
+    dispatch("updatePost", form).then(res => {
       notification.success({
-        message: '发布成功',
-        description: '你的文章已经成功发布'
+        message: '修改成功',
+        description: '你的文章已经成功修改'
       })
       isSave.value = true;
-      router.replace({name: 'postList'})
+      router.replace({name: 'postDetail', params: {postId: form.id}})
     })
-  }
+  };
 
   onBeforeRouteLeave((to, from) => {
     if (isSave.value) {

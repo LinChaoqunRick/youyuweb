@@ -2,7 +2,6 @@ import http from "@/network/https";
 import {
   GET_POST_LIST,
   GET_POST_DETAIL,
-  HELLO_TEST1,
   CATEGORY_LIST,
   GET_COMMENTS_PAGE,
   GET_COMMENTS_ALL,
@@ -14,7 +13,8 @@ import {
   CANCEL_POST_LIKE,
   GET_CREATE_TYPES,
   CREATE_POST,
-
+  GET_POST_EDIT_DETAIL,
+  UPDATE_POST,
 
   OSS_POLICY,
   OSS_STS,
@@ -42,13 +42,13 @@ export default {
       return http.get(GET_SUB_COMMENTS_ALL, params);
     },
     createComment(state, params) {
-      return http.get(CREATE_COMMENT, params);
+      return http.post(CREATE_COMMENT, params);
     },
     deleteComment(state, params) {
-      return http.get(DELETE_COMMENT, params);
+      return http.post(DELETE_COMMENT, params);
     },
     setPostLike(state, params) {
-      return http.get(SET_POST_LIKE, params);
+      return http.post(SET_POST_LIKE, params);
     },
     isPostLike(state, params) {
       return http.get(IS_POST_LIKE, params);
@@ -60,7 +60,13 @@ export default {
       return http.get(GET_CREATE_TYPES, params);
     },
     createPost(state, params) {
-      return http.get(CREATE_POST, params);
+      return http.post(CREATE_POST, params, {headers: {'Content-Type': 'application/json'}});
+    },
+    getPostEditDetail(state, params) {
+      return http.get(GET_POST_EDIT_DETAIL, params);
+    },
+    updatePost(state, params) {
+      return http.post(UPDATE_POST, params, {headers: {'Content-Type': 'application/json'}});
     },
 
 
@@ -70,10 +76,5 @@ export default {
     getOssSts(state, params) {
       return http.get(OSS_STS, params);
     },
-
-
-    helloTest1(state, params) {
-      return http.post(HELLO_TEST1, params)
-    }
   },
 }

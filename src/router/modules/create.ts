@@ -21,12 +21,13 @@ const route = [
       {
         path: 'edit',
         name: 'editPost',
+        alias: '/editPost',
         meta: {
           title: "写文章",
           code: "CREATE_POST", // 如果有写文章的权限，那么一定有编辑文章的权限，沿用CREATE_POST,
           hide: true
         },
-        component: () => import("@/views/create/post/PostCreate.vue"),
+        component: () => import("@/views/create/post/PostEdit.vue"),
       },
       {
         path: 'moment',

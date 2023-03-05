@@ -11,7 +11,8 @@ import store from "../store";
 //   // axios.defaults.baseURL = '/api'
 //   axios.defaults.timeout = 50000
 // }
-// // 配置axios默认Content-type
+
+// 配置axios默认Content-type
 // axios.defaults.headers["Content-Type"] = "application/x-www-form-urlencoded";
 
 // 创建axios的对象
@@ -75,11 +76,11 @@ function get(url, params = {}) {
 /**
  * post方法，对应post请求
  * @param {String} url [请求的url地址]
- * @param {Object} params [请求时携带的参数]
+ * @param {Object} data [请求时携带的参数]
  */
-function post(url, params = {}, config = {}) {
+function post(url, data = {}, config = {}) {
   return new Promise((resolve, reject) => {
-    instance.post(url, params, config).then(res => {
+    instance.post(url, data, config).then(res => {
       resolve(res)
     }).catch(err => {
       reject(err)
@@ -88,8 +89,8 @@ function post(url, params = {}, config = {}) {
 }
 
 const http = {
-  get: get,
-  post: post
+  get,
+  post
 };
 
 export default http

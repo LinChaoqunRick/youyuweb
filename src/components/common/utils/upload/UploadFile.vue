@@ -7,15 +7,14 @@
       :show-upload-list="false"
       :action="data.host"
       :before-upload="beforeUpload"
-      :disabled="fileList.length>=maxCount"
-      :multiple="multiple"
-      :max-count="maxCount"
+      :disabled="disabled"
+      :max-count="1"
       @change="handleChange"
     >
-      <div class="upload-box" :class="{'disabled':fileList.length>=maxCount}">
+      <div class="upload-box" :class="{'disabled':disabled}">
         <div class="progress-box" :style="{'width': `${percent}%`}"></div>
         <div class="upload-button">
-          <i-upload-one theme="outline" size="20" fill="currentColor"/>
+          <i-upload-one theme="outline" size="18" fill="currentColor"/>
           <div class="ant-upload-text">
             点击上传
           </div>
@@ -37,11 +36,7 @@
 
   const {dispatch} = useStore();
   const props = defineProps({
-    maxCount: {
-      type: Number,
-      default: 1
-    },
-    multiple: {
+    disabled: {
       type: Boolean,
       default: false
     }
@@ -61,8 +56,7 @@
       return;
     }
     if (info.file.status === 'done') {
-      const newFile = fileList.value[fileList.value.length - 1];
-      newFile.url = `${data.value.host}/${data.value.dir}${filename.value}`;
+      fileList.value[0].url = `${data.value.host}/${data.value.dir}${filename.value}`;
       loading.value = false;
       emit('uploadSuccess', fileList.value);
     }
