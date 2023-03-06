@@ -32,8 +32,9 @@
           }"/>
       </div>
       <div class="comment-operation">
-        <div class="ope-item">
-          <i-good-two theme="outline" size="16" fill="currentColor"/>
+        <div class="ope-item" :class="{'ope-active': data.commentLike}">
+          <i-good-two :theme="data.commentLike?'filled':'outline'" size="16" fill="currentColor"
+                      @click="handleLike"/>
           点赞<span v-if="data.supportCount">({{data.supportCount}})</span>
         </div>
         <div class="ope-item" :class="{'ope-active': active}" @click="handleReply">
@@ -124,6 +125,14 @@
     } else {
       updateActiveId(-1);
     }
+  }
+
+  function handleLike() {
+    if (!isLogin.value) {
+      commit("changeLogin", true);
+      return;
+    }
+
   }
 
   function handleSubmit(content: string) {

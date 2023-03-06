@@ -79,7 +79,7 @@
             }"/>
         </div>
       </div>
-      <div class="post-aside">
+      <div class="post-right">
         <div class="post-category">
           <MdCatalogPanel editorId="md-editor"/>
         </div>
@@ -323,7 +323,10 @@
         }
       }
 
-      .post-aside {
+      .post-right {
+        position: relative;
+        z-index: 10;
+
         .post-category {
           position: fixed;
           top: 100px;

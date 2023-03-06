@@ -1,7 +1,9 @@
 import axios from "axios";
 import {message} from 'ant-design-vue';
 import Cookies from "js-cookie";
-import store from "../store";
+import store from "@/store";
+import router from "@/router";
+import qs from 'qs';
 
 // if (process.env.NODE_ENV === 'development') {
 //   // axios.defaults.baseURL = '/api'
@@ -18,7 +20,7 @@ import store from "../store";
 // 创建axios的对象
 const instance = axios.create({
   baseURL: "",  //配置固定域名
-  timeout: 5000,
+  timeout: 10 * 1000,
   headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 })
 
@@ -44,7 +46,10 @@ instance.interceptors.response.use((response) => {
       location.reload();
     }, 1500)
     return Promise.reject(res)
-  } else if (res.code === 508){ // 后端参数校验错误
+  } else if (res.code === 404) {
+    router.replace({name: 'NotFound'});
+    return Promise.reject(res);
+  } else if (res.code === 508) { // 后端参数校验错误
     message.error(res.message);
     return Promise.reject(res)
   } else {
@@ -62,14 +67,8 @@ instance.interceptors.response.use((response) => {
  * @param {Object} params [请求时携带的参数]
  */
 function get(url, params = {}) {
-  return new Promise((resolve, reject) => {
-    instance.get(url, {
-      params: params
-    }).then(res => {
-      resolve(res)
-    }).catch(err => {
-      reject(err)
-    })
+  return instance.get(url, {
+    params: params
   })
 }
 
@@ -78,14 +77,17 @@ function get(url, params = {}) {
  * @param {String} url [请求的url地址]
  * @param {Object} data [请求时携带的参数]
  */
-function post(url, data = {}, config = {}) {
-  return new Promise((resolve, reject) => {
-    instance.post(url, data, config).then(res => {
-      resolve(res)
-    }).catch(err => {
-      reject(err)
-    })
-  })
+function post(url, data = {}, config) {
+  if (!config) {
+    config = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      }
+    }
+    return instance.post(url, qs.stringify(data), config)
+  } else {
+    return instance.post(url, data, config)
+  }
 }
 
 const http = {
