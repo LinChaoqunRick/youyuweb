@@ -15,6 +15,8 @@ import {
   CREATE_POST,
   GET_POST_EDIT_DETAIL,
   UPDATE_POST,
+  SET_COMMENT_LIKE,
+  CANCEL_COMMENT_LIKE,
 
   OSS_POLICY,
   OSS_STS,
@@ -67,6 +69,12 @@ export default {
     },
     updatePost(state, params) {
       return http.post(UPDATE_POST, params, {headers: {'Content-Type': 'application/json'}});
+    },
+    setCommentLike(state, params) {
+      return http.post(SET_COMMENT_LIKE, params);
+    },
+    cancelCommentLike(state, params) {
+      return http.post(CANCEL_COMMENT_LIKE, params);
     },
 
 

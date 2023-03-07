@@ -10,6 +10,7 @@ import {install} from '@icon-park/vue-next/es/all';
 import aside from "@/libs/directives/aside.js";
 import aside2 from "@/libs/directives/aside2.js";
 import row from "@/libs/directives/row.ts";
+import RelativeTime from "dayjs/plugin/relativeTime";
 
 // js
 import MarkExtension from "@/libs/marked/marked-mark";
@@ -33,6 +34,9 @@ app.directive("aside", aside);
 app.directive("aside2", aside2);
 app.directive("row", row);
 
+dayjs.extend(RelativeTime)
+app.config.globalProperties.$dayjs = dayjs;
+
 dayjs.locale('zh-cn') // use loaded locale globally
 
 // Install
@@ -52,9 +56,7 @@ MdEditor.config({
 
     return renderer;
   },
-  editorConfig: {
-
-  },
+  editorConfig: {},
   editorExtensions: {
     highlight: {
       css: {

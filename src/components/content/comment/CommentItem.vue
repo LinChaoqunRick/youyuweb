@@ -19,7 +19,7 @@
           </a-popover>
           <div class="author-text" v-if="post.userId === data.userId">(作者)</div>
         </div>
-        <div class="create-time" :title="data.createTime">{{dayjs().to(dayjs(data.createTime))}}</div>
+        <div class="create-time" :title="data.createTime">{{$dayjs().to(data.createTime)}}</div>
       </div>
       <div class="comment-content" :class="{'content-expand': expand}" v-row="{set: set}">
         <MdPreview
@@ -32,9 +32,8 @@
           }"/>
       </div>
       <div class="comment-operation">
-        <div class="ope-item" :class="{'ope-active': data.commentLike}">
-          <i-good-two :theme="data.commentLike?'filled':'outline'" size="16" fill="currentColor"
-                      @click="handleLike"/>
+        <div class="ope-item" :class="{'ope-active': data.commentLike}" @click="handleLike">
+          <i-good-two :theme="data.commentLike?'filled':'outline'" size="16" fill="currentColor"/>
           点赞<span v-if="data.supportCount">({{data.supportCount}})</span>
         </div>
         <div class="ope-item" :class="{'ope-active': active}" @click="handleReply">
@@ -70,17 +69,13 @@
 </template>
 
 <script setup lang="ts">
-  import dayjs from 'dayjs';
-  import RelativeTime from 'dayjs/plugin/relativeTime';
-  import MdPreview from "@/components/content/mdEditor/MdPreview.vue";
   import {ref, computed, inject} from 'vue';
   import {useStore} from "vuex";
+  import {message, Modal} from "ant-design-vue";
   import ReplyItem from "@/components/content/comment/ReplyItem.vue";
   import UserCard from "@/components/content/comment/UserCard.vue";
   import ReplyEditor from "@/components/content/comment/ReplyEditor.vue";
-  import {message, Modal} from "ant-design-vue";
-
-  dayjs.extend(RelativeTime);
+  import MdPreview from "@/components/content/mdEditor/MdPreview.vue";
 
   const {getters, commit, dispatch} = useStore();
   const isLogin = computed(() => getters['isLogin']);
@@ -132,7 +127,33 @@
       commit("changeLogin", true);
       return;
     }
-
+    if (props.data.commentLike) { // 已经点过赞了，取消点赞
+      dispatch('cancelCommentLike', {
+        commentId: props.data.id,
+        userId: userInfo.value.id,
+        userIdTo: props.data.userId
+      }).then(res => {
+        if (res) {
+          props.data.commentLike = null;
+          props.data.supportCount -= 1;
+        }
+      })
+    } else { // 没点赞过，点赞
+      dispatch('setCommentLike', {
+        commentId: props.data.id,
+        userId: userInfo.value.id,
+        userIdTo: props.data.userId
+      }).then(res => {
+        if (res) {
+          props.data.commentLike = {
+            commentId: props.data.id,
+            userId: userInfo.value.id,
+            userIdTo: props.data.userId
+          };
+          props.data.supportCount += 1;
+        }
+      })
+    }
   }
 
   function handleSubmit(content: string) {

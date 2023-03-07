@@ -32,11 +32,12 @@
         </a-popover>
         <div class="author-text" v-if="post.userId === data.userId">(作者)</div>
       </div>
+      <div class="create-time" :title="data.createTime">{{$dayjs().to(data.createTime)}}</div>
     </div>
     <div class="reply-content" v-html="data.content"></div>
     <div class="reply-operation">
-      <div class="ope-item">
-        <i-good-two theme="outline" size="16" fill="currentColor"/>
+      <div class="ope-item" :class="{'ope-active': data.commentLike}" @click="handleLike">
+        <i-good-two :theme="data.commentLike?'filled':'outline'" size="16" fill="currentColor"/>
         点赞<span v-if="data.supportCount">({{data.supportCount}})</span>
       </div>
       <div class="ope-item" :class="{'ope-active': active}" @click="handleReply">
@@ -54,11 +55,13 @@
 </template>
 
 <script setup lang="ts">
-  import UserCard from "@/components/content/comment/UserCard.vue";
   import {computed, inject} from "vue";
   import {useStore} from "vuex";
-  import ReplyEditor from "@/components/content/comment/ReplyEditor.vue";
   import {message, Modal} from "ant-design-vue";
+
+  import ReplyEditor from "@/components/content/comment/ReplyEditor.vue";
+  import UserCard from "@/components/content/comment/UserCard.vue";
+
 
   const {getters, commit, dispatch} = useStore();
   const isLogin = computed(() => getters['isLogin']);
@@ -68,7 +71,8 @@
 
   const props = defineProps({
     data: {
-      type: Object
+      type: Object,
+      required: true
     },
     root: { // 子评论的父评论
       type: Object
@@ -107,6 +111,40 @@
     }).catch(e => {
       message.error("评论失败")
     })
+  }
+
+  function handleLike() {
+    if (!isLogin.value) {
+      commit("changeLogin", true);
+      return;
+    }
+    if (props.data.commentLike) { // 已经点过赞了，取消点赞
+      dispatch('cancelCommentLike', {
+        commentId: props.data.id,
+        userId: userInfo.value.id,
+        userIdTo: props.data.userId
+      }).then(res => {
+        if (res) {
+          props.data.commentLike = null;
+          props.data.supportCount -= 1;
+        }
+      })
+    } else { // 没点赞过，点赞
+      dispatch('setCommentLike', {
+        commentId: props.data.id,
+        userId: userInfo.value.id,
+        userIdTo: props.data.userId
+      }).then(res => {
+        if (res) {
+          props.data.commentLike = {
+            commentId: props.data.id,
+            userId: userInfo.value.id,
+            userIdTo: props.data.userId
+          };
+          props.data.supportCount += 1;
+        }
+      })
+    }
   }
 
   function handleDelete() {
@@ -160,6 +198,12 @@
       .reply-text {
         margin: 0 8px;
         font-size: 14px;
+      }
+
+      .create-time {
+        font-size: 14px;
+        color: #8a919f;
+        margin-left: auto;
       }
     }
 
