@@ -33,7 +33,8 @@ function handleScroll() {
 const scrollFn = handleScroll();
 
 export default {
-  mounted(el) {
+  mounted(el, binding) {
+    console.log(binding);
     header = document.getElementById("header");
     footer = document.getElementById("footer");
     aside = el;

@@ -25,7 +25,7 @@
         <p>{{user.signature}}</p>
       </div>
       <div class="user-operation">
-        <a-button type="primary">Ta的主页</a-button>
+        <a-button type="primary" @click="handleProfile">Ta的主页</a-button>
         <a-button>私信</a-button>
         <a-button type="primary" danger>关注</a-button>
       </div>
@@ -58,7 +58,7 @@
 <script lang="ts" setup>
   import {inject, ref, watch} from 'vue';
   import {useStore} from 'vuex';
-  import {useRoute} from 'vue-router';
+  import {useRoute, useRouter} from 'vue-router';
   import {Modal} from 'ant-design-vue';
 
   interface statData {
@@ -66,9 +66,8 @@
     label: string
   }
 
-  const router = useRoute();
-
-  const reload = inject('reload')
+  const route = useRoute();
+  const router = useRouter();
 
   const {dispatch} = useStore();
 
@@ -113,9 +112,14 @@
         content: `Ta共获得${user.value.extraInfo[item.value]}个点赞`,
       });
     }
+  };
+
+  function handleProfile() {
+    router.push({path: `/user/${user.value.id}`})
   }
 
   watch(() => props.id, (val) => {
+    if (!props.id) return;
     dispatch("getUserById", {userId: val}).then(res => {
       user.value = res.data;
     });
@@ -127,11 +131,7 @@
     dispatch("getLimitPost", {userId: val, orderBy: 'create_time'}).then(res => {
       newPosts.value = res.data;
     })
-  })
-
-  watch(() => router.params.postId, (() => {
-    reload();
-  }))
+  }, {immediate: true})
 </script>
 
 <style lang="scss" scoped>

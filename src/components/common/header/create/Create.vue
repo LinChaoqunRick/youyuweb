@@ -3,8 +3,9 @@
     创作中心
     <template #overlay>
       <a-menu>
-        <router-link v-for="(item, index) in menu" :to="item.path">
-          <a-menu-item :key="index">
+        <router-link v-for="(item, index) in menu" :to="item.path" custom v-slot="{isActive, isExactActive, navigate}">
+          <a-menu-item :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}" :key="index"
+                       @click="handleNavigate(isActive,isExactActive,navigate)">
             <component :is="item.icon"/>
             {{item.label}}
           </a-menu-item>
@@ -18,7 +19,12 @@
 </template>
 
 <script setup lang="ts">
-  import {ref} from 'vue';
+  import {computed, ref} from 'vue';
+  import {useStore} from "vuex";
+
+  const {getters, commit} = useStore();
+
+  const isLogin = computed(() => getters['isLogin']);
 
   const menu = ref([
     {
@@ -36,7 +42,17 @@
       path: "/draft",
       icon: "icon-newspaper-folding"
     }
-  ])
+  ]);
+
+  function handleNavigate(isActive, isExactActive, navigate) {
+    if (!isLogin.value) {
+      commit("changeLogin", true);
+      return;
+    }
+    if (!isExactActive) {
+      navigate();
+    }
+  }
 </script>
 
 <style lang="scss">

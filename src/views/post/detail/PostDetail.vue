@@ -100,7 +100,7 @@
 </template>
 
 <script setup>
-  import {ref, reactive, computed, provide, readonly} from 'vue';
+  import {ref, reactive, computed, provide, readonly, watch, inject} from 'vue';
   import {useRoute, useRouter} from 'vue-router';
   import {useStore} from 'vuex';
 
@@ -111,6 +111,8 @@
   import MdCatalogPanel from "./child/MdCatalogPanel.vue";
   import PostOperation from "./child/PostOperation.vue";
   import PostComment from "./child/PostComment.vue";
+
+  const reload = inject('reload')
 
   const route = useRoute();
   const router = useRouter();
@@ -128,6 +130,10 @@
   }
 
   getPostDetail();
+
+  watch(() => route.params.postId, (() => {
+    reload();
+  }))
 
   function handleEdit() {
     router.push({path: '/editPost', query: {postId: post.value.id}})

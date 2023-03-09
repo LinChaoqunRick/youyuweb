@@ -1,6 +1,6 @@
 export default {
   state: () => ({
-    theme: localStorage.getItem("theme")
+    theme: localStorage.getItem("theme") || 'light'
   }),
   mutations: {
     changeTheme(state: { theme: any; }, theme: string) {

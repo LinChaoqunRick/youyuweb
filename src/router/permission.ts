@@ -7,6 +7,7 @@ import post from "./modules/post";
 import moment from "./modules/moment";
 import lab from "./modules/lab";
 import note from "./modules/note";
+import user from "./modules/user";
 
 const routes = [
   ...home,
@@ -18,6 +19,7 @@ const routes = [
   ...create,
   ...lab,
   ...about,
+  ...user,
   {
     path: '/:pathMatch(.*)',
     redirect: '/404',
