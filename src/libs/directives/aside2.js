@@ -21,12 +21,17 @@ function handleScroll() {
       return;
     }
 
-    if ((windowScrollBottom > asideBottom) && dir) { // 向下滚动，如果超过了下限
+    if (dir && windowScrollBottom > asideBottom) { // 如果向下滚动且超过了下限
       cacheTop = getElementTop(aside);
       aside.style.cssText = `position: absolute;bottom: ${(footerTop - windowScrollBottom) > 0 ? footerTop - windowScrollBottom : 0}px`;
-    } else if (windowScrollTop < getElementTop(aside) - header.clientHeight && !dir) { // 向上滚动，如果超过了上限
-      cacheTop = getElementTop(aside);
-      aside.style.cssText = `position: sticky;top: ${elInitTop}px`;
+    } else if (!dir) { // 向上滚动
+      if (windowScrollTop < elInitTop - 68) { // 如果超过了header + 初始位置
+        cacheTop = elInitTop;
+        aside.style.cssText = `position: relative;top: 0px`;
+      } else if (windowScrollTop < getElementTop(aside) - header.clientHeight) { // 如果超过了上限
+        cacheTop = getElementTop(aside);
+        aside.style.cssText = `position: sticky;top: 68px`;
+      }
     } else {
       aside.style.cssText = `position: relative;top: ${cacheTop - elInitTop}px`;
     }
@@ -41,6 +46,7 @@ export default {
     footer = document.getElementById("footer");
     aside = el;
     elInitTop = getElementTop(aside);
+    cacheTop = elInitTop;
     window.addEventListener("scroll", onScroll, false);
   },
 
