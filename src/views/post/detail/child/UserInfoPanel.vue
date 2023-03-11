@@ -1,35 +1,37 @@
 <template>
   <div class="user-info-panel">
-    <div class="basic-info">
-      <div class="user-avatar-nickname">
-        <div class="user-avatar">
-          <img :src="user.avatar"/>
-          <div class="user-gender" v-if="user.sex!==undefined">
-            <i-female v-if="user.sex == 1" theme="outline" size="14" fill="#ffc0cb"/>
-            <i-male v-else theme="outline" size="14" fill="#00CFF3"/>
+    <slot name="basic">
+      <div class="basic-info">
+        <div class="user-avatar-nickname">
+          <div class="user-avatar">
+            <img :src="user.avatar"/>
+            <div class="user-gender" v-if="user.sex!==undefined">
+              <i-female v-if="user.sex == 1" theme="outline" size="14" fill="#ffc0cb"/>
+              <i-male v-else theme="outline" size="14" fill="#00CFF3"/>
+            </div>
+          </div>
+          <div class="user-nickname">
+            <div class="nickname">{{user.nickname}}</div>
+            <div class="uid">uid: {{user.id}}</div>
           </div>
         </div>
-        <div class="user-nickname">
-          <div class="nickname">{{user.nickname}}</div>
-          <div class="uid">uid: {{user.id}}</div>
+        <div class="user-statistics">
+          <div class="statis-data" v-for="item in dataItems" @click="handleClickStat(item)">
+            <div class="data-value">{{user.extraInfo?.[item.value]}}</div>
+            <div class="data-label">{{item.label}}</div>
+          </div>
+        </div>
+        <div class="user-signature">
+          <div class="sign-title">描述：</div>
+          <p>{{user.signature}}</p>
+        </div>
+        <div class="user-operation">
+          <a-button type="primary" @click="handleProfile">Ta的主页</a-button>
+          <a-button>私信</a-button>
+          <a-button type="primary" danger>关注</a-button>
         </div>
       </div>
-      <div class="user-statistics">
-        <div class="statis-data" v-for="item in dataItems" @click="handleClickStat(item)">
-          <div class="data-value">{{user.extraInfo?.[item.value]}}</div>
-          <div class="data-label">{{item.label}}</div>
-        </div>
-      </div>
-      <div class="user-signature">
-        <div class="sign-title">描述：</div>
-        <p>{{user.signature}}</p>
-      </div>
-      <div class="user-operation">
-        <a-button type="primary" @click="handleProfile">Ta的主页</a-button>
-        <a-button>私信</a-button>
-        <a-button type="primary" danger>关注</a-button>
-      </div>
-    </div>
+    </slot>
     <div class="hot-posts">
       <a-card title="热门文章" style="width: 100%">
         <div class="post-list">
@@ -109,7 +111,7 @@
       });
     } else if (value === 'likeCount') {
       Modal.info({
-        content: `Ta共获得${user.value.extraInfo[item.value]}个点赞`,
+        content: `Ta共收获了${user.value.extraInfo[item.value]}个点赞`,
       });
     }
   };
@@ -131,7 +133,11 @@
     dispatch("getLimitPost", {userId: val, orderBy: 'create_time'}).then(res => {
       newPosts.value = res.data;
     })
-  }, {immediate: true})
+  }, {immediate: true});
+
+  defineExpose({
+    user
+  })
 </script>
 
 <style lang="scss" scoped>

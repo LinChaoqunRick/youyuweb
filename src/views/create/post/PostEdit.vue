@@ -31,7 +31,7 @@
   const initData = () => {
     dispatch("getPostEditDetail", {postId: route.query.postId}).then(res => {
       formValidate.value = res.data;
-      formValidate.value.tags = formValidate.value.tags?.split(",") ?? [];
+      formValidate.value.tags = formValidate.value.tags ? formValidate.value.tags.split(",") : [];
       formValidate.value.thumbnail = formValidate.value.thumbnail?.split(",") ?? [];
     })
   }

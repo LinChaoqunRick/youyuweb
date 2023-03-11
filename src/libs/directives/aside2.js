@@ -1,7 +1,7 @@
 import {getElementTop} from "@/assets/utils/utils";
 
-let header, footer, aside, asideTop;
-let elInitTop, cacheTop; // cacheTop: 变化方向时，记录变化时候的elementTop值
+let header, footer, aside, elInitTop;
+let cacheTop; // cacheTop: 变化方向时，记录变化时刻的elementTop值
 
 function handleScroll() {
   let beforeScrollTop = document.documentElement.scrollTop;
@@ -17,36 +17,35 @@ function handleScroll() {
 
     // 如果aside高度比较小，直接sticky
     if (aside.clientHeight < document.documentElement.clientHeight - footer.clientHeight - header.clientHeight) {
-      aside.style.cssText = `position: sticky;top: ${asideTop}px`
+      aside.style.cssText = `position: sticky;top: ${elInitTop}px`
       return;
     }
 
     if ((windowScrollBottom > asideBottom) && dir) { // 向下滚动，如果超过了下限
       cacheTop = getElementTop(aside);
       aside.style.cssText = `position: absolute;bottom: ${(footerTop - windowScrollBottom) > 0 ? footerTop - windowScrollBottom : 0}px`;
-    } else if (windowScrollTop < getElementTop(aside) - header.clientHeight && !dir) { // 如果超过了上限
+    } else if (windowScrollTop < getElementTop(aside) - header.clientHeight && !dir) { // 向上滚动，如果超过了上限
       cacheTop = getElementTop(aside);
-      aside.style.cssText = `position: sticky;top: ${asideTop}px`;
+      aside.style.cssText = `position: sticky;top: ${elInitTop}px`;
     } else {
       aside.style.cssText = `position: relative;top: ${cacheTop - elInitTop}px`;
     }
   }
 }
 
-const scrollFn = handleScroll();
+const onScroll = handleScroll();
 
 export default {
   mounted(el, binding) {
-    elInitTop = getElementTop(el);
     header = document.getElementById("header");
     footer = document.getElementById("footer");
     aside = el;
-    asideTop = getElementTop(aside);
-    window.addEventListener("scroll", scrollFn, false);
+    elInitTop = getElementTop(aside);
+    window.addEventListener("scroll", onScroll, false);
   },
 
   unmounted() {
-    window.removeEventListener("scroll", scrollFn, false);
+    window.removeEventListener("scroll", onScroll, false);
   }
 }
 

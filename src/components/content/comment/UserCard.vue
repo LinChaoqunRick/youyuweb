@@ -53,7 +53,7 @@
       });
     } else if (value === 'likeCount') {
       Modal.info({
-        content: `Ta共获得${user.value.extraInfo[item.value]}个点赞`,
+        content: `Ta共收获了${user.value.extraInfo[item.value]}个点赞`,
       });
     }
   }
