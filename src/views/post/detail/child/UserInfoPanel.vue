@@ -1,17 +1,17 @@
 <template>
   <div class="user-info-panel">
-    <slot name="basic">
+    <slot name="basic" :user="user" :dataItems="dataItems">
       <div class="basic-info">
         <div class="user-avatar-nickname">
           <div class="user-avatar">
-            <img :src="user.avatar"/>
+            <img :src="user.avatar" @click="handleProfile"/>
             <div class="user-gender" v-if="user.sex!==undefined">
               <i-female v-if="user.sex == 1" theme="outline" size="14" fill="#ffc0cb"/>
               <i-male v-else theme="outline" size="14" fill="#00CFF3"/>
             </div>
           </div>
           <div class="user-nickname">
-            <div class="nickname">{{user.nickname}}</div>
+            <div class="nickname" @click="handleProfile">{{user.nickname}}</div>
             <div class="uid">uid: {{user.id}}</div>
           </div>
         </div>
@@ -26,7 +26,7 @@
           <p>{{user.signature}}</p>
         </div>
         <div class="user-operation">
-          <a-button type="primary" @click="handleProfile">Ta的主页</a-button>
+          <a-button type="primary" @click="handleProfile" class="home-button">Ta的主页</a-button>
           <a-button>私信</a-button>
           <a-button type="primary" danger>关注</a-button>
         </div>
@@ -62,11 +62,8 @@
   import {useStore} from 'vuex';
   import {useRoute, useRouter} from 'vue-router';
   import {Modal} from 'ant-design-vue';
+  import type {statType} from "@/types/user";
 
-  interface statData {
-    value: string | number,
-    label: string
-  }
 
   const route = useRoute();
   const router = useRouter();
@@ -78,7 +75,9 @@
       type: [String, Number],
       // required: true
     }
-  })
+  });
+
+  const emit = defineEmits(['onLoaded'])
 
   const dataItems = [
     {
@@ -103,7 +102,7 @@
   const hotPosts = ref([]);
   const newPosts = ref([]);
 
-  function handleClickStat(item: statData) {
+  function handleClickStat(item: statType) {
     const {value} = item;
     if (value === 'viewCount') {
       Modal.info({
@@ -124,6 +123,7 @@
     if (!props.id) return;
     dispatch("getUserById", {userId: val}).then(res => {
       user.value = res.data;
+      emit('onLoaded', user.value);
     });
 
     dispatch("getLimitPost", {userId: val, orderBy: 'view_count', orderType: 'desc'}).then(res => {
@@ -196,6 +196,7 @@
             white-space: nowrap;
             font-size: 16px;
             font-weight: bold;
+            cursor: pointer;
           }
 
           .uid {
