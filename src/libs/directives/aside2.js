@@ -1,6 +1,7 @@
 import {getElementTop} from "@/assets/utils/utils";
 
 let header, footer, aside, asideTop;
+let elInitTop, cacheTop; // cacheTop: 变化方向时，记录变化时候的elementTop值
 
 function handleScroll() {
   let beforeScrollTop = document.documentElement.scrollTop;
@@ -20,12 +21,14 @@ function handleScroll() {
       return;
     }
 
-    if ((windowScrollBottom > asideBottom) && dir) { // 如果超过了下限
+    if ((windowScrollBottom > asideBottom) && dir) { // 向下滚动，如果超过了下限
+      cacheTop = getElementTop(aside);
       aside.style.cssText = `position: absolute;bottom: ${(footerTop - windowScrollBottom) > 0 ? footerTop - windowScrollBottom : 0}px`;
     } else if (windowScrollTop < getElementTop(aside) - header.clientHeight && !dir) { // 如果超过了上限
-      aside.style.cssText = `position: absolute;top: ${windowScrollTop}px`;
+      cacheTop = getElementTop(aside);
+      aside.style.cssText = `position: sticky;top: ${asideTop}px`;
     } else {
-      // console.log(123123);
+      aside.style.cssText = `position: relative;top: ${cacheTop - elInitTop}px`;
     }
   }
 }
@@ -34,7 +37,7 @@ const scrollFn = handleScroll();
 
 export default {
   mounted(el, binding) {
-    console.log(binding);
+    elInitTop = getElementTop(el);
     header = document.getElementById("header");
     footer = document.getElementById("footer");
     aside = el;
