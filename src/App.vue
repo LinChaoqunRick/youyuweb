@@ -1,5 +1,5 @@
 <template>
-  <div class="app">
+  <div class="app" id="youyu-app">
     <a-config-provider :locale="zhCN">
       <div class="header" id="header">
         <YHeader/>
@@ -7,9 +7,7 @@
       <div class="main-app" v-if="isRouterAlive">
         <router-view/>
       </div>
-      <div class="footer" id="footer">
-        <YFooter/>
-      </div>
+      <YFooter/>
     </a-config-provider>
   </div>
 </template>
@@ -35,11 +33,8 @@
 
 <style lang="scss" scoped>
   .app {
-    min-height: 100vh;
     background-color: var(--youyu-body-background);
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
 
     .header {
       height: 60px;
@@ -49,12 +44,9 @@
     }
 
     .main-app {
-      flex: 1;
+      height: 100%;
+      min-height: calc(100vh - 100px);
       position: relative;
-    }
-
-    .footer {
-      height: 40px;
     }
   }
 </style>

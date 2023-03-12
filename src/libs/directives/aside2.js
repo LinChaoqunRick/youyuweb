@@ -1,6 +1,6 @@
 import {getElementTop} from "@/assets/utils/utils";
 
-let header, footer, aside, elInitTop;
+let youyuApp, header, footer, aside, elInitTop;
 let cacheTop; // cacheTop: 变化方向时，记录变化时刻的elementTop值
 
 function handleScroll() {
@@ -22,8 +22,13 @@ function handleScroll() {
     }
 
     if (dir && windowScrollBottom > asideBottom) { // 如果向下滚动且超过了下限
-      cacheTop = getElementTop(aside);
-      aside.style.cssText = `position: absolute;bottom: ${(footerTop - windowScrollBottom) > 0 ? footerTop - windowScrollBottom : 0}px`;
+      if (youyuApp.clientHeight < document.body.clientHeight) {
+        console.log(1234);
+        aside.style.cssText = `position: relative;`;
+      } else {
+        cacheTop = getElementTop(aside);
+        aside.style.cssText = `position: absolute;bottom: ${(footerTop - windowScrollBottom) > 0 ? footerTop - windowScrollBottom : 0}px`;
+      }
     } else if (!dir) { // 向上滚动
       if (windowScrollTop < elInitTop - 68) { // 如果超过了header + 初始位置
         cacheTop = elInitTop;
@@ -42,16 +47,17 @@ const onScroll = handleScroll();
 
 export default {
   mounted(el, binding) {
+    youyuApp = document.getElementById("youyu-app");
     header = document.getElementById("header");
     footer = document.getElementById("footer");
     aside = el;
     elInitTop = getElementTop(aside);
     cacheTop = elInitTop;
-    window.addEventListener("scroll", onScroll, false);
+    document.addEventListener("scroll", onScroll, false);
   },
 
   unmounted() {
-    window.removeEventListener("scroll", onScroll, false);
+    document.removeEventListener("scroll", onScroll, false);
   }
 }
 

@@ -6,14 +6,18 @@
       </div>
       <div class="user-content">
         <div class="content-menu">
-          <a-menu v-model:selectedKeys="current" mode="horizontal">
-            <a-menu-item v-for="item in menuItems.filter(i=>i.show!==false)" :key="item.key">
-              {{item.label}}
-            </a-menu-item>
-          </a-menu>
+          <router-link v-for="item in menuItems.filter(i=>i.show!==false)" :to="item.path" custom
+                       v-slot="{isActive, isExactActive, navigate}">
+            <span :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}"
+                  @click="handleNavigate(isActive,isExactActive,navigate)" class="menu-item">{{item.title}}</span>
+          </router-link>
         </div>
         <div class="content-component">
-          <router-view/>
+          <router-view v-slot="{ Component }">
+            <keep-alive>
+              <component :is="Component"/>
+            </keep-alive>
+          </router-view>
         </div>
       </div>
     </div>
@@ -52,11 +56,11 @@
 
   const userId = router.currentRoute.value.params.userId;
   const menuItems = [
-    {label: "动态", key: 'MomentList'},
-    {label: "文章", key: 'PostList'},
-    {label: "专栏", key: 'SpecialColumn'},
-    {label: "收藏", key: 'CollectList', show: true},
-    {label: "关注", key: 'SubscribeList'},
+    {title: "动态", path: 'moment'},
+    {title: "文章", path: 'post'},
+    {title: "专栏", path: 'column'},
+    {title: "收藏", path: 'collection'},
+    {title: "关注", path: 'subscribe'},
   ]
 
   function onLoaded(userData: userType) {
@@ -75,7 +79,13 @@
         content: `Ta共收获了${user.value.extraInfo[item.value]}个点赞`,
       });
     }
-  };
+  }
+
+  function handleNavigate(isActive, isExactActive, navigate) {
+    if (!isExactActive) {
+      navigate();
+    }
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -250,26 +260,23 @@
 
       .user-content {
         width: 75%;
-        height: 2000px;
+        height: 100%;
         margin-left: 8px;
         background-color: #fff;
         margin-top: 90px;
 
         .content-menu {
           padding: 0 10px;
+          display: flex;
 
-          ::v-deep(.ant-menu) {
-            .ant-menu-item {
-              padding: 0 20px !important;
+          .menu-item {
+            cursor: pointer;
+            padding-bottom: 4px;
+            margin: 10px 10px 0px 10px;
+            transition: 0s;
 
-              &.ant-menu-item-selected {
-                font-weight: bold;
-              }
-
-              &::after {
-                right: 10px;
-                left: 10px;
-              }
+            &.router-link-active {
+              border-bottom: 2px solid #1890ff;
             }
           }
         }

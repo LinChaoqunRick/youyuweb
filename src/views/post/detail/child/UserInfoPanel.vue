@@ -116,7 +116,7 @@
   };
 
   function handleProfile() {
-    router.push({path: `/user/${user.value.id}`})
+    router.push({path: `/user/${user.value.id}/moment`})
   }
 
   watch(() => props.id, (val) => {
@@ -294,8 +294,17 @@
       }
     }
 
-    ::v-deep(.ant-card-body) {
-      padding: 16px 24px;
+    ::v-deep(.ant-card) {
+      .ant-card-head {
+        position: sticky;
+        top: 60px;
+        background: var(--antd-background);
+        /*box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);*/
+      }
+
+      .ant-card-body {
+        padding: 16px 24px;
+      }
     }
   }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <footer class="y-footer">
+  <footer class="y-footer" id="footer">
     <div class="copyright">Copyright© 2020-{{year}}有语</div>
     <a class="mitt" href="https://beian.miit.gov.cn">闽ICP备2021002248号-1 </a>
   </footer>
@@ -24,9 +24,6 @@
     color: #909090;
     height: 40px;
     width: 100%;
-    position: absolute;
-    bottom: 0;
-    left: 0;
     display: flex;
     justify-content: center;
     align-items: center;

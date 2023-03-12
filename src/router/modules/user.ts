@@ -12,7 +12,7 @@ const route = [
       {
         path: ":userId(\\d+)",
         name: "userProfile",
-        redirect: ":userId(\\d+)/moment",
+        // redirect: "/user/:userId(\\d+)/moment",
         meta: {
           title: "用户主页",
           code: "USER_PROFILE"
@@ -23,7 +23,7 @@ const route = [
             path: "moment",
             name: "userMoment",
             meta: {
-              title: "动态",
+              title: "Ta的动态",
               code: "USER_PROFILE"
             },
             component: () => import("@/views/user/profile/child/MomentList.vue"),
@@ -32,7 +32,7 @@ const route = [
             path: "post",
             name: "userPost",
             meta: {
-              title: "文章",
+              title: "Ta的文章",
               code: "USER_PROFILE"
             },
             component: () => import("@/views/user/profile/child/PostList.vue"),
@@ -41,16 +41,16 @@ const route = [
             path: "column",
             name: "userColumn",
             meta: {
-              title: "专栏",
+              title: "Ta的专栏",
               code: "USER_PROFILE"
             },
             component: () => import("@/views/user/profile/child/SpecialColumn.vue"),
           },
           {
-            path: "collect",
-            name: "userCollect",
+            path: "collection",
+            name: "userCollection",
             meta: {
-              title: "收藏",
+              title: "Ta的收藏",
               code: "USER_PROFILE"
             },
             component: () => import("@/views/user/profile/child/CollectList.vue"),
@@ -59,7 +59,7 @@ const route = [
             path: "subscribe",
             name: "userSubscribe",
             meta: {
-              title: "关注",
+              title: "Ta的关注",
               code: "USER_PROFILE"
             },
             component: () => import("@/views/user/profile/child/SubscribeList.vue"),

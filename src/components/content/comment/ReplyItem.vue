@@ -30,7 +30,7 @@
           </template>
           <div class="user-nickname">{{data.userTo.nickname}}</div>
         </a-popover>
-        <div class="author-text" v-if="post.userId === data.userId">(作者)</div>
+        <div class="author-text" v-if="post.userId === data.userIdTo">(作者)</div>
       </div>
       <div class="create-time" :title="data.createTime">{{$dayjs().to(data.createTime)}}</div>
     </div>
