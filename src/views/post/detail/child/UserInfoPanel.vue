@@ -296,9 +296,9 @@
 
     ::v-deep(.ant-card) {
       .ant-card-head {
-        position: sticky;
-        top: 60px;
-        background: var(--antd-background);
+        /*position: sticky;*/
+        /*top: 60px;*/
+        /*background: var(--antd-background);*/
         /*box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);*/
       }
 

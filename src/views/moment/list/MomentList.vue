@@ -1,13 +1,17 @@
 <template>
-  MomentList
+  <div class="moment-list">
+    <div></div>
+  </div>
 </template>
 
 <script>
-    export default {
-        name: "MomentList"
-    }
+  export default {
+    name: "MomentList"
+  }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+  .moment-list {
 
+  }
 </style>

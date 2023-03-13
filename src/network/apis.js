@@ -36,6 +36,9 @@ export const GET_REGISTER_CODE = ApiBase + "/mail/sendRegisterCode"; // 获取�
 // 分类
 export const CATEGORY_LIST = ApiBase + "/category/list"; //
 
+// 用户
+export const GET_COLUMN_LIST = ApiBase + "/column/list"; //
+
 // oss
 export const OSS_POLICY = ApiBase + "/oss/policy"; //
 export const OSS_STS = ApiBase + "/oss/sts"; //

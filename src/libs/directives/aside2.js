@@ -1,6 +1,11 @@
 import {getElementTop} from "@/assets/utils/utils";
 
-let youyuApp, header, footer, aside, elInitTop;
+/**
+ *  参照元素id必须为`aside-right`
+ *  且参照元素最好透明
+ */
+
+let youyuApp, header, footer, aside, elInitTop, asideRight;
 let cacheTop; // cacheTop: 变化方向时，记录变化时刻的elementTop值
 
 function handleScroll() {
@@ -21,9 +26,10 @@ function handleScroll() {
       return;
     }
 
+    asideRight.style.minHeight = `${aside.clientHeight}px`;
+
     if (dir && windowScrollBottom > asideBottom) { // 如果向下滚动且超过了下限
       if (youyuApp.clientHeight < document.body.clientHeight) {
-        console.log(1234);
         aside.style.cssText = `position: relative;`;
       } else {
         cacheTop = getElementTop(aside);
@@ -50,6 +56,7 @@ export default {
     youyuApp = document.getElementById("youyu-app");
     header = document.getElementById("header");
     footer = document.getElementById("footer");
+    asideRight = document.getElementById("aside-right");
     aside = el;
     elInitTop = getElementTop(aside);
     cacheTop = elInitTop;

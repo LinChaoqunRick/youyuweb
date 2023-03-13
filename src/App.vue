@@ -13,13 +13,18 @@
 </template>
 
 <script setup lang="ts">
-  import {nextTick, ref, provide} from 'vue';
-  import zhCN from 'ant-design-vue/es/locale/zh_CN'
+  import {nextTick, ref, provide, computed, watch} from 'vue';
+  import {useStore} from "vuex";
 
+  import zhCN from 'ant-design-vue/es/locale/zh_CN';
   import YHeader from '@/components/common/header/YHeader.vue';
   import YFooter from "@/components/common/footer/YFooter.vue";
 
-  const isRouterAlive = ref(true);
+  const {getters} = useStore();
+
+  const isRouterAlive = ref<boolean>(true);
+
+  const isLogin = computed(() => getters['isLogin']);
 
   function reload() {
     isRouterAlive.value = false;
@@ -27,6 +32,15 @@
       isRouterAlive.value = true;
     })
   }
+
+  /**
+   * 用户登录后刷新页面
+   */
+  watch(() => isLogin.value, (newVal) => {
+    if (newVal) {
+      reload();
+    }
+  })
 
   provide('reload', reload);
 </script>

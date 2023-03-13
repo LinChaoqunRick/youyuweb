@@ -4,20 +4,25 @@
       <div class="user-left">
         <UserInfoPanel v-aside2 :id="userId" @onLoaded="onLoaded" ref="UserInfoRef"></UserInfoPanel>
       </div>
-      <div class="user-content">
-        <div class="content-menu">
-          <router-link v-for="item in menuItems.filter(i=>i.show!==false)" :to="item.path" custom
-                       v-slot="{isActive, isExactActive, navigate}">
+      <div class="user-content" id="aside-right">
+        <div class="user-menu-content">
+          <div class="content-menu">
+            <router-link v-for="item in menuItems.filter(i=>i.show!==false)" :to="item.path" custom
+                         v-slot="{isActive, isExactActive, navigate}">
             <span :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}"
                   @click="handleNavigate(isActive,isExactActive,navigate)" class="menu-item">{{item.title}}</span>
-          </router-link>
+            </router-link>
+          </div>
+          <div class="content-component">
+            <router-view v-slot="{ Component }">
+              <keep-alive>
+                <component :is="Component" :user="user"/>
+              </keep-alive>
+            </router-view>
+          </div>
         </div>
-        <div class="content-component">
-          <router-view v-slot="{ Component }">
-            <keep-alive>
-              <component :is="Component"/>
-            </keep-alive>
-          </router-view>
+        <div class="user-extra-info">
+          123
         </div>
       </div>
     </div>
@@ -25,11 +30,11 @@
 </template>
 
 <script lang="ts">
-  import MomentList from "./child/MomentList.vue";
-  import PostList from "./child/PostList.vue";
-  import SpecialColumn from "./child/SpecialColumn.vue";
-  import CollectList from "./child/CollectList.vue";
-  import SubscribeList from "./child/SubscribeList.vue";
+  import MomentList from "./moment/MomentList.vue";
+  import PostList from "./post/PostList.vue";
+  import SpecialColumn from "./column/SpecialColumn.vue";
+  import CollectList from "./collection/CollectList.vue";
+  import SubscribeList from "./subscribe/SubscribeList.vue";
 
   export default {
     components: {
@@ -259,30 +264,42 @@
       }
 
       .user-content {
+        display: flex;
         width: 75%;
-        height: 100%;
         margin-left: 8px;
-        background-color: #fff;
-        margin-top: 90px;
+        padding-top: 90px;
 
-        .content-menu {
-          padding: 0 10px;
-          display: flex;
+        .user-menu-content {
+          width: 75%;
 
-          .menu-item {
-            cursor: pointer;
-            padding-bottom: 4px;
-            margin: 10px 10px 0px 10px;
-            transition: 0s;
+          .content-menu {
+            padding: 0 10px;
+            display: flex;
+            background-color: var(--youyu-body-background2);
+            border-bottom: 1px solid #e4e6eb;
 
-            &.router-link-active {
-              border-bottom: 2px solid #1890ff;
+            .menu-item {
+              cursor: pointer;
+              padding-bottom: 4px;
+              margin: 10px 10px 0px 10px;
+              transition: 0s;
+
+              &.router-link-active {
+                border-bottom: 2px solid #1890ff;
+              }
             }
+          }
+
+          .content-component {
+            padding: 6px 10px;
+            background-color: var(--youyu-body-background2);
           }
         }
 
-        .content-component {
-          padding: 6px 10px;
+        .user-extra-info {
+          width: 25%;
+          margin-left: 8px;
+          background-color: var(--youyu-body-background2);
         }
       }
     }

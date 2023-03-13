@@ -20,10 +20,10 @@ const routes = [
   ...lab,
   ...about,
   ...user,
-  {
-    path: '/:pathMatch(.*)',
-    redirect: '/404',
-  },
+  // {
+  //   path: '/:pathMatch(.*)',
+  //   redirect: '/404',
+  // },
 ]
 
 export default routes;

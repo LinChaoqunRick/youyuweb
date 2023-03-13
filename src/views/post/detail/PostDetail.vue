@@ -5,7 +5,7 @@
         <UserInfoPanel :id="post.userId"/>
       </div>
     </div>
-    <div class="post-body">
+    <div class="post-body" id="aside-right">
       <div class="post-main">
         <div class="post-title" v-html="post.title"></div>
         <div class="post-info">
@@ -163,6 +163,7 @@
     display: flex;
     margin: 8px auto;
     justify-content: center;
+    /*align-items: flex-start;*/
 
     .post-aside {
       position: relative;
