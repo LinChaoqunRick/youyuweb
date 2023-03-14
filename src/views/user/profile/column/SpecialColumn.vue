@@ -28,7 +28,7 @@
 
   watch(() => props.user, (newVal) => {
     getColumnList();
-  })
+  }, {immediate: true})
 
 </script>
 

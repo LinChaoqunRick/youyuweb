@@ -5,7 +5,7 @@ import {getElementTop} from "@/assets/utils/utils";
  *  且参照元素最好透明
  */
 
-let youyuApp, header, footer, aside, elInitTop, asideRight;
+let youyuApp, header, footer, aside, elInitTop, asideRight, parent;
 let cacheTop; // cacheTop: 变化方向时，记录变化时刻的elementTop值
 
 function handleScroll() {
@@ -26,7 +26,7 @@ function handleScroll() {
       return;
     }
 
-    asideRight.style.minHeight = `${aside.clientHeight}px`;
+    parent.style.minHeight = `${aside.clientHeight}px`;
 
     if (dir && windowScrollBottom > asideBottom) { // 如果向下滚动且超过了下限
       if (youyuApp.clientHeight < document.body.clientHeight) {
@@ -60,6 +60,7 @@ export default {
     aside = el;
     elInitTop = getElementTop(aside);
     cacheTop = elInitTop;
+    parent = el.parentNode;
     document.addEventListener("scroll", onScroll, false);
   },
 
