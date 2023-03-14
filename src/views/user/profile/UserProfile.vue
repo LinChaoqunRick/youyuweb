@@ -16,13 +16,17 @@
           <div class="content-component">
             <router-view v-slot="{ Component }">
               <keep-alive>
-                <component :is="Component" :user="user"/>
+                <component :is="Component"/>
               </keep-alive>
             </router-view>
           </div>
         </div>
         <div class="user-extra-info">
-          123
+          <div class="user-achievement">
+            <div v-for="item in 20">
+              12312312312
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -48,7 +52,7 @@
 </script>
 
 <script setup lang="ts">
-  import {ref, onMounted} from "vue";
+  import {ref, onMounted, provide} from "vue";
   import {useRouter} from "vue-router";
   import UserInfoPanel from "@/views/post/detail/child/UserInfoPanel.vue";
   import type {userType, statType} from "@/types/user";
@@ -58,6 +62,8 @@
   const router = useRouter();
   const user = ref({});
   const current = ref<string[]>(['MomentList']);
+
+  provide('user', user);
 
   const userId = router.currentRoute.value.params.userId;
   const menuItems = [
@@ -299,7 +305,12 @@
         .user-extra-info {
           width: 25%;
           margin-left: 8px;
-          background-color: var(--youyu-body-background2);
+
+          .user-achievement {
+            background-color: var(--youyu-body-background2);
+            position: sticky;
+            top: 68px;
+          }
         }
       }
     }

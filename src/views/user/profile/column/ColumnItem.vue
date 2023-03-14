@@ -10,6 +10,25 @@
           置顶
         </div>
         <div class="title-text">{{data.title}}</div>
+        <span class="column-operation">
+          <div v-if="isOwn">
+            <a-popover placement="bottom" trigger="click" overlayClassName="column-operation-tooltip">
+            <template #content>
+              <a-button type="text">管理内容</a-button>
+              <a-button type="text">修改介绍</a-button>
+              <a-button type="text">置顶</a-button>
+              <a-button type="text">删除</a-button>
+            </template>
+            <i-more theme="outline" size="22" fill="currentColor"/>
+          </a-popover>
+          </div>
+          <div v-else class="subscribe-button">
+            <a-button type="primary" size="small">
+              <i-plus theme="outline" size="14" fill="currentColor"/>
+              订阅
+            </a-button>
+          </div>
+        </span>
       </div>
       <div class="column-content">{{data.content}}</div>
       <div class="column-info">
@@ -24,12 +43,19 @@
 </template>
 
 <script setup lang="ts">
+  import {computed, inject} from "vue";
+  import {useStore} from "vuex";
+
   const props = defineProps({
     data: {
       type: Object,
       required: true
     }
   })
+  const {getters} = useStore();
+  const user = inject('user');
+  let userInfo = computed(() => getters['userInfo']);
+  const isOwn = computed(() => user.value.id === userInfo.value.id);
 </script>
 
 <style lang="scss" scoped>
@@ -87,6 +113,16 @@
           text-overflow: ellipsis;
           white-space: nowrap;
         }
+
+        .column-operation {
+          display: inline-block;
+
+          .subscribe-button {
+            button {
+              font-size: 13px;
+            }
+          }
+        }
       }
 
       .column-content {
@@ -103,6 +139,7 @@
       }
 
       .column-info {
+        font-size: 13px;
         color: var(--youyu-body-text1);
 
         .info-separator {
@@ -113,6 +150,30 @@
           color: #86909c;
         }
       }
+    }
+
+    .column-extra {
+      padding: 6px 16px;
+    }
+  }
+</style>
+
+<style lang="scss">
+  .column-operation-tooltip {
+    .ant-popover-inner-content {
+      padding: 0;
+    }
+
+    .ant-btn {
+      width: 100%;
+
+      &:hover {
+        color: #1890ff;
+      }
+    }
+
+    button {
+      display: block;
     }
   }
 </style>

@@ -26,9 +26,18 @@
           <p>{{user.signature}}</p>
         </div>
         <div class="user-operation">
-          <a-button type="primary" @click="handleProfile" class="home-button">Ta的主页</a-button>
-          <a-button>私信</a-button>
-          <a-button type="primary" danger>关注</a-button>
+          <a-button type="primary" @click="handleProfile" class="home-button">
+            <!--            <i-user theme="outline" size="14" fill="currentColor"/>-->
+            Ta的主页
+          </a-button>
+          <a-button>
+            <!--            <i-mail theme="outline" size="14" fill="currentColor"/>-->
+            私信
+          </a-button>
+          <a-button type="primary" danger>
+            <!--            <i-remind theme="outline" size="14" fill="currentColor"/>-->
+            关注
+          </a-button>
         </div>
       </div>
     </slot>
@@ -201,6 +210,7 @@
 
           .uid {
             font-size: 12px;
+            color: var(--youyu-body-text1);
           }
         }
       }

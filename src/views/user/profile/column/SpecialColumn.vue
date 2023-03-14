@@ -5,28 +5,24 @@
 </template>
 
 <script setup lang="ts">
-  import {ref, computed, watch} from "vue";
+  import {ref, computed, watch, inject} from "vue";
   import {useStore} from 'vuex';
   import ColumnItem from "./ColumnItem.vue";
 
   const {getters, dispatch} = useStore();
-  const props = defineProps({
-    user: {
-      type: Object
-    }
-  })
+  const user = inject('user');
 
   const userInfo = computed(() => getters['userInfo']);
 
   const columnList = ref([]);
 
   function getColumnList() {
-    dispatch('getColumnList', {userId: props.user.id}).then(res => {
+    dispatch('getColumnList', {userId: user.value.id}).then(res => {
       columnList.value = res.data;
     })
   }
 
-  watch(() => props.user, (newVal) => {
+  watch(() => user.value, (newVal) => {
     getColumnList();
   }, {immediate: true})
 
