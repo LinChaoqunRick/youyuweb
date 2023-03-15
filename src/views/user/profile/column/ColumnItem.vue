@@ -16,14 +16,14 @@
             <template #content>
               <a-button type="text">管理内容</a-button>
               <a-button type="text">修改介绍</a-button>
-              <a-button type="text">置顶</a-button>
+              <a-button type="text"><span>{{data.isTop==='1'?'取消置顶':'置顶'}}</span></a-button>
               <a-button type="text">删除</a-button>
             </template>
             <i-more theme="outline" size="22" fill="currentColor"/>
           </a-popover>
           </div>
           <div v-else class="subscribe-button">
-            <a-button type="primary" size="small">
+            <a-button type="primary" size="small" @click="handleSubscribe">
               <i-plus theme="outline" size="14" fill="currentColor"/>
               订阅
             </a-button>
@@ -52,10 +52,18 @@
       required: true
     }
   })
-  const {getters} = useStore();
+  const {getters, commit} = useStore();
   const user = inject('user');
-  let userInfo = computed(() => getters['userInfo']);
+  const userInfo = computed(() => getters['userInfo']);
+  const isLogin = computed(() => getters['isLogin']);
   const isOwn = computed(() => user.value.id === userInfo.value.id);
+
+  function handleSubscribe() {
+    if (!isLogin.value) {
+      commit("changeLogin", true);
+      return;
+    }
+  }
 </script>
 
 <style lang="scss" scoped>

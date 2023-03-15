@@ -277,6 +277,7 @@
 
         .user-menu-content {
           width: 75%;
+          overflow: hidden;
 
           .content-menu {
             padding: 0 10px;

@@ -26,7 +26,7 @@ function handleScroll() {
       return;
     }
 
-    parent.style.minHeight = `${aside.clientHeight}px`;
+    parent.style.cssText = `min-height:${aside.clientHeight}px;`;
 
     if (dir && windowScrollBottom > asideBottom) { // 如果向下滚动且超过了下限
       if (youyuApp.clientHeight < document.body.clientHeight) {
