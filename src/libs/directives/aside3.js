@@ -1,15 +1,17 @@
 import {getElementTop} from "@/assets/utils/utils";
 
-let header, footer, aside, elInitTop, asideRight, parent, filler;
-let cacheTop = 0; // cacheTop: 变化方向时，记录变化时刻的elementTop值
-let dir;
+/**
+ *  cacheTop: 变化方向时，记录变化时刻的elementTop值
+ */
+let header, footer, aside, elInitTop, asideRight, parent, filler, cacheTop;
+
 
 function handleScroll() {
   let beforeScrollTop = document.documentElement.scrollTop;
 
   return () => {
     let afterScrollTop = document.documentElement.scrollTop;
-    dir = afterScrollTop - beforeScrollTop > 0 ? 1 : 0;
+    let dir = afterScrollTop - beforeScrollTop > 0 ? 1 : 0;
     beforeScrollTop = afterScrollTop;
 
     let windowScrollBottom = document.documentElement.scrollTop + document.documentElement.clientHeight;
@@ -21,11 +23,10 @@ function handleScroll() {
       return;
     }
 
-    // filler.style.cssText = `height: 0px;`;
-    //
     // parent.style.minHeight = `${aside.clientHeight}px;`;
-    // parent.style.display = `flex`;
-    // filler.style.cssText = `height: ${aside.clientHeight}px;`;
+    parent.style.display = `flex`;
+    parent.style.alignItems = `flex-start`;
+    filler.style.cssText = `height: ${aside.clientHeight}px;`;
 
     if (dir) { // 向下滚动
       if (windowScrollBottom > getElementTop(footer)) { // 超过footer
@@ -60,6 +61,7 @@ export default {
     header = document.getElementById("header");
     footer = document.getElementById("footer");
     asideRight = document.getElementById("aside-right");
+    cacheTop = 0;
     aside = el;
     elInitTop = getElementTop(aside);
     parent = el.parentNode;

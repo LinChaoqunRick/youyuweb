@@ -74,7 +74,7 @@
         '-',
         'revoke',
         'next',
-        'save',
+        /*'save',*/
         '=',
         'prettier',
         'pageFullscreen',
