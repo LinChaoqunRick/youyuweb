@@ -2,7 +2,7 @@
   <div class="user-profile">
     <div class="user-main">
       <div class="user-left">
-        <UserInfoPanel v-aside2 :id="userId" @onLoaded="onLoaded" ref="UserInfoRef"></UserInfoPanel>
+        <UserInfoPanel v-aside3 :id="userId" @onLoaded="onLoaded" ref="UserInfoRef"></UserInfoPanel>
       </div>
       <div class="user-content" id="aside-right">
         <div class="user-menu-content">
@@ -23,7 +23,11 @@
         </div>
         <div class="user-extra-info">
           <div class="user-achievement">
-            <div v-for="item in 20">
+            <div v-for="item in 10">
+              12312312312
+            </div>
+            <div style="position: fixed;">45645645645</div>
+            <div v-for="item in 10">
               12312312312
             </div>
           </div>

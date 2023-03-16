@@ -151,7 +151,7 @@
 
 <style lang="scss" scoped>
   .user-info-panel {
-    width: 100%;
+    width: 300px;
 
     .basic-info {
       display: flex;

@@ -9,6 +9,7 @@ import {install} from '@icon-park/vue-next/es/all';
 // directives
 import aside from "@/libs/directives/aside.js";
 import aside2 from "@/libs/directives/aside2.js";
+import aside3 from "@/libs/directives/aside3.js";
 import row from "@/libs/directives/row.ts";
 import RelativeTime from "dayjs/plugin/relativeTime";
 
@@ -32,6 +33,7 @@ app.use(store);
 
 app.directive("aside", aside);
 app.directive("aside2", aside2);
+app.directive("aside3", aside3);
 app.directive("row", row);
 
 dayjs.extend(RelativeTime)
