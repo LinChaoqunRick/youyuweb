@@ -26,7 +26,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import {ref, toRef} from 'vue';
   import {useStore} from "vuex";
   import {onBeforeRouteUpdate, useRoute, useRouter} from "vue-router";
@@ -71,18 +71,17 @@
 
   initData();
 
-  const handleChange = (page, pageSize) => {
+  const handleChange = (page: number, pageSize: number) => {
     initData();
   };
-  const handleSizeChange = (current, newSize) => {
+  const handleSizeChange = (current: number, newSize: number) => {
     size.value = newSize;
   };
-  // onBeforeRouteUpdate(({params}) => {
-  //   if (params.page === '1') {
-  //     current.value = 1;
-  //     initData();
-  //   }
-  // })
+
+  defineExpose({
+    page,
+    initData
+  })
 </script>
 
 <style lang="scss" scoped>

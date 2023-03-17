@@ -23,9 +23,6 @@ function handleScroll() {
       return;
     }
 
-    // parent.style.minHeight = `${aside.clientHeight}px;`;
-    parent.style.display = `flex`;
-    parent.style.alignItems = `flex-start`;
     filler.style.cssText = `height: ${aside.clientHeight}px;`;
 
     if (dir) { // 向下滚动
@@ -65,6 +62,9 @@ export default {
     aside = el;
     elInitTop = getElementTop(aside);
     parent = el.parentNode;
+    // parent.style.minHeight = `${aside.clientHeight}px;`;
+    parent.style.display = `flex`;
+    parent.style.alignItems = `flex-start`;
     filler = document.createElement("div");
     parent.appendChild(filler);
     document.addEventListener("scroll", onScroll, false);

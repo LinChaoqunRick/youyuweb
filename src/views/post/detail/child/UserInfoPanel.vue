@@ -166,8 +166,8 @@
         align-items: center;
 
         .user-avatar {
-          width: 80px;
-          height: 80px;
+          width: 90px;
+          height: 90px;
           position: relative;
           cursor: pointer;
 
@@ -198,7 +198,7 @@
         .user-nickname {
           width: 120px;
           height: 100%;
-          margin-left: 10px;
+          margin-left: 20px;
 
           .nickname {
             width: 100%;
@@ -319,4 +319,4 @@
       }
     }
   }
-</style>
+</style>post-content

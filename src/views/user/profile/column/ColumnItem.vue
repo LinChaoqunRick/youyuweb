@@ -15,7 +15,7 @@
             <a-popover placement="bottom" trigger="click" overlayClassName="column-operation-tooltip">
             <template #content>
               <a-button type="text">管理内容</a-button>
-              <a-button type="text">修改介绍</a-button>
+              <a-button type="text" @click="handleEdit">编辑专栏</a-button>
               <a-button type="text"><span>{{data.isTop==='1'?'取消置顶':'置顶'}}</span></a-button>
               <a-button type="text">删除</a-button>
             </template>
@@ -45,6 +45,8 @@
 <script setup lang="ts">
   import {computed, inject} from "vue";
   import {useStore} from "vuex";
+  import openModal from "@/libs/tools/openModal";
+  import ColumnEditor from "./ColumnEditor.vue";
 
   const props = defineProps({
     data: {
@@ -63,6 +65,12 @@
       commit("changeLogin", true);
       return;
     }
+  }
+
+  function handleEdit() {
+    openModal({
+      component: ColumnEditor
+    })
   }
 </script>
 
