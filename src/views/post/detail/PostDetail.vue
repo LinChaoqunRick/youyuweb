@@ -143,17 +143,12 @@
     fold.value = !fold.value;
   }
 
-  function setPostLikeCount(count) {
-    post.value.likeCount = count;
-  }
-
-  function setPostCommentCount(count) {
-    post.value.commentCount = count;
+  function setPostAttribute(name, value) {
+    post.value[name] = value;
   }
 
   provide('post', readonly(post));
-  provide('setPostLikeCount', setPostLikeCount);
-  provide('setPostCommentCount', setPostCommentCount);
+  provide('setPostAttribute', setPostAttribute);
 
 </script>
 

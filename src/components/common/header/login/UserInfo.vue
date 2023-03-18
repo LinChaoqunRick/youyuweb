@@ -4,26 +4,9 @@
     <a-popover placement="bottom"
                overlayClassName="user-info-popover">
       <template #content>
-        <div class="ope-list ope-list1">
-          <div v-for="item in list1" class="ope-list-item">
-            <component :is="item.icon" theme="outline" size="18"/>
-            <div class="ope-item-label">
-              {{item.label}}
-            </div>
-          </div>
-        </div>
-        <div class="ope-list-separator"></div>
-        <div class="ope-list ope-list1">
-          <div v-for="item in list2" class="ope-list-item">
-            <component :is="item.icon" theme="outline" size="18"/>
-            <div class="ope-item-label">
-              {{item.label}}
-            </div>
-          </div>
-        </div>
-        <div class="ope-list-separator"></div>
-        <div class="ope-list ope-list1">
-          <div v-for="item in list3" class="ope-list-item" @click="handleClick(item)">
+        <div v-for="item in menuList" class="ope-list">
+          <div class="ope-list-separator" v-if="item.type === 'separator'"></div>
+          <div class="ope-list-item ope-list1" v-else @click="handleClick(item)">
             <component :is="item.icon" theme="outline" size="18"/>
             <div class="ope-item-label">
               {{item.label}}
@@ -51,11 +34,13 @@
   import {ExclamationCircleOutlined} from '@ant-design/icons-vue';
   import {createVNode} from 'vue';
   import {Modal, message} from 'ant-design-vue';
+  import {useRouter} from 'vue-router';
 
-  let {getters, dispatch} = useStore();
+  const {getters, dispatch} = useStore();
   let userInfo = computed(() => getters['userInfo']);
+  const router = useRouter();
 
-  const list1 = [
+  const menuList = [
     {
       label: "我的关注",
       icon: "i-like"
@@ -76,8 +61,9 @@
       label: "账号设置",
       icon: "i-setting-one"
     },
-  ];
-  const list2 = [
+    {
+      type: 'separator'
+    },
     {
       label: "我的主页",
       icon: "i-home"
@@ -86,8 +72,9 @@
       label: "管理文章",
       icon: "i-pencil"
     },
-  ];
-  const list3 = [
+    {
+      type: 'separator'
+    },
     {
       label: "帮助",
       icon: "i-help"
@@ -100,6 +87,9 @@
 
   function handleClick(item) {
     switch (item.label) {
+      case "我的主页":
+        router.push(`/user/${userInfo.value.id}/moment`)
+        break;
       case "退出":
         showConfirm();
         break;
@@ -175,7 +165,7 @@
       justify-content: center;
       align-items: center;
       cursor: pointer;
-      padding: 6px 8px;
+      padding: 7px 8px;
       color: rgb(96, 98, 102);
 
       .i-icon {

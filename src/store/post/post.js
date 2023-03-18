@@ -17,6 +17,10 @@ import {
   UPDATE_POST,
   SET_COMMENT_LIKE,
   CANCEL_COMMENT_LIKE,
+  SET_POST_COLLECT,
+  IS_POST_COLLECT,
+  CANCEL_POST_COLLECT,
+
 
   OSS_POLICY,
   OSS_STS,
@@ -53,10 +57,10 @@ export default {
       return http.post(SET_POST_LIKE, params);
     },
     isPostLike(state, params) {
-      return http.get(IS_POST_LIKE, params);
+      return http.post(IS_POST_LIKE, params);
     },
     cancelPostLike(state, params) {
-      return http.get(CANCEL_POST_LIKE, params);
+      return http.post(CANCEL_POST_LIKE, params);
     },
     getCreateTypes(state, params) {
       return http.get(GET_CREATE_TYPES, params);
@@ -75,6 +79,15 @@ export default {
     },
     cancelCommentLike(state, params) {
       return http.post(CANCEL_COMMENT_LIKE, params);
+    },
+    setPostCollect(state, params) {
+      return http.post(SET_POST_COLLECT, params);
+    },
+    isPostCollect(state, params) {
+      return http.post(IS_POST_COLLECT, params);
+    },
+    cancelPostCollect(state, params) {
+      return http.post(CANCEL_POST_COLLECT, params);
     },
 
 

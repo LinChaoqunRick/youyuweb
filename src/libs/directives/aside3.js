@@ -7,11 +7,12 @@ let header, footer, aside, elInitTop, asideRight, parent, filler, cacheTop;
 
 
 function handleScroll() {
-  let beforeScrollTop = document.documentElement.scrollTop;
+  let beforeScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
 
   return () => {
-    let afterScrollTop = document.documentElement.scrollTop;
+    let afterScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
     let dir = afterScrollTop - beforeScrollTop > 0 ? 1 : 0;
+    // console.log(dir, beforeScrollTop, afterScrollTop, aside.clientHeight);
     beforeScrollTop = afterScrollTop;
 
     let windowScrollBottom = document.documentElement.scrollTop + document.documentElement.clientHeight;

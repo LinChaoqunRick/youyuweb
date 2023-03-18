@@ -93,7 +93,7 @@
   ];
   const footers = ['markdownTotal', '=', 'scrollSwitch'];
   const post = inject('post');
-  const setPostCommentCount = inject('setPostCommentCount');
+  const setPostAttribute = inject('setPostAttribute');
 
   function updateActiveId(value) {
     activeId.value = value;
@@ -139,7 +139,7 @@
       message.success('评论成功');
       content.value = '';
       handleSort(true);
-      setPostCommentCount(post.value.commentCount + 1);
+      setPostAttribute('commentCount', post.value.commentCount + 1);
     }).catch(e => {
       message.error("评论失败")
     })

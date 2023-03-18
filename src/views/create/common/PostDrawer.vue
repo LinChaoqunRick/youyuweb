@@ -86,6 +86,11 @@
             :maxlength="100"
           />
         </a-form-item>
+        <a-form-item label="收录至专栏" name="columnId">
+          <a-select v-model:value="formValidate.columnId">
+            <a-select-option :value="item.id" v-for="item in columnList">{{item.title}}</a-select-option>
+          </a-select>
+        </a-form-item>
         <a-form-item label="文章类型" name="createType">
           <a-radio-group v-model:value="formValidate.createType" button-style="solid">
             <a-radio-button v-for="item in createTypes" :value="item.code">{{item.desc}}</a-radio-button>
@@ -188,6 +193,7 @@
   });
   const image = ref<string>('');
   const postImages = ref([]);
+  const columnList = ref([]);
   const modalVisible = ref(false);
 
   async function onSubmit() {
@@ -209,12 +215,23 @@
     })
   }
 
+  function getColumnList() {
+    dispatch('getColumnList', {userId: props.formValidate.userId}).then(res => {
+      columnList.value = res.data;
+    })
+  }
+
   function uploadSuccess(fileList) {
     props.formValidate.thumbnail.push(fileList[0].url);
   }
 
   getCategoryList();
   getCreateTypes();
+
+
+  watch(() => props.formValidate, () => {
+    getColumnList();
+  })
 
   function transferData(data) {
     data.forEach(item => {
@@ -243,6 +260,9 @@
     props.formValidate.tags = props.formValidate.tags.filter(tag => tag !== removedTag);
   };
 
+  const handleOk = () => {
+
+  }
 
   function onClose() {
     emit('update:visible', false);
