@@ -25,7 +25,7 @@ import {
 export default {
   actions: {
     getPostList(state, params) {
-      return http.get(GET_POST_LIST, params);
+      return http.post(GET_POST_LIST, params);
     },
     getPostDetail(state, params) {
       // return http.post(GET_POST_DETAIL, params, {headers: {'content-type': "application/x-www-form-urlencoded"}});

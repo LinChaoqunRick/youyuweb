@@ -1,7 +1,7 @@
 <template>
   <footer class="y-footer" id="footer">
     <div class="copyright">Copyright© 2020-{{year}}有语</div>
-    <a class="mitt" href="https://beian.miit.gov.cn">闽ICP备2021002248号-1 </a>
+    <a class="mitt" target="_blank" href="https://beian.miit.gov.cn">闽ICP备2021002248号-1 </a>
   </footer>
 </template>
 

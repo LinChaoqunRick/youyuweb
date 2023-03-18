@@ -47,6 +47,9 @@
           </a-tag>
         </a-form-item>
         <a-form-item label="封面" name="thumbnail" class="post-thumbnails">
+          <div class="select-from-post">
+            <a-button type="link" @click="openModal">从文章中选取</a-button>
+          </div>
           <UploadFile :disabled="formValidate.thumbnail.length>=3" @uploadSuccess="uploadSuccess">
             <div class="file-list">
               <div v-for="(file, index) in formValidate.thumbnail" :key="file"
@@ -99,6 +102,15 @@
         </div>
       </template>
     </a-drawer>
+
+    <a-modal v-model:visible="modalVisible" title="选取封面" width="60%" @ok="handleOk"
+             wrapClassName="post-image-select-modal">
+      <div class="image-box">
+        <div class="image-item" v-for="item in postImages" :class="{'selected-active': item.selected}">
+          <img :src="item.url" @click="handleItemClick(item)"/>
+        </div>
+      </div>
+    </a-modal>
   </div>
 </template>
 
@@ -109,13 +121,14 @@
 </script>
 
 <script setup lang="ts">
-  import {nextTick, reactive, ref} from 'vue';
+  import {nextTick, reactive, ref, watch} from 'vue';
   import type {PropType,} from 'vue';
   import type {TreeSelectProps} from 'ant-design-vue';
   import {Form, message, notification} from 'ant-design-vue';
   import {useStore} from 'vuex';
   import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
   import type {postData} from "@/types/post";
+  import {getMarkDownImages} from "@/assets/utils/utils";
 
   const {dispatch} = useStore();
 
@@ -160,6 +173,12 @@
         message: '请输入原文链接',
       },
     ],
+    thumbnail: [
+      {
+        required: true,
+        message: '请至少上传一张首图',
+      },
+    ]
   });
   const formRef = ref();
   const inputRef = ref();
@@ -168,6 +187,8 @@
     inputValue: '',
   });
   const image = ref<string>('');
+  const postImages = ref([]);
+  const modalVisible = ref(false);
 
   async function onSubmit() {
     const form = await formRef.value.validate().catch(console.log);
@@ -244,10 +265,10 @@
   }
 
   const handleDelete = (index): void => {
-    if (props.formValidate.thumbnail.length === 1) {
-      message.error("至少保留一张图片");
-      return;
-    }
+    // if (props.formValidate.thumbnail.length === 1) {
+    //   message.error("至少保留一张图片");
+    //   return;
+    // }
     props.formValidate.thumbnail.splice(index, 1)
   }
 
@@ -256,6 +277,19 @@
     previewVisible.value = value;
   };
 
+  const openModal = () => {
+    modalVisible.value = true;
+  }
+
+  const handleItemClick = (item) => {
+    item.selected = !(item.selected);
+  }
+
+  watch(() => props.visible, (val) => {
+    if (val) {
+      postImages.value = getMarkDownImages(props.formValidate.content);
+    }
+  })
   defineExpose({
     onSubmit,
   })
@@ -293,6 +327,12 @@
   .create-post-drawer {
     .post-thumbnails {
       position: relative;
+
+      .select-from-post {
+        position: absolute;
+        top: 1px;
+        left: 120px;
+      }
 
       .file-list {
         width: 180px;
@@ -361,6 +401,32 @@
               }
             }
           }
+        }
+      }
+    }
+  }
+
+  .post-image-select-modal {
+    .image-box {
+      display: flex;
+      flex-wrap: wrap;
+
+      .image-item {
+        height: 100%;
+        width: 25%;
+        cursor: pointer;
+        padding: 5px 10px;
+
+        img {
+          height: 120px;
+          width: 100%;
+        }
+      }
+
+      .selected-active {
+        img {
+          /*border: 1px solid #1890ff;*/
+          box-shadow: 0 0 0 2px #1890ff;
         }
       }
     }

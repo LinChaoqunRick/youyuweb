@@ -13,6 +13,11 @@
         <div class="article-caption" v-html="data.summary"
              @click="$router.push({name:'articleDetail',params:{postId:data.id}})"/>
         <div class="article-info">
+          <span class="info-nickname" @click="$router.push(`/user/${data.user.id}/moment`)">{{data.user.nickname}}</span>
+          <span class="separator">/</span>
+          <span class="create-type"
+                :class="[`create_type_${data.createType}`]">{{createTypeList[data.createType]}}</span>
+          <span class="separator">/</span>
           <span>{{(data.createTime).substr(0, 10)}}</span>
           <span class="separator">/</span>
           <span>{{data.commentCount}}&ensp;评论</span>
@@ -35,6 +40,10 @@
         </div>
       </div>
       <div class="article-info">
+        <span @click="$router.push(`/user/${data.user.id}/moment`)">{{data.user.nickname}}</span>
+        <span class="separator">/</span>
+        <span class="create-type" :class="[`create_type_${data.createType}`]">{{createTypeList[data.createType]}}</span>
+        <span class="separator">/</span>
         <span>{{(data.createTime).substr(0, 10)}}</span>
         <span class="separator">/</span>
         <span>{{data.commentCount}}&ensp;评论</span>
@@ -60,6 +69,8 @@
       required: true
     }
   })
+
+  const createTypeList = ['原创', '转载', '翻译'];
 
   const thumbnails = computed(() => {
     return props.data.thumbnail.split(",").splice(0, 3);
@@ -235,6 +246,31 @@
 
     .image-wrapper {
       padding: 16px 16px 16px 0 !important;
+    }
+  }
+
+  .article-info {
+    .info-nickname {
+      color: #1890ff;
+      cursor: pointer;
+    }
+
+    .create-type {
+      /*background-color: #1890ff;*/
+      padding: 1px 4px;
+      border-radius: 2px;
+    }
+
+    .create_type_0 {
+      color: #67bb55;
+    }
+
+    .create_type_1 {
+      color: #fc5531;
+    }
+
+    .create_type_2 {
+      color: #6a87f1;
     }
   }
 </style>

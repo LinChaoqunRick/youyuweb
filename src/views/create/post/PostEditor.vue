@@ -4,7 +4,7 @@
       <input v-model="formValidate.title" placeholder="请输入文章标题" maxlength="60"/>
       <span class="top-tips">文章将自动保存至草稿箱</span>
       <a-button type="primary">草稿箱</a-button>
-      <a-button type="primary" @click="visible = true">发布</a-button>
+      <a-button type="primary" @click="handlePost">发布</a-button>
     </div>
     <MdEditorCom v-model="formValidate.content" class="write-post-editor" ref="editor"/>
     <PostDrawer v-model:visible="visible" :formValidate="formValidate" v-bind="$attrs"/>
@@ -33,6 +33,10 @@
   })
 
   const visible = ref<boolean>(false);
+
+  function handlePost() {
+    visible.value = true;
+  }
 </script>
 
 <style lang="scss" scoped>

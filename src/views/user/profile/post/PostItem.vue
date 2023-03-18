@@ -12,11 +12,13 @@
              @click="navigate"/>
       </div>
       <div class="post-info">
+        <span class="create-type" :class="[`create_type_${data.createType}`]">{{createTypeList[data.createType]}}</span>
+        <span class="separator">/</span>
         <span>{{(data.createTime).substr(0, 10)}}</span>
         <span class="separator">/</span>
         <span>{{data.commentCount}}&ensp;评论</span>
         <span class="separator">/</span>
-        <span>{{data.viewCount}}&ensp;阅读</span>
+        <span style="cursor: pointer" @click="navigate">{{data.viewCount}}&ensp;阅读</span>
       </div>
     </div>
   </div>
@@ -27,6 +29,8 @@
   import {useRouter} from 'vue-router';
 
   const router = useRouter();
+
+  const createTypeList = ['原创', '转载', '翻译'];
 
   const props = defineProps({
     data: {
@@ -98,6 +102,24 @@
         line-height: 32px;
         font-size: 12px;
         color: var(--youyu-body-text1);
+
+        .create-type {
+          /*background-color: #1890ff;*/
+          padding: 1px 4px;
+          border-radius: 2px;
+        }
+
+        .create_type_0 {
+          color: #67bb55;
+        }
+
+        .create_type_1 {
+          color: #fc5531;
+        }
+
+        .create_type_2 {
+          color: #6a87f1;
+        }
 
         .separator {
           color: #e1e1e1;

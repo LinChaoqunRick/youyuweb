@@ -43,6 +43,10 @@
     params: {
       type: Object,
       default: () => ({})
+    },
+    loadImmediate: { // 是否一开始就获取数据
+      type: Boolean,
+      default: true
     }
   });
   const page = Number(route.params.page);
@@ -56,6 +60,8 @@
   // Cookies.set("token", "666666", {expires: 7});
 
   const initData = () => {
+    finished.value = false;
+    dataList.value = [];
     dispatch(props.listUrl, Object.assign({}, {
       pageNum: current.value,
       pageSize: size.value
@@ -69,7 +75,9 @@
     })
   }
 
-  initData();
+  if (props.loadImmediate) {
+    initData();
+  }
 
   const handleChange = (page: number, pageSize: number) => {
     initData();

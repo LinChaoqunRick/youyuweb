@@ -182,3 +182,13 @@ export async function uploadToOss(files: File[]) {
     })
   );
 }
+
+export function getMarkDownImages(content: string) {
+  const images = [];
+  const pattern = /!\[(.*?)]\((https?:\/\/.+\.(png|jpe?g|webp|gif|svg))(.*\))/gi;
+  let matcher;
+  while ((matcher = pattern.exec(content)) !== null) {
+    images.push({alt: matcher[1], url: matcher[2]});
+  }
+  return images;
+}

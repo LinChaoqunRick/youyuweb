@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="list-body">
-      <YTable listUrl="getPostList" :params="listParams" ref="yTable">
+      <YTable listUrl="getPostList" :params="listParams" :loadImmediate="false" ref="yTable">
         <template #default="{dataList}">
           <div v-for="(item, index) in dataList" class="article-item" :key="item.postId">
             <PostItem :data="item" :index="index"/>
@@ -28,13 +28,14 @@
 </template>
 
 <script setup lang="ts">
-  import {computed, ref, nextTick} from 'vue';
+  import {computed, ref, nextTick, inject, watch} from 'vue';
   import {useStore} from "vuex";
 
   import YTable from "@/components/common/table/YTable.vue";
   import PostItem from "./PostItem.vue";
 
   const {getters} = useStore();
+  const user = inject('user');
 
   const userInfo = computed(() => getters['userInfo']);
 
@@ -42,8 +43,8 @@
   const checked = ref(false);
   const sort = ref(true); // true:最新 false:最热
   const listParams = computed(() => ({
-    userId: userInfo.value.id,
-    isOriginal: checked.value,
+    userId: user.value.id,
+    original: checked.value,
     sort: sort.value
   }))
 
@@ -58,6 +59,10 @@
       yTable.value.initData();
     })
   }
+
+  watch(() => user.value, (newVal) => {
+    searchData();
+  }, {immediate: true})
 </script>
 
 <style lang="scss" scoped>
