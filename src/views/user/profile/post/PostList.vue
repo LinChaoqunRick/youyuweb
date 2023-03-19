@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="list-body">
-      <YTable listUrl="getPostList" :params="listParams" :loadImmediate="false" ref="yTable">
+      <YTable listUrl="getPostList" :params="listParams" ref="yTable">
         <template #default="{dataList}">
           <div v-for="(item, index) in dataList" class="article-item" :key="item.postId">
             <PostItem :data="item" :index="index"/>
@@ -26,6 +26,12 @@
     </div>
   </div>
 </template>
+
+<script lang="ts">
+  export default {
+    name: "PostList"
+  }
+</script>
 
 <script setup lang="ts">
   import {computed, ref, nextTick, inject, watch} from 'vue';
@@ -60,9 +66,6 @@
     })
   }
 
-  watch(() => user.value, (newVal) => {
-    searchData();
-  }, {immediate: true})
 </script>
 
 <style lang="scss" scoped>

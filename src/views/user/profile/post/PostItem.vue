@@ -12,13 +12,11 @@
              @click="navigate"/>
       </div>
       <div class="post-info">
-        <span class="create-type" :class="[`create_type_${data.createType}`]">{{createTypeList[data.createType]}}</span>
-        <span class="separator">/</span>
-        <span>{{(data.createTime).substr(0, 10)}}</span>
-        <span class="separator">/</span>
-        <span>{{data.commentCount}}&ensp;评论</span>
-        <span class="separator">/</span>
-        <span style="cursor: pointer" @click="navigate">{{data.viewCount}}&ensp;阅读</span>
+        <span class="create-type info-item" :class="[`create_type_${data.createType}`]">{{createTypeList[data.createType]}}</span>
+        <span class="category-name info-item">{{data.categoryName}}</span>
+        <span class="info-item">{{(data.createTime).substr(0, 10)}}</span>
+        <span class="info-item">{{data.commentCount}}&ensp;评论</span>
+        <span class="info-item" style="cursor: pointer" @click="navigate">{{data.viewCount}}&ensp;阅读</span>
       </div>
     </div>
   </div>
@@ -105,8 +103,11 @@
 
         .create-type {
           /*background-color: #1890ff;*/
-          padding: 1px 4px;
           border-radius: 2px;
+        }
+
+        .category-name {
+          color: #1890ff;
         }
 
         .create_type_0 {
@@ -121,9 +122,14 @@
           color: #6a87f1;
         }
 
-        .separator {
-          color: #e1e1e1;
-          padding: 0 5px;
+        .info-item {
+          &:nth-child(n+2) {
+            &:before {
+              content: '/';
+              color: #e1e1e1;
+              padding: 0 5px;
+            }
+          }
         }
       }
     }

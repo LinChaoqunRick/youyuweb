@@ -14,6 +14,7 @@ export const UPDATE_POST = ApiBase + "/post/update"; // 获取编辑文章详情
 export const SET_POST_COLLECT = ApiBase + "/post/postCollect";
 export const IS_POST_COLLECT = ApiBase + "/post/isPostCollect";
 export const CANCEL_POST_COLLECT = ApiBase + "/post/cancelPostCollect";
+export const GET_POST_COLLECT_LIST = ApiBase + "/post/collectList"; // 获取收藏列表
 
 
 // 评论

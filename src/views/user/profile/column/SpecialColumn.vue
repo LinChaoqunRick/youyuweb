@@ -22,9 +22,7 @@
     })
   }
 
-  watch(() => user.value, (newVal) => {
-    getColumnList();
-  }, {immediate: true})
+  getColumnList();
 
 </script>
 

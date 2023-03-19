@@ -18,6 +18,8 @@
           <span class="create-type"
                 :class="[`create_type_${data.createType}`]">{{createTypeList[data.createType]}}</span>
           <span class="separator">/</span>
+          <span class="category-name">{{data.categoryName}}</span>
+          <span class="separator">/</span>
           <span>{{(data.createTime).substr(0, 10)}}</span>
           <span class="separator">/</span>
           <span>{{data.commentCount}}&ensp;评论</span>
@@ -257,8 +259,11 @@
 
     .create-type {
       /*background-color: #1890ff;*/
-      padding: 1px 4px;
       border-radius: 2px;
+    }
+
+    .category-name {
+      color: #1890ff;
     }
 
     .create_type_0 {

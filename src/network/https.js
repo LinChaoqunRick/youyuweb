@@ -77,7 +77,7 @@ function get(url, params = {}) {
  * @param {String} url [请求的url地址]
  * @param {Object} data [请求时携带的参数]
  */
-function post(url, data = {}, config) {
+function post(url, data = {}, config = null) {
   if (!config) {
     config = {
       headers: {

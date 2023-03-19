@@ -21,7 +21,6 @@ import {
   IS_POST_COLLECT,
   CANCEL_POST_COLLECT,
 
-
   OSS_POLICY,
   OSS_STS,
 } from "@/network/apis";

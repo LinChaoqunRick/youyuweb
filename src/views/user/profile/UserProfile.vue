@@ -16,7 +16,7 @@
           <div class="content-component">
             <router-view v-slot="{ Component }">
               <keep-alive>
-                <component :is="Component"/>
+                <component :is="Component" v-if="user" :key="$route.name"/>
               </keep-alive>
             </router-view>
           </div>
@@ -64,7 +64,7 @@
 
   const UserInfoRef = ref(null)
   const router = useRouter();
-  const user = ref({});
+  const user = ref(null);
   const current = ref<string[]>(['MomentList']);
 
   provide('user', user);

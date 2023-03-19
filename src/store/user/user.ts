@@ -3,6 +3,7 @@ import {
   GET_USER_BY_ID,
   GET_LIMIT_POST,
   GET_COLUMN_LIST,
+  GET_POST_COLLECT_LIST,
 
 } from "@/network/apis";
 
@@ -16,6 +17,9 @@ export default {
     },
     getColumnList(state: any, params: object) {
       return http.get(GET_COLUMN_LIST, params);
+    },
+    getPostCollectList(state: any, params: object) {
+      return http.post(GET_POST_COLLECT_LIST, params);
     },
 
   },
