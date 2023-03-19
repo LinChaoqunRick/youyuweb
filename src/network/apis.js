@@ -34,6 +34,9 @@ export const ACCOUNT_REGISTER = ApiBase + "/login/register"; // 注销
 // 用户
 export const GET_USER_BY_ID = ApiBase + "/user/getUserById"; // 根据id获取用户信息
 export const GET_LIMIT_POST = ApiBase + "/user/getLimitPost"; // 获取指定数量条帖子记录
+export const SET_USER_FOLLOW = ApiBase + "/user/follow"; // 关注用户
+export const CANCEL_USER_FOLLOW = ApiBase + "/user/unfollow"; // 取关用户
+
 
 export const GET_REGISTER_CODE = ApiBase + "/mail/sendRegisterCode"; // 获取注册验证码
 

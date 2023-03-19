@@ -4,6 +4,8 @@ import {
   GET_LIMIT_POST,
   GET_COLUMN_LIST,
   GET_POST_COLLECT_LIST,
+  SET_USER_FOLLOW,
+  CANCEL_USER_FOLLOW,
 
 } from "@/network/apis";
 
@@ -20,6 +22,12 @@ export default {
     },
     getPostCollectList(state: any, params: object) {
       return http.post(GET_POST_COLLECT_LIST, params);
+    },
+    setUserFollow(state: any, params: object) {
+      return http.post(SET_USER_FOLLOW, params);
+    },
+    cancelUserFollow(state: any, params: object) {
+      return http.post(CANCEL_USER_FOLLOW, params);
     },
 
   },

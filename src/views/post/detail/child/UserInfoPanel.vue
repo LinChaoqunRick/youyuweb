@@ -25,18 +25,29 @@
           <div class="sign-title">描述：</div>
           <p>{{user.signature}}</p>
         </div>
+        <!--        <div class="user-contact">-->
+        <!--          <div class="contact-title">社交：</div>-->
+        <!--          <div class="contact-list">-->
+        <!--            <div class="contact-item">-->
+        <!--              <i-github theme="outline" size="20" fill="#909090"/>-->
+        <!--            </div>-->
+        <!--            <div class="contact-item">-->
+        <!--              <i-international theme="outline" size="20" fill="#333"/>-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--        </div>-->
         <div class="user-operation">
           <a-button type="primary" @click="handleProfile" class="home-button">
             <!--            <i-user theme="outline" size="14" fill="currentColor"/>-->
             Ta的主页
           </a-button>
-          <a-button>
+          <a-button @click="handleMessage" v-if="!isOwn">
             <!--            <i-mail theme="outline" size="14" fill="currentColor"/>-->
             私信
           </a-button>
-          <a-button type="primary" danger>
+          <a-button type="primary" danger @click="handleFollow" v-if="!isOwn">
             <!--            <i-remind theme="outline" size="14" fill="currentColor"/>-->
-            关注
+            {{user.follow?'取消关注':'关注'}}
           </a-button>
         </div>
       </div>
@@ -67,17 +78,17 @@
 </template>
 
 <script lang="ts" setup>
-  import {inject, ref, watch} from 'vue';
+  import {computed, inject, ref, watch} from 'vue';
   import {useStore} from 'vuex';
   import {useRoute, useRouter} from 'vue-router';
-  import {Modal} from 'ant-design-vue';
+  import {message, Modal} from 'ant-design-vue';
   import type {statType} from "@/types/user";
 
 
   const route = useRoute();
   const router = useRouter();
 
-  const {dispatch} = useStore();
+  const {getters, commit, dispatch} = useStore();
 
   const props = defineProps({
     id: {
@@ -86,6 +97,8 @@
     }
   });
 
+  const userInfo = computed(() => getters['userInfo']);
+  const isLogin = computed(() => getters['isLogin']);
   const emit = defineEmits(['onLoaded'])
 
   const dataItems = [
@@ -107,6 +120,7 @@
     }
   ]
 
+  const isOwn = ref(true);
   const user = ref({});
   const hotPosts = ref([]);
   const newPosts = ref([]);
@@ -128,10 +142,42 @@
     router.push({path: `/user/${user.value.id}/moment`})
   }
 
+  function handleMessage() {
+    if (!isLogin.value) {
+      commit("changeLogin", true);
+      return;
+    }
+  }
+
+  function handleFollow() {
+    if (!isLogin.value) {
+      commit("changeLogin", true);
+      return;
+    }
+    if (user.value.follow) { // 已经关注了，取消关注
+      dispatch("cancelUserFollow", {
+        userId: userInfo.value.id,
+        userIdTo: user.value.id
+      }).then(res => {
+        user.value.follow = false;
+        message.success("已取消关注")
+      })
+    } else { // 还没有关注，关注
+      dispatch("setUserFollow", {
+        userId: userInfo.value.id,
+        userIdTo: user.value.id
+      }).then(res => {
+        user.value.follow = true;
+        message.success("已添加关注")
+      })
+    }
+  }
+
   watch(() => props.id, (val) => {
     if (!props.id) return;
     dispatch("getUserById", {userId: val}).then(res => {
       user.value = res.data;
+      isOwn.value = user.value.id === userInfo.value.id;
       emit('onLoaded', user.value);
     });
 
@@ -262,6 +308,25 @@
         }
       }
 
+      .user-contact {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 0 16px;
+
+        .contact-list {
+          display: flex;
+          align-items: center;
+
+          .contact-item {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            height: 24px;
+          }
+        }
+      }
+
       .user-operation {
         width: 100%;
         padding: 0 10px;
@@ -319,4 +384,4 @@
       }
     }
   }
-</style>post-content
+</style>

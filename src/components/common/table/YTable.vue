@@ -2,11 +2,11 @@
   <div class="y-table">
     <div class="table-body">
       <slot :dataList="dataList">
-        <div class="table-no-data" v-if="finished && dataList.length === 0">
+        <div class="table-no-data" v-if="finished && !dataList.length">
           暂无数据
         </div>
         <div class="table-skeleton" v-else>
-          <a-skeleton active avatar v-for="item in 10"></a-skeleton>
+          <a-skeleton active avatar v-for="item in size"></a-skeleton>
         </div>
       </slot>
     </div>

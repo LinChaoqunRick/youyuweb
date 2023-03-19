@@ -56,13 +56,15 @@
 </script>
 
 <script setup lang="ts">
-  import {ref, onMounted, provide} from "vue";
-  import {useRouter} from "vue-router";
+  import {ref, watch, provide, inject} from "vue";
+  import {useRoute, useRouter} from "vue-router";
   import UserInfoPanel from "@/views/post/detail/child/UserInfoPanel.vue";
   import type {userType, statType} from "@/types/user";
   import {Modal} from "ant-design-vue";
 
+  const reload = inject('reload')
   const UserInfoRef = ref(null)
+  const route = useRoute();
   const router = useRouter();
   const user = ref(null);
   const current = ref<string[]>(['MomentList']);
@@ -101,14 +103,18 @@
       navigate();
     }
   }
+
+  watch(() => route.params.userId, (() => {
+    reload();
+  }))
 </script>
 
 <style lang="scss" scoped>
   .user-profile {
     .user-main {
-      max-width: 1300px;
       display: flex;
-      margin: 8px auto;
+      justify-content: center;
+      padding: 8px 0;
       justify-content: center;
 
       .user-left {
@@ -275,7 +281,7 @@
 
       .user-content {
         display: flex;
-        width: 75%;
+        width: 64%;
         margin-left: 8px;
         padding-top: 90px;
 

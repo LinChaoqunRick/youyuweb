@@ -154,7 +154,6 @@
 
 <style lang="scss" scoped>
   .post-detail {
-    max-width: 1300px;
     display: flex;
     margin: 8px auto;
     justify-content: center;
@@ -170,7 +169,7 @@
     }
 
     .post-body {
-      width: 75%;
+      width: 64%;
       margin-left: 8px;
 
       .post-main {

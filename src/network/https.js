@@ -49,7 +49,7 @@ instance.interceptors.response.use((response) => {
   } else if (res.code === 404) {
     router.replace({name: 'NotFound'});
     return Promise.reject(res);
-  } else if (res.code === 508) { // 后端参数校验错误
+  } else if ([508, 509].includes(res.code)) { // 后端参数校验错误, 内容不存在
     message.error(res.message);
     return Promise.reject(res)
   } else {
