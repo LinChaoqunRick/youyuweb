@@ -6,6 +6,7 @@ import {
   GET_POST_COLLECT_LIST,
   SET_USER_FOLLOW,
   CANCEL_USER_FOLLOW,
+  GET_FOLLOW_LIST,
 
 } from "@/network/apis";
 
@@ -28,6 +29,9 @@ export default {
     },
     cancelUserFollow(state: any, params: object) {
       return http.post(CANCEL_USER_FOLLOW, params);
+    },
+    getFollowList(state: any, params: object) {
+      return http.post(GET_FOLLOW_LIST, params);
     },
 
   },

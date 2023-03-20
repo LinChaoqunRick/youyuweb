@@ -24,7 +24,6 @@ const route = [
             name: "userMoment",
             meta: {
               title: "Ta的动态",
-              code: "USER_PROFILE"
             },
             component: () => import("@/views/user/profile/moment/MomentList.vue"),
           },
@@ -33,7 +32,6 @@ const route = [
             name: "userPost",
             meta: {
               title: "Ta的文章",
-              code: "USER_PROFILE"
             },
             component: () => import("@/views/user/profile/post/PostList.vue"),
           },
@@ -42,7 +40,6 @@ const route = [
             name: "userColumn",
             meta: {
               title: "Ta的专栏",
-              code: "USER_PROFILE"
             },
             component: () => import("@/views/user/profile/column/SpecialColumn.vue"),
           },
@@ -51,18 +48,16 @@ const route = [
             name: "userCollection",
             meta: {
               title: "Ta的收藏",
-              code: "USER_PROFILE"
             },
             component: () => import("@/views/user/profile/collection/CollectList.vue"),
           },
           {
-            path: "subscribe",
-            name: "userSubscribe",
+            path: "follow",
+            name: "userFollow",
             meta: {
               title: "Ta的关注",
-              code: "USER_PROFILE"
             },
-            component: () => import("@/views/user/profile/subscribe/SubscribeList.vue"),
+            component: () => import("@/views/user/profile/follow/FollowList.vue"),
           }
         ]
       },

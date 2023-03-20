@@ -3,7 +3,7 @@ import {getElementTop} from "@/assets/utils/utils";
 /**
  *  cacheTop: 变化方向时，记录变化时刻的elementTop值
  */
-let header, footer, aside, elInitTop, asideRight, parent, filler, cacheTop;
+let header, footer, aside, elInitTop, cacheTop, mainApp;
 
 
 function handleScroll() {
@@ -24,7 +24,13 @@ function handleScroll() {
       return;
     }
 
-    filler.style.cssText = `height: ${aside.clientHeight}px;`;
+    // console.log(aside.offsetHeight);
+    // console.log(mainApp.offsetHeight);
+    // 如果aside高度与mainApp一致，就是参考元素高度没aside高
+    if (aside.offsetHeight >= mainApp.offsetHeight) {
+      aside.style.cssText = `position: relative;`;
+      return;
+    }
 
     if (dir) { // 向下滚动
       if (windowScrollBottom > getElementTop(footer)) { // 超过footer
@@ -40,7 +46,7 @@ function handleScroll() {
         aside.style.cssText = `position: relative;top: ${cacheTop}px`;
       }
     } else { // 向上滚动
-      if (windowScrollTop < getElementTop(aside) - header.clientHeight) { // 超过上限
+      if (windowScrollTop < getElementTop(aside) - (header.clientHeight - 8)) { // 超过上限
         cacheTop = windowScrollTop;
         // console.log("up 1", cacheTop)
         aside.style.cssText = `position: sticky;top: ${elInitTop}px;`
@@ -58,16 +64,10 @@ export default {
   mounted(el, binding) {
     header = document.getElementById("header");
     footer = document.getElementById("footer");
-    asideRight = document.getElementById("aside-right");
+    mainApp = document.getElementById("main-app");
     cacheTop = 0;
     aside = el;
     elInitTop = getElementTop(aside);
-    parent = el.parentNode;
-    // parent.style.minHeight = `${aside.clientHeight}px;`;
-    parent.style.display = `flex`;
-    parent.style.alignItems = `flex-start`;
-    filler = document.createElement("div");
-    parent.appendChild(filler);
     document.addEventListener("scroll", onScroll, false);
   },
 

@@ -15,9 +15,9 @@
           </div>
           <div class="content-component">
             <router-view v-slot="{ Component }">
-              <keep-alive>
-                <component :is="Component" v-if="user" :key="$route.name"/>
-              </keep-alive>
+              <!--              <keep-alive>-->
+              <component :is="Component" v-if="user" :key="$route.name"/>
+              <!--              </keep-alive>-->
             </router-view>
           </div>
         </div>
@@ -42,7 +42,7 @@
   import PostList from "./post/PostList.vue";
   import SpecialColumn from "./column/SpecialColumn.vue";
   import CollectList from "./collection/CollectList.vue";
-  import SubscribeList from "./subscribe/SubscribeList.vue";
+  import SubscribeList from "./follow/FollowList.vue";
 
   export default {
     components: {
@@ -77,7 +77,7 @@
     {title: "文章", path: 'post'},
     {title: "专栏", path: 'column'},
     {title: "收藏", path: 'collection'},
-    {title: "关注", path: 'subscribe'},
+    {title: "关注", path: 'follow'},
   ]
 
   function onLoaded(userData: userType) {
@@ -114,8 +114,7 @@
     .user-main {
       display: flex;
       justify-content: center;
-      padding: 8px 0;
-      justify-content: center;
+      margin: 8px 0;
 
       .user-left {
         position: relative;

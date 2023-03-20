@@ -36,6 +36,7 @@ export const GET_USER_BY_ID = ApiBase + "/user/getUserById"; // 根据id获取�
 export const GET_LIMIT_POST = ApiBase + "/user/getLimitPost"; // 获取指定数量条帖子记录
 export const SET_USER_FOLLOW = ApiBase + "/user/follow"; // 关注用户
 export const CANCEL_USER_FOLLOW = ApiBase + "/user/unfollow"; // 取关用户
+export const GET_FOLLOW_LIST = ApiBase + "/user/followList"; // 获取用户关注列表
 
 
 export const GET_REGISTER_CODE = ApiBase + "/mail/sendRegisterCode"; // 获取注册验证码

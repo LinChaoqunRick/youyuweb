@@ -1,10 +1,11 @@
 <template>
-  <div class="collect-list">
+  <div class="follow-list">
+    <div class="follow-menu"></div>
     <div class="list-body">
-      <YTable listUrl="getPostCollectList" :params="listParams" ref="yTable">
+      <YTable listUrl="getFollowList" :params="listParams">
         <template #default="{dataList}">
-          <div v-for="(item, index) in dataList" class="article-item" :key="item.postId">
-            <PostItem :data="item" :index="index"/>
+          <div v-for="(item, index) in dataList" class="list-item" :key="item.postId">
+            <UserItem :data="item"/>
           </div>
         </template>
       </YTable>
@@ -16,7 +17,7 @@
   import {useStore} from "vuex";
   import {computed, inject, ref, watch} from "vue";
   import YTable from "@/components/common/table/YTable.vue";
-  import PostItem from "../post/PostItem.vue";
+  import UserItem from "./UserItem.vue";
 
   const {getters, dispatch} = useStore();
   const user = inject('user');
@@ -24,9 +25,22 @@
   const userInfo = computed(() => getters['userInfo']);
   const listParams = computed(() => ({
     userId: user.value.id,
+    pageSize: 20
   }))
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+  .follow-list {
+    .follow-menu {
+      height: 40px;
+    }
 
+    .list-body {
+      padding: 0 10px;
+
+      .list-item {
+        border-top: 1px solid #e4e6eb;
+      }
+    }
+  }
 </style>

@@ -26,7 +26,7 @@
         </a-popover>
         <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
           <template #content>
-            <UserCard :user="data.user"/>
+            <UserCard :user="data.userTo"/>
           </template>
           <div class="user-nickname">{{data.userTo.nickname}}</div>
         </a-popover>

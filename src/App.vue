@@ -4,7 +4,7 @@
       <div class="header" id="header">
         <YHeader/>
       </div>
-      <div class="main-app" v-if="isRouterAlive">
+      <div class="main-app" id="main-app" v-if="isRouterAlive">
         <router-view/>
       </div>
       <YFooter/>
