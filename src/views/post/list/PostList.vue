@@ -10,7 +10,7 @@
       </YTable>
     </div>
     <div class="article-right">
-      <PostAside v-aside2/>
+      <PostAside v-aside3/>
     </div>
   </div>
 </template>
@@ -38,7 +38,7 @@
     }
 
     .article-right {
-      width: 290px;
+      width: 300px;
       margin-left: 8px;
       position: relative;
     }

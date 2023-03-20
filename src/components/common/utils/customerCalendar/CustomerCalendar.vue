@@ -32,16 +32,15 @@
 
 <style lang="scss" scoped>
   .customer-calendar {
-    width: 290px;
+    width: 100%;
     height: 380px;
     background-color: var(--article-background);
     border-radius: 8px;
     padding: 24px 26px;
 
     .image-container {
-      height: 320px;
-      width: 240px;
       position: relative;
+      height: 320px;
 
       .date-container {
         width: 48px;
@@ -69,7 +68,7 @@
       img {
         height: 100%;
         width: 100%;
-        object-fit: cover;
+        /*object-fit: cover;*/
       }
     }
 

@@ -19,7 +19,8 @@ function handleScroll() {
     let windowScrollTop = document.documentElement.scrollTop;
 
     // 如果aside高度比较小，直接sticky
-    if (aside.clientHeight < document.documentElement.clientHeight - footer.clientHeight - header.clientHeight) {
+    console.log(aside.clientHeight, document.documentElement.clientHeight - header.clientHeight);
+    if (aside.clientHeight < document.documentElement.clientHeight - header.clientHeight) {
       aside.style.cssText = `position: sticky;top: ${elInitTop}px`
       return;
     }
