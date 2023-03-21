@@ -1,9 +1,9 @@
 <template>
-  <div class="article-container">
+  <div class="post-list">
     <div class="article-list">
-      <YTable listUrl="getPostList">
+      <YTable listUrl="getPostList" @onLoaded="onLoaded">
         <template #default="{dataList}">
-          <div v-for="(item, index) in dataList" class="article-body" :key="item.postId">
+          <div v-for="(item, index) in dataList" class="article-body" :key="item.postId" ref="postItem">
             <PostItem :data="item" :index="index"/>
           </div>
         </template>
@@ -16,16 +16,39 @@
 </template>
 
 <script setup>
+  import {ref, nextTick} from "vue";
+  import {useIntersectionObserver} from '@vueuse/core';
+  import {addClass} from "@/assets/utils/utils.ts"
+
   import YTable from "@/components/common/table/YTable.vue";
   import PostItem from "@/components/content/post/PostItem.vue";
   import PostAside from "../aside/PostAside.vue";
+
+  const postItem = ref([]);
+
+  const onLoaded = () => {
+    nextTick(() => {
+      postItem.value.forEach(item => {
+        const {stop} = useIntersectionObserver(
+          item,
+          ([{isIntersecting}], observerElement) => {
+            if (isIntersecting) {
+              addClass(item, "animate__animated")
+              addClass(item, "animate__fadeIn")
+              stop();
+            }
+          },
+        )
+      })
+    })
+  }
 </script>
 
 <style lang="scss" scoped>
-  .article-container {
+  .post-list {
     display: flex;
     justify-content: center;
-    margin: 8px auto 0 auto;
+    margin: 8px auto;
     max-width: 1100px;
 
     .article-list {

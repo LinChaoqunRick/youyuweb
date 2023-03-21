@@ -30,7 +30,8 @@
   import {ref, toRef} from 'vue';
   import {useStore} from "vuex";
   import {onBeforeRouteUpdate, useRoute, useRouter} from "vue-router";
-  import Cookies from 'js-cookie';
+
+  const emit = defineEmits(['onLoaded']);
 
   const route = useRoute();
   const router = useRouter();
@@ -57,7 +58,6 @@
   const dataList = ref([]);
   const finished = ref(false);
 
-  // Cookies.set("token", "666666", {expires: 7});
 
   const initData = () => {
     finished.value = false;
@@ -70,6 +70,7 @@
       router.push({params: {page: res.data.current}})
       total.value = res.data.total;
       dataList.value = res.data.list;
+      emit("onLoaded");
     }).finally(() => {
       finished.value = true;
     })

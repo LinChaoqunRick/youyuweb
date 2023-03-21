@@ -32,7 +32,7 @@
 
 <style lang="scss" scoped>
   .customer-calendar {
-    width: 100%;
+    width: 300px;
     height: 380px;
     background-color: var(--article-background);
     border-radius: 8px;

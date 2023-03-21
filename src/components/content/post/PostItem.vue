@@ -1,5 +1,5 @@
 <template>
-  <div class="post-item">
+  <div class="post-item" ref="thisRef">
     <div class="article-item" :class="{'flex-revert': !!(index % 2)}" v-if="thumbnails.length < 3">
       <div class="image-wrapper">
         <div class="image-link" @click="$router.push({name:'postDetail',params:{postId:data.id}})">
@@ -13,7 +13,8 @@
         <div class="article-caption" v-html="data.summary"
              @click="$router.push({name:'articleDetail',params:{postId:data.id}})"/>
         <div class="article-info">
-          <span class="info-nickname" @click="$router.push(`/user/${data.user.id}/moment`)">{{data.user.nickname}}</span>
+          <span class="info-nickname"
+                @click="$router.push(`/user/${data.user.id}/moment`)">{{data.user.nickname}}</span>
           <span class="separator">/</span>
           <span class="create-type"
                 :class="[`create_type_${data.createType}`]">{{createTypeList[data.createType]}}</span>
@@ -58,7 +59,7 @@
 </template>
 
 <script setup>
-  import {computed} from 'vue';
+  import {ref, computed, onMounted} from 'vue';
 
   const props = defineProps({
     data: {
@@ -73,10 +74,12 @@
   })
 
   const createTypeList = ['原创', '转载', '翻译'];
+  const thisRef = ref(null);
 
   const thumbnails = computed(() => {
     return props.data.thumbnail.split(",").splice(0, 3);
   })
+
 </script>
 
 <style lang="scss" scoped>

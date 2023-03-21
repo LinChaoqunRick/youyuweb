@@ -1,7 +1,8 @@
 <template>
   <div class="post-operation">
     <a-badge :count="post.likeCount" color="#1890ff" :overflow-count="99">
-      <div class="ope-item" :class="{'active':post.postLike}" @click="handleSetLike" title="点赞">
+      <div class="ope-item" :class="{'active':post.postLike}" @click="handleSetLike"
+           :title="`${post.postLike?'取消点赞':'点赞'}`">
         <i-good-two theme="filled" size="21" fill="currentColor"/>
       </div>
     </a-badge>
@@ -32,7 +33,7 @@
   import {scrollToEle} from "@/assets/utils/utils";
   import {computed, inject, reactive, ref} from "vue";
   import {useStore} from "vuex";
-  import { message } from 'ant-design-vue';
+  import {message} from 'ant-design-vue';
 
   const {getters, commit, dispatch} = useStore();
 

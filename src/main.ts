@@ -5,12 +5,14 @@ import store from "@/store";
 import Antd from 'ant-design-vue';
 import MdEditor from 'md-editor-v3';
 import {install} from '@icon-park/vue-next/es/all';
+import animated from 'animate.css'
 
 // directives
 import aside from "@/libs/directives/aside.js";
 import aside2 from "@/libs/directives/aside2.js";
 import aside3 from "@/libs/directives/aside3.js";
 import aside4 from "@/libs/directives/aside4.js";
+import scrollToEl from "@/libs/directives/scrollToEl.js";
 import row from "@/libs/directives/row.ts";
 import RelativeTime from "dayjs/plugin/relativeTime";
 
@@ -31,11 +33,13 @@ const app = createApp(App);
 app.use(router);
 app.use(Antd);
 app.use(store);
+app.use(animated)
 
 app.directive("aside", aside);
 app.directive("aside2", aside2);
 app.directive("aside3", aside3);
 app.directive("aside4", aside4);
+app.directive("scroll-to-el", scrollToEl);
 app.directive("row", row);
 
 dayjs.extend(RelativeTime)

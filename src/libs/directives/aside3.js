@@ -12,14 +12,13 @@ function handleScroll() {
   return () => {
     let afterScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
     let dir = afterScrollTop - beforeScrollTop > 0 ? 1 : 0;
-    // console.log(dir, beforeScrollTop, afterScrollTop, aside.clientHeight);
     beforeScrollTop = afterScrollTop;
 
     let windowScrollBottom = document.documentElement.scrollTop + document.documentElement.clientHeight;
     let windowScrollTop = document.documentElement.scrollTop;
 
     // 如果aside高度比较小，直接sticky
-    console.log(aside.clientHeight, document.documentElement.clientHeight - header.clientHeight);
+    // console.log(aside.clientHeight, document.documentElement.clientHeight - header.clientHeight);
     if (aside.clientHeight < document.documentElement.clientHeight - header.clientHeight) {
       aside.style.cssText = `position: sticky;top: ${elInitTop}px`
       return;

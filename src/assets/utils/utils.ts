@@ -2,6 +2,7 @@ import {nextTick} from 'vue';
 import dayjs from "dayjs";
 import axios from "axios";
 import store from "@/store/index";
+import type {ossType} from '../../types/oss'
 
 export function getElementLeft(element: HTMLElement) {
   let actualLeft: number = element.offsetLeft;
@@ -151,7 +152,7 @@ interface policy {
 }
 
 export async function uploadToOss(files: File[]) {
-  let data: object = {}
+  let data: ossType = {}
 
   await store.dispatch("getOssPolicy").then(res => {
     data = res.data;
@@ -191,4 +192,21 @@ export function getMarkDownImages(content: string) {
     images.push({alt: matcher[1], url: matcher[2]});
   }
   return images;
+}
+
+
+// 给元素添加class名称 el:要添加类名的元素 cn:添加的样式名称
+export const addClass = (el: HTMLElement, cn: string) => {
+  el.classList.add(cn);
+}
+
+// 删除元素class名称 el:要删除类名的元素 cn:删除的样式名称
+export const removeClass = (el: HTMLElement, cn: string) => {
+  el.classList.remove(cn);
+}
+
+// 判断元素是否有某个类名 el:要判断类名的元素 cn:判断的样式名称
+function hasClass(el: HTMLElement, cn: string) {
+  let reg = new RegExp("\\b" + cn + "\\b")
+  return reg.test(el.className)
 }
