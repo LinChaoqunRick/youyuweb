@@ -27,20 +27,20 @@
   const postItem = ref([]);
 
   const onLoaded = () => {
-    nextTick(() => {
-      postItem.value.forEach(item => {
-        const {stop} = useIntersectionObserver(
-          item,
-          ([{isIntersecting}], observerElement) => {
-            if (isIntersecting) {
-              addClass(item, "animate__animated")
-              addClass(item, "animate__fadeIn")
-              stop();
-            }
-          },
-        )
-      })
-    })
+    // nextTick(() => {
+    //   postItem.value.forEach(item => {
+    //     const {stop} = useIntersectionObserver(
+    //       item,
+    //       ([{isIntersecting}], observerElement) => {
+    //         if (isIntersecting) {
+    //           addClass(item, "animate__animated")
+    //           addClass(item, "animate__fadeIn")
+    //           stop();
+    //         }
+    //       },
+    //     )
+    //   })
+    // })
   }
 </script>
 
@@ -48,11 +48,10 @@
   .post-list {
     display: flex;
     justify-content: center;
-    margin: 8px auto;
-    max-width: 1100px;
+    padding: 8px 0;
 
     .article-list {
-      flex: 1;
+      width: 54%;
       margin-bottom: 8px;
 
       .article-body {

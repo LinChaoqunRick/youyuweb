@@ -34,6 +34,8 @@
                 <div class="category-name" v-if="post.categoryName">
                   {{post.categoryName}}
                 </div>
+                <span class="tag-label" v-if="tags.length">标签：</span>
+                <div class="tag-name" v-for="item in tags">{{item}}</div>
               </div>
             </div>
             <div class="post-operation">
@@ -120,6 +122,7 @@
   const post = ref('');
   const fold = ref(true);
   const userInfo = computed(() => getters['userInfo']);
+  const tags = computed(() => post.value.tags?.length ? post.value.tags.split(",") : [])
   const postComment = ref(null);
 
   function getPostDetail() {
@@ -155,7 +158,7 @@
 <style lang="scss" scoped>
   .post-detail {
     display: flex;
-    margin: 8px auto;
+    padding: 8px 0;
     justify-content: center;
     /*align-items: flex-start;*/
 
@@ -235,6 +238,28 @@
                 }
 
                 .category-name {
+                  position: relative;
+                  height: 20px;
+                  line-height: 18px;
+                  font-size: 13px;
+                  margin-right: 5px;
+                  padding: 0 5px;
+                  background-color: var(--youyu-body-background3);
+                  color: #4a88c4;
+                  border: 1px solid var(--youyu-border-color);
+                  border-radius: 4px;
+                  cursor: pointer;
+                }
+
+                .tag-label {
+                  position: relative;
+                  height: 20px;
+                  line-height: 20px;
+                  font-size: 13px;
+                  margin-left: 8px;
+                }
+
+                .tag-name {
                   position: relative;
                   height: 20px;
                   line-height: 18px;

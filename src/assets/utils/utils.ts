@@ -210,3 +210,21 @@ function hasClass(el: HTMLElement, cn: string) {
   let reg = new RegExp("\\b" + cn + "\\b")
   return reg.test(el.className)
 }
+
+/**
+ * 随机颜色
+ */
+export const randomColor = () => {
+  return '#' + Math.floor(Math.random() * 0xffffff).toString(16);
+}
+
+/**
+ * 16进制色值获取反色设置方法
+ * @param  {String} oldColor 为16进制色值的字符串（例：'#000000'）
+ * @return {String} 返回反色的色值（例：'#ffffff'）
+ */
+export const colorReverse = (color: string) => {
+  const reverseColor: string = '0x' + color.replace(/#/g, '');
+  let str = '000000' + (0xFFFFFF - reverseColor).toString(16);
+  return '#' + str.substring(str.length - 6, str.length);
+}

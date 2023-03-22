@@ -33,22 +33,22 @@ function handleScroll() {
     }
 
     if (dir) { // 向下滚动
-      if (windowScrollBottom > getElementTop(footer)) { // 超过footer
-        // console.log("down 1")
+      if (windowScrollBottom >= getElementTop(footer)) { // 超过footer
         aside.style.cssText = `position: absolute;bottom: 0px;`
         cacheTop = getElementTop(aside) - elInitTop; // absolute是可以使用getElementTop计算
-      } else if (windowScrollBottom >= getElementTop(aside) + aside.clientHeight) { // 超过下限
-        cacheTop = windowScrollBottom - elInitTop - aside.clientHeight;
-        // console.log("down 2", cacheTop)
+        // console.log("down 1", cacheTop);
+      } else if (windowScrollBottom >= getElementTop(aside) + aside.clientHeight + 8) { // 超过下限
+        cacheTop = windowScrollBottom - elInitTop - aside.clientHeight - 8;
+        // console.log("down 2", cacheTop);
         aside.style.cssText = `position: fixed;bottom: 8px;`;
       } else { // 其他
         // console.log("down 3")
         aside.style.cssText = `position: relative;top: ${cacheTop}px`;
       }
     } else { // 向上滚动
-      if (windowScrollTop < getElementTop(aside) - (header.clientHeight - 8)) { // 超过上限
+      if (windowScrollTop + header.clientHeight < getElementTop(aside)) { // 超过上限
         cacheTop = windowScrollTop;
-        // console.log("up 1", cacheTop)
+        // console.log("up 1", cacheTop);
         aside.style.cssText = `position: sticky;top: ${elInitTop}px;`
       } else { // 其他
         // console.log("up 2")

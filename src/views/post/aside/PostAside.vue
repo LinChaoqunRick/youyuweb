@@ -1,7 +1,6 @@
 <template>
   <div id="post-aside">
-    <CustomerCalendar class="mb-10"/>
-    <CategoryPanel class="mb-10"/>
+    <CustomerCalendar class="mb-8"/>
     <CategoryPanel/>
   </div>
 </template>

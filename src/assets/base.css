@@ -49,6 +49,22 @@ html, body {
   margin-left: 10px;
 }
 
+.mt-8 {
+  margin-top: 8px;
+}
+
+.mr-8 {
+  margin-right: 8px;
+}
+
+.mb-8 {
+  margin-bottom: 8px;
+}
+
+.ml-8 {
+  margin-left: 8px;
+}
+
 
 .fade-enter-active,
 .fade-leave-active {

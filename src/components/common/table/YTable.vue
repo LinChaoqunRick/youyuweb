@@ -12,6 +12,7 @@
     </div>
     <div class="table-pagination" v-if="!!dataList.length">
       <a-pagination v-model:current="current"
+                    v-model:pageSize="size"
                     :total="total"
                     :show-total="total => `共${total}条`"
                     @change="handleChange"
