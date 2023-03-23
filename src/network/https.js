@@ -20,7 +20,7 @@ import qs from 'qs';
 // 创建axios的对象
 const instance = axios.create({
   baseURL: "",  //配置固定域名
-  timeout: 10 * 1000,
+  timeout: 20 * 1000,
   headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 })
 

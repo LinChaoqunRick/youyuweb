@@ -52,25 +52,35 @@
         </div>
       </div>
     </slot>
+    <div class="column-list mt-8">
+      <a-card title="Ta的专栏" style="width: 100%">
+        <div class="column-list" v-if="columnList.length">
+          <ColumnItemMini v-for="item in columnList" :data="item"/>
+        </div>
+        <div v-else class="no-data">暂无数据</div>
+      </a-card>
+    </div>
     <div class="hot-posts">
       <a-card title="热门文章" style="width: 100%">
         <div class="post-list">
-          <ul>
+          <ul v-if="hotPosts.length">
             <li v-for="item in hotPosts">
               <router-link :to="{name:'postDetail',params:{postId:item.id}}" v-html="item.title"></router-link>
             </li>
           </ul>
+          <div v-else class="no-data">暂无数据</div>
         </div>
       </a-card>
     </div>
     <div class="new-posts">
       <a-card title="最新文章" style="width: 100%">
         <div class="post-list">
-          <ul>
+          <ul v-if="newPosts.length">
             <li v-for="item in newPosts">
               <router-link :to="{name:'postDetail',params:{postId:item.id}}" v-html="item.title"></router-link>
             </li>
           </ul>
+          <div v-else class="no-data">暂无数据</div>
         </div>
       </a-card>
     </div>
@@ -83,6 +93,7 @@
   import {useRoute, useRouter} from 'vue-router';
   import {message, Modal} from 'ant-design-vue';
   import type {statType} from "@/types/user";
+  import ColumnItemMini from '@/components/content/user/column/ColumnItemMini.vue';
 
 
   const route = useRoute();
@@ -122,6 +133,7 @@
 
   const isOwn = ref(true);
   const user = ref({});
+  const columnList = ref([]);
   const hotPosts = ref([]);
   const newPosts = ref([]);
 
@@ -187,6 +199,10 @@
 
     dispatch("getLimitPost", {userId: val, orderBy: 'create_time'}).then(res => {
       newPosts.value = res.data;
+    })
+
+    dispatch('getColumnList', {userId: val}).then(res => {
+      columnList.value = res.data;
     })
   }, {immediate: true});
 
@@ -336,6 +352,18 @@
         button {
           flex: 1;
           margin: 0 3px;
+        }
+      }
+    }
+
+    .column-list {
+      ::v-deep(.ant-card-body) {
+        padding: 16px !important;
+      }
+
+      ::v-deep(.column-item-mini) {
+        &:nth-child(n+2) {
+          margin-top: 8px;
         }
       }
     }

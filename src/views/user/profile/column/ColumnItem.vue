@@ -32,11 +32,9 @@
       </div>
       <div class="column-content">{{data.content}}</div>
       <div class="column-info">
-        {{data.createTime}}
-        <span class="info-separator">/</span>
-        4篇文章
-        <span class="info-separator">/</span>
-        2人订阅
+        <span class="info-item">{{data.createTime}}</span>
+        <span class="info-item">{{data.postNum}}篇文章</span>
+        <span class="info-item">{{data.subscriberNum}}人订阅</span>
       </div>
     </div>
   </div>
@@ -158,12 +156,14 @@
         font-size: 13px;
         color: var(--youyu-body-text1);
 
-        .info-separator {
-          margin: 0 9px;
-          font-weight: 700;
-          font-size: 14px;
-          line-height: 1;
-          color: #86909c;
+        .info-item {
+          &:nth-child(n+2) {
+            &:before {
+              content: '/';
+              color: #e1e1e1;
+              padding: 0 5px;
+            }
+          }
         }
       }
     }
