@@ -8,8 +8,9 @@
   const percent = ref(0);
 
   function handleScroll() {
-    let hideHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    percent.value = document.documentElement.scrollTop / hideHeight * 100;
+    const hideHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const value = document.documentElement.scrollTop / hideHeight * 100
+    percent.value = value > 100 ? 100 : value;
   }
 
   onMounted(() => {
