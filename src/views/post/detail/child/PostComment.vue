@@ -35,12 +35,16 @@
           </div>
         </div>
       </template>
-      <CommentItem v-for="item in commentList"
-                   :data="item"
-                   :key="item.id"
-                   @deleteSuccess="handleSort(true)"/>
-      <div class="more-btn" v-if="total - commentList.length> 0" @click="handleLoadALl">
-        加载剩余 {{total - commentList.length}} 条评论
+      <div class="comment-list">
+        <CommentItem v-for="item in commentList"
+                     :data="item"
+                     :key="item.id"
+                     @deleteSuccess="handleSort(true)"/>
+        <div class="more-btn" v-if="total - commentList.length> 0" @click="handleLoadALl">
+          加载剩余 {{total - commentList.length}} 条评论
+          <i-down v-if="!restLoading" theme="outline" size="14" fill="#1890ff"/>
+          <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
+        </div>
       </div>
     </a-card>
   </div>
@@ -94,6 +98,7 @@
   const footers = ['markdownTotal', '=', 'scrollSwitch'];
   const post = inject('post');
   const setPostAttribute = inject('setPostAttribute');
+  const restLoading = ref(false);
 
   function updateActiveId(value) {
     activeId.value = value;
@@ -113,10 +118,13 @@
   }
 
   function handleLoadALl() {
+    restLoading.value = true;
     dispatch("getCommentsAll", {postId: post.value.id, orderBy: order.value}).then(res => {
       total.value = res.data.length;
       commentList.value = res.data;
       keepScrollTop();
+    }).finally(() => {
+      restLoading.value = false;
     })
   }
 

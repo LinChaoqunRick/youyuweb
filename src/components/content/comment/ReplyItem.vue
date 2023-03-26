@@ -70,11 +70,11 @@
   const emit = defineEmits(['saveSuccess', 'deleteSuccess'])
 
   const props = defineProps({
-    data: {
+    data: { // 回复的子评论
       type: Object,
       required: true
     },
-    root: { // 子评论的父评论
+    root: { // 回复的子评论的父评论
       type: Object
     },
   })
@@ -99,7 +99,7 @@
     dispatch("createComment", {
       postId: props.data.postId,
       userId: userInfo.value.id,
-      rootId: props.root.id,
+      rootId: props.data.rootId,
       replyId: props.data.id,
       userIdTo: props.data.userId,
       content: content

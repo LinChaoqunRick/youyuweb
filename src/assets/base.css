@@ -82,3 +82,16 @@ html, body {
   opacity: 0;
 }
 
+.i-icon-loading-four {
+  animation: rotate .6s infinite linear;
+}
+
+@keyframes rotate {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+

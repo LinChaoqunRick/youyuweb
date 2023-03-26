@@ -18,8 +18,8 @@ export default defineConfig({
     open: false, //启动后是否自动打开浏览器,
     proxy: {
       '/plat': {
-        // target: "http://localhost:8080",
-        target: "http://124.222.79.236:8080",
+        target: "http://localhost:8080",
+        // target: "http://124.222.79.236:8080",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/plat/, '')
       },

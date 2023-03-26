@@ -158,7 +158,7 @@
 <style lang="scss" scoped>
   .post-detail {
     display: flex;
-    padding: 8px 0;
+    margin: 8px 0;
     justify-content: center;
     /*align-items: flex-start;*/
 
@@ -280,13 +280,12 @@
               height: 22px;
               right: 10px;
               top: 0;
-              color: #8fb0c9;
+              color: #1890ff;
               display: flex;
               align-items: center;
 
               .operation-item {
                 height: 10px;
-                padding: 0 4px;
                 font-size: 12px;
                 cursor: pointer;
                 user-select: none;
@@ -294,14 +293,11 @@
                 align-items: center;
 
                 &:nth-child(n+2) {
-                  border-left: 2px solid #8fb0c9;
-                  /*&:before {*/
-                  /*  content: "";*/
-                  /*  height: 10px;*/
-                  /*  width: 1px;*/
-                  /*  color: #8fb0c9;*/
-                  /*  border-left: 1px solid #8fb0c9;*/
-                  /*}*/
+                  &:before {
+                    content: '|';
+                    color: #e1e1e1;
+                    padding: 0 4px;
+                  }
                 }
               }
             }

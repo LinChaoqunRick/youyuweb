@@ -52,7 +52,8 @@
         <div class="limit-btn" @click="expand = false" v-show="row>7 && expand">收起</div>
         <div class="more-btn" @click="loadReply" v-if="data.replyCount>0 && !replies.length">
           共{{data.replyCount}}条回复
-          <i-down theme="outline" size="14" fill="#1890ff"/>
+          <i-down v-if="!replyLoading" theme="outline" size="14" fill="#1890ff"/>
+          <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
         </div>
       </div>
       <div class="sub-comment-wrapper" v-if="replies.length">
@@ -60,7 +61,6 @@
                    :activeId="activeId"
                    v-for="item in replies"
                    :data="item"
-                   :root="data"
                    @saveSuccess="loadReply"
                    @deleteSuccess="loadReply"/>
       </div>
@@ -95,6 +95,7 @@
   const {activeId, updateActiveId} = inject('active');
   const active = computed(() => activeId.value === props.data.id);
   const post = inject('post');
+  const replyLoading = ref(false);
 
   const emit = defineEmits(['deleteSuccess'])
 
@@ -103,10 +104,13 @@
   }
 
   function loadReply() {
+    replyLoading.value = true;
     const commentId = props.data.id;
     dispatch("getSubCommentsAll", {commentId}).then(res => {
       replies.value = res.data;
       props.data.replyCount = res.data.length;
+    }).finally(() => {
+      replyLoading.value = false;
     })
   }
 

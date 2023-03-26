@@ -51,7 +51,7 @@
   const listParams = computed(() => ({
     userId: user.value.id,
     original: checked.value,
-    sort: sort.value
+    sort: !sort.value
   }))
 
   function handleSort(value: boolean) {

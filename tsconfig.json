@@ -6,7 +6,8 @@
     "allowJs": true,  //编译时允许有js
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "lib": ["es2015", "es2016", "dom", "es2018.promise"]
   },
 
   "references": [
