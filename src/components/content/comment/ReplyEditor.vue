@@ -15,7 +15,7 @@
         </a-popover>
       </div>
       <div class="right-box">
-        <a-button type="primary" :disabled="disabled" @click="handleSubmit">发表评论</a-button>
+        <a-button type="primary" :disabled="disabled" :loading="submitLoading" @click="handleSubmit">发表评论</a-button>
       </div>
     </div>
   </div>
@@ -42,13 +42,16 @@
   const disabled = computed(() => !value.value)
 
   const value = ref<string>("");
+  const submitLoading = ref(false);
 
   function handleSubmit() {
-    emit("handleSubmit", value.value, clearContent);
+    submitLoading.value = true;
+    emit("handleSubmit", value.value, submitCallback);
   }
 
-  function clearContent() {
-    value.value = "";
+  function submitCallback() {
+    submitLoading.value = false;
+    // value.value = "";
   }
 
   function focus() {

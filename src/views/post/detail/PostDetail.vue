@@ -75,6 +75,7 @@
         </div>
         <div class="post-content">
           <MdPreview
+            editorId="post-content"
             :text="post.content"
             :extend="{
               showCodeRowNumber: true
@@ -83,7 +84,7 @@
       </div>
       <div class="post-right">
         <div class="post-category">
-          <MdCatalogPanel editorId="md-editor"/>
+          <MdCatalogPanel editorId="post-content"/>
         </div>
         <div class="post-operation">
           <PostOperation v-if="post"/>

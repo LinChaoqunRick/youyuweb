@@ -95,7 +95,7 @@
     }
   }
 
-  function handleSubmit(content: string, clearContent) {
+  function handleSubmit(content: string, submitCallback: Function) {
     dispatch("createComment", {
       postId: props.data.postId,
       userId: userInfo.value.id,
@@ -110,7 +110,7 @@
       emit("saveSuccess");
     }).catch(e => {
       message.error("评论失败")
-    })
+    }).finally(() => submitCallback())
   }
 
   function handleLike() {

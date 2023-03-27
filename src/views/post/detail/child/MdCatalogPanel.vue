@@ -40,7 +40,7 @@
   const prop = defineProps({
     editorId: {
       type: String,
-      default: 'md-editor'
+      default: 'post-content'
     },
   })
 
@@ -127,11 +127,15 @@
             padding: 8px 16px;
           }
 
-          ::v-deep(.md-catalog) {
-            .md-catalog-active {
-              border-left: 3px solid #42b983;
+          ::v-deep(.md-editor-catalog) {
+            .md-editor-catalog-active {
+              border-left: 3px solid #1890ff;
               font-weight: 700;
-              color: #42b983;
+              color: #1890ff !important;
+
+              span {
+                color: #1890ff !important;
+              }
             }
           }
         }
@@ -144,9 +148,5 @@
       }
     }
   }
-
-</style>
-
-<style lang="scss">
 
 </style>

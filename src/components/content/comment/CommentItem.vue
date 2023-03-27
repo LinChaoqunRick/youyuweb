@@ -160,7 +160,7 @@
     }
   }
 
-  function handleSubmit(content: string) {
+  function handleSubmit(content: string, submitCallback: Function) {
     dispatch("createComment", {
       postId: props.data.postId,
       userId: userInfo.value.id,
@@ -172,7 +172,7 @@
       updateActiveId(-1);
     }).catch(e => {
       message.error("评论失败")
-    })
+    }).finally(() => submitCallback())
   }
 
   function handleDelete() {

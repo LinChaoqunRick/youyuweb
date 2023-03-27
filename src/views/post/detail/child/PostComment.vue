@@ -10,7 +10,8 @@
                      }"
                      class="write-comment-editor" ref="commentEditor"/>
         <div class="action-box">
-          <a-button type="primary" :disabled="submittable" @click="handleSubmit">发表评论</a-button>
+          <a-button type="primary" :disabled="submittable" :loading="submitLoading" @click="handleSubmit">发表评论
+          </a-button>
         </div>
       </div>
       <div class="comment-hint-wrapper" v-else>
@@ -98,6 +99,7 @@
   const footers = ['markdownTotal', '=', 'scrollSwitch'];
   const post = inject('post');
   const setPostAttribute = inject('setPostAttribute');
+  const submitLoading = ref(false);
   const restLoading = ref(false);
 
   function updateActiveId(value) {
@@ -139,6 +141,7 @@
   }
 
   function handleSubmit() {
+    submitLoading.value = true;
     dispatch("createComment", {
       postId: post.value.id,
       userId: userInfo.value.id,
@@ -150,6 +153,8 @@
       setPostAttribute('commentCount', post.value.commentCount + 1);
     }).catch(e => {
       message.error("评论失败")
+    }).finally(() => {
+      submitLoading.value = false;
     })
   }
 </script>
