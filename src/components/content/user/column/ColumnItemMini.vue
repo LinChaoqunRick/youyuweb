@@ -1,7 +1,7 @@
 <template>
   <div class="column-item-mini">
     <div class="column-left">
-      <img :src="data.cover"/>
+      <img :src="data.cover+'?x-oss-process=style/tinyThumb'"/>
     </div>
     <div class="column-right">
       <div class="column-title" :title="data.title">{{data.title}}</div>

@@ -87,8 +87,17 @@
 
   function handleClick(item) {
     switch (item.label) {
+      case "我的关注":
+        router.push(`/user/${userInfo.value.id}/follow`)
+        break;
+      case "我的收藏":
+        router.push(`/user/${userInfo.value.id}/collection`)
+        break;
       case "我的主页":
         router.push(`/user/${userInfo.value.id}/moment`)
+        break;
+      case "管理文章":
+        router.push(`/user/${userInfo.value.id}/post`)
         break;
       case "退出":
         showConfirm();

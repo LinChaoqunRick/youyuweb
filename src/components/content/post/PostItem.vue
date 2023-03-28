@@ -3,7 +3,7 @@
     <div class="article-item" :class="{'flex-revert': !!(index % 2)}" v-if="thumbnails.length < 3">
       <div class="image-wrapper">
         <div class="image-link" @click="$router.push({name:'postDetail',params:{postId:data.id}})">
-          <img :src="thumbnails[0]">
+          <img :src="thumbnails[0]+'?x-oss-process=style/smallThumb'">
         </div>
       </div>
       <div class="content-wrapper">
@@ -38,7 +38,7 @@
       <div class="image-wrapper">
         <div class="image-link" @click="$router.push({name:'postDetail',params:{postId:data.id}})">
           <div class="img-container" v-for="img in thumbnails">
-            <img :src="img">
+            <img :src="img+'?x-oss-process=style/smallThumb'">
           </div>
         </div>
       </div>

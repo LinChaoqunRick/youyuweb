@@ -129,6 +129,9 @@
   function getPostDetail() {
     dispatch("getPostDetail", {postId: route.params.postId}).then(res => {
       post.value = res.data;
+      post.value.content = post.value.content.replace(/!\[.*?]\((https?:\/\/.+\.(png|jpe?g|webp|gif|svg))(.*\))/gi, (match) => {
+        return match.slice(0, match.length - 1) + '?x-oss-process=style/detailThumb)'
+      });
       document.title = res.data.title;
     })
   }
