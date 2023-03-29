@@ -2,9 +2,7 @@
   <div class="category-panel">
     <div class="category-title">分类专栏</div>
     <div class="category-list">
-      <div class="category-item" v-for="item in categoryList"
-           :style="`border:2px solid ${item.backgroundColor};background-color: ${item.backgroundColor+'99'};color:${item.color}`"
-      >
+      <div class="category-item" v-for="item in categoryList" :style="`color:${getRandomColor()}`">
         {{item.name}}
       </div>
     </div>
@@ -32,6 +30,11 @@
   }
 
   getCategoryList();
+
+  function getRandomColor() {
+    const colors: string[] = ['#1890ff', '#003366', '#B433FF', '#CC0000', '#33B0CA'];
+    return colors[Math.floor((Math.random() * colors.length))]
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -45,8 +48,8 @@
     .category-title {
       font-size: 16px;
       font-weight: bold;
-      border-bottom: 1px solid #bfbfbf;
-      padding-bottom: 6px;
+      /*border-bottom: 1px solid #bfbfbf;*/
+      /*padding-bottom: 6px;*/
     }
 
     .category-list {
@@ -59,10 +62,13 @@
       flex-wrap: wrap;
 
       .category-item {
-        padding: 1px 14px;
-        border-radius: 20px;
+        font-size: 13px;
+        padding: 2px 12px;
+        border-radius: 4px;
         margin: 4px;
         cursor: pointer;
+        background-color: #fafafa;
+        border: 1px solid rgba(221,221,221,0.78);
       }
     }
   }

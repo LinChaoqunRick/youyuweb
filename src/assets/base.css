@@ -2,7 +2,7 @@ html, body {
   height: auto;
   width: auto;
   color: var(--youyu-body-text) !important;
-  background-color: var(--youyu-body-background) !important;
+  background-color: transparent !important;
   transition: color 0.5s, background-color 0.5s;
   line-height: 1.6;
   font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
@@ -12,9 +12,13 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   position: relative;
+}
+
+html {
   /*background-image: url(https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/snow3.jpg);*/
-  background-image: url(https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/flower.jpg);
-  background-size: cover;
+  /*background-image: url(https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/flower.jpg);*/
+  background-image: url(https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/cloud.jpg);
+  background-size: 100vw 100vh;
   background-repeat: no-repeat;
   background-attachment: fixed;
 }

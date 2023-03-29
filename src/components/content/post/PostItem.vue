@@ -89,7 +89,7 @@
     position: relative;
 
     .article-item {
-      height: 180px;
+      height: 170px;
       width: 100%;
       margin-bottom: 8px;
       background-color: var(--article-background);
@@ -101,12 +101,12 @@
       .image-wrapper {
         width: 240px;
         /*height: 100%;*/
-        padding: 16px 0 16px 16px;
+        padding: 16px;
         overflow: hidden;
 
         .image-link {
-          width: 224px;
-          height: 148px;
+          width: 210px;
+          height: 140px;
           overflow: hidden;
           border-radius: 10px;
 
@@ -121,7 +121,7 @@
       }
 
       .content-wrapper {
-        padding: 10px 16px;
+        padding: 10px 16px 10px 0;
         height: 100%;
         width: 0;
         flex: 1;
@@ -129,10 +129,10 @@
         flex-direction: column;
 
         .article-title {
-          height: 30px;
-          border-bottom: var(--article-border);
+          height: 32px;
+          /*border-bottom: var(--article-border);*/
           font-size: 18px;
-          line-height: 22px;
+          line-height: 32px;
           font-weight: 700;
           cursor: pointer;
           font-family: "Open Sans", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", Arial, Verdana, Tahoma, sans-serif;
@@ -155,17 +155,16 @@
           text-overflow: ellipsis;
           overflow: hidden;
           font-size: 14px;
-          padding: 5px 0;
-          line-height: 1.8;
+          line-height: 1.7;
           cursor: pointer;
         }
 
         .article-info {
           height: 20px;
-          border-top: var(--article-border);
+          /*border-top: var(--article-border);*/
           color: var(--article-info-color);
           font-size: 12px;
-          padding-top: 6px;
+          padding-top: 2px;
 
           .separator {
             color: #e1e1e1;
@@ -250,7 +249,11 @@
     flex-direction: row-reverse;
 
     .image-wrapper {
-      padding: 16px 16px 16px 0 !important;
+      /*padding: 16px 16px 16px 0 !important;*/
+    }
+
+    .content-wrapper {
+      padding: 12px 0 12px 16px !important;
     }
   }
 

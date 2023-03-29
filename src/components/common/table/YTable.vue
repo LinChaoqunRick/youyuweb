@@ -54,7 +54,7 @@
   const page = Number(route.params.page);
 
   const current = ref(page || 1);
-  const size = ref(10);
+  const size = ref(15);
   const total = ref(0);
   const dataList = ref([]);
   const finished = ref(false);

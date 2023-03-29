@@ -8,7 +8,9 @@
       </div>
     </div>
     <div class="date-today">
-      {{day}} {{month}}， {{year}}
+      <span class="date-item">{{day}}</span>
+      <span class="date-item">{{month}}</span>
+      <span class="date-item">{{year}}</span>
     </div>
   </div>
 </template>
@@ -76,11 +78,21 @@
       margin-top: 6px;
       height: 30px;
       width: 100%;
-      color: #b3b3b3;
+      color: #999;
       font-family: DM Sans, sans-serif;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 500;
-      text-align: left;
+      text-align: center;
+
+      .date-item {
+        &:nth-child(n+2) {
+          &:before {
+            content: '/';
+            color: rgba(0, 0, 0, 0.4);
+            padding: 0 6px;
+          }
+        }
+      }
     }
   }
 </style>

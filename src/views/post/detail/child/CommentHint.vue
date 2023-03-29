@@ -3,8 +3,10 @@
     <div class="comment-hint-items">
       <div class="hint-item">
         <i-info theme="filled" size="24" fill="#637792"/>
-        <div class="hint-text">您尚未<span style="color: #1890ff;cursor: pointer;margin-left: 2px;"
-                                        @click="handleLogin">登录</span></div>
+        <div class="hint-text">
+          您尚未
+          <span class="login-btn" @click="handleLogin">登录</span>
+        </div>
       </div>
       <div class="hint-item">
         <i-check-one theme="filled" size="20" fill="#67c23a"/>
@@ -47,6 +49,17 @@
           font-weight: 700;
           color: #637792;
           margin-left: 5px;
+
+          .login-btn {
+            color: #1890ff;
+            cursor: pointer;
+            margin-left: 2px;
+            transition: .3s;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
         }
 
         &:nth-child(n+2) {
