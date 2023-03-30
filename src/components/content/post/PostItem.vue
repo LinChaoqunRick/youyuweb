@@ -11,7 +11,7 @@
           <p v-html="data.title" @click="$router.push({name:'postDetail',params:{postId:data.id}})"/>
         </div>
         <div class="article-caption" v-html="data.summary"
-             @click="$router.push({name:'articleDetail',params:{postId:data.id}})"/>
+             @click="$router.push({name:'postDetail',params:{postId:data.id}})"/>
         <div class="article-info">
           <span class="info-nickname"
                 @click="$router.push(`/user/${data.user.id}/moment`)">{{data.user.nickname}}</span>
@@ -129,10 +129,9 @@
         flex-direction: column;
 
         .article-title {
-          height: 32px;
+          height: 30px;
           /*border-bottom: var(--article-border);*/
           font-size: 18px;
-          line-height: 32px;
           font-weight: 700;
           cursor: pointer;
           font-family: "Open Sans", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", Arial, Verdana, Tahoma, sans-serif;
@@ -164,7 +163,7 @@
           /*border-top: var(--article-border);*/
           color: var(--article-info-color);
           font-size: 12px;
-          padding-top: 2px;
+          padding-top: 3px;
 
           .separator {
             color: #e1e1e1;

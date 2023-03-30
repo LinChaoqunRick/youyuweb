@@ -68,7 +68,11 @@
         margin: 4px;
         cursor: pointer;
         background-color: #fafafa;
-        border: 1px solid rgba(221,221,221,0.78);
+        border: 1px solid rgba(221, 221, 221, 0.78);
+
+        &:hover {
+          background-color: #efefef;
+        }
       }
     }
   }

@@ -99,6 +99,9 @@
       case "管理文章":
         router.push(`/user/${userInfo.value.id}/post`)
         break;
+      case "个人中心":
+        router.push(`/user/center`)
+        break;
       case "退出":
         showConfirm();
         break;

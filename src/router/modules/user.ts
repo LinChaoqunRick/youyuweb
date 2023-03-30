@@ -61,6 +61,25 @@ const route = [
           }
         ]
       },
+      {
+        path: 'center',
+        name: 'userCenter',
+        meta: {
+          title: "用户中心",
+          code: "USER_CENTER"
+        },
+        component: () => import("@/views/user/center/UserCenter.vue"),
+        children: [
+          {
+            path: "profile",
+            name: "userCenterProfile",
+            meta: {
+              title: "个人资料",
+            },
+            component: () => import("@/views/user/center/profile/CenterProfile.vue"),
+          },
+        ]
+      }
     ]
   }
 ]
