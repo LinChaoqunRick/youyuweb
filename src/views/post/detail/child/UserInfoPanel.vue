@@ -95,7 +95,6 @@
   import type {statType} from "@/types/user";
   import ColumnItemMini from '@/components/content/user/column/ColumnItemMini.vue';
 
-
   const route = useRoute();
   const router = useRouter();
 

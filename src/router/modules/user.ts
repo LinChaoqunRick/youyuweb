@@ -78,6 +78,22 @@ const route = [
             },
             component: () => import("@/views/user/center/profile/CenterProfile.vue"),
           },
+          {
+            path: "account",
+            name: "userCenterAccount",
+            meta: {
+              title: "账号设置",
+            },
+            component: () => import("@/views/user/center/account/CenterAccount.vue"),
+          },
+          {
+            path: "message",
+            name: "userCenterMessage",
+            meta: {
+              title: "消息通知",
+            },
+            component: () => import("@/views/user/center/message/CenterMessage.vue"),
+          },
         ]
       }
     ]

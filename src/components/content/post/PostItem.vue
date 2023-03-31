@@ -13,19 +13,14 @@
         <div class="article-caption" v-html="data.summary"
              @click="$router.push({name:'postDetail',params:{postId:data.id}})"/>
         <div class="article-info">
-          <span class="info-nickname"
+          <span class="info-item info-nickname"
                 @click="$router.push(`/user/${data.user.id}/moment`)">{{data.user.nickname}}</span>
-          <span class="separator">/</span>
-          <span class="create-type"
+          <span class="info-item create-type"
                 :class="[`create_type_${data.createType}`]">{{createTypeList[data.createType]}}</span>
-          <span class="separator">/</span>
-          <span class="category-name">{{data.categoryName}}</span>
-          <span class="separator">/</span>
-          <span>{{(data.createTime).substr(0, 10)}}</span>
-          <span class="separator">/</span>
-          <span>{{data.commentCount}}&ensp;评论</span>
-          <span class="separator">/</span>
-          <span>{{data.viewCount}}&ensp;阅读</span>
+          <span class="info-item category-name">{{data.categoryName}}</span>
+          <span class="info-item">{{(data.createTime).substr(0, 10)}}</span>
+          <span class="info-item">{{data.commentCount}}&ensp;评论</span>
+          <span class="info-item">{{data.viewCount}}&ensp;阅读</span>
         </div>
       </div>
     </div>
@@ -43,15 +38,11 @@
         </div>
       </div>
       <div class="article-info">
-        <span @click="$router.push(`/user/${data.user.id}/moment`)">{{data.user.nickname}}</span>
-        <span class="separator">/</span>
-        <span class="create-type" :class="[`create_type_${data.createType}`]">{{createTypeList[data.createType]}}</span>
-        <span class="separator">/</span>
-        <span>{{(data.createTime).substr(0, 10)}}</span>
-        <span class="separator">/</span>
-        <span>{{data.commentCount}}&ensp;评论</span>
-        <span class="separator">/</span>
-        <span>{{data.viewCount}}&ensp;阅读</span>
+        <span class="info-item" @click="$router.push(`/user/${data.user.id}/moment`)">{{data.user.nickname}}</span>
+        <span class="info-item create-type" :class="[`create_type_${data.createType}`]">{{createTypeList[data.createType]}}</span>
+        <span class="info-item">{{(data.createTime).substr(0, 10)}}</span>
+        <span class="info-item">{{data.commentCount}}&ensp;评论</span>
+        <span class="info-item">{{data.viewCount}}&ensp;阅读</span>
       </div>
     </div>
     <div class="hover-tag"></div>
@@ -164,11 +155,6 @@
           color: var(--article-info-color);
           font-size: 12px;
           padding-top: 3px;
-
-          .separator {
-            color: #e1e1e1;
-            padding: 0 5px;
-          }
         }
       }
     }
@@ -212,10 +198,6 @@
         padding-top: 6px;
         margin: 8px 16px 0 16px;
 
-        .separator {
-          color: #e1e1e1;
-          padding: 0 5px;
-        }
       }
     }
 
@@ -281,6 +263,16 @@
 
     .create_type_2 {
       color: #6a87f1;
+    }
+
+    .info-item {
+      &:nth-child(n+2) {
+        &:before {
+          content: '/';
+          color: #bbbbbb;
+          padding: 0 5px;
+        }
+      }
     }
   }
 </style>
