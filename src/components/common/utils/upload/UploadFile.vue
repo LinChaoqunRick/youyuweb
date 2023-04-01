@@ -11,19 +11,18 @@
       :max-count="1"
       @change="handleChange"
     >
-      <div class="upload-box" :class="{'disabled':disabled}">
-        <div class="progress-box" :style="{'width': `${percent}%`}"></div>
-        <div class="upload-button">
-          <i-upload-one theme="outline" size="18" fill="currentColor"/>
-          <div class="ant-upload-text">
-            点击上传
+      <slot :percent="percent">
+        <div class="upload-box" :class="{'disabled':disabled}">
+          <div class="progress-box" :style="{'width': `${percent}%`}"></div>
+          <div class="upload-button">
+            <i-upload-one theme="outline" size="18" fill="currentColor"/>
+            <div class="ant-upload-text">
+              点击上传
+            </div>
           </div>
         </div>
-      </div>
+      </slot>
     </a-upload>
-    <div class="slot-content">
-      <slot></slot>
-    </div>
   </div>
 </template>
 
@@ -138,10 +137,6 @@
           background: #f5f5f5 !important;
         }
       }
-    }
-
-    .slot-content {
-
     }
   }
 </style>

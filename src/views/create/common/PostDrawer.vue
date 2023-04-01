@@ -50,33 +50,32 @@
           <div class="select-from-post">
             <a-button type="link" @click="openModal">从文章中选取</a-button>
           </div>
-          <UploadFile :disabled="formValidate.thumbnail.length>=3" @uploadSuccess="uploadSuccess">
-            <div class="file-list">
-              <div v-for="(file, index) in formValidate.thumbnail" :key="file"
-                   :style="{left: 40 * index + 'px',top: 8 * index + 'px'}" class="image-preview">
-                <img :src="file"/>
-                <div class="image-mask">
-                  <div class="image-mask-content content-preview" @click="handlePreview(file)">
-                    <i-preview-open theme="outline" size="16" fill="currentColor"/>
-                    <div class="content-name">预览</div>
-                  </div>
-                  <div class="image-mask-content content-delete" @click="handleDelete(index)">
-                    <i-delete-four theme="outline" size="16" fill="currentColor"/>
-                    <div class="content-name">删除</div>
-                  </div>
+          <UploadFile :disabled="formValidate.thumbnail.length>=3" @uploadSuccess="uploadSuccess"/>
+          <div class="file-list">
+            <div v-for="(file, index) in formValidate.thumbnail" :key="file"
+                 :style="{left: 40 * index + 'px',top: 8 * index + 'px'}" class="image-preview">
+              <img :src="file"/>
+              <div class="image-mask">
+                <div class="image-mask-content content-preview" @click="handlePreview(file)">
+                  <i-preview-open theme="outline" size="16" fill="currentColor"/>
+                  <div class="content-name">预览</div>
+                </div>
+                <div class="image-mask-content content-delete" @click="handleDelete(index)">
+                  <i-delete-four theme="outline" size="16" fill="currentColor"/>
+                  <div class="content-name">删除</div>
                 </div>
               </div>
-              <a-image
-                :width="200"
-                :style="{ display: 'none' }"
-                :preview="{
+            </div>
+            <a-image
+              :width="200"
+              :style="{ display: 'none' }"
+              :preview="{
                     visible: previewVisible,
                     onVisibleChange: setPreviewVisible,
                 }"
-                :src="image"
-              />
-            </div>
-          </UploadFile>
+              :src="image"
+            />
+          </div>
         </a-form-item>
         <a-form-item label="摘要" name="summary">
           <a-textarea

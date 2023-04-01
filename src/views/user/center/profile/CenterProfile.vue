@@ -24,7 +24,7 @@
               :maxlength="100"
             />
           </a-form-item>
-          <a-form-item name="birthday" label="生日" v-bind="config">
+          <a-form-item name="birthday" label="生日">
             <a-date-picker v-model:value="formValidate.birthday" value-format="YYYY-MM-DD"/>
           </a-form-item>
           <a-form-item label=" " class="submit-btn">
@@ -32,7 +32,18 @@
           </a-form-item>
         </a-form>
       </div>
-      <div class="content-right"></div>
+      <div class="content-right">
+        <div class="user-avatar">
+          <UploadFile @uploadSuccess="uploadSuccess">
+            <div class="upload-box"></div>
+          </UploadFile>
+          <img :src="formValidate.avatar"/>
+        </div>
+        <div class="avatar-text">我的头像</div>
+        <div class="avatar-tips">
+          支持 jpg、png、jpeg 格式大小 5M 以内的图片
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -40,6 +51,7 @@
 <script setup lang="ts">
   import {ref, computed, reactive} from "vue";
   import {useStore} from "vuex";
+  import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
 
   const {dispatch, getters} = useStore();
 
@@ -68,6 +80,10 @@
       console.log(res);
       formValidate.value = res.data;
     });
+  }
+
+  function uploadSuccess() {
+
   }
 
   initData();
@@ -109,7 +125,50 @@
 
       .content-right {
         width: 260px;
-        background-color: skyblue;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .user-avatar {
+          position: relative;
+          height: 100px;
+          width: 100px;
+          border: 1px dashed #1890ff;
+          border-radius: 50%;
+          overflow: hidden;
+          cursor: pointer;
+
+          .upload-box {
+            display: none;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+          }
+
+          &:hover {
+            .upload-box {
+              display: block;
+            }
+          }
+
+          img {
+            height: 100%;
+            width: 100%;
+          }
+        }
+
+        .avatar-text {
+          margin: 6px 0;
+        }
+
+        .avatar-tips {
+          width: 160px;
+          font-size: 13px;
+          color: var(--youyu-text1);
+        }
       }
     }
   }
