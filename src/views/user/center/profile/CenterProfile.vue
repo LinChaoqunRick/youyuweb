@@ -28,16 +28,19 @@
             <a-date-picker v-model:value="formValidate.birthday" value-format="YYYY-MM-DD"/>
           </a-form-item>
           <a-form-item label=" " class="submit-btn">
-            <a-button type="primary">保存修改</a-button>
+            <a-button type="primary" @click="onSubmit">保存修改</a-button>
           </a-form-item>
         </a-form>
       </div>
       <div class="content-right">
         <div class="user-avatar">
-          <UploadFile @uploadSuccess="uploadSuccess">
-            <div class="upload-box"></div>
-          </UploadFile>
           <img :src="formValidate.avatar"/>
+          <UploadFile @uploadSuccess="uploadSuccess">
+            <div class="upload-box">
+              <i-add-one theme="outline" size="22" fill="#fff"/>
+              <div>上传头像</div>
+            </div>
+          </UploadFile>
         </div>
         <div class="avatar-text">我的头像</div>
         <div class="avatar-tips">
@@ -51,6 +54,7 @@
 <script setup lang="ts">
   import {ref, computed, reactive} from "vue";
   import {useStore} from "vuex";
+  import {message} from "ant-design-vue";
   import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
 
   const {dispatch, getters} = useStore();
@@ -77,13 +81,20 @@
 
   function initData() {
     dispatch("getUserById", {userId: userInfo.value.id}).then(res => {
-      console.log(res);
       formValidate.value = res.data;
     });
   }
 
-  function uploadSuccess() {
+  function uploadSuccess(fileList: []) {
+    const url = fileList[0].url;
+    formValidate.value.avatar = url;
+  }
 
+  function onSubmit() {
+    console.log(formValidate.value);
+    dispatch("saveBasicInfo", formValidate.value).then(res => {
+      message.success("保存成功!");
+    })
   }
 
   initData();
@@ -146,11 +157,19 @@
             bottom: 0;
             left: 0;
             background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+
+            .i-icon {
+              margin-bottom: 2px;
+            }
           }
 
           &:hover {
             .upload-box {
-              display: block;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
             }
           }
 

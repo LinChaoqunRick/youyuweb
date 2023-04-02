@@ -7,7 +7,7 @@ import {
   SET_USER_FOLLOW,
   CANCEL_USER_FOLLOW,
   GET_FOLLOW_LIST,
-
+  SAVE_BASIC_INFO,
 } from "@/network/apis";
 
 export default {
@@ -32,6 +32,9 @@ export default {
     },
     getFollowList(state: any, params: object) {
       return http.post(GET_FOLLOW_LIST, params);
+    },
+    saveBasicInfo(state: any, params: object) {
+      return http.post(SAVE_BASIC_INFO, params);
     },
 
   },
