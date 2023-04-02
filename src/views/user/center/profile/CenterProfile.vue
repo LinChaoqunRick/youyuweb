@@ -38,7 +38,7 @@
           <UploadFile @uploadSuccess="uploadSuccess">
             <div class="upload-box">
               <i-add-one theme="outline" size="22" fill="#fff"/>
-              <div>上传头像</div>
+              <div class="upload-text">上传头像</div>
             </div>
           </UploadFile>
         </div>
@@ -57,7 +57,7 @@
   import {message} from "ant-design-vue";
   import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
 
-  const {dispatch, getters} = useStore();
+  const {getters, commit, dispatch} = useStore();
 
   const userInfo = computed(() => getters['userInfo']);
   const labelCol = {span: 4};
@@ -90,10 +90,13 @@
     formValidate.value.avatar = url;
   }
 
-  function onSubmit() {
-    console.log(formValidate.value);
-    dispatch("saveBasicInfo", formValidate.value).then(res => {
+  async function onSubmit() {
+    await dispatch("saveBasicInfo", formValidate.value).then(res => {
       message.success("保存成功!");
+    })
+    // 保存成功后更新Vuex数据
+    await dispatch("getUserById", {userId: formValidate.value.id}).then(res => {
+      commit("changeUser", res.data);
     })
   }
 
@@ -160,7 +163,11 @@
             color: #fff;
 
             .i-icon {
-              margin-bottom: 2px;
+              margin-bottom: 3px;
+            }
+
+            .upload-text {
+              font-size: 13px;
             }
           }
 
