@@ -1,5 +1,5 @@
 <template>
-  NoteList
+  <div></div>
 </template>
 
 <script>
