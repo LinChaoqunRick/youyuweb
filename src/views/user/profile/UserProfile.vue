@@ -82,7 +82,7 @@
 
   function onLoaded(userData: userType) {
     user.value = userData
-    document.title = userData.nickname + '的主页'
+    // document.title = userData.nickname + '的主页'
   }
 
   function handleClickStat(item: statType) {
@@ -250,8 +250,8 @@
               .user-gender {
                 height: 26px;
                 width: 26px;
-                top: 0;
-                right: -27px;
+                top: 2px;
+                right: -25px;
               }
             }
 

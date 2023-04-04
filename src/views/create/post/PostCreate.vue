@@ -27,7 +27,7 @@
   });
   const isSave = ref(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = (callback) => {
     const form = JSON.parse(JSON.stringify(toRaw(formValidate.value)));
     form.tags = form.tags.join(",");
     form.thumbnail = form.thumbnail.join(",");
@@ -46,6 +46,8 @@
       })
       isSave.value = true;
       router.replace({name: 'postList'})
+    }).finally(() => {
+      callback();
     })
   }
 

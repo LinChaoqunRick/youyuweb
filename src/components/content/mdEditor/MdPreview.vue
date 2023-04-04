@@ -20,6 +20,7 @@
     theme: toRef(store.state.theme, "theme"),
     previewTheme: 'cyanosis',
     previewOnly: true,
+    codeTheme: 'github'
   })
 
   const editorConfig = computed(() => {

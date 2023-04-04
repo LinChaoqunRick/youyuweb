@@ -102,7 +102,7 @@
       <template #footer>
         <div class="drawer-footer">
           <a-button style="margin-right: 8px" @click="onClose">取消</a-button>
-          <a-button type="primary" @click="onSubmit">发布</a-button>
+          <a-button type="primary" :loading="loading" @click="onSubmit">发布</a-button>
         </div>
       </template>
     </a-drawer>
@@ -194,11 +194,15 @@
   const postImages = ref([]);
   const columnList = ref([]);
   const modalVisible = ref(false);
+  const loading = ref(false);
 
   async function onSubmit() {
     const form = await formRef.value.validate().catch(console.log);
     if (form) {
-      emit('handleSubmit');
+      loading.value = true;
+      emit('handleSubmit', () => {
+        loading.value = false;
+      });
     }
   }
 
