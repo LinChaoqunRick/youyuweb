@@ -16,7 +16,7 @@
                    placeholder="邮箱"
                    @blur="validate('email', { trigger: 'blur' }).catch(() => {})">
             <template #prefix>
-              <icon-mail fill="#c0c4cc"/>
+              <i-mail fill="#c0c4cc"/>
             </template>
           </a-input>
         </a-form-item>
@@ -26,7 +26,7 @@
                    :maxlength="6"
                    placeholder="验证码">
             <template #prefix>
-              <icon-key fill="#c0c4cc"/>
+              <i-key fill="#c0c4cc"/>
             </template>
           </a-input>
           <a-button type="primary"
@@ -42,7 +42,7 @@
                    :maxlength="30"
                    placeholder="昵称">
             <template #prefix>
-              <icon-user fill="#c0c4cc"/>
+              <i-user fill="#c0c4cc"/>
             </template>
           </a-input>
         </a-form-item>
@@ -52,7 +52,7 @@
                             :maxlength="30"
                             placeholder="密码">
             <template #prefix>
-              <icon-lock fill="#c0c4cc"/>
+              <i-lock fill="#c0c4cc"/>
             </template>
           </a-input-password>
         </a-form-item>
@@ -62,7 +62,7 @@
                             :maxlength="30"
                             placeholder="确认密码">
             <template #prefix>
-              <icon-lock fill="#c0c4cc"/>
+              <i-lock fill="#c0c4cc"/>
             </template>
           </a-input-password>
         </a-form-item>-->

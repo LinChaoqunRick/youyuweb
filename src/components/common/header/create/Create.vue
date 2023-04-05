@@ -13,7 +13,7 @@
       </a-menu>
     </template>
     <template #icon>
-      <icon-down/>
+      <i-down/>
     </template>
   </a-dropdown-button>
 </template>
@@ -30,17 +30,17 @@
     {
       label: "写博客",
       path: "/create/post",
-      icon: "icon-write"
+      icon: "i-write"
     },
     {
       label: "发动态",
       path: "/create/moment",
-      icon: "icon-notes"
+      icon: "i-notes"
     },
     {
       label: "草稿箱",
       path: "/draft",
-      icon: "icon-newspaper-folding"
+      icon: "i-newspaper-folding"
     }
   ]);
 

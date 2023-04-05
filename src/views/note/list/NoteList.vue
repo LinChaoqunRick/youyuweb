@@ -4,24 +4,18 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
   import openModal from "@/libs/tools/openModal";
   import NoteAdd from "./component/NoteAdd.vue";
   import {Modal} from "ant-design-vue";
 
-  export default {
-    name: "NoteList",
-    components: {
-      Modal
-    },
-    methods: {
-      handleCreate() {
-        openModal({
-          component: NoteAdd,
-          title: '创建笔记',
-        })
-      }
-    }
+  function handleCreate() {
+    const res = openModal({
+      component: NoteAdd,
+      title: '创建笔记',
+      maskClosable: false,
+      width: '620px'
+    }).catch(console.log);
   }
 </script>
 

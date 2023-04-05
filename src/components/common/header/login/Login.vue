@@ -40,27 +40,27 @@
   const guideList = ref([
     {
       label: "发布博客随笔",
-      icon: "icon-write"
+      icon: "i-write"
     },
     {
       label: "参与交流评论",
-      icon: "icon-comment"
+      icon: "i-comment"
     },
     {
       label: "收藏有用文章",
-      icon: "icon-star"
+      icon: "i-star"
     },
     {
       label: "关注优秀作者",
-      icon: "icon-user"
+      icon: "i-user"
     },
     {
       label: "获取后续提醒",
-      icon: "icon-remind"
+      icon: "i-remind"
     },
     {
       label: "其他更多功能",
-      icon: "icon-more"
+      icon: "i-more"
     },
   ]);
   const LoginPanelRef = ref(null);

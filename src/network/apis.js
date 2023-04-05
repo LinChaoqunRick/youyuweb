@@ -1,5 +1,10 @@
 const ApiBase = '/plat';
-const FrontApiBase = '/api';
+
+// 登录
+export const ACCOUNT_LOGIN = ApiBase + "/login/accountLogin"; // 登录
+export const ACCOUNT_LOGOUT = ApiBase + "/login/logout"; // 注销
+export const GET_AUTH_ROUTES = ApiBase + "/login/getAuthRoutes"; // 注销
+export const ACCOUNT_REGISTER = ApiBase + "/login/register"; // 注销
 
 // 帖子
 export const GET_POST_LIST = ApiBase + "/post/list";
@@ -16,6 +21,7 @@ export const IS_POST_COLLECT = ApiBase + "/post/isPostCollect";
 export const CANCEL_POST_COLLECT = ApiBase + "/post/cancelPostCollect";
 export const GET_POST_COLLECT_LIST = ApiBase + "/post/collectList"; // 获取收藏列表
 
+export const CREATE_NOTE = ApiBase + "/note/create"; // 创建笔记
 
 // 评论
 export const GET_COMMENTS_PAGE = ApiBase + "/comment/getCommentsPage";
@@ -26,11 +32,6 @@ export const DELETE_COMMENT = ApiBase + "/comment/deleteComment";
 export const SET_COMMENT_LIKE = ApiBase + "/comment/setLike";
 export const CANCEL_COMMENT_LIKE = ApiBase + "/comment/cancelLike";
 
-export const ACCOUNT_LOGIN = ApiBase + "/login/accountLogin"; // 登录
-export const ACCOUNT_LOGOUT = ApiBase + "/login/logout"; // 注销
-export const GET_AUTH_ROUTES = ApiBase + "/login/getAuthRoutes"; // 注销
-export const ACCOUNT_REGISTER = ApiBase + "/login/register"; // 注销
-
 // 用户
 export const GET_USER_BY_ID = ApiBase + "/user/getUserById"; // 根据id获取用户信息
 export const GET_LIMIT_POST = ApiBase + "/user/getLimitPost"; // 获取指定数量条帖子记录
@@ -39,7 +40,7 @@ export const CANCEL_USER_FOLLOW = ApiBase + "/user/unfollow"; // 取关用户
 export const GET_FOLLOW_LIST = ApiBase + "/user/followList"; // 获取用户关注列表
 export const SAVE_BASIC_INFO = ApiBase + "/user/saveBasicInfo"; // 修改用户信息
 
-
+// 邮件
 export const GET_REGISTER_CODE = ApiBase + "/mail/sendRegisterCode"; // 获取注册验证码
 
 // 分类
@@ -52,29 +53,4 @@ export const GET_COLUMN_LIST = ApiBase + "/column/list"; //
 export const OSS_POLICY = ApiBase + "/oss/policy"; //
 export const OSS_STS = ApiBase + "/oss/sts"; //
 
-const Api = {
-  // 登录
-  getLogin: ApiBase + "/login/getLogin",
 
-  // 博客
-
-
-  // 用户
-  getUserList: ApiBase + '/user/list',
-  setDeleted: ApiBase + '/user/setDeleted',
-
-  // 系统
-  getNotice: ApiBase + '/system/getNotice',
-  setNotice: ApiBase + '/system/setNotice',
-  getUpdateLog: ApiBase + '/system/getUpdateLog',
-  setUpdateLog: ApiBase + '/system/setUpdateLog',
-}
-
-
-const FrontApi = {
-  getBlogNewest: FrontApiBase + "/home/newest",
-  getUpdateLog: FrontApiBase + '/message/getUpdateLog'
-}
-
-
-// export {Api, FrontApi}

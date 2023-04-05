@@ -4,10 +4,10 @@
       <transition name="fade" mode="out-in">
         <a-switch v-model:checked="checked">
           <template #checkedChildren>
-            <icon-sun-one/>
+            <i-sun-one/>
           </template>
           <template #unCheckedChildren>
-            <icon-moon/>
+            <i-moon/>
           </template>
         </a-switch>
       </transition>

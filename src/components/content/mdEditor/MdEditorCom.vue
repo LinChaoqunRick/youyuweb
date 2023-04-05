@@ -102,7 +102,8 @@
     theme: toRef(state.theme, "theme"),
     editorId: props.editorId,
     toolbars: props.toolbars,
-    footers: props.footers
+    footers: props.footers,
+    codeTheme: 'github'
   })
 
   const editorConfig = computed(() => {

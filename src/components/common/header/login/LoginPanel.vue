@@ -30,7 +30,7 @@
         </transition>
       </div>
       <div class="login-panel-close" @click="handleClose">
-        <icon-close size="24" fill="#fff"/>
+        <i-close size="24" fill="#fff"/>
       </div>
     </div>
   </div>

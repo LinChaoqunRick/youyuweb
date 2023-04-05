@@ -13,7 +13,7 @@
                    :maxlength="30"
                    placeholder="手机号/邮箱">
             <template #prefix>
-              <icon-user fill="#c0c4cc"/>
+              <i-user fill="#c0c4cc"/>
             </template>
           </a-input>
         </a-form-item>
@@ -23,7 +23,7 @@
                             :maxlength="30"
                             placeholder="密码">
             <template #prefix>
-              <icon-lock fill="#c0c4cc"/>
+              <i-lock fill="#c0c4cc"/>
             </template>
           </a-input-password>
         </a-form-item>

@@ -1,7 +1,9 @@
 import {createApp} from "vue";
 import {Modal, Button} from "ant-design-vue";
+import Antd from 'ant-design-vue';
 import store from "@/store";
 import router from "@/router";
+import {install} from '@icon-park/vue-next/es/all';
 
 export default function openModal(config = {}) {
   const modalProps = {...Modal.props};
@@ -24,7 +26,7 @@ export default function openModal(config = {}) {
       components: {
         [config.component.name]: config.component,
         Modal,
-        Button
+        Button,
       },
       provide() {
         return {
@@ -42,6 +44,9 @@ export default function openModal(config = {}) {
         <div class="modal-content" style="font-size:14px">
           <component ref="modalBody" is="${config.component.name}" v-bind="componentProps"/>
         </div>
+        <template v-slot:closeIcon>
+          <i-close theme="outline" size="18" fill="#00000073"/>
+        </template>
         <template v-slot:footer>
           <Button v-if="cancelText" type="text" @click="handleCancel" :size="buttonSize">
             {{cancelText}}
@@ -101,7 +106,9 @@ export default function openModal(config = {}) {
           }
         },
       }
-    }, config);
+    }, config).use(store).use(router).use(Antd);
+
+    install(Comp, 'i');
 
     const modal = document.createElement("div");
     const instance = Comp.mount(modal);

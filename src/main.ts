@@ -48,7 +48,7 @@ app.config.globalProperties.$dayjs = dayjs;
 dayjs.locale('zh-cn') // use loaded locale globally
 
 // Install
-install(app); // use default prefix 'icon', eg: icon is People, name is icon-people.
+// install(app); // use default prefix 'icon', eg: icon is People, name is icon-people.
 install(app, 'i'); // use custom prefix 'i', eg: icon is People, name is i-people.
 
 MdEditor.config({
