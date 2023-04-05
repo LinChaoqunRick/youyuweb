@@ -6,7 +6,13 @@
 
 <script>
   export default {
-    name: "NoteAdd"
+    name: "NoteAdd",
+    methods: {
+      beforeConfirm(done) {
+        console.log("beforeConfirm");
+        done();
+      }
+    }
   }
 </script>
 

@@ -1,9 +1,13 @@
 import {createApp} from "vue";
-import Modal from "@/libs/tools/openModal/Modal.vue";
+import {Modal, Button} from "ant-design-vue";
 import store from "@/store";
 import router from "@/router";
 
 export default function openModal(config = {}) {
+  const modalProps = {...Modal.props};
+  // 删除visible、confirmLoading用自定义
+  Reflect.deleteProperty(modalProps, "visible");
+  Reflect.deleteProperty(modalProps, "confirmLoading");
   config = Object.assign({}, {
     cancelText: "取消",
     okText: "确定",
@@ -13,83 +17,94 @@ export default function openModal(config = {}) {
   if (!config.component) {
     throw new Error("component is required!");
   }
-  const Comp = createApp({
-    name: "ModalContainer",
-    inheritAttrs: false,
-    components: {
-      [config.component.name]: config.component,
-      Modal
-    },
-    provide() {
-      return {
-        modal: this
-      };
-    },
-    data() {
-      return {
-        confirmLoading: false
-      };
-    },
-    template: `
-      <Modal v-bind="$props" class="modal-body">
+  return new Promise((resolve, reject) => {
+    const Comp = createApp({
+      name: "ModalContainer",
+      inheritAttrs: false,
+      components: {
+        [config.component.name]: config.component,
+        Modal,
+        Button
+      },
+      provide() {
+        return {
+          modal: this
+        };
+      },
+      data() {
+        return {
+          confirmLoading: false,
+          modalVisible: true
+        };
+      },
+      template: `
+      <Modal v-model:visible="modalVisible" v-bind="$props" class="modal-body" @cancel="handleCancel(false)">
         <div class="modal-content" style="font-size:14px">
           <component ref="modalBody" is="${config.component.name}" v-bind="componentProps"/>
         </div>
-        <!--<template slot="footer">
-          <Button v-if="cancelText" type="text" @click="onCancel" :size="buttonSize">
+        <template v-slot:footer>
+          <Button v-if="cancelText" type="text" @click="handleCancel" :size="buttonSize">
             {{cancelText}}
           </Button>
-          <Button v-if="okText" type="primary" @click="onOk" :size="buttonSize" :loading="confirmLoading">
+          <Button v-if="okText" type="primary" @click="handleOk" :size="buttonSize" :loading="confirmLoading">
             {{okText}}
           </Button>
-        </template>-->
+        </template>
       </Modal>
     `,
-    props: {
-      componentProps: {
-        type: Object,
-        default: () => ({})
-      },
-      ...Modal.props,
-      ...{
-        title: {
-          type: String,
-          default: "提示"
+      props: {
+        componentProps: {
+          type: Object,
+          default: () => ({})
         },
-        buttonSize: {
-          type: String,
-          default: "large"
+        ...modalProps,
+        ...{
+          title: {
+            type: String,
+            default: "提示"
+          },
+          buttonSize: {
+            type: String,
+            default: "medium"
+          }
         }
+      },
+      methods: {
+        close() {
+          this.modalVisible = false;
+          setTimeout(() => {
+            Comp.unmount();
+            document.body.removeChild(modal);
+          }, 300);
+        },
+        ok(params) {
+          const done = () => {
+            this.close();
+            resolve(params instanceof PointerEvent ? 1 : params);
+          };
+          if (typeof config.beforeConfirm === "function") {
+            config.beforeConfirm(done, params);
+          } else {
+            done();
+          }
+        },
+        handleCancel(action) {
+          const value = action === false ? false : 0;
+          this.close();
+          reject(value);
+        },
+        handleOk(params) {
+          if (this.$refs.modalBody && typeof this.$refs.modalBody.beforeConfirm === "function") {
+            this.$refs.modalBody.beforeConfirm(this.ok);
+          } else {
+            this.ok();
+          }
+        },
       }
-    },
-    methods: {
-      onCancel(action) {
-        const value = action === false ? false : 0;
-        this.$emit("cancel", value);
-      },
-      onOk(params) {
-        if (this.$refs.modalBody && typeof this.$refs.modalBody.beforeConfirm === "function") {
-          this.$refs.modalBody.beforeConfirm((result) => this.$emit("ok", result != null ? result : params));
-        } else {
-          this.$emit("ok", params);
-        }
-      },
-    }
-  });
-  return new Promise((resolve, reject) => {
+    }, config);
+
     const modal = document.createElement("div");
-    console.log(Comp);
     const instance = Comp.mount(modal);
     document.body.appendChild(modal);
-
-    const close = () => {
-      instance.value = false;
-      setTimeout(() => {
-        instance.$destroy();
-        if (instance.$el) {
-          document.body.removeChild(instance.$el);
-        }
-      }, 300);
-    };
   });
 }
