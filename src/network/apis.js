@@ -22,6 +22,7 @@ export const CANCEL_POST_COLLECT = ApiBase + "/post/cancelPostCollect";
 export const GET_POST_COLLECT_LIST = ApiBase + "/post/collectList"; // 获取收藏列表
 
 export const CREATE_NOTE = ApiBase + "/note/create"; // 创建笔记
+export const LIST_NOTE = ApiBase + "/note/list"; // 创建列表
 
 // 评论
 export const GET_COMMENTS_PAGE = ApiBase + "/comment/getCommentsPage";

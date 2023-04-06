@@ -11,6 +11,7 @@ export default {
   state: () => ({
     showLogin: false,
     user: JSON.parse(localStorage.getItem("user")) || {},
+    authorId: 10000, //作者id
   }),
   mutations: {
     changeLogin(state, status) {
@@ -30,6 +31,9 @@ export default {
     },
     userInfo(state) {
       return state.user;
+    },
+    isAuthor(state) {
+      return state.user.id === state.authorId;
     }
   },
   actions: {
