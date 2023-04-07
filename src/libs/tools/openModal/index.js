@@ -85,7 +85,7 @@ export default function openModal(config = {}) {
         ok(params) {
           const done = () => {
             this.close();
-            resolve(params instanceof PointerEvent ? 1 : params);
+            resolve(params ?? 1);
           };
           if (typeof config.beforeConfirm === "function") {
             config.beforeConfirm(done, params);
