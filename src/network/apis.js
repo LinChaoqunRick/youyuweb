@@ -25,6 +25,11 @@ export const CREATE_NOTE = ApiBase + "/note/create"; // 创建笔记
 export const LIST_NOTE = ApiBase + "/note/list"; // 笔记列表
 export const GET_NOTE = ApiBase + "/note/get"; // 笔记详情
 export const UPDATE_NOTE = ApiBase + "/note/update"; // 笔记修改
+export const CREATE_NOTE_CHAPTER = ApiBase + "/noteChapter/create"; // 创建章节
+export const LIST_NOTE_CHAPTER = ApiBase + "/noteChapter/list"; // 章节列表
+export const GET_NOTE_CHAPTER = ApiBase + "/noteChapter/get"; // 章节详情
+export const UPDATE_NOTE_CHAPTER = ApiBase + "/noteChapter/update"; // 章节修改
+export const DELETE_NOTE_CHAPTER = ApiBase + "/noteChapter/create"; // 章节删除
 
 // 评论
 export const GET_COMMENTS_PAGE = ApiBase + "/comment/getCommentsPage";
