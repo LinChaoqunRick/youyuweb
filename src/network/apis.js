@@ -7,6 +7,7 @@ export const GET_AUTH_ROUTES = ApiBase + "/login/getAuthRoutes"; // 注销
 export const ACCOUNT_REGISTER = ApiBase + "/login/register"; // 注销
 
 // 帖子
+export const GET_USER_BY_ID = ApiBase + "/post/getUserById"; // 根据id获取用户详细信息（包括帖子数、粉丝数等）
 export const GET_POST_LIST = ApiBase + "/post/list";
 export const GET_POST_DETAIL = ApiBase + "/post/get";
 export const SET_POST_LIKE = ApiBase + "/post/setPostLike";
@@ -20,7 +21,9 @@ export const SET_POST_COLLECT = ApiBase + "/post/postCollect";
 export const IS_POST_COLLECT = ApiBase + "/post/isPostCollect";
 export const CANCEL_POST_COLLECT = ApiBase + "/post/cancelPostCollect";
 export const GET_POST_COLLECT_LIST = ApiBase + "/post/collectList"; // 获取收藏列表
+export const GET_LIMIT_POST = ApiBase + "/post/getLimitPost"; // 获取指定数量条帖子记录
 
+// 笔记
 export const CREATE_NOTE = ApiBase + "/note/create"; // 创建笔记
 export const LIST_NOTE = ApiBase + "/note/list"; // 笔记列表
 export const GET_NOTE = ApiBase + "/note/get"; // 笔记详情
@@ -41,8 +44,6 @@ export const SET_COMMENT_LIKE = ApiBase + "/comment/setLike";
 export const CANCEL_COMMENT_LIKE = ApiBase + "/comment/cancelLike";
 
 // 用户
-export const GET_USER_BY_ID = ApiBase + "/user/getUserById"; // 根据id获取用户信息
-export const GET_LIMIT_POST = ApiBase + "/user/getLimitPost"; // 获取指定数量条帖子记录
 export const SET_USER_FOLLOW = ApiBase + "/user/follow"; // 关注用户
 export const CANCEL_USER_FOLLOW = ApiBase + "/user/unfollow"; // 取关用户
 export const GET_FOLLOW_LIST = ApiBase + "/user/followList"; // 获取用户关注列表

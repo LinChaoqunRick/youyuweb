@@ -29,7 +29,7 @@
     const form = await editor.value.getFormData();
     if (form) {
       formValidate.value.userId = userInfo.value.id;
-      modal.confirmLoading = true;
+      modal.value.confirmLoading = true;
       dispatch("createNote", formValidate.value).then(res => {
         done();
         message.success("保存成功");

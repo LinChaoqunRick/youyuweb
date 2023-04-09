@@ -8,3 +8,16 @@ export interface note {
   createTime: string;
   updateTime: string;
 }
+
+export interface chapter {
+  id: number
+  noteId: number
+  parentId: number
+  userIds: string
+  title: string
+  content: string
+  viewCount: number
+  createTime: string
+  updateTime: string
+}
+

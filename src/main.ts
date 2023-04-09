@@ -36,7 +36,6 @@ const app = createApp(App);
 app.use(router);
 app.use(Antd);
 app.use(store);
-app.use(animated)
 
 app.directive("aside", aside);
 app.directive("aside2", aside2);

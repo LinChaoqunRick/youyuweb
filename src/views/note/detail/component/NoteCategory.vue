@@ -1,9 +1,7 @@
 <template>
   <div class="note-category">
-    <div class="category-top">
-      <a-button type="primary" ghost class="create-chapter" @click="createFirstChapter">创建章节</a-button>
-    </div>
     <a-tree
+      v-if="treeData.length"
       class="draggable-tree"
       v-model:selectedKeys="selectedKeys"
       block-node
@@ -17,84 +15,198 @@
           <div class="title-item">
             <div class="title-text" v-if="!data.isEdit">
               <span>{{data.title}}</span>
-              <div class="item-operation" v-show="selected">
+              <!--<div class="item-operation" v-show="selected">
                 <i-editor theme="outline" size="14" fill="#333" title="编辑" @click="onEdit(data)"/>
                 <i-delete-four theme="outline" size="16" fill="#333" title="删除"/>
-              </div>
+              </div>-->
             </div>
             <div v-else class="item-input">
               <input v-model="data.title" v-focus @blur="onBlur(data)"/>
             </div>
           </div>
           <template #overlay>
-            <a-menu @click="({ key: menuKey }) => onContextMenuClick(treeKey, menuKey)">
-              <a-menu-item key="1">1st menu item</a-menu-item>
-              <a-menu-item key="2">2nd menu item</a-menu-item>
-              <a-menu-item key="3">3rd menu item</a-menu-item>
+            <a-menu @click="({ key: menuKey }) => onContextMenuClick(data, menuKey)">
+              <a-menu-item key="1">编辑</a-menu-item>
+              <a-menu-item key="2">删除</a-menu-item>
+              <a-menu-item key="3">添加子项</a-menu-item>
             </a-menu>
           </template>
         </a-dropdown>
       </template>
     </a-tree>
+    <div class="category-top">
+      <a-button type="primary" ghost class="create-chapter" @click="createFirstChapter">创建章节</a-button>
+    </div>
+    <Teleport class="chapter-bottom" to="#chapter-bottom" v-if="contentMounted">
+      <div class="chapter-last-next">
+        <div class="chapter-item chapter-item-last">
+          <div class="item-box" v-if="lastNode" @click="onLastNext('last')">
+            <div class="item-text">
+              <i-left theme="outline" size="12" fill="#3c3c3c54"/>
+              上一篇
+            </div>
+            <div class="item-title">{{lastNode.title}}</div>
+          </div>
+        </div>
+        <div class="chapter-item chapter-item-next">
+          <div class="item-box" v-if="nextNode" @click="onLastNext('next')">
+            <div class="item-text">下一篇
+              <i-right theme="outline" size="12" fill="#3c3c3c54"/>
+            </div>
+            <div class="item-title">{{nextNode.title}}</div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
 <script>
+  import openModal from "@/libs/tools/openModal";
+  import ChapterAdd from "./ChapterAdd.vue";
+  import ChapterEdit from "./ChapterEdit.vue";
+  import {mapActions} from "vuex";
+  import {message} from 'ant-design-vue';
+  import {computed} from "vue";
+
   export default {
     data() {
       return {
         selectedKeys: [],
-        treeData: [
-          {
-            title: '第一章: 初识Spring',
-            children: [
-              {
-                title: '1-1: Spring的诞生',
-              },
-              {
-                title: '1-2: Spring的历史演变',
-              }
-            ]
-          },
-          {
-            title: '第二章: Spring容器',
-          },
-          {
-            title: '第三章: Spring IOC',
-          },
-          {
-            title: '第四章: Spring AOP',
-          }
-        ]
+        rawDataList: [],
+        treeData: [],
+        note: null,
+        contentMounted: false,
+        lastNode: null,
+        nextNode: null,
+      }
+    },
+    computed: {
+      isOwn() {
+        return user.value.id === userInfo.value.id
       }
     },
     methods: {
-      createFirstChapter() {
-        // this.treeData = [
-        //   {
-        //     title: 'parent 1',
-        //     isEdit: true,
-        //   }
-        // ]
-        console.log(this.$refs.aTree);
+      ...mapActions(['getNote', 'listNoteChapter']),
+      async initData() {
+        await this.getNoteDetail();
+        this.getListChapter()
+      },
+      async getNoteDetail() {
+        await this.getNote({noteId: this.$route.params.noteId}).then(res => {
+          this.note = res.data;
+        })
+      },
+      getListChapter() {
+        this.listNoteChapter({noteId: this.note.id}).then(res => {
+          this.treeData = this.transferData(res.data);
+          this.rawDataList = this.flatTreeData(this.treeData);
+          if (this.treeData.length) { // 默认选中第一章
+            this.selectedKeys = [this.treeData[0].key];
+            this.$emit("handleNodeSelect", this.treeData[0]);
+          }
+        })
+      },
+      transferData(data) {
+        data.forEach(item => {
+          item.key = item.id;
+          if (item.parentId > -1) {
+            const parent = data.find(i => i.id === item.parentId);
+            if (parent) {
+              if (!parent.children?.length) {
+                parent.children = []
+              }
+              parent.children.push(item);
+            }
+          }
+        })
+        return data.filter(item => item.parentId === -1)
+      },
+      flatTreeData(data) {
+        const flatData = [];
+        (function transfer(data) {
+          data.forEach(item => {
+            flatData.push(item);
+            if (item.children?.length) {
+              transfer(item.children);
+            }
+          })
+        })(data);
+        return flatData;
+      },
+      async createFirstChapter() {
+        const res = await openModal({
+          component: ChapterAdd,
+          componentProps: {
+            noteId: this.note.id,
+          },
+          title: '新建章节'
+        }).catch(console.log);
+        if (res) {
+          this.getListChapter();
+        }
       },
       handleSelect(keys, info) {
-        console.log(info);
         const node = info.node;
         this.selectedKeys = [node.key];
+        this.$emit("handleNodeSelect", node);
       },
       onEdit(data) {
         data.isEdit = true;
       },
       onBlur(data) {
         data.isEdit = false;
+      },
+      async onContextMenuClick(data, menuKey) {
+        if (menuKey === '1') {
+          const res = await openModal({
+            component: ChapterEdit,
+            componentProps: {
+              id: data.id
+            },
+            title: '编辑章节'
+          }).catch(console.log);
+          if (res) {
+            this.getListChapter();
+          }
+        } else if (menuKey === '3') {
+          const res = await openModal({
+            component: ChapterAdd,
+            componentProps: {
+              noteId: this.note.id,
+              parentId: data.id
+            },
+            title: '新建章节'
+          }).catch(console.log);
+          if (res) {
+            this.getListChapter();
+          }
+        }
+      },
+      generatePreNext() {
+        this.$nextTick(() => {
+          this.contentMounted = true;
+          const currentKey = this.selectedKeys[0];
+          const currentIndex = this.rawDataList.findIndex(item => item.id === currentKey);
+          this.lastNode = this.rawDataList[currentIndex - 1];
+          this.nextNode = this.rawDataList[currentIndex + 1];
+        })
+      },
+      onLastNext(type) {
+        const node = type === 'last' ? this.lastNode : this.nextNode;
+        this.selectedKeys = [node.key];
+        this.$emit("handleNodeSelect", node);
       }
-    }
+    },
+    created() {
+      this.initData();
+    },
   }
 </script>
 
 <style lang="scss" scoped>
   .note-category {
+    position: relative;
     width: 100%;
 
     .category-top {
@@ -111,7 +223,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 2px 4px;
+        padding: 2px 0 2px 8px;
 
         .item-operation {
           display: flex;

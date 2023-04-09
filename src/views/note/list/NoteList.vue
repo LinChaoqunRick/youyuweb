@@ -2,7 +2,7 @@
   <div class="note-list">
     <a-button type="primary" @click="handleCreate" v-if="isAuthor">创建</a-button>
     <div class="note-list-items">
-      <YTable listUrl="listNote" @onLoaded="onLoaded">
+      <YTable listUrl="listNote">
         <template #default="{dataList}" ref="YTableRef">
           <div v-for="(item, index) in dataList" class="article-body" :key="item.postId" ref="postItem">
             <NoteItem :data="item" @handleEdit="handleEdit" @click="handleNavigate(item)"/>
