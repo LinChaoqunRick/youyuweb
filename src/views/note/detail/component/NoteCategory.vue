@@ -24,7 +24,7 @@
               <input v-model="data.title" v-focus @blur="onBlur(data)"/>
             </div>
           </div>
-          <template #overlay>
+          <template #overlay v-if="isOwn">
             <a-menu @click="({ key: menuKey }) => onContextMenuClick(data, menuKey)">
               <a-menu-item key="1">编辑</a-menu-item>
               <a-menu-item key="2">删除</a-menu-item>
@@ -35,7 +35,7 @@
       </template>
     </a-tree>
     <div class="category-top">
-      <a-button type="primary" ghost class="create-chapter" @click="createFirstChapter">创建章节</a-button>
+      <a-button type="primary" ghost class="create-chapter" @click="createFirstChapter" v-if="isOwn">创建章节</a-button>
     </div>
     <Teleport class="chapter-bottom" to="#chapter-bottom" v-if="contentMounted">
       <div class="chapter-last-next">
@@ -65,44 +65,40 @@
   import openModal from "@/libs/tools/openModal";
   import ChapterAdd from "./ChapterAdd.vue";
   import ChapterEdit from "./ChapterEdit.vue";
-  import {mapActions} from "vuex";
+  import {mapActions, mapGetters} from "vuex";
   import {message} from 'ant-design-vue';
   import {computed} from "vue";
 
   export default {
+    inject: ['note'],
     data() {
       return {
         selectedKeys: [],
         rawDataList: [],
         treeData: [],
-        note: null,
         contentMounted: false,
         lastNode: null,
         nextNode: null,
       }
     },
     computed: {
+      ...mapGetters(['userInfo']),
       isOwn() {
-        return user.value.id === userInfo.value.id
+        return this.note?.userId === this.userInfo?.id
       }
     },
     methods: {
-      ...mapActions(['getNote', 'listNoteChapter']),
+      ...mapActions(['getNote', 'listNoteChapter', 'deleteNoteChapter']),
       async initData() {
-        await this.getNoteDetail();
         this.getListChapter()
       },
-      async getNoteDetail() {
-        await this.getNote({noteId: this.$route.params.noteId}).then(res => {
-          this.note = res.data;
-        })
-      },
       getListChapter() {
-        this.listNoteChapter({noteId: this.note.id}).then(res => {
+        this.listNoteChapter({noteId: this.note.value.id}).then(res => {
           this.treeData = this.transferData(res.data);
           this.rawDataList = this.flatTreeData(this.treeData);
           if (this.treeData.length) { // 默认选中第一章
             this.selectedKeys = [this.treeData[0].key];
+            console.log("getListChapter");
             this.$emit("handleNodeSelect", this.treeData[0]);
           }
         })
@@ -138,7 +134,7 @@
         const res = await openModal({
           component: ChapterAdd,
           componentProps: {
-            noteId: this.note.id,
+            noteId: this.note.value.id,
           },
           title: '新建章节'
         }).catch(console.log);
@@ -169,11 +165,16 @@
           if (res) {
             this.getListChapter();
           }
+        } else if (menuKey === '2') {
+          this.deleteNoteChapter({id: data.id}).then(res => {
+            message.success("删除成功");
+            this.initData();
+          })
         } else if (menuKey === '3') {
           const res = await openModal({
             component: ChapterAdd,
             componentProps: {
-              noteId: this.note.id,
+              noteId: this.note.value.id,
               parentId: data.id
             },
             title: '新建章节'
@@ -211,7 +212,8 @@
 
     .category-top {
       width: 100%;
-      text-align: center;
+      margin-top: 10px;
+      /*text-align: center;*/
 
       .create-chapter {
         margin-bottom: 10px;

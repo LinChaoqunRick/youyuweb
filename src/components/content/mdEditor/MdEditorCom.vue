@@ -103,7 +103,8 @@
     editorId: props.editorId,
     toolbars: props.toolbars,
     footers: props.footers,
-    codeTheme: 'github'
+    codeTheme: 'github',
+    showCodeRowNumber: true
   })
 
   const editorConfig = computed(() => {

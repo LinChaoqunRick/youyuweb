@@ -1,9 +1,9 @@
 <template>
   <div class="user-card">
     <div class="user-info">
-      <img :src="user.avatar"/>
+      <img :src="user.avatar" @click="handleProfile"/>
       <div class="user-info-basic">
-        <div class="user-nickname">{{user.nickname}}</div>
+        <div class="user-nickname" @click="handleProfile">{{user.nickname}}</div>
         <div class="user-signature">{{user.signature}}</div>
       </div>
     </div>
@@ -17,6 +17,7 @@
 </template>
 
 <script setup lang="ts">
+  import {useRouter} from "vue-router";
   import {Modal} from "ant-design-vue";
 
   const props = defineProps({
@@ -25,6 +26,7 @@
       required: true
     }
   })
+  const router = useRouter();
 
   const dataItems = [
     {
@@ -45,19 +47,24 @@
     }
   ]
 
-  function handleClickStat(item: statData) {
+  function handleClickStat(item) {
     const {value} = item;
-    if (value === 'viewCount') {
-      Modal.info({
-        content: `Ta的文章已被阅读${user.value.extraInfo[item.value]}次`,
-      });
+    if (value === 'postCount') {
+      handleProfile();
+    } else if (value === 'viewCount') {
+      // Modal.info({
+      //   content: `Ta的文章已被阅读${props.user.extraInfo[item.value]}次`,
+      // });
     } else if (value === 'likeCount') {
-      Modal.info({
-        content: `Ta共收获了${user.value.extraInfo[item.value]}个点赞`,
-      });
+      // Modal.info({
+      //   content: `Ta共收获了${props.user.extraInfo[item.value]}个点赞`,
+      // });
     }
   }
 
+  function handleProfile() {
+    router.push({path: `/user/${props.user.id}/moment`})
+  }
 </script>
 
 <style lang="scss" scoped>

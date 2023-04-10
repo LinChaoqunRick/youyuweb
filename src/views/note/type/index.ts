@@ -1,3 +1,5 @@
+import type {userType} from "@/types/user";
+
 export interface note {
   id: number | null;
   name: string;
@@ -18,6 +20,7 @@ export interface chapter {
   content: string
   viewCount: number
   createTime: string
-  updateTime: string
+  updateTime: string,
+  user: userType | null
 }
 

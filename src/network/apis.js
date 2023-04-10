@@ -32,7 +32,7 @@ export const CREATE_NOTE_CHAPTER = ApiBase + "/noteChapter/create"; // 创建章
 export const LIST_NOTE_CHAPTER = ApiBase + "/noteChapter/list"; // 章节列表
 export const GET_NOTE_CHAPTER = ApiBase + "/noteChapter/get"; // 章节详情
 export const UPDATE_NOTE_CHAPTER = ApiBase + "/noteChapter/update"; // 章节修改
-export const DELETE_NOTE_CHAPTER = ApiBase + "/noteChapter/create"; // 章节删除
+export const DELETE_NOTE_CHAPTER = ApiBase + "/noteChapter/delete"; // 章节删除
 
 // 评论
 export const GET_COMMENTS_PAGE = ApiBase + "/comment/getCommentsPage";

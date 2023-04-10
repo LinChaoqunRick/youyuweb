@@ -76,10 +76,7 @@
         <div class="post-content">
           <MdPreview
             editorId="post-content"
-            :text="post.content"
-            :extend="{
-              showCodeRowNumber: true
-            }"/>
+            :text="post.content"/>
         </div>
       </div>
       <div class="post-right">

@@ -6,13 +6,13 @@
           <template #content>
             <UserCard :user="data.user"/>
           </template>
-          <img :src="data.user.avatar"/>
+          <img :src="data.user.avatar" @click="handleProfile(data.user)"/>
         </a-popover>
         <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
           <template #content>
             <UserCard :user="data.user"/>
           </template>
-          <div class="user-nickname">{{data.user.nickname}}</div>
+          <div class="user-nickname" @click="handleProfile(data.user)">{{data.user.nickname}}</div>
         </a-popover>
         <div class="author-text" v-if="post.userId === data.userId">(作者)</div>
       </div>
@@ -22,13 +22,13 @@
           <template #content>
             <UserCard :user="data.userTo"/>
           </template>
-          <img :src="data.userTo.avatar"/>
+          <img :src="data.userTo.avatar" @click="handleProfile(data.userTo)"/>
         </a-popover>
         <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
           <template #content>
             <UserCard :user="data.userTo"/>
           </template>
-          <div class="user-nickname">{{data.userTo.nickname}}</div>
+          <div class="user-nickname" @click="handleProfile(data.userTo)">{{data.userTo.nickname}}</div>
         </a-popover>
         <div class="author-text" v-if="post.userId === data.userIdTo">(作者)</div>
       </div>
@@ -57,13 +57,16 @@
 <script setup lang="ts">
   import {computed, inject} from "vue";
   import {useStore} from "vuex";
+  import {useRouter} from "vue-router";
   import {message, Modal} from "ant-design-vue";
 
   import ReplyEditor from "@/components/content/comment/ReplyEditor.vue";
   import UserCard from "@/components/content/comment/UserCard.vue";
+  import type {userType} from "@/types/user";
 
 
   const {getters, commit, dispatch} = useStore();
+  const router = useRouter();
   const isLogin = computed(() => getters['isLogin']);
   const userInfo = computed(() => getters['userInfo']);
 
@@ -161,6 +164,9 @@
     });
   }
 
+  function handleProfile(user: userType) {
+    router.push({path: `/user/${user.id}/moment`})
+  }
 </script>
 
 <style lang="scss" scoped>

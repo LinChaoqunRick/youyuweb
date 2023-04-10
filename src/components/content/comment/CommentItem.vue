@@ -5,7 +5,7 @@
         <template #content>
           <UserCard :user="data.user"/>
         </template>
-        <img :src="data.user.avatar"/>
+        <img :src="data.user.avatar" @click="handleProfile(data.user)"/>
       </a-popover>
     </div>
     <div class="content-box">
@@ -15,7 +15,7 @@
             <template #content>
               <UserCard :user="data.user"/>
             </template>
-            <div class="nickname-text">{{data.user.nickname}}</div>
+            <div class="nickname-text" @click="handleProfile(data.user)">{{data.user.nickname}}</div>
           </a-popover>
           <div class="author-text" v-if="post.userId === data.userId">(作者)</div>
         </div>
@@ -24,12 +24,7 @@
       <div class="comment-content" :class="{'content-expand': expand}" v-row="{set: set}">
         <MdPreview
           :text="data.content"
-          editorId="md-editor"
-          :extend="{
-            previewOnly: true,
-            previewTheme: 'cyanosis',
-            showCodeRowNumber: true
-          }"/>
+          editorId="md-editor"/>
       </div>
       <div class="comment-operation">
         <div class="ope-item" :class="{'ope-active': data.commentLike}" @click="handleLike">
@@ -71,13 +66,16 @@
 <script setup lang="ts">
   import {ref, computed, inject} from 'vue';
   import {useStore} from "vuex";
+  import {useRouter} from "vue-router";
   import {message, Modal} from "ant-design-vue";
+  import type {userType} from "@/types/user";
   import ReplyItem from "@/components/content/comment/ReplyItem.vue";
   import UserCard from "@/components/content/comment/UserCard.vue";
   import ReplyEditor from "@/components/content/comment/ReplyEditor.vue";
   import MdPreview from "@/components/content/mdEditor/MdPreview.vue";
 
   const {getters, commit, dispatch} = useStore();
+  const router = useRouter();
   const isLogin = computed(() => getters['isLogin']);
   const userInfo = computed(() => getters['userInfo']);
 
@@ -187,6 +185,10 @@
         }).catch(console.log)
       },
     });
+  }
+
+  function handleProfile(user: userType) {
+    router.push({path: `/user/${user.id}/moment`})
   }
 </script>
 
