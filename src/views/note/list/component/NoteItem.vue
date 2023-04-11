@@ -5,7 +5,7 @@
         <img :src="data.cover"/>
       </div>
       <div class="item-info">
-        <div class="info-view">{{data.viewCount}}0 views</div>
+        <div class="info-view">{{data.viewCount}} views</div>
         <div class="info-more" v-if="userInfo.id===data.userId">
           <a-popover v-model:visible="visible" trigger="click" placement="bottom" overlayClassName="note-popover">
             <template #content>

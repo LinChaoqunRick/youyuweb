@@ -84,7 +84,7 @@
     computed: {
       ...mapGetters(['userInfo']),
       isOwn() {
-        return this.note?.userId === this.userInfo?.id
+        return this.note.value?.userId === this.userInfo?.id
       }
     },
     methods: {
@@ -98,7 +98,6 @@
           this.rawDataList = this.flatTreeData(this.treeData);
           if (this.treeData.length) { // 默认选中第一章
             this.selectedKeys = [this.treeData[0].key];
-            console.log("getListChapter");
             this.$emit("handleNodeSelect", this.treeData[0]);
           }
         })
