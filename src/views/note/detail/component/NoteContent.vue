@@ -64,7 +64,7 @@
     loading.value = true;
     dispatch("getNoteChapter", {id: props.id}).then(res => {
       chapter.value = res.data;
-      emit("contentLoaded");
+      emit("contentLoaded", chapter.value);
     }).finally(() => {
       loading.value = false;
     })

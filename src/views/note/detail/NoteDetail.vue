@@ -10,7 +10,9 @@
       <div class="note-content">
         <NoteContent :id="id" @contentLoaded="contentLoaded" @saveSuccess="saveSuccess"/>
       </div>
-      <div class="note-info"></div>
+      <div class="note-info">
+        <NoteInfo/>
+      </div>
     </div>
   </div>
 </template>
@@ -21,13 +23,16 @@
   import {useRoute} from "vue-router";
   import NoteCategory from "./component/NoteCategory.vue";
   import NoteContent from "./component/NoteContent.vue";
+  import NoteInfo from "./component/NoteInfo.vue";
+  import type {note, chapter} from "@/views/note/type";
 
   const NoteCategoryRef = ref(null);
   const id = ref(null);
   const collapse = ref<boolean>(false);
   const {dispatch} = useStore();
   const route = useRoute();
-  const note = ref()
+  const note = ref<note>();
+  const chapter = ref<chapter>();
 
   function initData() {
     dispatch("getNote", {noteId: route.params.noteId}).then(res => {
@@ -38,12 +43,14 @@
   initData();
 
   provide('note', note);
+  provide('chapter', chapter);
 
   function handleNodeSelect(node) {
     id.value = node.id;
   }
 
-  function contentLoaded() {
+  function contentLoaded(data: chapter) {
+    chapter.value = data;
     NoteCategoryRef.value.generatePreNext()
   }
 
