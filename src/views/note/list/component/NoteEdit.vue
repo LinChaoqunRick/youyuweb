@@ -22,7 +22,7 @@
     name: '',
     userId: null,
     introduce: '',
-    cover: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/login/loginImg.jpg',
+    cover: '',
     type: '',
     createTime: '',
     updateTime: ''

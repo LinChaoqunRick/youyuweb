@@ -5,7 +5,7 @@
       <YTable listUrl="listNote">
         <template #default="{dataList}" ref="YTableRef">
           <div v-for="(item, index) in dataList" class="article-body" :key="item.postId" ref="postItem">
-            <NoteItem :data="item" @handleEdit="handleEdit" @click="handleNavigate(item)"/>
+            <NoteItem :data="item" @handleEdit="handleEdit"/>
           </div>
         </template>
       </YTable>
@@ -15,7 +15,6 @@
 
 <script setup lang="ts">
   import {ref, computed} from "vue";
-  import {useRouter} from "vue-router";
   import {useStore} from "vuex";
 
   import YTable from "@/components/common/table/YTable.vue";
@@ -29,7 +28,6 @@
   const isAuthor = computed(() => getters['isAuthor']);
   const noteList = ref([]);
   const YTableRef = ref();
-  const router = useRouter();
 
   function handleCreate() {
     const res = openModal({
@@ -52,21 +50,17 @@
     }).catch(console.log);
     YTableRef.value.initData();
   }
-
-  function handleNavigate(data: note) {
-    console.log(data);
-    router.push({name: 'noteDetail', params: {noteId: data.id}})
-  }
 </script>
 
 <style lang="scss" scoped>
   .note-list {
-    padding: 16px;
+    padding: 8px;
 
     .note-list-items {
       ::v-deep(.table-body) {
         display: grid;
-        grid-template-columns: repeat(5, 250px);
+        grid-template-columns: repeat(5, 220px);
+        grid-gap: 60px;
         justify-items: center;
         justify-content: center;
       }

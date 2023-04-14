@@ -121,6 +121,7 @@
             border-radius: 2px;
 
             img {
+              object-fit: cover;
               height: 150px;
               width: 110px;
               cursor: pointer;
