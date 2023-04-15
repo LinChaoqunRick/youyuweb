@@ -22,7 +22,7 @@
         <div class="setting-item-title">个人主页</div>
         <div class="setting-item-value">{{user.homepage}}</div>
         <div class="setting-item-operate">
-          <a-button type="link">编辑</a-button>
+          <a-button type="link" @click="onEditHomepage">编辑</a-button>
         </div>
       </div>
       <div class="setting-item">
@@ -46,6 +46,8 @@
 <script setup lang="ts">
   import {useStore} from "vuex";
   import {computed, ref} from "vue";
+  import Homepage from './components/Homepage.vue';
+  import openModal from "@/libs/tools/openModal";
 
   const {getters, dispatch} = useStore();
   const user = ref({});
@@ -58,6 +60,17 @@
   }
 
   initData();
+
+  async function onEditHomepage() {
+    const res = await openModal({
+      component: Homepage,
+      title: '个人主页设置',
+      maskClosable: false,
+      componentProps: {
+        homepage: user.value.homepage
+      }
+    }).catch(console.log)
+  }
 </script>
 
 <style lang="scss" scoped>

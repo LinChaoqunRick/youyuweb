@@ -6,7 +6,7 @@
           暂无数据
         </div>
         <div class="table-skeleton" v-else>
-          <a-skeleton active avatar v-for="item in size"></a-skeleton>
+          <a-skeleton active avatar v-for="item in 10"></a-skeleton>
         </div>
       </slot>
     </div>
