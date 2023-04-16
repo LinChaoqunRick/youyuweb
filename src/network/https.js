@@ -17,7 +17,7 @@ import qs from 'qs';
 // 配置axios默认Content-type
 // axios.defaults.headers["Content-Type"] = "application/x-www-form-urlencoded";
 
-const showMessageCode = [508, 509, 510];
+const showMessageCode = [508, 509, 510, 600];
 
 // 创建axios的对象
 const instance = axios.create({
