@@ -12,30 +12,49 @@
 </template>
 
 <script setup lang="ts">
-  import {ref, reactive} from "vue";
+  import {ref, reactive, inject} from "vue";
+  import type {PropType} from 'vue';
+  import type {userType} from "@/types/user";
+  import {useStore} from "vuex";
+  import {message} from "ant-design-vue";
+  import {checkDomain} from "@/libs/validate/validate";
 
+  const modal = inject('modal');
   const labelCol = {span: 4};
   const wrapperCol = {span: 20};
   const formRef = ref();
+  const {dispatch} = useStore();
 
   const props = defineProps({
-    homepage: {
-      type: String
+    user: {
+      type: Object as PropType<userType>
     }
   })
 
   const formValidate = reactive({
-    homepage: props.homepage
+    id: props.user.id,
+    homepage: props.user.homepage
   })
 
   const rulesRef = {
     homepage: [
-      {
-        required: true,
-        message: '请输入主页地址',
-      },
+      {required: false, validator: checkDomain, trigger: 'change'}
     ],
   };
+
+  function beforeConfirm(done) {
+    modal.confirmLoading = true;
+    dispatch("saveHomepage", formValidate).then(res => {
+      done();
+      message.success("保存成功");
+    }).finally(() => {
+      modal.confirmLoading = false;
+    })
+  }
+
+  defineExpose({
+    beforeConfirm
+  })
 </script>
 
 <style scoped>

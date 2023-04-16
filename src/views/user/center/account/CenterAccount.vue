@@ -8,7 +8,7 @@
         <div class="setting-item-title">手机</div>
         <div class="setting-item-value">{{user.username}}</div>
         <div class="setting-item-operate">
-          <a-button type="link">换绑</a-button>
+          <a-button type="link" @click="onChangeTelephone">换绑</a-button>
         </div>
       </div>
       <div class="setting-item">
@@ -47,6 +47,7 @@
   import {useStore} from "vuex";
   import {computed, ref} from "vue";
   import Homepage from './components/Homepage.vue';
+  import Telephone from './components/Telephone.vue';
   import openModal from "@/libs/tools/openModal";
 
   const {getters, dispatch} = useStore();
@@ -62,13 +63,30 @@
   initData();
 
   async function onEditHomepage() {
-    const res = await openModal({
+    openModal({
       component: Homepage,
       title: '个人主页设置',
       maskClosable: false,
       componentProps: {
-        homepage: user.value.homepage
+        user: user.value
       }
+    }).then(res => {
+      initData();
+    }).catch(console.log)
+  }
+
+  async function onChangeTelephone() {
+    openModal({
+      component: Telephone,
+      title: '换绑手机',
+      maskClosable: false,
+      componentProps: {
+        user: user.value
+      },
+      width: '320px',
+      wrapClassName: 'change-telephone-modal'
+    }).then(res => {
+      initData();
     }).catch(console.log)
   }
 </script>
@@ -102,6 +120,18 @@
         .setting-item-operate {
           margin-left: auto;
         }
+      }
+    }
+  }
+</style>
+
+<style lang="scss">
+  .change-telephone-modal {
+    .ant-modal-body {
+      padding: 10px 24px 0 24px;
+
+      .ant-form-item {
+        margin-bottom: 20px;
       }
     }
   }
