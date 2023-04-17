@@ -2,8 +2,8 @@
   <div class="note-list">
     <a-button type="primary" @click="handleCreate" v-if="isAuthor">创建</a-button>
     <div class="note-list-items">
-      <YTable listUrl="listNote">
-        <template #default="{dataList}" ref="YTableRef">
+      <YTable listUrl="listNote" ref="YTableRef">
+        <template #default="{dataList}">
           <div v-for="(item, index) in dataList" class="article-body" :key="item.postId" ref="postItem">
             <NoteItem :data="item" @handleEdit="handleEdit"/>
           </div>
@@ -48,7 +48,7 @@
       maskClosable: false,
       width: '620px'
     }).catch(console.log);
-    YTableRef.value.initData();
+    YTableRef.value.refreshData();
   }
 </script>
 

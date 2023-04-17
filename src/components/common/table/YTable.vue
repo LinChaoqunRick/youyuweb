@@ -77,6 +77,17 @@
     })
   }
 
+  const refreshData = () => {
+    dispatch(props.listUrl, Object.assign({}, {
+      pageNum: current.value,
+      pageSize: size.value
+    }, props.params)).then(res => {
+      total.value = res.data.total;
+      dataList.value = res.data.list;
+      emit("onLoaded");
+    })
+  }
+
   if (props.loadImmediate) {
     initData();
   }
@@ -90,7 +101,8 @@
 
   defineExpose({
     page,
-    initData
+    initData,
+    refreshData
   })
 </script>
 

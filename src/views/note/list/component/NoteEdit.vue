@@ -44,7 +44,7 @@
         done();
         message.success("保存成功");
       }).finally(() => {
-        modal.value && (modal.value.confirmLoading = false);
+        modal.confirmLoading = false;
       })
     }
   }

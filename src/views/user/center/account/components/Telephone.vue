@@ -8,7 +8,7 @@
           原手机号：{{props.user.username}}
         </div>
         <a-form-item label=" " name="code">
-          <a-input v-model:value="formPrevious.code" :maxlength="11" size="small" placeholder="验证码">
+          <a-input v-model:value="formPrevious.code" :maxlength="6" size="small" placeholder="验证码">
             <template v-slot:suffix>
               <a-button type="link" class="send-code-btn" :disabled="preBtnProps.disabled" @click="onPreSendCode">
                 {{preBtnProps.text}}
@@ -22,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+  import {ref, inject} from "vue";
   import type {PropType} from "vue";
   import type {userType} from "@/types/user";
   import {useStore} from "vuex";
@@ -29,9 +30,11 @@
   import {checkTelephone} from "@/libs/validate/validate";
   import {message} from "ant-design-vue";
 
+  const modal = inject('modal');
   const labelCol = {span: 0};
   const wrapperCol = {span: 24};
   const {dispatch} = useStore();
+  const formRef = ref();
 
   const props = defineProps({
     user: {
@@ -41,7 +44,7 @@
 
   const rulesRef = {
     code: [
-      {required: true, validator: checkTelephone, trigger: 'change'}
+      {required: true, message: '请输入6位验证码', min: 6, max: 6, trigger: 'change'}
     ],
   };
 
@@ -51,7 +54,7 @@
   });
 
   const formPrevious = reactive({
-    id: props.user.id,
+    telephone: props.user.username,
     code: ''
   })
 
@@ -76,6 +79,22 @@
       }
     }, 1000)
   }
+
+  async function beforeConfirm() {
+    const form = await formRef.value.validate().catch(console.log);
+    if (form) {
+      modal.confirmLoading = true;
+      dispatch('messageVerify', formPrevious).then(res => {
+        console.log(res);
+      }).finally(() => {
+        modal.confirmLoading = false;
+      })
+    }
+  }
+
+  defineExpose({
+    beforeConfirm
+  })
 </script>
 
 <style lang="scss" scoped>
