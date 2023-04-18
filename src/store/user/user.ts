@@ -8,7 +8,8 @@ import {
   CANCEL_USER_FOLLOW,
   GET_FOLLOW_LIST,
   SAVE_BASIC_INFO,
-  SAVE_HOMEPAGE
+  SAVE_HOMEPAGE,
+  SAVE_TELEPHONE
 } from "@/network/apis";
 
 export default {
@@ -40,6 +41,8 @@ export default {
     saveHomepage(state: any, params: object) {
       return http.post(SAVE_HOMEPAGE, params);
     },
-
+    saveTelephone(state: any, params: object) {
+      return http.post(SAVE_TELEPHONE, params);
+    },
   },
 }

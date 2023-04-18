@@ -8,7 +8,7 @@
         <div class="setting-item-title">手机</div>
         <div class="setting-item-value">{{user.username}}</div>
         <div class="setting-item-operate">
-          <a-button type="link" @click="onChangeTelephone">换绑</a-button>
+          <a-button type="link" @click="onChangeTelephone">{{user.username? '换绑':'绑定'}}</a-button>
         </div>
       </div>
       <div class="setting-item">
@@ -29,7 +29,7 @@
         <div class="setting-item-title">密码</div>
         <div class="setting-item-value"></div>
         <div class="setting-item-operate">
-          <a-button type="link">修改</a-button>
+          <a-button type="link" @click="onChangePassword">修改</a-button>
         </div>
       </div>
       <div class="setting-item">
@@ -48,6 +48,7 @@
   import {computed, ref} from "vue";
   import Homepage from './components/Homepage.vue';
   import Telephone from './components/Telephone.vue';
+  import Password from "./components/Password.vue";
   import openModal from "@/libs/tools/openModal";
 
   const {getters, dispatch} = useStore();
@@ -89,6 +90,20 @@
       initData();
     }).catch(console.log)
   }
+
+  async function onChangePassword() {
+    openModal({
+      component: Password,
+      title: '修改密码',
+      maskClosable: false,
+      componentProps: {
+        user: user.value
+      },
+      width: '320px',
+    }).then(res => {
+
+    })
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -128,10 +143,11 @@
 <style lang="scss">
   .change-telephone-modal {
     .ant-modal-body {
-      padding: 10px 24px 0 24px;
+      position: relative;
+      padding: 10px 24px 20px 24px;
 
       .ant-form-item {
-        margin-bottom: 20px;
+        /*margin-bottom: 20px;*/
       }
     }
   }
