@@ -34,6 +34,7 @@
         </a-dropdown>
       </template>
     </a-tree>
+    <div v-else class="no-data">暂无数据</div>
     <div class="category-top">
       <a-button type="primary" ghost class="create-chapter" @click="createFirstChapter" v-if="isOwn">创建章节</a-button>
     </div>

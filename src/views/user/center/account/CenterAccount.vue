@@ -100,6 +100,7 @@
         user: user.value
       },
       width: '320px',
+      wrapClassName: 'change-password-modal'
     }).then(res => {
 
     })
@@ -141,7 +142,7 @@
 </style>
 
 <style lang="scss">
-  .change-telephone-modal {
+  .change-telephone-modal, .change-password-modal {
     .ant-modal-body {
       position: relative;
       padding: 10px 24px 20px 24px;

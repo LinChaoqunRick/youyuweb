@@ -35,6 +35,7 @@
   import {createVNode} from 'vue';
   import {Modal, message} from 'ant-design-vue';
   import {useRouter} from 'vue-router';
+  import {cleanCookieLocalStorage} from "@/assets/utils/utils";
 
   const {getters, dispatch} = useStore();
   let userInfo = computed(() => getters['userInfo']);
@@ -102,6 +103,9 @@
       case "个人中心":
         router.push(`/user/center/profile`)
         break;
+      case "账号设置":
+        router.push(`/user/center/account`)
+        break;
       case "退出":
         showConfirm();
         break;
@@ -125,8 +129,7 @@
 
   function handleLogout() {
     dispatch("logout").then(res => {
-      Cookies.set("token", "");
-      store.commit("changeUser", {});
+      cleanCookieLocalStorage();
       message.success('注销成功!');
       // 刷新页面
       location.reload();

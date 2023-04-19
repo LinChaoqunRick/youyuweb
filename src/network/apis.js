@@ -50,6 +50,7 @@ export const GET_FOLLOW_LIST = ApiBase + "/user/followList"; // 获取用户关�
 export const SAVE_BASIC_INFO = ApiBase + "/user/saveBasicInfo"; // 修改用户信息
 export const SAVE_HOMEPAGE = ApiBase + "/user/saveHomepage"; // 修改个人主页信息
 export const SAVE_TELEPHONE = ApiBase + "/user/saveTelephone"; // 修改手机号
+export const SAVE_PASSWORD = ApiBase + "/user/savePassword"; // 修改密码
 
 // 邮件
 export const GET_REGISTER_CODE = ApiBase + "/mail/sendRegisterCode"; // 获取注册验证码

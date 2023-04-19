@@ -8,7 +8,7 @@
           原手机号：{{props.user.username}}
         </div>
         <a-form-item label=" " name="code">
-          <a-input v-model:value="formPrevious.code" :maxlength="6" size="small" placeholder="验证码">
+          <a-input v-model:value="formPrevious.code" :maxlength="6" size="large" placeholder="验证码">
             <template v-slot:suffix>
               <a-button type="link" class="send-code-btn" :disabled="preBtnProps.disabled" @click="onPreSendCode">
                 {{preBtnProps.text}}
@@ -23,10 +23,10 @@
       <a-form :model="formNew" :colon="false" :rules="rulesRef" :label-col="labelCol" :wrapper-col="wrapperCol"
               ref="formRef" class="code-form">
         <a-form-item label=" " name="telephone">
-          <a-input v-model:value="formNew.telephone" :maxlength="11" placeholder="新手机号"/>
+          <a-input v-model:value="formNew.telephone" size="large" :maxlength="11" placeholder="新手机号"/>
         </a-form-item>
         <a-form-item label=" " name="code">
-          <a-input v-model:value="formNew.code" :maxlength="6" size="small" placeholder="验证码">
+          <a-input v-model:value="formNew.code" :maxlength="6" size="large" placeholder="验证码">
             <template v-slot:suffix>
               <a-button type="link" class="send-code-btn" :disabled="nextBtnProps.disabled" @click="onNextSendCode">
                 {{nextBtnProps.text}}
@@ -108,10 +108,12 @@
   }
 
   function onNextSendCode() {
-    dispatch('messageSend', {telephone: formNew.telephone}).then(res => {
-      message.success("发送成功");
-      disableTimer(nextBtnProps);
-    })
+    formRef.value.validateFields('telephone').then(res => {
+      dispatch('messageSend', {telephone: formNew.telephone}).then(res => {
+        message.success("发送成功");
+        disableTimer(nextBtnProps);
+      })
+    });
   }
 
   function disableTimer(obj: btnProp) {
@@ -152,12 +154,12 @@
         })
       } else {
         nextBtnProps.correct = true;
-        await dispatch('messageVerify', formNew).then(res => {
+        await dispatch('messageVerify', formNew).then(async res => {
           if (!res.data) {
             tryCount.value++;
             nextBtnProps.correct = false;
           } else {
-            dispatch("saveTelephone", {oldTel: props.user.username, newTel: formNew.telephone}).then(res => {
+            await dispatch("saveTelephone", {oldTel: props.user.username, newTel: formNew.telephone}).then(res => {
               if (res.data) {
                 message.success("修改成功");
                 done();
@@ -192,6 +194,10 @@
         position: absolute;
         bottom: 0;
         color: red;
+      }
+
+      .send-code-btn {
+        height: auto;
       }
     }
 

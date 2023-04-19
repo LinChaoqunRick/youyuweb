@@ -9,7 +9,8 @@ import {
   GET_FOLLOW_LIST,
   SAVE_BASIC_INFO,
   SAVE_HOMEPAGE,
-  SAVE_TELEPHONE
+  SAVE_TELEPHONE,
+  SAVE_PASSWORD
 } from "@/network/apis";
 
 export default {
@@ -43,6 +44,9 @@ export default {
     },
     saveTelephone(state: any, params: object) {
       return http.post(SAVE_TELEPHONE, params);
+    },
+    savePassword(state: any, params: object) {
+      return http.post(SAVE_PASSWORD, params);
     },
   },
 }

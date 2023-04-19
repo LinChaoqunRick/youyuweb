@@ -2,7 +2,8 @@ import {nextTick} from 'vue';
 import dayjs from "dayjs";
 import axios from "axios";
 import store from "@/store/index";
-import type {ossType} from '../../types/oss'
+import type {ossType} from '../../types/oss';
+import Cookies from "js-cookie";
 
 export function getElementLeft(element: HTMLElement) {
   let actualLeft: number = element.offsetLeft;
@@ -227,4 +228,9 @@ export const colorReverse = (color: string) => {
   const reverseColor: string = '0x' + color.replace(/#/g, '');
   let str = '000000' + (0xFFFFFF - reverseColor).toString(16);
   return '#' + str.substring(str.length - 6, str.length);
+}
+
+export const cleanCookieLocalStorage = () => {
+  Cookies.remove("token");
+  localStorage.clear();
 }

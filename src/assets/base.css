@@ -86,6 +86,11 @@ html {
   opacity: 0;
 }
 
+.no-data {
+  text-align: center;
+  font-size: 16px;
+}
+
 .i-icon-loading-four {
   animation: rotate .6s infinite linear;
 }

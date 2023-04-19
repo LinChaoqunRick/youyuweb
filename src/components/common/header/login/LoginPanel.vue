@@ -17,6 +17,7 @@
             </div>
             <div class="login-panel-content-form">
               <LoginAccount v-if="loginType === 0"/>
+              <LoginTelephone v-else/>
             </div>
           </div>
           <div class="login-panel-content-body" v-else>
@@ -39,6 +40,7 @@
 <script>
   import {mapMutations} from 'vuex';
   import LoginAccount from './LoginAccount.vue';
+  import LoginTelephone from './LoginTelephone.vue';
   import RegisterPanel from './RegisterPanel.vue';
 
   export default {
@@ -51,6 +53,7 @@
     },
     components: {
       LoginAccount,
+      LoginTelephone,
       RegisterPanel
     },
     data() {

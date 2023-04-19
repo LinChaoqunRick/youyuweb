@@ -80,7 +80,7 @@ export default function openModal(config = {}) {
           setTimeout(() => {
             Comp.unmount();
             document.body.removeChild(modal);
-          }, 300);
+          }, 100);
         },
         ok(params) {
           const done = () => {
