@@ -1,7 +1,8 @@
 const ApiBase = '/plat';
 
 // 登录
-export const ACCOUNT_LOGIN = ApiBase + "/login/accountLogin"; // 登录
+export const ACCOUNT_LOGIN = ApiBase + "/login/accountLogin"; // 账号登录
+export const TELEPHONE_LOGIN = ApiBase + "/login/telephoneLogin"; // 手机验证码登录
 export const ACCOUNT_LOGOUT = ApiBase + "/login/logout"; // 注销
 export const GET_AUTH_ROUTES = ApiBase + "/login/getAuthRoutes"; // 注销
 export const ACCOUNT_REGISTER = ApiBase + "/login/register"; // 注销

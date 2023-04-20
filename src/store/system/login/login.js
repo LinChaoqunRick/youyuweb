@@ -1,6 +1,7 @@
 import http from "@/network/https";
 import {
   ACCOUNT_LOGIN,
+  TELEPHONE_LOGIN,
   ACCOUNT_LOGOUT,
   GET_AUTH_ROUTES,
   GET_REGISTER_CODE,
@@ -38,7 +39,10 @@ export default {
   },
   actions: {
     accountLogin(state, params) {
-      return http.post(ACCOUNT_LOGIN, params, {headers: {'content-type': "application/json"}});
+      return http.post(ACCOUNT_LOGIN, params);
+    },
+    telephoneLogin(state, params) {
+      return http.post(TELEPHONE_LOGIN, params);
     },
     logout(state, params) {
       return http.post(ACCOUNT_LOGOUT, params);

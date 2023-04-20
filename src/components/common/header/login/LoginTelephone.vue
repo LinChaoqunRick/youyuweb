@@ -7,8 +7,8 @@
       <a-form
         :model="formState"
         class="login-form">
-        <a-form-item label="" v-bind="validateInfos.username">
-          <a-input v-model:value="formState.username"
+        <a-form-item label="" v-bind="validateInfos.telephone">
+          <a-input v-model:value="formState.telephone"
                    size="large"
                    :maxlength="30"
                    placeholder="手机号">
@@ -48,21 +48,21 @@
   import {message} from 'ant-design-vue';
   import Cookies from "js-cookie";
   import {generateAuthRoutes} from "@/router/config/useGenerateRoutes";
+  import {checkTelephone} from "@/libs/validate/validate";
 
   const {commit, dispatch} = useStore();
   import {Form} from 'ant-design-vue';
 
   const useForm = Form.useForm;
-  const handleSwitch = inject('handleSwitch')
+  const handleSwitch = inject('handleSwitch');
 
   interface btnProp {
     text: string,
     disabled: boolean,
-    correct: boolean
   }
 
   const formState = reactive({
-    username: '',
+    telephone: '',
     code: '',
   });
 
@@ -71,33 +71,41 @@
     message: "账号或密码错误"
   })
 
-  const loading = ref(false);
+  const loading = ref<boolean>(false);
+  const tryCount = ref<number>(0);
 
   const rulesRef = reactive({
-    username: [{required: true, message: '请输入账号'}],
-    code: [{required: true, message: '请输入验证码'}],
+    telephone: [{required: true, validator: checkTelephone, trigger: 'change'}],
+    code: [{required: true, message: '请输入6位验证码', min: 6, max: 6, trigger: 'change'}],
   });
 
   const btnProps = reactive<btnProp>({
     text: '发送验证码',
     disabled: false,
-    correct: true
   });
 
   const {resetFields, validate, validateInfos} = useForm(formState, rulesRef);
 
   const onSubmit = () => {
-    validate().then(() => {
+    validate().then(async () => {
       tip.showTip = false;
       loading.value = true;
-      handleLogin(toRaw(formState));
+      const result = await dispatch('messageVerify', formState).catch(console.log);
+      if (result.data) {
+        handleLogin(toRaw(formState));
+      } else {
+        tryCount.value++;
+        tip.showTip = true;
+        tip.message = '验证码错误或已过期，请重试';
+        loading.value = false;
+      }
     }).catch(err => {
       console.log('error', err);
     });
   };
 
   function handleLogin(form) {
-    dispatch('accountLogin', form).then(res => {
+    dispatch('telephoneLogin', formState).then(res => {
       const {userInfo, token} = res.data;
       message.success(`欢迎回来，${userInfo.nickname}`);
       commit("changeLogin", false);
@@ -114,7 +122,8 @@
   }
 
   function onSendCode() {
-    dispatch('messageSend', {telephone: formState.username}).then(res => {
+    dispatch('messageSend', {telephone: formState.telephone}).then(res => {
+      tryCount.value = 0;
       message.success("发送成功");
       disableTimer(btnProps);
     })
@@ -150,7 +159,7 @@
     .tip-box {
       position: absolute;
       width: 320px;
-      top: 70px;
+      top: 130px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
