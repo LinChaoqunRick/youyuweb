@@ -1,11 +1,17 @@
 <template>
   AlbumList
+  <ImagePreview/>
 </template>
 
 <script>
-    export default {
-        name: "AlbumList"
+  import ImagePreview from "@/components/common/utils/image/ImagePreview.vue";
+
+  export default {
+    name: "AlbumList",
+    components: {
+      ImagePreview
     }
+  }
 </script>
 
 <style scoped>
