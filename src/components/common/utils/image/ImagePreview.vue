@@ -26,14 +26,12 @@
 </template>
 
 <script setup lang="ts">
-  import {computed, ref} from 'vue';
+  import {ref} from 'vue';
 
   interface resultData {
     width: number,
     height: number
   }
-
-  const largeDisable = computed(() => scale >= maxScale);
 
   let image: HTMLElement | null,
     result: resultData,
@@ -44,7 +42,10 @@
     flipX: boolean = false,
     flipY: boolean = false,
     rotate: number = 0,
-    scaleRatio: number = 1.2;
+    scaleRatio: number = 1.2,
+    isPointerdown = false,
+    moveDiff = {x: 0, y: 0}, // 相对于上一次pointermove移动差值
+    lastPointermove = {x: 0, y: 0}; // 用于计算diff; // 按下标识;
 
   const scale = ref<number>(1);
 
@@ -52,10 +53,12 @@
     image = document.getElementById('preview-image');
     result = getImgSize(image.naturalWidth, image.naturalHeight, window.innerWidth, window.innerHeight);
     listenWheel();
+    listenDrag();
   }
 
   function listenWheel() {
     document.addEventListener('wheel', (e: Event) => {
+      e.preventDefault();
       let ratio = scaleRatio;
       // 缩小
       if (e.deltaY > 0) {
@@ -101,6 +104,39 @@
       }
       refreshTransform();
     })
+  }
+
+  function listenDrag() {
+// 绑定 pointerdown
+    image.addEventListener('pointerdown', function (e) {
+      isPointerdown = true;
+      lastPointermove = {x: e.clientX, y: e.clientY};
+    });
+    // 绑定 pointermove
+    image.addEventListener('pointermove', function (e) {
+      if (isPointerdown) {
+        const current = {x: e.clientX, y: e.clientY};
+        moveDiff.x = current.x - lastPointermove.x;
+        moveDiff.y = current.y - lastPointermove.y;
+        lastPointermove = {x: current.x, y: current.y};
+        x += moveDiff.x;
+        y += moveDiff.y;
+        refreshTransform();
+      }
+      e.preventDefault();
+    });
+    // 绑定 pointerup
+    image.addEventListener('pointerup', function (e) {
+      if (isPointerdown) {
+        isPointerdown = false;
+      }
+    });
+    // 绑定 pointercancel
+    image.addEventListener('pointercancel', function (e) {
+      if (isPointerdown) {
+        isPointerdown = false;
+      }
+    });
   }
 
   /**
@@ -228,7 +264,7 @@
         /*cursor: grab;*/
         transition: transform .3s cubic-bezier(.215, .61, .355, 1) 0s;
         user-select: none;
-        pointer-events: auto;
+        touch-action: none;
       }
 
       .ope-icon {
@@ -242,6 +278,7 @@
         justify-content: center;
         align-items: center;
         cursor: pointer;
+        z-index: 1;
 
         &:hover {
           background-color: rgba(0, 0, 0, .2);
