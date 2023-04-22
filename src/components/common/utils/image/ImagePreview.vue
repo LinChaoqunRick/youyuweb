@@ -13,20 +13,26 @@
       <i-close theme="outline" size="20" fill="currentColor"/>
     </div>
     <div class="image-preview-body">
-      <div class="ope-icon last-icon">
+      <div class="ope-icon last-icon" v-if="current!==0" @click="handleChange('last')">
         <i-left theme="outline" size="30" fill="#fff"/>
       </div>
-      <div class="ope-icon next-icon">
+      <div class="ope-icon next-icon" v-if="current!==props.list.length" @click="handleChange('next')">
         <i-left theme="outline" size="30" fill="#fff" style="transform: scale3d(-1,1,1)"/>
       </div>
-      <img src="https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/cloud.jpg" @load="onLoad"
-           id="preview-image"/>
+      <img :src="props.list[current]" @load="onLoad" id="preview-image"/>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import {ref} from 'vue';
+  import {ref, onMounted} from 'vue';
+
+  const props = defineProps({
+    list: {
+      type: Array,
+      required: true
+    }
+  })
 
   interface resultData {
     width: number,
@@ -37,28 +43,32 @@
     result: resultData,
     x: number = 0,
     y: number = 0,
-    minScale: number = 0.4,
+    minScale: number = 0.2,
     maxScale: number = 12,
     flipX: boolean = false,
     flipY: boolean = false,
     rotate: number = 0,
     scaleRatio: number = 1.2,
-    isPointerdown = false,
+    isPointerdown = false, // 按下标识;
     moveDiff = {x: 0, y: 0}, // 相对于上一次pointermove移动差值
-    lastPointermove = {x: 0, y: 0}; // 用于计算diff; // 按下标识;
+    lastPointermove = {x: 0, y: 0}; // 用于计算diff;
 
   const scale = ref<number>(1);
+  const current = ref<number>(0);
 
-  function onLoad() {
+  onMounted(() => {
     image = document.getElementById('preview-image');
-    result = getImgSize(image.naturalWidth, image.naturalHeight, window.innerWidth, window.innerHeight);
     listenWheel();
     listenDrag();
+  })
+
+  function onLoad() {
+    refreshData();
+    result = getImgSize(image.naturalWidth, image.naturalHeight, window.innerWidth, window.innerHeight);
   }
 
   function listenWheel() {
     document.addEventListener('wheel', (e: Event) => {
-      e.preventDefault();
       let ratio = scaleRatio;
       // 缩小
       if (e.deltaY > 0) {
@@ -74,6 +84,7 @@
       } else {
         scale.value = _scale;
       }
+      console.log(scale.value);
 
       if (e.target.tagName === 'IMG') {
         // 图片的中心坐标
@@ -110,6 +121,7 @@
 // 绑定 pointerdown
     image.addEventListener('pointerdown', function (e) {
       isPointerdown = true;
+      image.setPointerCapture(e.pointerId);
       lastPointermove = {x: e.clientX, y: e.clientY};
     });
     // 绑定 pointermove
@@ -208,6 +220,33 @@
         scale.value = minScale;
       }
     }
+    refreshTransform();
+  }
+
+  function handleChange(type: string) {
+    if (type === 'last') {
+      current.value -= 1;
+      if (current.value <= 0) {
+        current.value = 0;
+      }
+    } else {
+      current.value += 1;
+      if (current.value > props.list.length - 1) {
+        current.value = props.list.length - 1;
+      }
+    }
+  }
+
+  function refreshData() {
+    x = 0;
+    y = 0;
+    flipX = false;
+    flipY = false;
+    rotate = 0;
+    moveDiff = {x: 0, y: 0}; // 相对于上一次pointermove移动差值
+    lastPointermove = {x: 0, y: 0}; // 用于计算diff;
+    scale.value = 1;
+
     refreshTransform();
   }
 </script>
