@@ -2,6 +2,7 @@ import type {Rule} from 'ant-design-vue/es/form';
 
 const domainRegExp = new RegExp("^((http://)|(https://))?([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}(/?)");
 const telephone = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+const emailRegExp = /^[a-zA-Z0-9]+([-_.][A-Za-zd]+)*@([a-zA-Z0-9]+[-.])+[A-Za-zd]{2,5}$/;
 
 // 至少八个字符，至少一个字母和一个数字：
 const password1 = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,30}$/;
@@ -31,6 +32,14 @@ export const checkTelephone = async (_rule: Rule, value: string) => {
 export const checkPassword = async (_rule: Rule, value: string) => {
   if (!password2.test(value)) {
     return Promise.reject('8-30位，必须包含字母、数字、特殊字符');
+  } else {
+    return Promise.resolve();
+  }
+};
+
+export const checkEmail = async (_rule: Rule, value: string) => {
+  if (!emailRegExp.test(value)) {
+    return Promise.reject('邮箱格式不正确');
   } else {
     return Promise.resolve();
   }

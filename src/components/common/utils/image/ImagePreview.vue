@@ -11,12 +11,13 @@
       <i-zoom-out :class="{'disabled': scale <= minScale}" theme="outline" size="20" fill="currentColor"
                   @click="handleScale('small')"/>
       <i-close theme="outline" size="20" fill="currentColor"/>
+      <div class="image-preview-progress" v-if="props.list.length>1">{{current+1}} / {{props.list.length}}</div>
     </div>
     <div class="image-preview-body">
       <div class="ope-icon last-icon" v-if="current!==0" @click="handleChange('last')">
         <i-left theme="outline" size="30" fill="#fff"/>
       </div>
-      <div class="ope-icon next-icon" v-if="current!==props.list.length" @click="handleChange('next')">
+      <div class="ope-icon next-icon" v-if="current!==props.list.length-1" @click="handleChange('next')">
         <i-left theme="outline" size="30" fill="#fff" style="transform: scale3d(-1,1,1)"/>
       </div>
       <img :src="props.list[current]" @load="onLoad" id="preview-image"/>
@@ -260,6 +261,8 @@
     left: 0;
     z-index: 1000;
     background-color: rgba(0, 0, 0, .55);
+    animation: expand 0.3s 1;
+    animation-fill-mode: forwards;
 
     .image-preview-operations {
       display: flex;
@@ -287,6 +290,12 @@
           color: #9E9E9E;
         }
       }
+
+      .image-preview-progress {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+      }
     }
 
     .image-preview-body {
@@ -300,7 +309,7 @@
         max-height: 100%;
         vertical-align: middle;
         transform: scale3d(1, 1, 1);
-        /*cursor: grab;*/
+        cursor: grab;
         transition: transform .3s cubic-bezier(.215, .61, .355, 1) 0s;
         user-select: none;
         touch-action: none;
@@ -341,6 +350,15 @@
           left: 2px;
         }
       }
+    }
+  }
+
+  @keyframes expand {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
     }
   }
 </style>

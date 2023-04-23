@@ -4,7 +4,7 @@ import {
   TELEPHONE_LOGIN,
   ACCOUNT_LOGOUT,
   GET_AUTH_ROUTES,
-  GET_REGISTER_CODE,
+  SEND_EMAIL_CODE,
   ACCOUNT_REGISTER
 } from "@/network/apis";
 
@@ -50,8 +50,8 @@ export default {
     getAuthRoutes(state, params) {
       return http.get(GET_AUTH_ROUTES, params);
     },
-    getRegisterCode(state, params) {
-      return http.post(GET_REGISTER_CODE, params, {headers: {'content-type': "application/json"}});
+    sendEmailCode(state, params) {
+      return http.post(SEND_EMAIL_CODE, params);
     },
     register(state, params) {
       return http.post(ACCOUNT_REGISTER, params, {headers: {'content-type': "application/json"}});

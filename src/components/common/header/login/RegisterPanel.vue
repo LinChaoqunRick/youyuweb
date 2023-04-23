@@ -2,13 +2,26 @@
   <div class="register-account">
     <div class="register-form-container">
       <div class="tip-box">
-        <a-alert type="error" :message="tip.message" banner closable v-if="tip.showTip" @close="tip.showTip = false"/>
+        <Transition name="fade">
+          <a-alert type="error" :message="tip.message" banner closable v-if="tip.show" @close="tip.show = false"/>
+        </Transition>
       </div>
       <a-form
         :model="formState"
         class="register-form"
         ref="form">
-        <a-form-item label="" v-bind="validateInfos.email">
+        <a-form-item label="" v-if="!formState.type" v-bind="validateInfos.username">
+          <a-input v-model:value="formState.username"
+                   size="large"
+                   :maxlength="11"
+                   placeholder="手机号"
+                   @blur="validate('username', { trigger: 'blur' }).catch(() => {})">
+            <template #prefix>
+              <i-phone fill="#c0c4cc"/>
+            </template>
+          </a-input>
+        </a-form-item>
+        <a-form-item label="" v-else v-bind="validateInfos.email">
           <a-input v-model:value="formState.email"
                    size="large"
                    :maxlength="30"
@@ -20,8 +33,9 @@
             </template>
           </a-input>
         </a-form-item>
-        <a-form-item label="" v-bind="validateInfos.verificationCode" class="verification-code">
-          <a-input v-model:value="formState.verificationCode"
+        <a-button type="link" class="type-switch" @click="onChangeType">使用{{formState.type?'手机':'邮箱'}}</a-button>
+        <a-form-item label="" v-bind="validateInfos.code" class="verification-code">
+          <a-input v-model:value="formState.code"
                    size="large"
                    :maxlength="6"
                    placeholder="验证码">
@@ -32,8 +46,10 @@
           <a-button type="primary"
                     size="large"
                     class="get-code-button"
+                    :loading="codeBtnProp.loading"
+                    :disabled="codeBtnProp.disabled"
                     @click="handleSendCode">
-            获取验证码
+            {{codeBtnProp.text}}
           </a-button>
         </a-form-item>
         <a-form-item label="" v-bind="validateInfos.nickname">
@@ -86,12 +102,11 @@
   </div>
 </template>
 
-<script setup>
-  import {ref, reactive, toRaw, inject} from 'vue';
+<script setup lang="ts">
+  import {ref, reactive, toRaw, inject, nextTick} from 'vue';
   import {useStore} from 'vuex';
   import {message} from 'ant-design-vue';
-  import Cookies from "js-cookie";
-  import {generateAuthRoutes} from "@/router/config/useGenerateRoutes";
+  import {checkTelephone} from "@/libs/validate/validate";
 
   const {commit, dispatch} = useStore();
   import {Form} from 'ant-design-vue';
@@ -101,15 +116,22 @@
   const useForm = Form.useForm;
 
   const formState = reactive({
+    type: 0,
     email: '',
-    verificationCode: '',
+    username: '',
+    code: '',
     nickname: '',
     password: '',
-    // confirmPassword: ''
   });
 
+  const codeBtnProp = reactive({
+    disabled: false,
+    loading: false,
+    text: '发送验证码'
+  })
+
   const tip = reactive({
-    showTip: false,
+    show: false,
     message: ""
   })
 
@@ -117,11 +139,15 @@
   const form = ref(null);
 
   const rulesRef = reactive({
+    username: [
+      {required: true, message: '请输入的手机号'},
+      {validator: checkTelephone, message: '请输入正确的手机号', trigger: 'blur'}
+    ],
     email: [
       {required: true, message: '请输入的邮箱'},
-      {type: 'email', message: '请输入正确的邮箱', trigger: 'blur'}
+      {type: 'email', message: '邮箱格式不正确', trigger: 'blur'}
     ],
-    verificationCode: [{required: true, message: '请输入验证码'}],
+    code: [{required: true, message: '请输入验证码'}],
     nickname: [{required: true, message: '请输入昵称'}],
     password: [{required: true, message: '请输入密码'}],
     // confirmPassword: [{required: true, message: '请确认密码'}],
@@ -144,13 +170,49 @@
   };
 
   function handleSendCode() {
-    validate(['email']).then(res => {
-      dispatch("getRegisterCode", {target: formState.email}).then(res => {
-        console.log(res);
-      }).catch(e => {
+    if (formState.type) { // 如果是邮箱登录
+      validate(['email']).then(res => {
+        codeBtnProp.loading = true;
+        dispatch("sendEmailCode", {target: formState.email, repeat: true}).then(res => {
+          tip.show = false;
+          disableTimer();
+          message.success("已发送");
+        }).catch((e) => {
+          setErrorMessage(e.message);
+        }).finally(() => {
+          codeBtnProp.loading = false;
+        })
+      }).catch(console.log)
+    } else { // 如果是手机登录
 
-      })
-    }).catch(console.log)
+    }
+  }
+
+  function setErrorMessage(message: string) {
+    tip.show = false;
+    setTimeout(() => {
+      tip.show = true;
+      tip.message = message;
+    }, 50)
+  }
+
+  function onChangeType() {
+    formState.type ^= 1;
+  }
+
+  function disableTimer() {
+    let second: number = 60;
+    codeBtnProp.text = `${second}秒后重新发送`
+    codeBtnProp.disabled = true;
+    const interval = setInterval(() => {
+      codeBtnProp.text = `${second}秒后重新发送`
+      second = second - 1;
+      if (second <= 0) {
+        clearInterval(interval);
+        codeBtnProp.text = `发送验证码`
+        codeBtnProp.disabled = false;
+      }
+    }, 1000)
   }
 </script>
 
@@ -166,6 +228,16 @@
     .register-form-container {
       width: 320px;
       /*background-color: skyblue;*/
+
+      .register-form {
+        position: relative;
+
+        .type-switch {
+          position: absolute;
+          right: -85px;
+          top: 3px;
+        }
+      }
 
       .verification-code {
         ::v-deep(.ant-form-item-control-input-content) {
@@ -193,7 +265,7 @@
     .tip-box {
       position: absolute;
       width: 320px;
-      top: 13px;
+      top: 18px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

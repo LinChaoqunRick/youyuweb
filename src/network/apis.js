@@ -54,7 +54,7 @@ export const SAVE_TELEPHONE = ApiBase + "/user/saveTelephone"; // 修改手机�
 export const SAVE_PASSWORD = ApiBase + "/user/savePassword"; // 修改密码
 
 // 邮件
-export const GET_REGISTER_CODE = ApiBase + "/mail/sendRegisterCode"; // 获取注册验证码
+export const SEND_EMAIL_CODE = ApiBase + "/mail/sendCode"; // 获取邮箱验证码
 
 // 分类
 export const CATEGORY_LIST = ApiBase + "/category/list"; //
