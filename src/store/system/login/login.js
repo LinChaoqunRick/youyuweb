@@ -54,7 +54,7 @@ export default {
       return http.post(SEND_EMAIL_CODE, params);
     },
     register(state, params) {
-      return http.post(ACCOUNT_REGISTER, params, {headers: {'content-type': "application/json"}});
+      return http.post(ACCOUNT_REGISTER, params);
     },
 
   },

@@ -8,33 +8,32 @@
       </div>
       <a-form
         :model="formState"
+        :rules="rulesRef"
         class="register-form"
-        ref="form">
-        <a-form-item label="" v-if="!formState.type" v-bind="validateInfos.username">
+        ref="formRef">
+        <a-form-item label="" v-if="!formState.type" name="username">
           <a-input v-model:value="formState.username"
                    size="large"
                    :maxlength="11"
-                   placeholder="手机号"
-                   @blur="validate('username', { trigger: 'blur' }).catch(() => {})">
+                   placeholder="手机号">
             <template #prefix>
               <i-phone fill="#c0c4cc"/>
             </template>
           </a-input>
         </a-form-item>
-        <a-form-item label="" v-else v-bind="validateInfos.email">
+        <a-form-item label="" v-else name="email">
           <a-input v-model:value="formState.email"
                    size="large"
                    :maxlength="30"
                    type="email"
-                   placeholder="邮箱"
-                   @blur="validate('email', { trigger: 'blur' }).catch(() => {})">
+                   placeholder="邮箱">
             <template #prefix>
               <i-mail fill="#c0c4cc"/>
             </template>
           </a-input>
         </a-form-item>
         <a-button type="link" class="type-switch" @click="onChangeType">使用{{formState.type?'手机':'邮箱'}}</a-button>
-        <a-form-item label="" v-bind="validateInfos.code" class="verification-code">
+        <a-form-item label="" name="code" class="verification-code">
           <a-input v-model:value="formState.code"
                    size="large"
                    :maxlength="6"
@@ -52,7 +51,7 @@
             {{codeBtnProp.text}}
           </a-button>
         </a-form-item>
-        <a-form-item label="" v-bind="validateInfos.nickname">
+        <a-form-item label="" name="nickname">
           <a-input v-model:value="formState.nickname"
                    size="large"
                    :maxlength="30"
@@ -62,7 +61,7 @@
             </template>
           </a-input>
         </a-form-item>
-        <a-form-item label="" v-bind="validateInfos.password">
+        <a-form-item label="" name="password">
           <a-input-password v-model:value="formState.password"
                             size="large"
                             :maxlength="30"
@@ -72,7 +71,7 @@
             </template>
           </a-input-password>
         </a-form-item>
-        <!--<a-form-item label="" v-bind="validateInfos.confirmPassword">
+        <!--<a-form-item label="" name="confirmPassword">
           <a-input-password v-model:value="formState.confirmPassword"
                             size="large"
                             :maxlength="30"
@@ -106,14 +105,11 @@
   import {ref, reactive, toRaw, inject, nextTick} from 'vue';
   import {useStore} from 'vuex';
   import {message} from 'ant-design-vue';
-  import {checkTelephone} from "@/libs/validate/validate";
+  import {checkPassword, checkTelephone} from "@/libs/validate/validate";
 
   const {commit, dispatch} = useStore();
-  import {Form} from 'ant-design-vue';
 
   const handleSwitch = inject('handleSwitch')
-
-  const useForm = Form.useForm;
 
   const formState = reactive({
     type: 0,
@@ -136,12 +132,12 @@
   })
 
   const loading = ref(false);
-  const form = ref(null);
+  const formRef = ref(null);
 
   const rulesRef = reactive({
     username: [
-      {required: true, message: '请输入的手机号'},
-      {validator: checkTelephone, message: '请输入正确的手机号', trigger: 'blur'}
+      {required: true, message: '请输入手机号', trigger: 'blur'},
+      {validator: checkTelephone, message: '请输入正确的手机号', trigger: 'change'}
     ],
     email: [
       {required: true, message: '请输入的邮箱'},
@@ -149,32 +145,35 @@
     ],
     code: [{required: true, message: '请输入验证码'}],
     nickname: [{required: true, message: '请输入昵称'}],
-    password: [{required: true, message: '请输入密码'}],
+    password: [
+      {required: true, message: '请输入密码', trigger: 'blur'},
+      {validator: checkPassword, trigger: 'change'}
+    ],
     // confirmPassword: [{required: true, message: '请确认密码'}],
   });
 
-  const {resetFields, validate, validateInfos} = useForm(formState, rulesRef);
-
   const onSubmit = () => {
-    loading.value = true;
-    validate().then(() => {
+    tip.show = false;
+    formRef.value.validate().then(() => {
+      loading.value = true;
       dispatch('register', toRaw(formState)).then(res => {
         message.success("注册成功!");
         handleSwitch()
+      }).catch(e => {
+        tip.message = e.message;
+        tip.show = true;
       })
-    }).catch(err => {
-      console.log('error', err);
-    }).finally(_ => {
+    }).finally(() => {
       loading.value = false;
     });
   };
 
   function handleSendCode() {
+    tip.show = false;
     if (formState.type) { // 如果是邮箱登录
-      validate(['email']).then(res => {
+      formRef.value.validateFields('email').then(res => {
         codeBtnProp.loading = true;
         dispatch("sendEmailCode", {target: formState.email, repeat: true}).then(res => {
-          tip.show = false;
           disableTimer();
           message.success("已发送");
         }).catch((e) => {
@@ -184,7 +183,17 @@
         })
       }).catch(console.log)
     } else { // 如果是手机登录
-
+      formRef.value.validateFields('username').then(res=>{
+        codeBtnProp.loading = true;
+        dispatch("messageSend", {telephone: formState.username, repeat: true}).then(res => {
+          disableTimer();
+          message.success("已发送");
+        }).catch((e) => {
+          setErrorMessage(e.message);
+        }).finally(() => {
+          codeBtnProp.loading = false;
+        })
+      })
     }
   }
 

@@ -109,9 +109,11 @@
 
   function onNextSendCode() {
     formRef.value.validateFields('telephone').then(res => {
-      dispatch('messageSend', {telephone: formNew.telephone}).then(res => {
+      dispatch('messageSend', {telephone: formNew.telephone, repeat: true}).then(res => {
         message.success("发送成功");
         disableTimer(nextBtnProps);
+      }).catch(e => {
+        message.error("发送失败:" + e.message);
       })
     });
   }
