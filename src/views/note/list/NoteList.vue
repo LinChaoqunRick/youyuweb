@@ -4,7 +4,7 @@
     <div class="note-list-items">
       <YTable listUrl="listNote" ref="YTableRef">
         <template #default="{dataList}">
-          <div v-for="(item, index) in dataList" class="article-body" :key="item.postId" ref="postItem">
+          <div v-for="(item, index) in dataList" class="note-body" :key="item.postId" ref="postItem">
             <NoteItem :data="item" @handleEdit="handleEdit"/>
           </div>
         </template>
@@ -69,6 +69,10 @@
         grid-gap: 60px;
         justify-items: center;
         justify-content: center;
+
+        .ant-skeleton {
+          height: 240px;
+        }
       }
 
       ::v-deep(.table-pagination) {

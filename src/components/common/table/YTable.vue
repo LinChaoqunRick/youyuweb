@@ -5,9 +5,7 @@
         <div class="table-no-data" v-if="finished && !dataList.length">
           暂无数据
         </div>
-        <div class="table-skeleton" v-else>
-          <a-skeleton active avatar v-for="item in 10"></a-skeleton>
-        </div>
+        <a-skeleton active avatar v-for="item in 10" v-else></a-skeleton>
       </slot>
     </div>
     <div class="table-pagination" v-if="!!dataList.length">
@@ -110,10 +108,9 @@
   .y-table {
     .table-body {
       .table-no-data {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        width: 100%;
         min-height: 200px;
+        text-align: center;
       }
 
       .table-skeleton {
