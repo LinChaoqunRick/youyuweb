@@ -29,12 +29,12 @@
     const form = await editor.value.getFormData();
     if (form) {
       formValidate.value.userId = userInfo.value.id;
-      modal.value.confirmLoading = true;
+      modal.confirmLoading = true;
       dispatch("createNote", formValidate.value).then(res => {
         done();
         message.success("保存成功");
       }).finally(() => {
-        modal.value.confirmLoading = false;
+        modal.confirmLoading = false;
       })
     }
   }

@@ -120,6 +120,7 @@
         .author-nickname {
           margin-left: 10px;
           font-weight: bold;
+          color: #1890ff;
         }
       }
 
@@ -130,7 +131,7 @@
         text-align: center;
 
         > div {
-          padding-left: 16px;
+          padding-left: 14px;
 
           .i-icon {
             margin-right: 10px;

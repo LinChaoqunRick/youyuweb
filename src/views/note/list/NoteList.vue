@@ -29,13 +29,14 @@
   const noteList = ref([]);
   const YTableRef = ref();
 
-  function handleCreate() {
-    const res = openModal({
+  async function handleCreate() {
+    const res = await openModal({
       component: NoteAdd,
       title: '创建笔记',
       maskClosable: false,
       width: '620px'
     }).catch(console.log);
+    YTableRef.value.refreshData();
   }
 
   async function handleEdit(data: note) {
@@ -63,10 +64,12 @@
     }
 
     .note-list-items {
+      padding-top: 20px;
+
       ::v-deep(.table-body) {
         display: grid;
         grid-template-columns: repeat(5, 220px);
-        grid-gap: 60px;
+        grid-gap: 50px;
         justify-items: center;
         justify-content: center;
 

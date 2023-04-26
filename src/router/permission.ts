@@ -8,6 +8,7 @@ import moment from "./modules/moment";
 import lab from "./modules/lab";
 import note from "./modules/note";
 import user from "./modules/user";
+import search from "./modules/search";
 
 const routes = [
   ...home,
@@ -20,6 +21,7 @@ const routes = [
   ...lab,
   ...about,
   ...user,
+  ...search,
   {
     path: '/:pathMatch(.*)',
     redirect: '/404',
