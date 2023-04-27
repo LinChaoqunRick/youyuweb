@@ -23,7 +23,7 @@
     summary: '',
     createType: '0',
     originalLink: '',
-    userId: null
+    userId: userInfo.value.id
   });
   const isSave = ref(false);
 

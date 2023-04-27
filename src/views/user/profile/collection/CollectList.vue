@@ -1,7 +1,7 @@
 <template>
   <div class="collect-list">
     <div class="list-body">
-      <YTable listUrl="getPostCollectList" :params="listParams" ref="yTable">
+      <YTable listUrl="getPostCollectList" :params="listParams" :pageSize="20" ref="yTable">
         <template #default="{dataList}">
           <div v-for="(item, index) in dataList" class="article-item" :key="item.postId">
             <PostItem :data="item" :index="index"/>

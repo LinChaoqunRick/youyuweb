@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="list-body">
-      <YTable listUrl="getPostList" :params="listParams" ref="yTable">
+      <YTable listUrl="getPostList" :params="listParams" :pageSize="20" ref="yTable">
         <template #default="{dataList}">
           <div v-for="(item, index) in dataList" class="article-item" :key="item.postId">
             <PostItem :data="item" :index="index"/>

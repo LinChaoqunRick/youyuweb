@@ -2,18 +2,24 @@
   <div class="search">
     <div class="view-navigation">
       <div class="sort-banner">
-        <div class="menu-item" :class="{'active-item':type == menu.type}" v-for="menu in sortList">{{menu.title}}</div>
+        <div v-for="menu in sortList"
+             class="menu-item"
+             @click="onClick(menu)"
+             :class="{'active-item':type == menu.type}">
+          {{menu.title}}
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import {ref} from 'vue';
-  import {useRoute} from "vue-router";
+  import {ref, computed} from 'vue';
+  import {useRoute, useRouter} from "vue-router";
 
   const route = useRoute();
-  const type = ref(route.query.type)
+  const router = useRouter();
+  const type = computed(() => route.query.type)
 
   const sortList = [
     {
@@ -25,6 +31,10 @@
       type: 2
     }
   ];
+
+  const onClick = (item) => {
+    router.push({path: route.path, query: Object.assign({}, route.query, {type: item.type})})
+  }
 </script>
 
 <style lang="scss" scoped>

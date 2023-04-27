@@ -232,9 +232,11 @@
   getCreateTypes();
 
 
-  watch(() => props.formValidate, () => {
-    getColumnList();
-  })
+  watch(() => props.formValidate.userId, (newVal) => {
+    if (newVal) {
+      getColumnList();
+    }
+  }, {immediate: true})
 
   function transferData(data) {
     data.forEach(item => {

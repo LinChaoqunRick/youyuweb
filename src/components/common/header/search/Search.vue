@@ -4,6 +4,7 @@
       v-model:value="text"
       placeholder="搜索有语"
       enter-button
+      :maxlength="50"
       @search="handleSearch"
       @focus="onFocus"
       @blur="onBlur"
