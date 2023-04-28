@@ -10,16 +10,22 @@
         </div>
       </div>
     </div>
+    <div class="search-content">
+      <PostList/>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import {ref, computed} from 'vue';
+  import {ref, computed, onActivated} from 'vue';
   import {useRoute, useRouter} from "vue-router";
+  import PostList from "./components/PostList.vue";
 
   const route = useRoute();
   const router = useRouter();
   const type = computed(() => route.query.type)
+
+  document.title = `搜索 · ${route.query.q}`
 
   const sortList = [
     {
@@ -33,13 +39,19 @@
   ];
 
   const onClick = (item) => {
-    router.push({path: route.path, query: Object.assign({}, route.query, {type: item.type})})
+    // router.push({path: route.path, query: Object.assign({}, route.query, {type: item.type})});
   }
 </script>
 
 <style lang="scss" scoped>
   .search {
+    padding-top: 56px;
+
     .view-navigation {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: 60px;
       height: 48px;
       background-color: var(--youyu-navigation);
 
@@ -60,6 +72,13 @@
           }
         }
       }
+    }
+
+    .search-content {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      background-color: var(--youyu-background1);
     }
   }
 </style>

@@ -26,9 +26,9 @@
 </template>
 
 <script setup lang="ts">
-  import {ref, toRef} from 'vue';
+  import {ref} from 'vue';
   import {useStore} from "vuex";
-  import {onBeforeRouteUpdate, useRoute, useRouter} from "vue-router";
+  import {useRoute, useRouter} from "vue-router";
 
   const emit = defineEmits(['onLoaded']);
 
@@ -42,35 +42,45 @@
     },
     params: {
       type: Object,
-      default: () => ({})
+      default: () => ({
+        pageSize: 10
+      })
     },
     loadImmediate: { // 是否一开始就获取数据
       type: Boolean,
       default: true
     },
-    pageSize: {
-      type: Number,
-      default: 10
+    beforeGetData: {
+      type: Function
     }
   });
   const page = Number(route.params.page);
 
   const current = ref(page || 1);
-  const size = ref(props.pageSize);
+  const size = ref(props.params.pageSize);
   const total = ref(0);
   const dataList = ref([]);
   const finished = ref(false);
 
 
-  const initData = () => {
+  const initData = async () => {
     finished.value = false;
     dataList.value = [];
+    if (props.beforeGetData) {
+      const result = await props.beforeGetData();
+      if (!result) {
+        finished.value = true;
+        return;
+      }
+    }
     dispatch(props.listUrl, Object.assign({}, {
       pageNum: current.value,
       pageSize: size.value
     }, props.params)).then(res => {
       document.documentElement.scrollTop = 0;
-      router.push({params: {page: res.data.current}})
+      const params = route.params;
+      const query = route.query;
+      router.push({params: Object.assign(params, {page: res.data.current}), query})
       total.value = res.data.total;
       dataList.value = res.data.list;
       emit("onLoaded");

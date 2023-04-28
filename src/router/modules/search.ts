@@ -1,6 +1,6 @@
 const route = [
   {
-    path: '/search',
+    path: '/search/:page(\\d+)?',
     name: 'search',
     meta: {
       title: "搜索",

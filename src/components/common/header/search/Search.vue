@@ -24,7 +24,7 @@
 
   const handleSearch = () => {
     if (text.value) {
-      router.push(`/search?q=${text.value}&type=1`)
+      router.push(`/search?q=${text.value}&type=1`);
     }
   }
 

@@ -26,8 +26,8 @@ import zhcn from 'dayjs/locale/zh-cn';
 
 // css
 import './assets/main.scss';
-import './assets/css/theme/dark.scss';
-import './assets/css/theme/default.scss';
+import './assets/css/theme/dark.css';
+import './assets/css/theme/light.css';
 import '@icon-park/vue-next/styles/index.css'; //icon-park
 import 'md-editor-v3/lib/style.css';
 

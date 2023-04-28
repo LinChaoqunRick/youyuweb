@@ -5,7 +5,8 @@
 
   --youyu-text1: #F2F2F5;
   --youyu-text2: #fff;
-  // globe
+
+  /*globe*/
   --youyu-body-background: rgba(26, 26, 26, 0.6);
   --youyu-body-background1: rgba(58, 58, 58, 0.58);
   --youyu-body-background2: rgba(0, 0, 0);
@@ -19,18 +20,18 @@
   --youyu-border: 1px solid #282828;
   --youyu-border2: 1px solid #4b4b4b;
 
-  // navigation
+  /*navigation*/
   --youyu-navigation: rgba(0, 0, 0, 0.95);
   --youyu-navigation-border: 1px solid #282828;
 
-  // login
+  /*login*/
   --youyu-login-background: #1a1a1a;
   --youyu-login-color: #fff;
 
-  //theme-switch
+  /*theme-switch*/
   --theme-switch-border: 1px solid rgba(84, 84, 84, 0.65);
 
-  // article
+  /*article*/
   --article-background: rgba(0, 0, 0, 0.6);
   --article-border: 1px solid #f1f1f1;
   --article-info-color: #F2F2F5;
@@ -38,14 +39,14 @@
   --post-info-background: #232323;
   --post-summary-background: #212121;
 
-  // pagination
+  /*pagination*/
   --pagination-background: rgba(58, 58, 58, 0.58);
   --pagination-border: 1px solid #282828;
   --pagination-text: #fff;
 
-  // comment
+  /*comment*/
   --subcomment-background: rgba(45, 45, 45, 0.7);
 
-  // antd
+  /*antd*/
   --antd-background: #141414
 }

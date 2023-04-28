@@ -1,7 +1,7 @@
 <template>
   <div class="post-list">
     <div class="article-list">
-      <YTable listUrl="getPostList" :pageSize="15" @onLoaded="onLoaded">
+      <YTable listUrl="getPostList" :params="{pageSize: 15}" @onLoaded="onLoaded">
         <template #default="{dataList}">
           <div v-for="(item, index) in dataList" class="article-body" :key="item.postId" ref="postItem">
             <PostItem :data="item" :index="index"/>
