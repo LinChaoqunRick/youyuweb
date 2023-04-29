@@ -40,7 +40,8 @@ function generateRoutes(permissionList: RouteRecordRaw[], codeList: [], _routes:
         copyRoute.children = [];
         generateRoutes(route.children, codeList, copyRoute.children, route);
       }
-      route.meta?.title && _routes.push(copyRoute);
+      // route.meta?.title && _routes.push(copyRoute);
+      _routes.push(copyRoute);
     }
   })
 }
