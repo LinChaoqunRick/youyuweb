@@ -2,7 +2,7 @@
   <div class="follow-list">
     <div class="follow-menu"></div>
     <div class="list-body">
-      <YTable listUrl="getFollowList" :params="listParams" :params="{pageSize: 20}">
+      <YTable listUrl="getFollowList" :params="listParams">
         <template #default="{dataList}">
           <div v-for="(item, index) in dataList" class="list-item" :key="item.postId">
             <UserItem :data="item"/>

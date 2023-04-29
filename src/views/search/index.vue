@@ -11,7 +11,10 @@
       </div>
     </div>
     <div class="search-content">
-      <PostList/>
+      <div class="post-list-wrapper">
+        <PostList v-if="type == 1"/>
+        <UserList v-if="type == 2"/>
+      </div>
     </div>
   </div>
 </template>
@@ -20,6 +23,7 @@
   import {ref, computed, onActivated} from 'vue';
   import {useRoute, useRouter} from "vue-router";
   import PostList from "./components/PostList.vue";
+  import UserList from "./components/UserList.vue";
 
   const route = useRoute();
   const router = useRouter();
@@ -39,7 +43,7 @@
   ];
 
   const onClick = (item) => {
-    // router.push({path: route.path, query: Object.assign({}, route.query, {type: item.type})});
+    router.push({path: route.path, query: Object.assign({}, route.query, {type: item.type})});
   }
 </script>
 
@@ -76,9 +80,20 @@
 
     .search-content {
       display: flex;
-      justify-content: center;
-      width: 100%;
-      background-color: var(--youyu-background1);
+      width: 960px;
+      margin: 0 auto;
+
+      .post-list-wrapper {
+        width: 75%;
+        margin-bottom: 6px;
+
+        ::v-deep(.post-list) {
+          .post-item {
+            margin-bottom: 6px;
+            border-radius: 2px;
+          }
+        }
+      }
     }
   }
 </style>

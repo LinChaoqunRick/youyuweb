@@ -1,7 +1,7 @@
 <template>
   <div class="collect-list">
     <div class="list-body">
-      <YTable listUrl="getPostCollectList" :params="listParams" :params="{pageSize: 20}" ref="yTable">
+      <YTable listUrl="getPostCollectList" :params="listParams" ref="yTable">
         <template #default="{dataList}">
           <div v-for="(item, index) in dataList" class="article-item" :key="item.postId">
             <PostItem :data="item" :index="index"/>
@@ -24,6 +24,7 @@
   const userInfo = computed(() => getters['userInfo']);
   const listParams = computed(() => ({
     userId: user.value.id,
+    pageSize: 20
   }))
 </script>
 

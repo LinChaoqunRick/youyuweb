@@ -1,8 +1,8 @@
 <template>
   <div class="post-list">
-    <YTable listUrl="getPostList" :params="listParams" :beforeGetData="beforeGetData">
+    <YTable listUrl="getUserList" :params="listParams" :beforeGetData="beforeGetData">
       <template #default="{dataList}">
-        <PostItem v-for="(item, index) in dataList" :key="item.postId" :data="item" :index="index"/>
+        <UserItem v-for="(item, index) in dataList" :key="item.postId" :data="item"/>
       </template>
     </YTable>
   </div>
@@ -12,7 +12,7 @@
   import {ref, reactive} from 'vue';
   import {useRoute} from "vue-router";
   import YTable from "@/components/common/table/YTable.vue";
-  import PostItem from "@/views/user/profile/post/PostItem.vue";
+  import UserItem from "@/views/user/profile/follow/UserItem.vue";
 
   const route = useRoute();
 

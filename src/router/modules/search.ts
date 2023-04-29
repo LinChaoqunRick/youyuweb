@@ -3,7 +3,7 @@ const route = [
     path: '/search/:page(\\d+)?',
     name: 'search',
     meta: {
-      title: "搜索",
+      title: "", // 由业务代码决定title
       code: "SEARCH",
       hide: true
     },

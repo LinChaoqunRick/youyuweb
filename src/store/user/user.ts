@@ -1,5 +1,6 @@
 import http from "@/network/https";
 import {
+  GET_USER_LIST,
   GET_USER_BY_ID,
   GET_LIMIT_POST,
   GET_COLUMN_LIST,
@@ -15,6 +16,9 @@ import {
 
 export default {
   actions: {
+    getUserList(state: any, params: object) {
+      return http.get(GET_USER_LIST, params);
+    },
     getUserById(state: any, params: object) {
       return http.get(GET_USER_BY_ID, params);
     },

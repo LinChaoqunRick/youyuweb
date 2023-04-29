@@ -45,6 +45,7 @@ export const SET_COMMENT_LIKE = ApiBase + "/comment/setLike";
 export const CANCEL_COMMENT_LIKE = ApiBase + "/comment/cancelLike";
 
 // 用户
+export const GET_USER_LIST = ApiBase + "/user/list"; // 用户列表
 export const SET_USER_FOLLOW = ApiBase + "/user/follow"; // 关注用户
 export const CANCEL_USER_FOLLOW = ApiBase + "/user/unfollow"; // 取关用户
 export const GET_FOLLOW_LIST = ApiBase + "/user/followList"; // 获取用户关注列表

@@ -50,11 +50,12 @@
   .post-item {
     display: flex;
     height: 140px;
+    background-color: var(--youyu-background1);
 
     .post-left {
       height: 100%;
-      width: 180px;
-      padding: 12px 0;
+      width: 200px;
+      padding: 12px;
 
       img {
         height: 100%;

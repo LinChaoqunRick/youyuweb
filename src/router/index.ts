@@ -32,7 +32,10 @@ router.beforeEach(async (to, from, next) => {
 })
 
 router.beforeResolve((to) => {
-  document.title = <string>to.meta.title;
+  const title = to.meta.title
+  if (title) {
+    document.title = <string>title;
+  }
 })
 
 router.afterEach((to, from): any => {
