@@ -20,10 +20,12 @@
 </template>
 
 <script setup lang="ts">
-  import {ref, computed, onActivated} from 'vue';
+  import {ref, computed, inject, watch} from 'vue';
   import {useRoute, useRouter} from "vue-router";
   import PostList from "./components/PostList.vue";
   import UserList from "./components/UserList.vue";
+
+  const reload = inject('reload');
 
   const route = useRoute();
   const router = useRouter();
@@ -45,6 +47,10 @@
   const onClick = (item) => {
     router.push({path: route.path, query: Object.assign({}, route.query, {type: item.type})});
   }
+
+  watch(() => route.query.q, () => {
+    reload();
+  })
 </script>
 
 <style lang="scss" scoped>
@@ -86,13 +92,6 @@
       .post-list-wrapper {
         width: 75%;
         margin-bottom: 6px;
-
-        ::v-deep(.post-list) {
-          .post-item {
-            margin-bottom: 6px;
-            border-radius: 2px;
-          }
-        }
       }
     }
   }

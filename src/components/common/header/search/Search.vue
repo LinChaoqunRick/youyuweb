@@ -15,16 +15,18 @@
 
 <script setup>
   import {ref} from 'vue';
-  import {useRouter} from 'vue-router';
+  import {useRoute, useRouter} from 'vue-router';
 
   const text = ref("");
   const active = ref(false);
 
+  const route = useRoute();
   const router = useRouter();
 
   const handleSearch = () => {
     if (text.value) {
-      router.push(`/search?q=${text.value}&type=1`);
+      const type = route.query.type ?? 1;
+      router.push(`/search?q=${text.value}&type=${type}`);
     }
   }
 

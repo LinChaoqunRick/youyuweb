@@ -22,7 +22,6 @@
   import {message} from "ant-design-vue";
 
   const router = useRouter();
-  const user = inject('user');
   const {getters, commit, dispatch} = useStore();
   const isLogin = computed(() => getters['isLogin']);
 
@@ -68,6 +67,8 @@
     display: flex;
     align-items: center;
     height: 80px;
+    background-color: var(--youyu-background1);
+    padding: 0 12px;
 
     .user-left {
       height: 50px;

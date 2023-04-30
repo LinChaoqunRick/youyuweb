@@ -26,6 +26,11 @@
   }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+  .post-list {
+    .post-item {
+      margin-bottom: 6px;
+      border-radius: 2px;
+    }
+  }
 </style>

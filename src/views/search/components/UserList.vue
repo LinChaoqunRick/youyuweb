@@ -1,5 +1,5 @@
 <template>
-  <div class="post-list">
+  <div class="user-list">
     <YTable listUrl="getUserList" :params="listParams" :beforeGetData="beforeGetData">
       <template #default="{dataList}">
         <UserItem v-for="(item, index) in dataList" :key="item.postId" :data="item"/>
@@ -26,6 +26,11 @@
   }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+  .user-list {
+    .user-item {
+      margin-bottom: 6px;
+      border-radius: 2px;
+    }
+  }
 </style>
