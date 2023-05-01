@@ -6,3 +6,4 @@
 - 基于`RSAB`模型的权限路由
 - 基于`Spring Security`的后端鉴权
 - 基于`redis`和`jwt`的认证体系
+- 邮件/短信验证码提醒
