@@ -58,7 +58,7 @@
       dispatch("cancelPostLike", {
         postId: post.value.id,
         userId: userInfo.value.id,
-        userIdTo: post.value.userId
+        // userIdTo: post.value.userId
       }).then(res => {
         setPostAttribute('postLike', false);
         setPostAttribute('likeCount', post.value.likeCount - 1);

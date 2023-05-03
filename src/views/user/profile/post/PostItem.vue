@@ -17,6 +17,9 @@
         <span class="info-item">{{(data.createTime).substr(0, 10)}}</span>
         <span class="info-item">{{data.commentCount}}&ensp;评论</span>
         <span class="info-item" style="cursor: pointer" @click="navigate">{{data.viewCount}}&ensp;阅读</span>
+        <div class="footer-extra">
+          <slot name="footer"/>
+        </div>
       </div>
     </div>
   </div>
@@ -131,6 +134,11 @@
               padding: 0 5px;
             }
           }
+        }
+
+        .footer-extra {
+          float: right;
+          display: inline-block;
         }
       }
     }

@@ -28,6 +28,9 @@
 
 <style lang="scss" scoped>
   .user-list {
+    background-color: var(--youyu-background1);
+    padding-bottom: 6px;
+
     .user-item {
       margin-bottom: 6px;
       border-radius: 2px;

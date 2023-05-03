@@ -28,6 +28,9 @@
 
 <style lang="scss" scoped>
   .post-list {
+    background-color: var(--youyu-background1);
+    padding-bottom: 6px;
+
     .post-item {
       margin-bottom: 6px;
       border-radius: 2px;

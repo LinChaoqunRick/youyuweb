@@ -78,13 +78,15 @@
       margin-top: 6px;
       height: 30px;
       width: 100%;
-      color: #999;
+      color: rgba(0, 0, 0, 0.6);
       font-family: DM Sans, sans-serif;
       font-size: 13px;
       font-weight: 500;
       text-align: center;
 
       .date-item {
+        font-weight: bold;
+
         &:nth-child(n+2) {
           &:before {
             content: '/';

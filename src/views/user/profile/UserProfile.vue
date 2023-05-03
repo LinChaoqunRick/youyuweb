@@ -260,7 +260,7 @@
                 position: relative;
                 font-size: 24px;
                 top: -61px;
-                left: 42px;
+                left: 30px;
                 cursor: auto;
               }
 

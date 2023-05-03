@@ -19,7 +19,18 @@
       <YTable listUrl="getPostList" :params="listParams" ref="yTable">
         <template #default="{dataList}">
           <div v-for="(item, index) in dataList" class="article-item" :key="item.postId">
-            <PostItem :data="item" :index="index"/>
+            <PostItem :data="item" :index="index">
+              <template #footer>
+                <a-button v-if="isOwn" size="small" type="primary" @click="handleEdit(item)">编辑</a-button>
+                <a-popconfirm
+                  title="是否删除本文?"
+                  ok-text="是"
+                  cancel-text="否"
+                  @confirm="onDeleteConfirm(item)">
+                  <a-button v-if="isOwn" size="small" type="primary" danger>删除</a-button>
+                </a-popconfirm>
+              </template>
+            </PostItem>
           </div>
         </template>
       </YTable>
@@ -36,24 +47,27 @@
 <script setup lang="ts">
   import {computed, ref, nextTick, inject, watch} from 'vue';
   import {useStore} from "vuex";
+  import {useRouter} from "vue-router";
+  import {message} from "ant-design-vue";
 
   import YTable from "@/components/common/table/YTable.vue";
   import PostItem from "./PostItem.vue";
 
-  const {getters} = useStore();
+  const {getters, dispatch} = useStore();
   const user = inject('user');
-
-  const userInfo = computed(() => getters['userInfo']);
+  const router = useRouter();
 
   const yTable = ref(null);
   const checked = ref(false);
   const sort = ref(true); // true:最新 false:最热
+  const userInfo = computed(() => getters['userInfo']);
   const listParams = computed(() => ({
     userId: user.value.id,
     original: checked.value,
     sort: !sort.value,
     pageSize: 20
-  }))
+  }));
+  const isOwn = computed(() => userInfo.value.id === user.value.id);
 
   function handleSort(value: boolean) {
     sort.value = value;
@@ -67,6 +81,18 @@
     })
   }
 
+  function handleEdit(item) {
+    router.push({path: '/editPost', query: {postId: item.id}})
+  }
+
+  function onDeleteConfirm(item) {
+    dispatch("deletePost", {postId: item.id}).then(res => {
+      if (res.data) {
+        message.success("删除成功");
+        yTable.value.initData();
+      }
+    })
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -118,6 +144,11 @@
     .list-body {
       .article-item {
         border-top: 1px solid #e4e6eb;
+
+        button {
+          font-size: 13px;
+          margin-left: 6px;
+        }
       }
     }
   }

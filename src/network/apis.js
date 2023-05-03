@@ -18,6 +18,7 @@ export const GET_CREATE_TYPES = ApiBase + "/post/getCreateTypes"; // 获取文�
 export const CREATE_POST = ApiBase + "/post/create"; // 发布文章
 export const GET_POST_EDIT_DETAIL = ApiBase + "/post/edit/detail"; // 获取编辑文章详情
 export const UPDATE_POST = ApiBase + "/post/update"; // 获取编辑文章详情
+export const DELETE_POST = ApiBase + "/post/delete"; // 删除文章
 export const SET_POST_COLLECT = ApiBase + "/post/postCollect";
 export const IS_POST_COLLECT = ApiBase + "/post/isPostCollect";
 export const CANCEL_POST_COLLECT = ApiBase + "/post/cancelPostCollect";

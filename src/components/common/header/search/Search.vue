@@ -2,7 +2,7 @@
   <div class="search">
     <a-input-search
       v-model:value="text"
-      placeholder="搜索有语"
+      placeholder="搜索"
       enter-button
       :maxlength="50"
       @search="handleSearch"
