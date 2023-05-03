@@ -15,7 +15,7 @@
       </div>
     </router-link>
   </div>
-  <div class="nav-link" v-else>
+  <div class="nav-link nav-link-single" v-else>
     <router-link :to="route.path" custom v-slot="{isActive, isExactActive, navigate}">
       <span :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}"
             @click="handleNavigate(isActive,isExactActive,navigate)">{{route.title}}</span>
@@ -57,7 +57,12 @@
       transition: .3s;
 
       .route-dropdown-item {
-        padding-top: 6px;
+        padding-top: 8px;
+        transition: .3s;
+
+        &:hover {
+          color: #1890ff;
+        }
 
         &:last-child {
           padding-bottom: 6px;
@@ -79,6 +84,14 @@
       .route-dropdown {
         display: block;
       }
+    }
+  }
+
+  .nav-link-single {
+    transition: .3s;
+
+    &:hover {
+      color: #1890ff;
     }
   }
 </style>
