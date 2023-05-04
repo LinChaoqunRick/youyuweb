@@ -58,6 +58,14 @@ const route = [
               title: "Ta的关注",
             },
             component: () => import("@/views/user/profile/follow/FollowList.vue"),
+          },
+          {
+            path: "fans",
+            name: "userFans",
+            meta: {
+              title: "Ta的关注",
+            },
+            component: () => import("@/views/user/profile/fans/FansList.vue"),
           }
         ]
       },

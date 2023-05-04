@@ -124,7 +124,9 @@
       .table-no-data {
         width: 100%;
         min-height: 200px;
-        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
 
       .table-skeleton {

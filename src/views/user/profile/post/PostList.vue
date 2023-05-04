@@ -70,6 +70,9 @@
   const isOwn = computed(() => userInfo.value.id === user.value.id);
 
   function handleSort(value: boolean) {
+    if (sort.value === value) {
+      return;
+    }
     sort.value = value;
     searchData();
   }

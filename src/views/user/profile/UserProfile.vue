@@ -12,6 +12,11 @@
             <span :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}"
                   @click="handleNavigate(isActive,isExactActive,navigate)" class="menu-item">{{item.title}}</span>
             </router-link>
+            <div class="menu-right">
+              <div class="menu-setting">
+                <i-setting-two theme="outline" size="18" fill="currentColor"/>
+              </div>
+            </div>
           </div>
           <div class="content-component">
             <router-view v-slot="{ Component }">
@@ -78,6 +83,7 @@
     {title: "专栏", path: 'column'},
     {title: "收藏", path: 'collection'},
     {title: "关注", path: 'follow'},
+    {title: "粉丝", path: 'fans'},
   ]
 
   function onLoaded(userData: userType) {
@@ -289,19 +295,35 @@
           overflow: hidden;
 
           .content-menu {
+            height: 38px;
+            position: relative;
             padding: 0 10px;
             display: flex;
             background-color: var(--youyu-body-background2);
             border-bottom: 1px solid #e4e6eb;
 
             .menu-item {
+              display: flex;
+              align-items: center;
+              height: calc(100% - 1px);
+              box-sizing: content-box;
               cursor: pointer;
-              padding-bottom: 4px;
-              margin: 10px 10px 0px 10px;
               transition: 0s;
+              margin: 0 10px;
 
               &.router-link-active {
                 border-bottom: 2px solid #1890ff;
+              }
+            }
+
+            .menu-right {
+              margin-left: auto;
+              margin-right: 4px;
+              display: flex;
+              align-items: center;
+
+              .menu-setting {
+                cursor: pointer;
               }
             }
           }
