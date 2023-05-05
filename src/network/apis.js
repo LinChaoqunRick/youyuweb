@@ -54,6 +54,7 @@ export const SAVE_BASIC_INFO = ApiBase + "/user/saveBasicInfo"; // 修改用户�
 export const SAVE_HOMEPAGE = ApiBase + "/user/saveHomepage"; // 修改个人主页信息
 export const SAVE_TELEPHONE = ApiBase + "/user/saveTelephone"; // 修改手机号
 export const SAVE_PASSWORD = ApiBase + "/user/savePassword"; // 修改密码
+export const SAVE_EMAIL = ApiBase + "/user/saveEmail"; // 修改邮箱
 
 // 邮件
 export const SEND_EMAIL_CODE = ApiBase + "/mail/sendCode"; // 获取邮箱验证码

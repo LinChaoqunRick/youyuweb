@@ -93,6 +93,8 @@
   async function onSubmit() {
     await dispatch("saveBasicInfo", formValidate.value).then(res => {
       message.success("保存成功!");
+    }).catch(e => {
+      message.error(e.message);
     })
     // 保存成功后更新Vuex数据
     await dispatch("getUserById", {userId: formValidate.value.id}).then(res => {

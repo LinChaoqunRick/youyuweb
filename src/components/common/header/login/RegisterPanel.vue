@@ -140,7 +140,7 @@
       {validator: checkTelephone, message: '请输入正确的手机号', trigger: 'change'}
     ],
     email: [
-      {required: true, message: '请输入的邮箱'},
+      {required: true, message: '请输入邮箱'},
       {type: 'email', message: '邮箱格式不正确', trigger: 'blur'}
     ],
     code: [{required: true, message: '请输入验证码'}],

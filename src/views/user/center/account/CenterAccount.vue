@@ -15,7 +15,7 @@
         <div class="setting-item-title">邮箱</div>
         <div class="setting-item-value">{{user.email}}</div>
         <div class="setting-item-operate">
-          <a-button type="link">{{user.email?'修改':'绑定'}}</a-button>
+          <a-button type="link" @click="onEditEmail">{{user.email?'修改':'绑定'}}</a-button>
         </div>
       </div>
       <div class="setting-item">
@@ -49,6 +49,7 @@
   import Homepage from './components/Homepage.vue';
   import Telephone from './components/Telephone.vue';
   import Password from "./components/Password.vue";
+  import Email from "./components/Email.vue";
   import openModal from "@/libs/tools/openModal";
 
   const {getters, dispatch} = useStore();
@@ -71,6 +72,20 @@
       componentProps: {
         user: user.value
       }
+    }).then(res => {
+      initData();
+    }).catch(console.log)
+  }
+
+  async function onEditEmail() {
+    openModal({
+      component: Email,
+      title: '邮箱设置',
+      maskClosable: false,
+      componentProps: {
+        user: user.value
+      },
+      width: '320px',
     }).then(res => {
       initData();
     }).catch(console.log)

@@ -43,11 +43,7 @@
   .create-post {
     display: flex;
     flex-direction: column;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    height: calc(100vh - 100px);
 
     .top-box {
       display: flex;

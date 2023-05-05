@@ -11,7 +11,8 @@ import {
   SAVE_BASIC_INFO,
   SAVE_HOMEPAGE,
   SAVE_TELEPHONE,
-  SAVE_PASSWORD
+  SAVE_PASSWORD,
+  SAVE_EMAIL
 } from "@/network/apis";
 
 export default {
@@ -51,6 +52,9 @@ export default {
     },
     savePassword(state: any, params: object) {
       return http.post(SAVE_PASSWORD, params);
+    },
+    saveEmail(state: any, params: object) {
+      return http.post(SAVE_EMAIL, params);
     },
   },
 }

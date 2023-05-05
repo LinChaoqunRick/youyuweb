@@ -28,7 +28,7 @@ const route = [
             component: () => import("@/views/user/profile/moment/MomentList.vue"),
           },
           {
-            path: "post",
+            path: "post/:page(\\d*)?",
             name: "userPost",
             meta: {
               title: "Ta的文章",

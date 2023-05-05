@@ -13,7 +13,7 @@
                   @click="handleNavigate(isActive,isExactActive,navigate)" class="menu-item">{{item.title}}</span>
             </router-link>
             <div class="menu-right">
-              <div class="menu-setting">
+              <div class="menu-setting" v-if="isOwn">
                 <i-setting-two theme="outline" size="18" fill="currentColor"/>
               </div>
             </div>
@@ -61,33 +61,39 @@
 </script>
 
 <script setup lang="ts">
-  import {ref, watch, provide, inject} from "vue";
+  import {ref, watch, provide, inject, computed} from "vue";
   import {useRoute, useRouter} from "vue-router";
+  import {useStore} from "vuex";
   import UserInfoPanel from "@/views/post/detail/child/UserInfoPanel.vue";
   import type {userType, statType} from "@/types/user";
   import {Modal} from "ant-design-vue";
 
+  const {getters} = useStore();
   const reload = inject('reload')
   const UserInfoRef = ref(null)
   const route = useRoute();
   const router = useRouter();
-  const user = ref(null);
+  const user = ref(null)
   const current = ref<string[]>(['MomentList']);
+  const userInfo = computed(() => getters['userInfo']);
+  const isOwn = computed(() => userInfo.value.id === user.value?.id);
 
   provide('user', user);
 
   const userId = router.currentRoute.value.params.userId;
-  const menuItems = [
-    {title: "动态", path: 'moment'},
-    {title: "文章", path: 'post'},
-    {title: "专栏", path: 'column'},
-    {title: "收藏", path: 'collection'},
-    {title: "关注", path: 'follow'},
-    {title: "粉丝", path: 'fans'},
-  ]
+  const menuItems = ref([])
 
   function onLoaded(userData: userType) {
     user.value = userData
+    menuItems.value = [
+      {title: "动态", path: `/user/${user.value.id}/moment`},
+      {title: "文章", path: `/user/${user.value.id}/post`},
+      {title: "专栏", path: `/user/${user.value.id}/column`},
+      {title: "收藏", path: `/user/${user.value.id}/collection`},
+      {title: "关注", path: `/user/${user.value.id}/follow`},
+      {title: "粉丝", path: `/user/${user.value.id}/fans`},
+    ]
+    console.log(menuItems);
     // document.title = userData.nickname + '的主页'
   }
 

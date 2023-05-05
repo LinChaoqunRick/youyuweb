@@ -1,5 +1,7 @@
 <template>
-  <PostEditor :formValidate="formValidate" @handleSubmit="handleSubmit"/>
+  <a-spin :spinning="spinning" tip="加载中...">
+    <PostEditor :formValidate="formValidate" @handleSubmit="handleSubmit"/>
+  </a-spin>
 </template>
 
 <script lang="ts" setup>
@@ -27,12 +29,15 @@
     userId: null
   });
   const isSave = ref(false);
+  const spinning = ref(true);
 
   const initData = () => {
     dispatch("getPostEditDetail", {postId: route.query.postId}).then(res => {
       formValidate.value = res.data;
       formValidate.value.tags = formValidate.value.tags ? formValidate.value.tags.split(",") : [];
       formValidate.value.thumbnail = formValidate.value.thumbnail?.split(",") ?? [];
+    }).finally(() => {
+      spinning.value = false;
     })
   }
   initData();
