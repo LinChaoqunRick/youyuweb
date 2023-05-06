@@ -43,6 +43,18 @@
 
   const menuList = [
     {
+      label: "我的主页",
+      icon: "i-home"
+    },
+    {
+      label: "管理文章",
+      icon: "i-pencil"
+    },
+    {
+      label: "我的时刻",
+      icon: "i-ulikecam"
+    },
+    {
       label: "我的关注",
       icon: "i-like"
     },
@@ -51,27 +63,19 @@
       icon: "i-star"
     },
     {
-      label: "消息通知",
-      icon: "i-remind"
+      type: 'separator'
     },
     {
       label: "个人中心",
       icon: "i-user"
     },
     {
+      label: "消息通知",
+      icon: "i-remind"
+    },
+    {
       label: "账号设置",
       icon: "i-setting-one"
-    },
-    {
-      type: 'separator'
-    },
-    {
-      label: "我的主页",
-      icon: "i-home"
-    },
-    {
-      label: "管理文章",
-      icon: "i-pencil"
     },
     {
       type: 'separator'
@@ -94,8 +98,11 @@
       case "我的收藏":
         router.push(`/user/${userInfo.value.id}/collection`)
         break;
-      case "我的主页":
+      case "我的时刻":
         router.push(`/user/${userInfo.value.id}/moment`)
+            break;
+      case "我的主页":
+        router.push(`/user/${userInfo.value.id}`)
         break;
       case "管理文章":
         router.push(`/user/${userInfo.value.id}/post`)

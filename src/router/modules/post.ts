@@ -1,6 +1,3 @@
-import {h} from 'vue';
-import {RouterView} from 'vue-router';
-
 const route = [
   {
     path: '/post',
@@ -23,7 +20,7 @@ const route = [
         component: () => import("@/views/post/list/PostList.vue")
       },
       {
-        path: 'details/:postId(\\d*)',
+        path: 'details/:postId(\\d+)',
         name: 'postDetail',
         meta: {
           title: "文章详情",

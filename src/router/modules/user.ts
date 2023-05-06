@@ -7,12 +7,11 @@ const route = [
       code: "USER",
       hide: true
     },
-    component: () => import('@/views/user/User.vue'),
     children: [
       {
         path: ":userId(\\d+)",
+        // redirect: to => {return {name: 'userMoment'}},
         name: "userProfile",
-        // redirect: '/user/:userId(\\d+)/moment',
         meta: {
           title: "用户主页",
           code: "USER_PROFILE"
@@ -20,20 +19,34 @@ const route = [
         component: () => import("@/views/user/profile/UserProfile.vue"),
         children: [
           {
+            path: "",
+            name: "userHome",
+            meta: {
+              title: "Ta的动态",
+            },
+            component: () => import("@/views/user/profile/home/UserHome.vue"),
+          },
+          {
             path: "moment",
             name: "userMoment",
             meta: {
-              title: "Ta的动态",
+              title: "Ta的时刻",
             },
             component: () => import("@/views/user/profile/moment/MomentList.vue"),
           },
           {
-            path: "post/:page(\\d*)?",
-            name: "userPost",
-            meta: {
-              title: "Ta的文章",
-            },
-            component: () => import("@/views/user/profile/post/PostList.vue"),
+            path: "post",
+            redirect: to => {return {name: 'userPost', params:{userId: to.params.userId, page: 1}}},
+            children: [
+              {
+                path: ':page(\\d+)',
+                name: "userPost",
+                meta: {
+                  title: "Ta的文章",
+                },
+                component: () => import("@/views/user/profile/post/PostList.vue"),
+              }
+            ]
           },
           {
             path: "column",

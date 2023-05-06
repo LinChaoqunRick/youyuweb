@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-  import {ref} from 'vue';
+  import {ref, watch} from 'vue';
   import {useStore} from "vuex";
   import {useRoute, useRouter} from "vue-router";
 
@@ -62,6 +62,15 @@
   const dataList = ref([]);
   const finished = ref(false);
 
+  watch(() => route, (newVal, oldVal) => {;
+    // console.log(newVal.name);
+    // console.log(oldVal.name);
+    // console.log(oldVal.params.page);
+    // console.log(newVal.params.page);
+    // if (newVal.name === oldVal.name && newVal.params.page !== oldVal.params.page){
+    //   initData();
+    // }
+  }, {deep: true})
 
   const initData = async () => {
     finished.value = false;

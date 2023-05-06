@@ -9,12 +9,12 @@
           <div class="content-menu">
             <router-link v-for="item in menuItems.filter(i=>i.show!==false)" :to="item.path" custom
                          v-slot="{isActive, isExactActive, navigate}">
-            <span :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}"
+            <span :class="{'router-link-active':isActive, 'router-link-exact-active':item.exact?isExactActive:isActive}"
                   @click="handleNavigate(isActive,isExactActive,navigate)" class="menu-item">{{item.title}}</span>
             </router-link>
             <div class="menu-right">
               <div class="menu-setting" v-if="isOwn">
-                <i-setting-two theme="outline" size="18" fill="currentColor"/>
+                <i-setting-two theme="outline" size="18" fill="currentColor" title="设置"/>
               </div>
             </div>
           </div>
@@ -86,14 +86,14 @@
   function onLoaded(userData: userType) {
     user.value = userData
     menuItems.value = [
-      {title: "动态", path: `/user/${user.value.id}/moment`},
+      {title: "动态", path: `/user/${user.value.id}`, exact: true},
+      {title: "时刻", path: `/user/${user.value.id}/moment`},
       {title: "文章", path: `/user/${user.value.id}/post`},
       {title: "专栏", path: `/user/${user.value.id}/column`},
       {title: "收藏", path: `/user/${user.value.id}/collection`},
       {title: "关注", path: `/user/${user.value.id}/follow`},
       {title: "粉丝", path: `/user/${user.value.id}/fans`},
     ]
-    console.log(menuItems);
     // document.title = userData.nickname + '的主页'
   }
 
@@ -316,9 +316,13 @@
               cursor: pointer;
               transition: 0s;
               margin: 0 10px;
+              color: var(--youyu-text2) !important;
+              font-weight: normal;
 
-              &.router-link-active {
+              &.router-link-exact-active {
                 border-bottom: 2px solid #1890ff;
+                color: #1890ff !important;
+                font-weight: bold;
               }
             }
 
@@ -329,7 +333,13 @@
               align-items: center;
 
               .menu-setting {
+                color: var(--youyu-text1);
                 cursor: pointer;
+                transition: .3s;
+
+                &:hover {
+                  color: var(--youyu-text2);
+                }
               }
             }
           }
