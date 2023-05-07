@@ -187,6 +187,10 @@
   watch(() => props.id, (val) => {
     if (!props.id) return;
     dispatch("getUserById", {userId: val}).then(res => {
+      if (!res.data) {
+        message.error("用户不存在");
+        return;
+      }
       user.value = res.data;
       isOwn.value = user.value.id === userInfo.value.id;
       emit('onLoaded', user.value);

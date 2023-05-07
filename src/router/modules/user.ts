@@ -2,6 +2,7 @@ const route = [
   {
     path: '/user',
     name: 'user',
+    redirect: '/404',
     meta: {
       title: "用户",
       code: "USER",
@@ -36,7 +37,9 @@ const route = [
           },
           {
             path: "post",
-            redirect: to => {return {name: 'userPost', params:{userId: to.params.userId, page: 1}}},
+            redirect: to => {
+              return {name: 'userPost', params: {userId: to.params.userId, page: 1}}
+            },
             children: [
               {
                 path: ':page(\\d+)',

@@ -290,10 +290,10 @@
   }
 
   const handleDelete = (index): void => {
-    // if (props.formValidate.thumbnail.length === 1) {
-    //   message.error("至少保留一张图片");
-    //   return;
-    // }
+    if (props.formValidate.thumbnail.length === 1) {
+      message.error("至少保留一张图片");
+      return;
+    }
     props.formValidate.thumbnail.splice(index, 1)
   }
 
@@ -310,9 +310,14 @@
     item.selected = !(item.selected);
   }
 
-  watch(() => props.visible, (val) => {
+  watch(() => modalVisible.value, (val) => {
     if (val) {
       postImages.value = getMarkDownImages(props.formValidate.content);
+      postImages.value.forEach(item => {
+        const newUrl = item.url.split("?")[0];
+        item.url = newUrl + "?x-oss-process=style/smallThumb"
+      })
+      console.log(postImages.value);
     }
   })
   defineExpose({

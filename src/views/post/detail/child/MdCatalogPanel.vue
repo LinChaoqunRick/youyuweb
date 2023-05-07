@@ -2,7 +2,7 @@
   <div class="md-catalog-panel">
     <div class="fold-panel" ref="panel">
       <div class="switch" @click="handleShow" v-show="!move">
-        <i-list-middle theme="outline" size="22" fill="#000"/>
+        <i-list-middle theme="outline" size="22" fill="currentColor"/>
       </div>
       <div class="drag-container" v-show="show">
         <UseDraggable

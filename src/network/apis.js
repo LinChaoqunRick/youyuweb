@@ -56,6 +56,7 @@ export const SAVE_TELEPHONE = ApiBase + "/user/saveTelephone"; // 修改手机�
 export const SAVE_PASSWORD = ApiBase + "/user/savePassword"; // 修改密码
 export const SAVE_EMAIL = ApiBase + "/user/saveEmail"; // 修改邮箱
 export const GET_PROFILE_MENU = ApiBase + "/user/getProfileMenu"; // 获取主页菜单信息
+export const SET_PROFILE_MENU = ApiBase + "/user/setProfileMenu"; // 设置主页菜单信息
 
 // 邮件
 export const SEND_EMAIL_CODE = ApiBase + "/mail/sendCode"; // 获取邮箱验证码

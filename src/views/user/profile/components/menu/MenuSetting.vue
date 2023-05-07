@@ -1,32 +1,102 @@
 <template>
   <div class="menu-setting">
-    <a-checkbox-group v-model:value="value" style="width: 100%">
-      <a-row>
-        <a-col :span="6" v-for="item in props.menuItems">
-          <a-checkbox :value="item.value">{{item.title}}</a-checkbox>
-        </a-col>
-      </a-row>
-    </a-checkbox-group>
+    <a-row>
+      <a-col :span="6" v-for="item in menuItems">
+        <a-checkbox v-model:checked="menuPermit[item.value]" :disabled="item.disabled">{{item.title}}</a-checkbox>
+      </a-col>
+    </a-row>
+    <div class="remind">
+      <i-caution theme="outline" size="14" fill="currentColor"/>
+      <span class="remind-text">对其他用户只展示勾选的菜单，对您不受影响</span>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import {ref} from 'vue';
+  import {inject, ref, toRaw} from 'vue';
+  import {useStore} from "vuex";
+  import {cloneDeep} from 'lodash';
+  import {message} from "ant-design-vue";
 
   const props = defineProps({
     menuItems: {
-      type: Array
+      type: Array,
+      required: true
+    },
+    userId: {
+      type: [String, Number],
+      required: true
     }
-  })
 
-  const value = ref([])
+  })
+  const modal = inject('modal');
+  const {dispatch} = useStore();
+  const menuItems = ref([]);
+  const menuPermit = ref({});
+
+  function handleMenuItems() {
+    const disabledMenus = ["动态", "时刻", "文章", "专栏"];
+    menuItems.value = cloneDeep(props.menuItems);
+    menuItems.value.map(item => {
+      item.disabled = disabledMenus.includes(item.title);
+      return item;
+    })
+  }
+
+  handleMenuItems();
+
+  function getProfileMenu() {
+    dispatch("getProfileMenu", {userId: props.userId}).then(res => {
+      Object.keys(res.data).forEach(key => {
+        if (key.startsWith("show")) {
+          res.data[key] = !!res.data[key]
+        }
+      })
+      menuPermit.value = res.data;
+    })
+  }
+
+  getProfileMenu();
+
+  function beforeConfirm(done) {
+    const menuResult = toRaw(menuPermit.value);
+    Object.keys(menuResult).forEach(key => {
+      if (key.startsWith("show")) {
+        menuResult[key] = menuResult[key] ? 1 : 0;
+      }
+    })
+    modal.confirmLoading = true;
+    dispatch("setProfileMenu", menuPermit.value).then(res => {
+      if (res.data) {
+        message.success("保存成功");
+        done()
+      } else {
+        message.error(res.message);
+      }
+    }).finally(() => {
+      modal.confirmLoading = false;
+    })
+  }
+
+  defineExpose({
+    beforeConfirm
+  })
 </script>
 
 <style lang="scss" scoped>
   .menu-setting {
-    ::v-deep(.ant-checkbox-group) {
-      .ant-checkbox-wrapper {
-        margin-bottom: 6px;
+    user-select: none;
+
+    ::v-deep(.ant-checkbox-wrapper) {
+      margin-bottom: 10px;
+    }
+
+    .remind {
+      color: #ff0000;
+      margin-top: 6px;
+
+      .remind-text {
+        margin-left: 6px;
       }
     }
   }

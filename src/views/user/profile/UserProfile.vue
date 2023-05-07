@@ -7,10 +7,14 @@
       <div class="user-content" id="aside-right">
         <div class="user-menu-content">
           <div class="content-menu">
-            <router-link v-for="item in menuItems.filter(i=>i.show!==false)" :to="item.path" custom
+            <router-link v-for="item in showMenuItems" :to="item.path" custom
                          v-slot="{isActive, isExactActive, navigate}">
             <span :class="{'router-link-active':isActive, 'router-link-exact-active':item.exact?isExactActive:isActive}"
-                  @click="handleNavigate(isActive,isExactActive,navigate)" class="menu-item">{{item.title}}</span>
+                  @click="handleNavigate(isActive,isExactActive,navigate)" class="menu-item">{{item.title}}
+              <div class="lock" v-if="item.hide">
+                <i-protect theme="filled" size="10" fill="#1890ff"/>
+              </div>
+            </span>
             </router-link>
             <div class="menu-right">
               <div class="menu-setting" v-if="isOwn">
@@ -46,7 +50,7 @@
   import {useStore} from "vuex";
   import UserInfoPanel from "@/views/post/detail/child/UserInfoPanel.vue";
   import type {userType, statType} from "@/types/user";
-  import {Modal} from "ant-design-vue";
+  import {message, Modal} from "ant-design-vue";
   import openModal from "@/libs/tools/openModal";
   import MenuSetting from "./components/menu/MenuSetting.vue"
 
@@ -64,6 +68,7 @@
 
   const userId = router.currentRoute.value.params.userId;
   const menuItems = ref([]);
+  const showMenuItems = ref([]); // 做展示用的
   const menuPermit = ref({});
 
   async function getProfileMenu() {
@@ -73,6 +78,7 @@
   }
 
   function isPermit(name) { // 判读该用户是否开通了这个目录
+    if (isOwn.value) return true;
     const nameMap = {
       userHome: 'showHome',
       userMoment: 'showMoment',
@@ -97,7 +103,19 @@
       {title: "关注", path: `/user/${user.value.id}/follow`, value: 'showFollow'},
       {title: "粉丝", path: `/user/${user.value.id}/fans`, value: 'showFans'},
     ]
+    handlePermit();
     // document.title = userData.nickname + '的主页'
+  }
+
+  function handlePermit() {
+    if (isOwn.value) {
+      showMenuItems.value = menuItems.value.map(item => {
+        item.hide = !menuPermit.value[item.value];
+        return item;
+      })
+    } else {
+      showMenuItems.value = menuItems.value.filter(item => !!menuPermit.value[item.value])
+    }
   }
 
   function handleClickStat(item: statType) {
@@ -125,10 +143,13 @@
       width: '520px',
       title: '设置',
       componentProps: {
-        menuItems: menuItems.value
+        menuItems: menuItems.value,
+        userId
       }
     }).then(res => {
-
+      getProfileMenu().then(res => {
+        handlePermit();
+      })
     }).catch(console.log)
   }
 
@@ -325,6 +346,7 @@
             border-bottom: 1px solid #e4e6eb;
 
             .menu-item {
+              position: relative;
               display: flex;
               align-items: center;
               height: calc(100% - 1px);
@@ -339,6 +361,12 @@
                 border-bottom: 2px solid #1890ff;
                 color: #1890ff !important;
                 font-weight: bold;
+              }
+
+              .lock {
+                position: absolute;
+                top: -5px;
+                right: -8px;
               }
             }
 

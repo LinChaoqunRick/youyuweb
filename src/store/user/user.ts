@@ -13,7 +13,8 @@ import {
   SAVE_TELEPHONE,
   SAVE_PASSWORD,
   SAVE_EMAIL,
-  GET_PROFILE_MENU
+  GET_PROFILE_MENU,
+  SET_PROFILE_MENU
 } from "@/network/apis";
 
 export default {
@@ -59,6 +60,9 @@ export default {
     },
     getProfileMenu(state: any, params: object) {
       return http.post(GET_PROFILE_MENU, params);
+    },
+    setProfileMenu(state: any, params: object) {
+      return http.post(SET_PROFILE_MENU, params);
     },
   },
 }
