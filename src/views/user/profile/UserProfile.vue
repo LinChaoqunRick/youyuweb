@@ -14,15 +14,13 @@
             </router-link>
             <div class="menu-right">
               <div class="menu-setting" v-if="isOwn">
-                <i-setting-two theme="outline" size="18" fill="currentColor" title="设置"/>
+                <i-setting-two theme="outline" size="18" fill="currentColor" title="设置" @click="onSetting"/>
               </div>
             </div>
           </div>
           <div class="content-component">
             <router-view v-slot="{ Component }">
-              <!--              <keep-alive>-->
-              <component :is="Component" v-if="user" :key="$route.name"/>
-              <!--              </keep-alive>-->
+              <component :is="Component" v-if="user && isPermit($route.name)" :key="$route.name"/>
             </router-view>
           </div>
         </div>
@@ -42,24 +40,6 @@
   </div>
 </template>
 
-<script lang="ts">
-  import MomentList from "./moment/MomentList.vue";
-  import PostList from "./post/PostList.vue";
-  import SpecialColumn from "./column/SpecialColumn.vue";
-  import CollectList from "./collection/CollectList.vue";
-  import SubscribeList from "./follow/FollowList.vue";
-
-  export default {
-    components: {
-      MomentList,
-      PostList,
-      SpecialColumn,
-      CollectList,
-      SubscribeList,
-    }
-  }
-</script>
-
 <script setup lang="ts">
   import {ref, watch, provide, inject, computed} from "vue";
   import {useRoute, useRouter} from "vue-router";
@@ -67,8 +47,10 @@
   import UserInfoPanel from "@/views/post/detail/child/UserInfoPanel.vue";
   import type {userType, statType} from "@/types/user";
   import {Modal} from "ant-design-vue";
+  import openModal from "@/libs/tools/openModal";
+  import MenuSetting from "./components/menu/MenuSetting.vue"
 
-  const {getters} = useStore();
+  const {getters, dispatch} = useStore();
   const reload = inject('reload')
   const UserInfoRef = ref(null)
   const route = useRoute();
@@ -81,18 +63,39 @@
   provide('user', user);
 
   const userId = router.currentRoute.value.params.userId;
-  const menuItems = ref([])
+  const menuItems = ref([]);
+  const menuPermit = ref({});
 
-  function onLoaded(userData: userType) {
-    user.value = userData
+  async function getProfileMenu() {
+    await dispatch("getProfileMenu", {userId}).then(res => {
+      menuPermit.value = res.data;
+    })
+  }
+
+  function isPermit(name) { // 判读该用户是否开通了这个目录
+    const nameMap = {
+      userHome: 'showHome',
+      userMoment: 'showMoment',
+      userPost: 'showPost',
+      userColumn: 'showColumn',
+      userCollection: 'showCollect',
+      userFollow: 'showFollow',
+      userFans: 'showFans',
+    }
+    return !!menuPermit.value[nameMap[name]];
+  }
+
+  async function onLoaded(userData: userType) {
+    await getProfileMenu();
+    user.value = userData;
     menuItems.value = [
-      {title: "动态", path: `/user/${user.value.id}`, exact: true},
-      {title: "时刻", path: `/user/${user.value.id}/moment`},
-      {title: "文章", path: `/user/${user.value.id}/post`},
-      {title: "专栏", path: `/user/${user.value.id}/column`},
-      {title: "收藏", path: `/user/${user.value.id}/collection`},
-      {title: "关注", path: `/user/${user.value.id}/follow`},
-      {title: "粉丝", path: `/user/${user.value.id}/fans`},
+      {title: "动态", path: `/user/${user.value.id}`, exact: true, value: 'showHome'},
+      {title: "时刻", path: `/user/${user.value.id}/moment`, value: 'showMoment'},
+      {title: "文章", path: `/user/${user.value.id}/post`, value: 'showPost'},
+      {title: "专栏", path: `/user/${user.value.id}/column`, value: 'showColumn'},
+      {title: "收藏", path: `/user/${user.value.id}/collection`, value: 'showCollect'},
+      {title: "关注", path: `/user/${user.value.id}/follow`, value: 'showFollow'},
+      {title: "粉丝", path: `/user/${user.value.id}/fans`, value: 'showFans'},
     ]
     // document.title = userData.nickname + '的主页'
   }
@@ -114,6 +117,19 @@
     if (!isExactActive) {
       navigate();
     }
+  }
+
+  function onSetting() {
+    openModal({
+      component: MenuSetting,
+      width: '520px',
+      title: '设置',
+      componentProps: {
+        menuItems: menuItems.value
+      }
+    }).then(res => {
+
+    }).catch(console.log)
   }
 
   watch(() => route.params.userId, (() => {

@@ -12,7 +12,8 @@ import {
   SAVE_HOMEPAGE,
   SAVE_TELEPHONE,
   SAVE_PASSWORD,
-  SAVE_EMAIL
+  SAVE_EMAIL,
+  GET_PROFILE_MENU
 } from "@/network/apis";
 
 export default {
@@ -55,6 +56,9 @@ export default {
     },
     saveEmail(state: any, params: object) {
       return http.post(SAVE_EMAIL, params);
+    },
+    getProfileMenu(state: any, params: object) {
+      return http.post(GET_PROFILE_MENU, params);
     },
   },
 }
