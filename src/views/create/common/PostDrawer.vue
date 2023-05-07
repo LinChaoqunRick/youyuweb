@@ -48,7 +48,7 @@
         </a-form-item>
         <a-form-item label="封面" name="thumbnail" class="post-thumbnails">
           <div class="select-from-post">
-            <a-button type="link" @click="openModal">从文章中选取</a-button>
+            <a-button type="link" :disabled="formValidate.thumbnail.length>=3" @click="openModal">从文章中选取</a-button>
           </div>
           <UploadFile :disabled="formValidate.thumbnail.length>=3" @uploadSuccess="uploadSuccess"/>
           <div class="file-list">
@@ -107,10 +107,11 @@
       </template>
     </a-drawer>
 
-    <a-modal v-model:visible="modalVisible" title="选取封面" width="60%" @ok="handleOk"
+    <a-modal v-model:visible="modalVisible" :title="`选取封面(还可选${restNum}张)`" width="60%" @ok="handleConfirm"
              wrapClassName="post-image-select-modal">
       <div class="image-box">
         <div class="image-item" v-for="item in postImages" :class="{'selected-active': item.selected}">
+          <i-check-small v-if="item.selected" theme="outline" size="18" fill="#fff"/>
           <img :src="item.url" @click="handleItemClick(item)"/>
         </div>
       </div>
@@ -125,7 +126,7 @@
 </script>
 
 <script setup lang="ts">
-  import {nextTick, reactive, ref, watch} from 'vue';
+  import {nextTick, reactive, ref, watch, computed} from 'vue';
   import type {PropType,} from 'vue';
   import type {TreeSelectProps} from 'ant-design-vue';
   import {Form, message, notification} from 'ant-design-vue';
@@ -195,6 +196,7 @@
   const columnList = ref([]);
   const modalVisible = ref(false);
   const loading = ref(false);
+  const restNum = computed(() => 3 - props.formValidate.thumbnail.length);
 
   async function onSubmit() {
     const form = await formRef.value.validate().catch(console.log);
@@ -265,8 +267,10 @@
     props.formValidate.tags = props.formValidate.tags.filter(tag => tag !== removedTag);
   };
 
-  const handleOk = () => {
-
+  const handleConfirm = () => {
+    const selectedUrls = postImages.value.filter(i => i.selected).map(i => i.url);
+    props.formValidate.thumbnail.push(...selectedUrls);
+    modalVisible.value = false;
   }
 
   function onClose() {
@@ -307,7 +311,14 @@
   }
 
   const handleItemClick = (item) => {
-    item.selected = !(item.selected);
+    if (item.selected) {
+      item.selected = !item.selected;
+      return;
+    }
+    if (postImages.value.filter(i => i.selected).length >= restNum.value) {
+      return;
+    }
+    item.selected = !item.selected;
   }
 
   watch(() => modalVisible.value, (val) => {
@@ -442,21 +453,41 @@
       flex-wrap: wrap;
 
       .image-item {
+        position: relative;
         height: 100%;
         width: 25%;
         cursor: pointer;
         padding: 5px 10px;
 
         img {
-          height: 120px;
+          object-fit: cover;
+          height: 130px;
           width: 100%;
+          transition: .3s;
         }
       }
 
       .selected-active {
+        .i-icon {
+          position: absolute;
+          right: 11px;
+          top: 6px;
+        }
+
+        &:before {
+          position: absolute;
+          content: '';
+          right: 10px;
+          top: 5px;
+          border-top: 16px solid rgba(24, 144, 255, 0.9);
+          border-right: 16px solid rgba(24, 144, 255, 0.9);
+          border-bottom: 16px solid transparent;
+          border-left: 16px solid transparent;
+        }
+
         img {
           /*border: 1px solid #1890ff;*/
-          box-shadow: 0 0 0 2px #1890ff;
+          /*box-shadow: 0 0 6px 3px rgba(24, 144, 255, 0.8);*/
         }
       }
     }
