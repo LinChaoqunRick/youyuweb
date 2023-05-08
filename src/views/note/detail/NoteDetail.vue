@@ -11,14 +11,14 @@
         <NoteContent :id="id" @contentLoaded="contentLoaded" @saveSuccess="saveSuccess"/>
       </div>
       <div class="note-info">
-        <NoteInfo/>
+        <NoteInfo v-if="showCatalog"/>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import {ref, provide} from "vue";
+  import {ref, provide, nextTick} from "vue";
   import {useStore} from "vuex";
   import {useRoute} from "vue-router";
   import NoteCategory from "./component/NoteCategory.vue";
@@ -33,6 +33,7 @@
   const route = useRoute();
   const note = ref<note>();
   const chapter = ref<chapter>();
+  const showCatalog = ref(false);
 
   function initData() {
     dispatch("getNote", {noteId: route.params.noteId}).then(res => {
@@ -52,6 +53,9 @@
   function contentLoaded(data: chapter) {
     chapter.value = data;
     NoteCategoryRef.value.generatePreNext()
+    nextTick(() => {
+      showCatalog.value = true;
+    })
   }
 
   function onCollapse() {

@@ -165,7 +165,7 @@
   }
 
   function handleProfile(user: userType) {
-    router.push({path: `/user/${user.id}/moment`})
+    router.push({path: `/user/${user.id}`})
   }
 </script>
 

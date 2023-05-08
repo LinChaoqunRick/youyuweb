@@ -1,7 +1,7 @@
 <template>
   <div class="note-content">
     <div class="chapter-content-body" v-if="chapter">
-      <div v-if="!isEdit" class="chapter-preview">
+      <div v-if="!isEdit" id="chapter-preview" class="chapter-preview">
         <div class="chapter-title">{{chapter.title}}</div>
         <div class="chapter-info">
           <span>本文由用户</span>
@@ -18,7 +18,7 @@
           </div>
         </div>
         <div class="chapter-content">
-          <MdPreview :text="chapter.content"/>
+          <MdPreview :text="chapter.content" editorId="note-content"/>
         </div>
         <div class="chapter-bottom" id="chapter-bottom"></div>
       </div>
@@ -30,7 +30,7 @@
             <a-button type="link" @click="handleSave">保存</a-button>
           </div>
         </div>
-        <MdEditorCom v-model="chapterCopy.content" class="edit-chapter-t-editor" ref="editor"/>
+        <MdEditorCom v-model="chapterCopy.content" editorId="note-content" class="edit-chapter-t-editor" ref="editor"/>
       </div>
     </div>
     <div v-if="loading" class="loading-box">
@@ -103,13 +103,16 @@
 
     .chapter-content-body {
       height: 100%;
-      overflow: auto;
+      /*overflow: auto;*/
+
+      #chapter-preview {
+        overflow: auto;
+      }
 
       .chapter-preview {
-        display: flex;
-        flex-direction: column;
+        /*display: flex;*/
+        /*flex-direction: column;*/
         height: 100%;
-        overflow: auto;
 
         .chapter-title {
           padding: 10px 16px;

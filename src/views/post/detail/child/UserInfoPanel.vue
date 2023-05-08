@@ -150,7 +150,7 @@
   };
 
   function handleProfile() {
-    router.push({path: `/user/${user.value.id}/moment`})
+    router.push({path: `/user/${user.value.id}`})
   }
 
   function handleMessage() {

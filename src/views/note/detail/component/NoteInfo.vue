@@ -1,6 +1,9 @@
 <template>
   <div class="note-info">
-    <div class="author-info">
+    <div class="note-catalog-wrapper">
+      <NoteCatalog editorId="note-content"/>
+    </div>
+    <!--<div class="author-info">
       <div class="info-top">
         <div class="info-avatar">
           <img :src="author.avatar" @click="handleProfile"/>
@@ -15,13 +18,14 @@
           <div class="extra-item">{{author.extraInfo?.likeCount}}</div>
         </div>
       </div>
-    </div>
+    </div>-->
   </div>
 </template>
 
 <script setup lang="ts">
   import {inject, computed} from 'vue';
   import {useRouter} from "vue-router";
+  import NoteCatalog from "./NoteCatalog.vue"
 
   const router = useRouter();
   const note = inject('note');
@@ -36,7 +40,13 @@
 
 <style lang="scss" scoped>
   .note-info {
-    width: 100%;
+    height: 100%;
+    overflow: auto;
+
+    .note-catalog-wrapper{
+      height: 100%;
+      overflow: auto;
+    }
 
     .author-info {
       padding: 16px;
