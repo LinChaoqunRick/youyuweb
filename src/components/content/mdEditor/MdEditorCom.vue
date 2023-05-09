@@ -133,6 +133,13 @@
 
     #md-editor {
       height: 100%;
+
+      ::v-deep(.i-icon) {
+        display: flex;
+        align-items: center;
+        height: 24px;
+        width: 24px;
+      }
     }
   }
 </style>

@@ -79,7 +79,7 @@
     .note-category-body {
       position: relative;
       height: 100%;
-      width: 320px;
+      width: 300px;
       overflow: visible;
       padding: 20px 16px;
       border-right: var(--youyu-navigation-border);
@@ -118,7 +118,7 @@
     }
 
     .note-info {
-      width: 260px;
+      width: 280px;
       border-left: var(--youyu-navigation-border);
     }
   }

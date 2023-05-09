@@ -4,7 +4,7 @@
       <Emoji @emojiHandler="emojiHandler"/>
     </template>
     <template #trigger>
-      <i-smiling-face theme="outline" size="17" fill="#333" style="padding: 0 3.5px"/>
+      <i-smiling-face theme="outline" size="17" fill="#3F4A54" style="padding: 0 3.5px"/>
     </template>
   </dropdown-toolbar>
 </template>

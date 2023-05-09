@@ -22,7 +22,8 @@
               <md-catalog
                 :editor-id="editorId"
                 :scroll-element="scrollElement"
-                :offsetTop="headerClientHeight"
+                :offsetTop="80"
+                :scrollElementOffsetTop="headerClientHeight"
               />
             </div>
           </div>
@@ -64,7 +65,7 @@
 
   onMounted(() => {
     const header = document.getElementById("header");
-    headerClientHeight.value = header?.clientHeight ?? 20;
+    headerClientHeight.value = header?.clientHeight ?? 40;
   })
 </script>
 
@@ -126,18 +127,6 @@
             overflow: auto;
             padding: 8px 16px;
           }
-
-          ::v-deep(.md-editor-catalog) {
-            .md-editor-catalog-active {
-              border-left: 3px solid #1890ff;
-              font-weight: 700;
-              color: #1890ff !important;
-
-              span {
-                color: #1890ff !important;
-              }
-            }
-          }
         }
 
         .fixed {
@@ -147,6 +136,7 @@
         }
       }
     }
+
   }
 
 </style>

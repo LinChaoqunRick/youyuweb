@@ -14,7 +14,7 @@ html {
   font-size: 12px;
 }
 
-.ant-card-self{
+.ant-card-self {
   .ant-card-head-title {
     font-size: 18px;
     font-weight: bold;
@@ -26,4 +26,20 @@ html {
   font-weight: bold;
 }
 
+.md-editor-catalog {
+  .md-editor-catalog-link {
+    > span {
+      &:hover {
+        color: #1890ff !important;
+      }
+    }
+  }
+
+  .md-editor-catalog-active {
+    > span {
+      color: #1890ff !important;
+      font-weight: 700 !important;
+    }
+  }
+}
 
