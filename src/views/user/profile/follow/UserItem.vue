@@ -1,10 +1,14 @@
 <template>
   <div class="user-item">
     <div class="user-left">
-      <img :src="data.avatar" @click="handleProfile"/>
+      <RouterLink :to="`/user/${props.data.id}`">
+        <img :src="data.avatar"/>
+      </RouterLink>
     </div>
     <div class="user-mid">
-      <div class="user-nickname" @click="handleProfile">{{data.nickname}}</div>
+      <RouterLink :to="`/user/${props.data.id}`">
+        <div class="user-nickname">{{data.nickname}}</div>
+      </RouterLink>
       <div class="user-signature">{{data.signature}}</div>
     </div>
     <div class="user-right">
@@ -18,7 +22,7 @@
 <script setup lang="ts">
   import {computed, inject} from 'vue';
   import {useStore} from "vuex";
-  import {useRouter} from "vue-router";
+  import {useRouter, RouterLink} from "vue-router";
   import {message} from "ant-design-vue";
 
   const router = useRouter();
@@ -56,10 +60,6 @@
       })
     }
   }
-
-  function handleProfile() {
-    router.push({path: `/user/${props.data.id}/moment`})
-  }
 </script>
 
 <style lang="scss" scoped>
@@ -89,6 +89,10 @@
       height: 100%;
       padding: 12px 16px;
       flex: 1;
+
+      a {
+        color: inherit;
+      }
 
       .user-nickname {
         flex: 1;

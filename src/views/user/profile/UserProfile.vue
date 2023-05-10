@@ -7,15 +7,15 @@
       <div class="user-content" id="aside-right">
         <div class="user-menu-content">
           <div class="content-menu">
-            <router-link v-for="item in showMenuItems" :to="item.path" custom
+            <RouterLink v-for="item in showMenuItems" :to="item.path"
                          v-slot="{isActive, isExactActive, navigate}">
-            <span :class="{'router-link-active':isActive, 'router-link-exact-active':item.exact?isExactActive:isActive}"
+            <div :class="{'router-link-active':isActive, 'router-link-exact-active':item.exact?isExactActive:isActive}"
                   @click="handleNavigate(isActive,isExactActive,navigate)" class="menu-item">{{item.title}}
               <div class="lock" v-if="item.hide">
                 <i-protect theme="filled" size="10" fill="#1890ff"/>
               </div>
-            </span>
-            </router-link>
+            </div>
+            </RouterLink>
             <div class="menu-right">
               <div class="menu-setting" v-if="isOwn">
                 <i-setting-two theme="outline" size="18" fill="currentColor" title="设置" @click="onSetting"/>

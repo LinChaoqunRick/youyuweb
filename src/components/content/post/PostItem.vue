@@ -2,19 +2,19 @@
   <div class="post-item" ref="thisRef">
     <div class="article-item" :class="{'flex-revert': !!(index % 2)}" v-if="thumbnails.length < 3">
       <div class="image-wrapper">
-        <div class="image-link" @click="$router.push({name:'postDetail',params:{postId:data.id}})">
+        <RouterLink class="post-link" :to="{name:'postDetail',params:{postId:data.id}}">
           <img :src="thumbnails[0]+'?x-oss-process=style/smallThumb'">
-        </div>
+        </RouterLink>
       </div>
       <div class="content-wrapper">
         <div class="article-title">
-          <p v-html="data.title" @click="$router.push({name:'postDetail',params:{postId:data.id}})"/>
+          <RouterLink class="post-link" :to="{name:'postDetail',params:{postId:data.id}}">
+            <p v-html="data.title"/>
+          </RouterLink>
         </div>
-        <div class="article-caption" v-html="data.summary"
-             @click="$router.push({name:'postDetail',params:{postId:data.id}})"/>
+        <RouterLink class="post-link article-caption" v-html="data.summary" :to="{name:'postDetail',params:{postId:data.id}}"/>
         <div class="article-info">
-          <span class="info-item info-nickname"
-                @click="$router.push(`/user/${data.user.id}/moment`)">{{data.user.nickname}}</span>
+          <RouterLink  class="info-item info-nickname" :to="`/user/${data.user.id}`">{{data.user.nickname}}</RouterLink>
           <span class="info-item create-type"
                 :class="[`create_type_${data.createType}`]">{{createTypeList[data.createType]}}</span>
           <span class="info-item category-name">{{data.categoryName}}</span>
@@ -27,19 +27,22 @@
     <div class="article-item article-item-more-pic" v-else>
       <div class="content-wrapper">
         <div class="article-title">
-          <p v-html="data.title" @click="$router.push({name:'postDetail',params:{postId:data.id}})"/>
+          <RouterLink class="post-link" :to="{name:'postDetail',params:{postId:data.id}}">
+            <p v-html="data.title"/>
+          </RouterLink>
         </div>
       </div>
       <div class="image-wrapper">
-        <div class="image-link" @click="$router.push({name:'postDetail',params:{postId:data.id}})">
+        <RouterLink class="post-link" :to="{name:'postDetail',params:{postId:data.id}}">
           <div class="img-container" v-for="img in thumbnails">
-            <img :src="img+'?x-oss-process=style/smallThumb'">
+            <img :src="img">
           </div>
-        </div>
+        </RouterLink>
       </div>
       <div class="article-info">
-        <span class="info-item" @click="$router.push(`/user/${data.user.id}/moment`)">{{data.user.nickname}}</span>
+        <RouterLink  class="info-item info-nickname" :to="`/user/${data.user.id}`">{{data.user.nickname}}</RouterLink>
         <span class="info-item create-type" :class="[`create_type_${data.createType}`]">{{createTypeList[data.createType]}}</span>
+        <span class="info-item category-name">{{data.categoryName}}</span>
         <span class="info-item">{{(data.createTime).substr(0, 10)}}</span>
         <span class="info-item">{{data.commentCount}}&ensp;评论</span>
         <span class="info-item">{{data.viewCount}}&ensp;阅读</span>
@@ -51,6 +54,7 @@
 
 <script setup>
   import {ref, computed, onMounted} from 'vue';
+  import {RouterLink} from 'vue-router';
 
   const props = defineProps({
     data: {
@@ -95,11 +99,12 @@
         padding: 16px;
         overflow: hidden;
 
-        .image-link {
+        .post-link {
           width: 210px;
           height: 140px;
           overflow: hidden;
           border-radius: 10px;
+          color: inherit;
 
           img {
             height: 100%;
@@ -126,7 +131,6 @@
           font-weight: 700;
           cursor: pointer;
           font-family: "Open Sans", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", Arial, Verdana, Tahoma, sans-serif;
-          transition: .2s;
 
           p {
             text-overflow: ellipsis;
@@ -161,7 +165,7 @@
 
     .article-item-more-pic {
       display: block;
-      height: 238px;
+      height: 230px;
 
       .content-wrapper {
         width: 100%;
@@ -172,14 +176,16 @@
       .image-wrapper {
         padding: 0 16px;
         width: 100%;
+        display: flex;
 
-        .image-link {
+        .post-link {
           width: 100%;
           height: 150px;
           display: flex;
+          color: inherit;
 
           .img-container {
-            width: 250px;
+            flex: 1;
             height: 150px;
             overflow: hidden;
 
@@ -191,13 +197,11 @@
       }
 
       .article-info {
-        height: 20px;
-        border-top: var(--article-border);
+        /*border-top: var(--article-border);*/
         color: var(--article-info-color);
         font-size: 12px;
         padding-top: 6px;
-        margin: 8px 16px 0 16px;
-
+        margin: 2px 16px 0 16px;
       }
     }
 
@@ -274,5 +278,10 @@
         }
       }
     }
+  }
+
+  .post-link {
+    color: inherit;
+    display: block;
   }
 </style>

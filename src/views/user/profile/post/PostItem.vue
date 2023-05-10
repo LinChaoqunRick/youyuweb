@@ -1,15 +1,20 @@
 <template>
   <div class="post-item">
     <div class="post-left">
-      <img :src="thumbnails[0]" @click="navigate">
+      <RouterLink :to="{name: 'postDetail', params: {postId: data?.id}}">
+        <img :src="thumbnails[0]">
+      </RouterLink>
     </div>
     <div class="post-right">
       <div class="post-title">
-        <div class="title-text" v-html="data.title" @click="navigate"/>
+        <RouterLink :to="{name: 'postDetail', params: {postId: data?.id}}">
+          <div class="title-text" v-html="data.title"/>
+        </RouterLink>
       </div>
       <div class="post-summary">
-        <div class="summary-text" v-html="data.summary"
-             @click="navigate"/>
+        <RouterLink :to="{name: 'postDetail', params: {postId: data?.id}}">
+          <div class="summary-text" v-html="data.summary"/>
+        </RouterLink>
       </div>
       <div class="post-info">
         <span class="create-type info-item" :class="[`create_type_${data.createType}`]">{{createTypeList[data.createType]}}</span>
@@ -27,7 +32,7 @@
 
 <script setup lang="ts">
   import {computed} from "vue";
-  import {useRouter} from 'vue-router';
+  import {useRouter, RouterLink} from 'vue-router';
 
   const router = useRouter();
 
@@ -43,10 +48,6 @@
   const thumbnails = computed(() => {
     return props.data?.thumbnail.split(",").splice(0, 3);
   })
-
-  const navigate = function () {
-    router.push({name: 'postDetail', params: {postId: props.data?.id}})
-  }
 </script>
 
 <style lang="scss" scoped>
@@ -81,6 +82,10 @@
         font-weight: bold;
         cursor: pointer;
 
+        a {
+          color: inherit;
+        }
+
         .title-text {
           overflow: hidden;
           text-overflow: ellipsis;
@@ -93,6 +98,10 @@
         line-height: 33px;
         cursor: pointer;
         overflow: hidden;
+
+        a {
+          color: inherit;
+        }
 
         .summary-text {
           height: 100%;

@@ -5,25 +5,29 @@
       <div class="route-dropdown">
         <div class="dropdown-arrow"></div>
         <div v-for="item in route.children" class="route-dropdown-item">
-          <router-link :to="item.path" custom v-slot="{isActive, isExactActive, navigate}">
+          <RouterLink :to="item.path">{{item.title}}</RouterLink>
+          <!--<router-link :to="item.path" custom v-slot="{isActive, isExactActive, navigate}">
           <span :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}"
                 @click="handleNavigate(isActive,isExactActive,navigate)">
             {{item.title}}
           </span>
-          </router-link>
+          </router-link>-->
         </div>
       </div>
     </router-link>
   </div>
   <div class="nav-link nav-link-single" v-else>
-    <router-link :to="route.path" custom v-slot="{isActive, isExactActive, navigate}">
+    <RouterLink :to="route.path">{{route.title}}</RouterLink>
+    <!--<router-link :to="route.path" custom v-slot="{isActive, isExactActive, navigate}">
       <span :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}"
             @click="handleNavigate(isActive,isExactActive,navigate)">{{route.title}}</span>
-    </router-link>
+    </router-link>-->
   </div>
 </template>
 
 <script setup>
+  import {RouterLink} from 'vue-router';
+
   const prop = defineProps({
     route: {
       type: Object,
@@ -44,6 +48,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
+    a {
+      color: #909090;
+
+      &:hover {
+        color: #1890ff;
+      }
+    }
 
     .route-dropdown {
       display: none;
