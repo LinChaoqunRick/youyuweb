@@ -28,7 +28,7 @@
   const emit = defineEmits(['onChange']);
 
   const state = reactive({
-    visible: true
+    visible: false
   });
 
   const emojiHandler = (emoji: string) => {
