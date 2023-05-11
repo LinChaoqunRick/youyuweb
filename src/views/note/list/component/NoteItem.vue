@@ -1,16 +1,22 @@
 <template>
   <div class="note-item-body">
-    <div class="item-cover" @click="handleNavigate(item)">
-      <img :src="data.cover"/>
+    <div class="item-cover">
+      <RouterLink :to="{name: 'noteDetail', params: {noteId: data.id}}">
+        <img :src="data.cover"/>
+      </RouterLink>
     </div>
     <div class="item-bottom">
-      <div class="item-title" :title="data.name" @click="handleNavigate(item)">《{{data.name}}》</div>
-      <div class="item-author">
-        <div class="author-avatar">
-          <img :src="data.user.avatar"/>
+      <RouterLink :to="{name: 'noteDetail', params: {noteId: data.id}}">
+        <div class="item-title" :title="data.name">《{{data.name}}》</div>
+      </RouterLink>
+      <RouterLink :to="`/user/${data.user.id}`">
+        <div class="item-author">
+          <div class="author-avatar">
+            <img :src="data.user.avatar"/>
+          </div>
+          <div class="author-nickname">{{data.user.nickname}}</div>
         </div>
-        <div class="author-nickname">{{data.user.nickname}}</div>
-      </div>
+      </RouterLink>
       <div class="item-info">
         <div class="info-view" title="阅读">
           <i-preview-open theme="outline" size="18" fill="currentColor"/>
@@ -38,7 +44,7 @@
   import type {PropType} from 'vue';
   import type {note} from "../../type";
   import {useStore} from "vuex";
-  import {useRouter} from "vue-router";
+  import {useRouter, RouterLink} from "vue-router";
   import {computed} from "vue";
 
   const emit = defineEmits(["handleEdit"])
@@ -56,10 +62,6 @@
   function handleEdit() {
     emit("handleEdit", props.data);
     visible.value = false;
-  }
-
-  function handleNavigate() {
-    router.push({name: 'noteDetail', params: {noteId: props.data.id}})
   }
 </script>
 
@@ -88,6 +90,10 @@
       border-width: 0 1px 1px 1px;
       border-style: solid;
       border-color: var(--youyu-border-color2);
+
+      a {
+        color: inherit;
+      }
 
       .item-title {
         width: 100%;

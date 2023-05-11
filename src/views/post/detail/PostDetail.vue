@@ -22,7 +22,13 @@
               <div class="post-info-data">
                 <div class="post-info-data-item">
                   <i-calendar theme="filled" size="13" fill="#797979"/>
-                  <span>{{post.createTime}}</span>
+                  <a-tooltip placement="top">
+                    <template #title>
+                      <div>首次发布：{{post.createTime}}</div>
+                      <div>最近更新：{{post.updateTime}}</div>
+                    </template>
+                    <span>{{post.createTime}}</span>
+                  </a-tooltip>
                 </div>
                 <div class="post-info-data-item">
                   <i-preview-open theme="filled" size="14" fill="#797979"/>
@@ -219,6 +225,7 @@
                   align-items: center;
                   margin-right: 6px;
                   color: #797979;
+                  cursor: pointer;
 
                   span {
                     margin-left: 2px;

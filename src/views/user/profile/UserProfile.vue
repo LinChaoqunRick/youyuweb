@@ -8,13 +8,14 @@
         <div class="user-menu-content">
           <div class="content-menu">
             <RouterLink v-for="item in showMenuItems" :to="item.path"
-                         v-slot="{isActive, isExactActive, navigate}">
-            <div :class="{'router-link-active':isActive, 'router-link-exact-active':item.exact?isExactActive:isActive}"
-                  @click="handleNavigate(isActive,isExactActive,navigate)" class="menu-item">{{item.title}}
-              <div class="lock" v-if="item.hide">
-                <i-protect theme="filled" size="10" fill="#1890ff"/>
+                        v-slot="{isActive, isExactActive, navigate}">
+              <div
+                :class="{'router-link-active':isActive, 'router-link-exact-active':item.exact?isExactActive:isActive}"
+                class="menu-item">{{item.title}}
+                <div class="lock" v-if="item.hide">
+                  <i-protect theme="filled" size="10" fill="#1890ff"/>
+                </div>
               </div>
-            </div>
             </RouterLink>
             <div class="menu-right">
               <div class="menu-setting" v-if="isOwn">

@@ -6,7 +6,17 @@
       <template #content>
         <div v-for="item in menuList" class="ope-list">
           <div class="ope-list-separator" v-if="item.type === 'separator'"></div>
-          <div class="ope-list-item ope-list1" v-else @click="handleClick(item)">
+          <RouterLink v-else-if="item.path" :to="item.path" class="ope-list1"
+                      v-slot="{isActive, isExactActive, navigate}">
+            <div class="ope-list-item"
+                 :class="{'router-link-active':isActive, 'router-link-exact-active':item.exact?isExactActive:isActive}">
+              <component :is="item.icon" theme="outline" size="18"/>
+              <div class="ope-item-label">
+                {{item.label}}
+              </div>
+            </div>
+          </RouterLink>
+          <div v-else class="ope-list-item ope-list1" @click="handleClick(item)">
             <component :is="item.icon" theme="outline" size="18"/>
             <div class="ope-item-label">
               {{item.label}}
@@ -34,7 +44,7 @@
   import {ExclamationCircleOutlined} from '@ant-design/icons-vue';
   import {createVNode} from 'vue';
   import {Modal, message} from 'ant-design-vue';
-  import {useRouter} from 'vue-router';
+  import {useRouter, RouterLink} from 'vue-router';
   import {cleanCookieLocalStorage} from "@/assets/utils/utils";
 
   const {getters, dispatch} = useStore();
@@ -44,45 +54,55 @@
   const menuList = [
     {
       label: "我的主页",
-      icon: "i-home"
+      icon: "i-home",
+      path: `/user/${userInfo.value.id}`,
+      exact: true
     },
     {
       label: "管理文章",
-      icon: "i-pencil"
+      icon: "i-pencil",
+      path: `/user/${userInfo.value.id}/post`
     },
     {
       label: "我的时刻",
-      icon: "i-ulikecam"
+      icon: "i-ulikecam",
+      path: `/user/${userInfo.value.id}/moment`
     },
     {
       label: "我的关注",
-      icon: "i-like"
+      icon: "i-like",
+      path: `/user/${userInfo.value.id}/follow`
     },
     {
       label: "我的收藏",
-      icon: "i-star"
+      icon: "i-star",
+      path: `/user/${userInfo.value.id}/collection`
     },
     {
       type: 'separator'
     },
     {
       label: "个人中心",
-      icon: "i-user"
+      icon: "i-user",
+      path: '/user/center/profile'
     },
     {
       label: "消息通知",
-      icon: "i-remind"
+      icon: "i-remind",
+      path: '/user/center/message'
     },
     {
       label: "账号设置",
-      icon: "i-setting-one"
+      icon: "i-setting-one",
+      path: '/user/center/account'
     },
     {
       type: 'separator'
     },
     {
       label: "帮助",
-      icon: "i-help"
+      icon: "i-help",
+      path: '/help'
     },
     {
       label: "退出",
@@ -92,27 +112,6 @@
 
   function handleClick(item) {
     switch (item.label) {
-      case "我的关注":
-        router.push(`/user/${userInfo.value.id}/follow`)
-        break;
-      case "我的收藏":
-        router.push(`/user/${userInfo.value.id}/collection`)
-        break;
-      case "我的时刻":
-        router.push(`/user/${userInfo.value.id}/moment`)
-            break;
-      case "我的主页":
-        router.push(`/user/${userInfo.value.id}`)
-        break;
-      case "管理文章":
-        router.push(`/user/${userInfo.value.id}/post`)
-        break;
-      case "个人中心":
-        router.push(`/user/center/profile`)
-        break;
-      case "账号设置":
-        router.push(`/user/center/account`)
-        break;
       case "退出":
         showConfirm();
         break;
@@ -188,7 +187,13 @@
       align-items: center;
       cursor: pointer;
       padding: 7px 8px;
-      color: rgb(96, 98, 102);
+      color: rgb(96, 98, 102) !important;
+      font-weight: normal;
+
+      &.router-link-exact-active {
+        color: #1890ff !important;
+        font-weight: bold;
+      }
 
       .i-icon {
         fill: #637792;
