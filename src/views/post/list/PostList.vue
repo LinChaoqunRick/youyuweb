@@ -52,7 +52,7 @@
 
     .article-list {
       width: 54%;
-      margin-bottom: 8px;
+      max-width: 860px;
 
       .article-body {
         width: 100%;

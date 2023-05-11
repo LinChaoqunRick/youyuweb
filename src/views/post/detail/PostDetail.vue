@@ -174,6 +174,7 @@
 
     .post-body {
       width: 64%;
+      max-width: 960px;
       margin-left: 8px;
 
       .post-main {
