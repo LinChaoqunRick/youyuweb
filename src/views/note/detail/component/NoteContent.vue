@@ -5,9 +5,11 @@
         <div class="chapter-title">{{chapter.title}}</div>
         <div class="chapter-info">
           <span>本文由用户</span>
-          <span class="user-info" @click="$router.push(`/user/${chapter.user.id}/moment`)">
-          <img :src="chapter.user.avatar"/>
-          <span class="info-nickname">{{chapter.user.nickname}}</span>
+          <span class="user-info">
+            <RouterLink :to="`/user/${chapter.user.id}`">
+              <img :src="chapter.user.avatar"/>
+              <span class="info-nickname">{{chapter.user.nickname}}</span>
+            </RouterLink>
         </span>
           <span>提供</span>，
           <div>发布于：<span class="time">{{chapter.createTime}}</span>，最后更新时间：
@@ -18,7 +20,7 @@
           </div>
         </div>
         <div class="chapter-content">
-          <MdPreview :text="chapter.content" editorId="note-content"/>
+          <MdPreview :text="chapter.content || ''" editorId="note-content"/>
         </div>
         <div class="chapter-bottom" id="chapter-bottom"></div>
       </div>
@@ -42,6 +44,7 @@
 <script setup lang="ts">
   import {ref, watch, onMounted, computed} from "vue";
   import {useStore} from "vuex";
+  import {RouterLink} from "vue-router";
   import type {chapter} from "@/views/note/type";
   import MdPreview from "@/components/content/mdEditor/MdPreview.vue";
   import MdEditorCom from "@/components/content/mdEditor/MdEditorCom.vue";
