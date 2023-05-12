@@ -78,7 +78,7 @@
       margin-top: 6px;
       height: 30px;
       width: 100%;
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--youyu-text1);
       font-family: DM Sans, sans-serif;
       font-size: 13px;
       font-weight: 500;

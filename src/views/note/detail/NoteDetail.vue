@@ -85,6 +85,7 @@
       border-right: var(--youyu-navigation-border);
       transform: translateX(0);
       transition: .3s;
+      z-index: 1;
 
       .collapse-button {
         display: flex;
@@ -103,7 +104,7 @@
       }
 
       &.note-category-collapse {
-        transform: translateX(-100%);
+        margin-left: -300px;
 
         .collapse-button {
           transform: rotateY(180deg);

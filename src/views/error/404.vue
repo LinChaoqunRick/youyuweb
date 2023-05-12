@@ -44,6 +44,12 @@
     button {
       width: 200px;
       font-weight: bold;
+      letter-spacing: 1px;
+
+      &:hover {
+        background-color: #1890ff;
+        color: #ffffff;
+      }
     }
   }
 </style>
