@@ -31,7 +31,7 @@
         </transition>
       </div>
       <div class="login-panel-close" @click="handleClose">
-        <i-close size="24" fill="#fff"/>
+        <i-close size="24" fill="currentColor"/>
       </div>
     </div>
   </div>
@@ -42,6 +42,7 @@
   import LoginAccount from './LoginAccount.vue';
   import LoginTelephone from './LoginTelephone.vue';
   import RegisterPanel from './RegisterPanel.vue';
+  import {addClass, removeClass, hasScroll} from "@/assets/utils/utils.ts";
 
   export default {
     name: "LoginPanel",
@@ -59,7 +60,8 @@
     data() {
       return {
         type: 0, // 0:login, 1:register,
-        loginType: 0 // 0:账密登录 2:手机登录
+        loginType: 0, // 0:账密登录 2:手机登录,
+        isScroll: false
       }
     },
     methods: {
@@ -74,6 +76,13 @@
         this.loginType = loginType;
       }
     },
+    created() {
+      this.isScroll = hasScroll();
+      addClass(document.body, this.isScroll ? "scrolling-effect-scroll" : 'scrolling-effect-noscroll');
+    },
+    beforeUnmount() {
+      removeClass(document.body, this.isScroll ? "scrolling-effect-scroll" : 'scrolling-effect-noscroll');
+    }
   }
 </script>
 
@@ -87,8 +96,9 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, .3);
+    background-color: rgba(0, 0, 0, .45);
     z-index: 2000;
+    overflow: auto;
 
     .login-panel-body {
       position: relative;
@@ -97,6 +107,7 @@
       height: 500px;
       background-color: var(--youyu-login-background);
       color: var(--youyu-login-color);
+      box-shadow: var(--youyu-shadow1);
       transition: .6s;
 
 
@@ -113,7 +124,8 @@
 
         .switch-button {
           margin-bottom: 20px;
-          background-color: rgba(255, 255, 255, 0.7);
+          font-weight: bold;
+          /*background-color: rgba(255, 255, 255, 0.7);*/
         }
       }
 
@@ -146,9 +158,10 @@
               font-size: 18px;
               font-weight: bold;
               color: #637792;
+              background-color: var(--youyu-background2);
 
               &.type-active {
-                background-color: #edeeef;
+                background-color: var(--youyu-background1) !important;
                 /*color: white;*/
               }
             }
@@ -159,7 +172,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: white;
+            background-color: var(--youyu-background1);
           }
         }
       }
@@ -169,6 +182,12 @@
         top: -26px;
         right: -26px;
         cursor: pointer;
+        color: #ebebeb;
+        transition: .3s;
+
+        &:hover {
+          color: #ffffff;
+        }
       }
     }
   }

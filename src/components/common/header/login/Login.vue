@@ -134,7 +134,7 @@
         width: 28px;
         height: 28px;
         border-radius: 14px;
-        background-color: #eaf2ff;
+        background-color: var(--youyu-login-icon-background);
         display: flex;
         align-items: center;
         justify-content: center;

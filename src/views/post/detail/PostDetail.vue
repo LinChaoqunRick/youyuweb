@@ -180,7 +180,7 @@
 
     .post-body {
       width: 64%;
-      max-width: 960px;
+      max-width: 1050px;
       margin-left: 8px;
 
       .post-main {
@@ -350,7 +350,7 @@
         }
 
         .post-content {
-          padding: 12px 24px 24px 24px;
+          padding: 0 24px;
         }
       }
 

@@ -287,7 +287,7 @@
         justify-content: center;
         align-items: center;
         width: 100%;
-        padding: 16px 0;
+        padding: 10px 0;
 
         .statis-data {
           flex: 1;
@@ -319,7 +319,7 @@
 
       .user-signature {
         width: 100%;
-        padding: 0 16px;
+        padding: 0 16px 10px 16px;
         display: flex;
 
         .sign-title {

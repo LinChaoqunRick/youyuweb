@@ -234,3 +234,10 @@ export const cleanCookieLocalStorage = () => {
   Cookies.remove("token");
   localStorage.clear();
 }
+
+/**
+ * 判断body是否存在滚动条
+ */
+export function hasScroll() {
+  return document.body.scrollHeight > (window.innerHeight || document.documentElement.clientHeight);
+}

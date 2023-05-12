@@ -177,7 +177,7 @@
 <style lang="scss">
   .user-info-popover {
     .ope-list-separator {
-      border-bottom: 2px solid #e7e7e7;
+      border-bottom: 2px solid var(--youyu-border-color2);
     }
 
     .ope-list-item {
@@ -187,7 +187,7 @@
       align-items: center;
       cursor: pointer;
       padding: 7px 8px;
-      color: rgb(96, 98, 102) !important;
+      color: var(--youyu-body-text1);
       font-weight: normal;
 
       &.router-link-exact-active {
@@ -200,7 +200,7 @@
       }
 
       &:hover {
-        background-color: #f5f5f5;
+        /*background-color: var(--youyu-body-background-ligth);*/
         color: #1890ff;
         /*font-weight: bold;*/
 

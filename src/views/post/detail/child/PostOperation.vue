@@ -116,6 +116,10 @@
       cursor: pointer;
       color: #8a919f;
 
+      .i-icon {
+        transition: .3s;
+      }
+
       &.active {
         .i-icon {
           color: #1890ff !important;

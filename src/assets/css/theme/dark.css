@@ -9,7 +9,7 @@
   /*globe*/
   --youyu-body-background: rgba(26, 26, 26, 0.6);
   --youyu-body-background1: rgba(58, 58, 58, 0.58);
-  --youyu-body-background2: rgba(0, 0, 0);
+  --youyu-body-background2: rgba(0, 0, 0, 1);
   --youyu-body-background3: rgba(0, 0, 0, 0.85);
   --youyu-body-background-ligth: rgb(45, 45, 45);
   --youyu-body-text: #fff;
@@ -27,6 +27,7 @@
   /*login*/
   --youyu-login-background: #1a1a1a;
   --youyu-login-color: #fff;
+  --youyu-login-icon-background: #282828;
 
   /*theme-switch*/
   --theme-switch-border: 1px solid rgba(84, 84, 84, 0.65);
@@ -46,6 +47,9 @@
 
   /*comment*/
   --subcomment-background: rgba(45, 45, 45, 0.7);
+
+  /*shadow*/
+  --youyu-shadow1: 0 0 10px rgba(255, 255, 255, .36);
 
   /*antd*/
   --antd-background: #141414

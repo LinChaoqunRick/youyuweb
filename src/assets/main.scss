@@ -43,3 +43,12 @@ html {
   }
 }
 
+.scrolling-effect-scroll {
+  overflow: hidden;
+  width: calc(100% - 17px);
+}
+
+.scrolling-effect-noscroll {
+  overflow: hidden;
+}
+
