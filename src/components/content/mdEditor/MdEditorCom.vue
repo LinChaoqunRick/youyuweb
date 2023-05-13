@@ -22,6 +22,7 @@
   import {useStore} from "vuex";
   import MdEditor from 'md-editor-v3';
   import type {ExposeParam, InsertContentGenerator} from 'md-editor-v3';
+  import {message} from "ant-design-vue";
 
   import EmojiExtension from '@/components/content/mdEditor/child/EmojiExtension/index.vue';
   import MarkExtension from '@/components/content/mdEditor/child/MarkExtension/index.vue';
@@ -118,8 +119,15 @@
   const onChange = (v: string) => (emit("update:modelValue", v));
 
   const onUploadImg = async (files: File[], callback: Function) => {
-    const res = await uploadToOss(files)
-    callback(res.map((item) => item.url));
+    const hide = message.loading('上传中...', 0);
+    uploadToOss(files).then(res => {
+      message.success("上传成功");
+      callback(res.map((item) => item.url));
+    }).catch(() => {
+      message.error("上传失败");
+    }).finally(() => {
+      hide();
+    });
   };
 
   defineExpose({
