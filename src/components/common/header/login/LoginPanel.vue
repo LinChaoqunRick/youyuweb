@@ -113,7 +113,7 @@
 
       .login-panel-image {
         background-image: url('https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/login/loginImg.jpg');
-        background-size: contain;
+        background-size: cover;
         height: 100%;
         width: 270px;
         display: flex;
@@ -199,6 +199,14 @@
 
     .login-panel-content {
       transform: translateX(-270px);
+    }
+  }
+</style>
+
+<style lang="scss">
+  .dark-theme {
+    .login-panel-image {
+      background-image: url('https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/login/dark-login.jpg') !important;
     }
   }
 </style>
