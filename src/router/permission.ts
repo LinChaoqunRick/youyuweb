@@ -13,9 +13,9 @@ import search from "./modules/search";
 const routes = [
   ...home,
   ...post,
-  ...magazine,
-  ...note,
   ...moment,
+  ...note,
+  ...magazine,
   ...album,
   ...create,
   ...lab,
