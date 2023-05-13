@@ -56,7 +56,7 @@
                  :style="{left: 40 * index + 'px',top: 8 * index + 'px'}" class="image-preview">
               <img :src="file"/>
               <div class="image-mask">
-                <div class="image-mask-content content-preview" @click="handlePreview(file)">
+                <div class="image-mask-content content-preview" @click="handlePreview(file, index)">
                   <i-preview-open theme="outline" size="16" fill="currentColor"/>
                   <div class="content-name">预览</div>
                 </div>
@@ -66,15 +66,6 @@
                 </div>
               </div>
             </div>
-            <a-image
-              :width="200"
-              :style="{ display: 'none' }"
-              :preview="{
-                    visible: previewVisible,
-                    onVisibleChange: setPreviewVisible,
-                }"
-              :src="image"
-            />
           </div>
         </a-form-item>
         <a-form-item label="摘要" name="summary">
@@ -109,11 +100,14 @@
 
     <a-modal v-model:visible="modalVisible" :title="`选取封面(还可选${restNum}张)`" width="60%" @ok="handleConfirm"
              wrapClassName="post-image-select-modal">
-      <div class="image-box">
+      <div class="image-box" v-if="postImages.length">
         <div class="image-item" v-for="item in postImages" :class="{'selected-active': item.selected}">
           <i-check-small v-if="item.selected" theme="outline" size="18" fill="#fff"/>
           <img :src="item.url" @click="handleItemClick(item)"/>
         </div>
+      </div>
+      <div v-else class="no-data">
+        暂无数据
       </div>
     </a-modal>
   </div>
@@ -134,6 +128,8 @@
   import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
   import type {postData} from "@/types/post";
   import {getMarkDownImages} from "@/assets/utils/utils";
+  import openImage from "@/libs/tools/openImage";
+  import list from "ant-design-vue/es/transfer/list";
 
   const {dispatch} = useStore();
 
@@ -191,7 +187,6 @@
     inputVisible: false,
     inputValue: '',
   });
-  const image = ref<string>('');
   const postImages = ref([]);
   const columnList = ref([]);
   const modalVisible = ref(false);
@@ -288,9 +283,14 @@
     });
   };
 
-  const handlePreview = (item): void => {
-    image.value = item;
-    setPreviewVisible(true)
+  const handlePreview = (item, index): void => {
+    const list = props.formValidate.thumbnail.map(item => item.split("?")[0]);
+    openImage({
+      componentProps: {
+        list,
+        current: index
+      }
+    })
   }
 
   const handleDelete = (index): void => {
@@ -300,11 +300,6 @@
     }
     props.formValidate.thumbnail.splice(index, 1)
   }
-
-  const previewVisible = ref<boolean>(false);
-  const setPreviewVisible = (value): void => {
-    previewVisible.value = value;
-  };
 
   const openModal = () => {
     modalVisible.value = true;
@@ -328,7 +323,6 @@
         const newUrl = item.url.split("?")[0];
         item.url = newUrl + "?x-oss-process=style/smallThumb"
       })
-      console.log(postImages.value);
     }
   })
   defineExpose({
