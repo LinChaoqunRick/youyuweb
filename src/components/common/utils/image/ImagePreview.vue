@@ -10,7 +10,7 @@
                  @click="handleScale('large')"/>
       <i-zoom-out :class="{'disabled': scale <= minScale}" theme="outline" size="20" fill="currentColor"
                   @click="handleScale('small')"/>
-      <i-close theme="outline" size="20" fill="currentColor"/>
+      <i-close theme="outline" size="20" fill="currentColor" @click="onClose"/>
       <div class="image-preview-progress" v-if="props.list.length>1">{{current+1}} / {{props.list.length}}</div>
     </div>
     <div class="image-preview-body">
@@ -32,8 +32,13 @@
     list: {
       type: Array,
       required: true
+    },
+    current: {
+      type: Number,
+      default: 0
     }
-  })
+  });
+  const emit = defineEmits(['onClose']);
 
   interface resultData {
     width: number,
@@ -55,15 +60,18 @@
     lastPointermove = {x: 0, y: 0}; // 用于计算diff;
 
   const scale = ref<number>(1);
-  const current = ref<number>(0);
+  const current = ref<number>(props.current);
 
-  onMounted(() => {
+  function initListen() {
     image = document.getElementById('preview-image');
     listenWheel();
     listenDrag();
-  })
+  }
 
   function onLoad() {
+    if (!image) {
+      initListen();
+    }
     refreshData();
     result = getImgSize(image.naturalWidth, image.naturalHeight, window.innerWidth, window.innerHeight);
   }
@@ -85,7 +93,6 @@
       } else {
         scale.value = _scale;
       }
-      console.log(scale.value);
 
       if (e.target.tagName === 'IMG') {
         // 图片的中心坐标
@@ -250,6 +257,10 @@
 
     refreshTransform();
   }
+
+  function onClose() {
+    emit('onClose');
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -261,8 +272,6 @@
     left: 0;
     z-index: 1000;
     background-color: rgba(0, 0, 0, .55);
-    animation: expand 0.3s 1;
-    animation-fill-mode: forwards;
 
     .image-preview-operations {
       display: flex;
@@ -350,15 +359,6 @@
           left: 2px;
         }
       }
-    }
-  }
-
-  @keyframes expand {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
     }
   }
 </style>
