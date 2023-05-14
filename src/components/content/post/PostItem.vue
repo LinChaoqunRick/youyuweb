@@ -4,6 +4,10 @@
       <div class="image-wrapper">
         <RouterLink class="post-link" :to="{name:'postDetail',params:{postId:data.id}}">
           <img :src="thumbnails[0]+'?x-oss-process=style/smallThumb'">
+          <div class="item-slants">
+            <div class="item-slant item-slant-top"></div>
+            <div class="item-slant item-slant-bottom"></div>
+          </div>
         </RouterLink>
       </div>
       <div class="content-wrapper">
@@ -12,9 +16,10 @@
             <p v-html="data.title"/>
           </RouterLink>
         </div>
-        <RouterLink class="post-link article-caption" v-html="data.summary" :to="{name:'postDetail',params:{postId:data.id}}"/>
+        <RouterLink class="post-link article-caption" v-html="data.summary"
+                    :to="{name:'postDetail',params:{postId:data.id}}"/>
         <div class="article-info">
-          <RouterLink  class="info-item info-nickname" :to="`/user/${data.user.id}`">{{data.user.nickname}}</RouterLink>
+          <RouterLink class="info-item info-nickname" :to="`/user/${data.user.id}`">{{data.user.nickname}}</RouterLink>
           <span class="info-item create-type"
                 :class="[`create_type_${data.createType}`]">{{createTypeList[data.createType]}}</span>
           <span class="info-item category-name">{{data.categoryName}}</span>
@@ -40,7 +45,7 @@
         </RouterLink>
       </div>
       <div class="article-info">
-        <RouterLink  class="info-item info-nickname" :to="`/user/${data.user.id}`">{{data.user.nickname}}</RouterLink>
+        <RouterLink class="info-item info-nickname" :to="`/user/${data.user.id}`">{{data.user.nickname}}</RouterLink>
         <span class="info-item create-type" :class="[`create_type_${data.createType}`]">{{createTypeList[data.createType]}}</span>
         <span class="info-item category-name">{{data.categoryName}}</span>
         <span class="info-item">{{(data.createTime).substr(0, 10)}}</span>
@@ -100,6 +105,7 @@
         overflow: hidden;
 
         .post-link {
+          position: relative;
           width: 210px;
           height: 140px;
           overflow: hidden;
@@ -233,10 +239,6 @@
   .flex-revert {
     flex-direction: row-reverse;
 
-    .image-wrapper {
-      /*padding: 16px 16px 16px 0 !important;*/
-    }
-
     .content-wrapper {
       padding: 12px 0 12px 16px !important;
     }
@@ -283,5 +285,73 @@
   .post-link {
     color: inherit;
     display: block;
+  }
+</style>
+
+<style lang="scss" scoped>
+  .post-item {
+    .article-item {
+      .item-slants {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+
+        .item-slant {
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+
+          &.item-slant-top {
+            transform: rotate(109deg) translateY(220px);
+            transition: .4s;
+          }
+
+          &.item-slant-bottom {
+            transform: rotate(70deg) translateY(190px);
+            transition: .3s;
+          }
+        }
+      }
+
+      &:hover {
+        .item-slant {
+          &.item-slant-top {
+            background-color: rgba(24, 144, 255, 0.8);
+            transform: rotate(109deg) translateY(157px);
+          }
+
+          &.item-slant-bottom {
+            background-color: rgba(255, 255, 255, 0.6);
+            transform: rotate(70deg) translateY(155px);
+          }
+        }
+      }
+    }
+
+    .flex-revert {
+      .item-slant-top {
+        transform: rotate(-109deg) translateY(220px) !important;
+      }
+
+      .item-slant-bottom {
+        transform: rotate(-70deg) translateY(190px) !important;
+      }
+
+      &:hover {
+        .item-slant-top {
+          background-color: rgba(24, 144, 255, 0.8);
+          transform: rotate(-109deg) translateY(157px) !important;
+        }
+
+        .item-slant-bottom {
+          background-color: rgba(255, 255, 255, 0.6);
+          transform: rotate(-70deg) translateY(155px) !important;
+        }
+      }
+    }
   }
 </style>

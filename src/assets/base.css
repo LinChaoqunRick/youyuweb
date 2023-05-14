@@ -17,7 +17,8 @@ html, body {
 html {
   /*background-image: url(https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/snow3.jpg);*/
   /*background-image: url(https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/flower.jpg);*/
-  background-image: url(https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/cloud.jpg);
+  /*background-image: url(https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/cloud.jpg);*/
+  background-image: url("https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/e3408389cb0d4ea1b5f651873dab2a19.jpg");
   background-size: 100vw 100vh;
   background-repeat: no-repeat;
   background-attachment: fixed;
