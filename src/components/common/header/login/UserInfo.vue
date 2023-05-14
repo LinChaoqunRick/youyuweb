@@ -6,8 +6,7 @@
       <template #content>
         <div v-for="item in menuList" class="ope-list">
           <div class="ope-list-separator" v-if="item.type === 'separator'"></div>
-          <RouterLink v-else-if="item.path" :to="item.path" class="ope-list1"
-                      v-slot="{isActive, isExactActive, navigate}">
+          <RouterLink v-else-if="item.path" :to="item.path" v-slot="{isActive, isExactActive, navigate}">
             <div class="ope-list-item"
                  :class="{'router-link-active':isActive, 'router-link-exact-active':item.exact?isExactActive:isActive}">
               <component :is="item.icon" theme="outline" size="18"/>
@@ -16,7 +15,7 @@
               </div>
             </div>
           </RouterLink>
-          <div v-else class="ope-list-item ope-list1" @click="handleClick(item)">
+          <div v-else class="ope-list-item" @click="handleClick(item)">
             <component :is="item.icon" theme="outline" size="18"/>
             <div class="ope-item-label">
               {{item.label}}
@@ -187,7 +186,7 @@
       align-items: center;
       cursor: pointer;
       padding: 7px 8px;
-      color: var(--youyu-body-text1);
+      color: var(--youyu-body-text1) !important;
       font-weight: normal;
 
       &.router-link-exact-active {
