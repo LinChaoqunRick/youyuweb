@@ -98,8 +98,10 @@
           this.treeData = this.transferData(res.data);
           this.rawDataList = this.flatTreeData(this.treeData);
           if (this.treeData.length) { // 默认选中第一章
-            this.selectedKeys = [this.treeData[0].key];
-            this.$emit("handleNodeSelect", this.treeData[0]);
+            const chapterId = this.$route.query.chapterId;
+            const selectedItem = this.rawDataList.find(item => item.id == chapterId) || this.treeData[0];
+            this.selectedKeys = [selectedItem.key];
+            this.$emit("handleNodeSelect", selectedItem);
           }
         })
       },
@@ -194,7 +196,7 @@
         })
       },
       onLastNext(type) {
-        const node = type === 'last' ? this.lastNode : this.nextNode;
+        const node = type === 'last' ? this.lastNchapter - contentode : this.nextNode;
         this.selectedKeys = [node.key];
         this.$emit("handleNodeSelect", node);
       }
@@ -209,6 +211,10 @@
   .note-category {
     position: relative;
     width: 100%;
+
+    ::v-deep(.ant-tree) {
+      background: transparent;
+    }
 
     .category-top {
       width: 100%;

@@ -4,13 +4,16 @@
       <div class="note-category-body" :class="{'note-category-collapse':collapse}">
         <NoteCategory @handleNodeSelect="handleNodeSelect" ref="NoteCategoryRef"/>
         <div class="collapse-button" @click="onCollapse">
-          <i-left theme="outline" size="16" fill="#bebebe"/>
+          <i-left theme="outline" size="16" fill="currentColor"/>
         </div>
       </div>
       <div class="note-content">
-        <NoteContent :id="id" @contentLoaded="contentLoaded" @saveSuccess="saveSuccess"/>
+        <NoteContent :id="id"
+                     @contentLoaded="contentLoaded"
+                     @saveSuccess="saveSuccess"
+                     @noteInfoCollapse="noteInfoCollapse"/>
       </div>
-      <div class="note-info">
+      <div class="note-info-wrapper" :class="{'note-info-collapse':infoCollapse}">
         <NoteInfo v-if="showCatalog"/>
       </div>
     </div>
@@ -29,6 +32,7 @@
   const NoteCategoryRef = ref(null);
   const id = ref(null);
   const collapse = ref<boolean>(false);
+  const infoCollapse = ref<boolean>(false);
   const {dispatch} = useStore();
   const route = useRoute();
   const note = ref<note>();
@@ -62,6 +66,10 @@
     collapse.value = !collapse.value;
   }
 
+  function noteInfoCollapse(value) {
+    infoCollapse.value = value;
+  }
+
   function saveSuccess() {
     NoteCategoryRef.value.initData();
   }
@@ -73,7 +81,7 @@
     display: flex;
     height: calc(100vh - 100px);
     width: 100%;
-    background-color: var(--youyu-background1);
+    background-color: var(--article-background);
     overflow: hidden;
 
     .note-category-body {
@@ -97,10 +105,14 @@
         height: 66px;
         border: 8px solid transparent;
         border-left: 0;
-        border-right: 16px solid var(--youyu-background3);
+        border-right: 16px solid var(--youyu-background2);
         cursor: pointer;
         transition: all .3s ease-in-out;
-        transform: rotateY(0);
+        color: #bebebe;
+
+        &:hover {
+          color: var(--youyu-text2);
+        }
       }
 
       &.note-category-collapse {
@@ -116,11 +128,17 @@
     .note-content {
       flex: 1;
       overflow: hidden;
+      background: transparent;
     }
 
-    .note-info {
+    .note-info-wrapper {
       width: 280px;
       border-left: var(--youyu-navigation-border);
+      transition: .3s;
+
+      &.note-info-collapse {
+        margin-right: -280px;
+      }
     }
   }
 </style>
