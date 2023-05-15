@@ -2,7 +2,7 @@ const route = [
   {
     path: '/moment',
     name: 'moment',
-    redirect: '/moment/list/1',
+    redirect: '/moment/list',
     meta: {
       title: "时刻",
       code: "MOMENT"
@@ -10,7 +10,7 @@ const route = [
     component: () => import('@/views/moment/Moment.vue'),
     children: [
       {
-        path: "list/:page(\\d+)?",
+        path: "list",
         name: "momentList",
         meta: {
           title: "时刻列表",
