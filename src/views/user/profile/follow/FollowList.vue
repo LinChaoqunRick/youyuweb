@@ -17,7 +17,7 @@
   import {useStore} from "vuex";
   import {computed, inject, ref, watch} from "vue";
   import YTable from "@/components/common/table/YTable.vue";
-  import UserItem from "./UserItem.vue";
+  import UserItem from "@/components/content/user/item/UserItem.vue";
 
   const {getters, dispatch} = useStore();
   const user = inject('user');

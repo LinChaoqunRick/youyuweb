@@ -12,7 +12,7 @@
   import {ref, reactive} from 'vue';
   import {useRoute} from "vue-router";
   import YTable from "@/components/common/table/YTable.vue";
-  import UserItem from "@/views/user/profile/follow/UserItem.vue";
+  import UserItem from "@/components/content/user/item/UserItem.vue";
 
   const route = useRoute();
 
