@@ -61,27 +61,51 @@ const route = [
           },
           {
             path: "collection",
-            name: "userCollection",
-            meta: {
-              title: "Ta的收藏",
+            redirect: to => {
+              return {name: 'userCollection', params: {userId: to.params.userId, page: 1}}
             },
-            component: () => import("@/views/user/profile/collection/CollectList.vue"),
+            children: [
+              {
+                path: ':page(\\d+)',
+                name: 'userCollection',
+                meta: {
+                  title: "Ta的收藏",
+                },
+                component: () => import("@/views/user/profile/collection/CollectList.vue"),
+              }
+            ]
           },
           {
             path: "follow",
-            name: "userFollow",
-            meta: {
-              title: "Ta的关注",
+            redirect: to => {
+              return {name: 'userFollow', params: {userId: to.params.userId, page: 1}}
             },
-            component: () => import("@/views/user/profile/follow/FollowList.vue"),
+            children: [
+              {
+                path: ':page(\\d+)',
+                name: "userFollow",
+                meta: {
+                  title: "Ta的关注",
+                },
+                component: () => import("@/views/user/profile/follow/FollowList.vue"),
+              }
+            ]
           },
           {
             path: "fans",
-            name: "userFans",
-            meta: {
-              title: "Ta的关注",
+            redirect: to => {
+              return {name: 'userFans', params: {userId: to.params.userId, page: 1}}
             },
-            component: () => import("@/views/user/profile/fans/FansList.vue"),
+            children: [
+              {
+                path: ':page(\\d+)',
+                name: "userFans",
+                meta: {
+                  title: "Ta的关注",
+                },
+                component: () => import("@/views/user/profile/fans/FansList.vue"),
+              }
+            ]
           }
         ]
       },
