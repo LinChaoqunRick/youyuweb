@@ -7,7 +7,7 @@
     </div>
     <div class="item-bottom">
       <RouterLink :to="{name: 'noteDetail', params: {noteId: data.id}}">
-        <div class="item-title" :title="data.name">《{{data.name}}》</div>
+        <div class="item-title" :title="data.name">{{data.name}}</div>
       </RouterLink>
       <RouterLink :to="`/user/${data.user.id}`">
         <div class="item-author">
@@ -99,7 +99,7 @@
         width: 100%;
         font-size: 16px;
         font-weight: bold;
-        padding: 8px 6px;
+        padding: 8px 12px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
