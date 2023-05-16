@@ -321,7 +321,7 @@
         .item-slant {
           &.item-slant-top {
             background-color: rgba(24, 144, 255, 0.8);
-            transform: rotate(109deg) translateY(157px);
+            transform: rotate(109deg) translateY(159px);
           }
 
           &.item-slant-bottom {
@@ -344,7 +344,7 @@
       &:hover {
         .item-slant-top {
           background-color: rgba(24, 144, 255, 0.8);
-          transform: rotate(-109deg) translateY(157px) !important;
+          transform: rotate(-109deg) translateY(159px) !important;
         }
 
         .item-slant-bottom {
