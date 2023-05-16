@@ -27,6 +27,7 @@ function handleScroll() {
     // console.log(aside.offsetHeight, mainApp.offsetHeight);
     // 如果aside高度与mainApp一致，就是参考元素高度没aside高
     if (aside.offsetHeight >= mainApp.offsetHeight) {
+      cacheTop = 0;
       aside.style.cssText = `position: relative;`;
       return;
     }
