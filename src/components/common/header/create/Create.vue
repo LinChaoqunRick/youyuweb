@@ -67,7 +67,7 @@
         /*background-color: var(--youyu-body-background);*/
 
         .ant-dropdown-menu-title-content {
-          color: #515767;
+          color: #909090;
         }
 
         .router-link-active {
@@ -85,7 +85,7 @@
 
         .i-icon {
           font-size: 16px;
-          margin-right: 10px;
+          margin-right: 6px;
         }
       }
     }

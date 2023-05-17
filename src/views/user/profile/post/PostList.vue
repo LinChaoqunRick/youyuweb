@@ -146,7 +146,7 @@
 
     .list-body {
       .article-item {
-        border-top: 1px solid #e4e6eb;
+        border-top: 1px solid var(--youyu-border-color);
 
         button {
           font-size: 13px;

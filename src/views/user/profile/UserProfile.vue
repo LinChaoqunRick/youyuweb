@@ -311,7 +311,6 @@
                 font-size: 24px;
                 top: -61px;
                 left: 30px;
-                cursor: auto;
               }
 
               .uid {
@@ -344,7 +343,7 @@
             padding: 0 10px;
             display: flex;
             background-color: var(--youyu-body-background2);
-            border-bottom: 1px solid #e4e6eb;
+            border-bottom: 1px solid var(--youyu-border-color);
 
             .menu-item {
               position: relative;

@@ -4,14 +4,18 @@
       <div class="basic-info">
         <div class="user-avatar-nickname">
           <div class="user-avatar">
-            <img :src="user.avatar" @click="handleProfile"/>
+            <RouterLink :to="`/user/${user.id}`">
+              <img :src="user.avatar"/>
+            </RouterLink>
             <div class="user-gender" v-if="user.sex!==undefined">
               <i-female v-if="user.sex == 1" theme="outline" size="14" fill="#ffc0cb"/>
               <i-male v-else theme="outline" size="14" fill="#00CFF3"/>
             </div>
           </div>
           <div class="user-nickname">
-            <div class="nickname" @click="handleProfile">{{user.nickname}}</div>
+            <RouterLink :to="`/user/${user.id}`">
+              <div class="nickname">{{user.nickname}}</div>
+            </RouterLink>
             <div class="uid">uid: {{user.id}}</div>
           </div>
         </div>
@@ -23,7 +27,7 @@
         </div>
         <div class="user-signature">
           <div class="sign-title">描述：</div>
-          <p>{{user.signature}}</p>
+          <div>{{user.signature}}</div>
         </div>
         <!--        <div class="user-contact">-->
         <!--          <div class="contact-title">社交：</div>-->
@@ -37,9 +41,11 @@
         <!--          </div>-->
         <!--        </div>-->
         <div class="user-operation">
-          <a-button type="primary" @click="handleProfile" class="home-button">
-            <!--            <i-user theme="outline" size="14" fill="currentColor"/>-->
-            Ta的主页
+          <a-button type="primary" class="home-button">
+            <RouterLink :to="`/user/${user.id}`">
+              <!--            <i-user theme="outline" size="14" fill="currentColor"/>-->
+              Ta的主页
+            </RouterLink>
           </a-button>
           <a-button @click="handleMessage" v-if="!isOwn">
             <!--            <i-mail theme="outline" size="14" fill="currentColor"/>-->
@@ -90,7 +96,7 @@
 <script lang="ts" setup>
   import {computed, inject, ref, watch} from 'vue';
   import {useStore} from 'vuex';
-  import {useRoute, useRouter} from 'vue-router';
+  import {useRoute, useRouter, RouterLink} from 'vue-router';
   import {message, Modal} from 'ant-design-vue';
   import type {statType} from "@/types/user";
   import ColumnItemMini from '@/components/content/user/column/ColumnItemMini.vue';
@@ -148,10 +154,6 @@
       });
     }
   };
-
-  function handleProfile() {
-    router.push({path: `/user/${user.value.id}`})
-  }
 
   function handleMessage() {
     if (!isLogin.value) {
@@ -273,6 +275,7 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
+            color: var(--youyu-text) !important;
           }
 
           .uid {

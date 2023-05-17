@@ -1,10 +1,11 @@
 :root {
-  --youyu-background1: #fff;
+  --youyu-background1: #ffffff;
   --youyu-background2: #eeeeee;
   --youyu-background3: #e5e6eb;
 
+  --youyu-text: #000000;
   --youyu-text1: #909090;
-  --youyu-text2: #333;
+  --youyu-text2: #333333;
   /*globe*/
   --youyu-body-background: rgba(244, 245, 245, 0.4);
   --youyu-body-background1: rgba(255, 255, 255, 0.68);
@@ -51,5 +52,8 @@
   --youyu-shadow1: 0 0 10px rgba(0, 0, 0, .36);
 
   /*antd*/
-  --antd-background: #fff
+  --antd-background: #fff;
+
+  /*md-editor*/
+  --editor-icon-color: #3F4A54
 }

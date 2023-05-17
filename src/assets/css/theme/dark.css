@@ -1,8 +1,9 @@
 :root[theme='dark'] {
-  --youyu-background1: #000;
+  --youyu-background1: #000000;
   --youyu-background2: #2a2a2a;
   --youyu-background3: #212121;
 
+  --youyu-text: #ffffff;
   --youyu-text1: #F2F2F5;
   --youyu-text2: #fff;
 
@@ -52,5 +53,8 @@
   --youyu-shadow1: 0 0 10px rgba(255, 255, 255, .36);
 
   /*antd*/
-  --antd-background: #141414
+  --antd-background: #141414;
+
+  /*md-editor*/
+  --editor-icon-color: #999999
 }

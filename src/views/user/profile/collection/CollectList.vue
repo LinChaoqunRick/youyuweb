@@ -50,6 +50,12 @@
   .collect-list {
     .list-body {
       .article-item {
+        border-bottom: 1px solid var(--youyu-border-color);
+
+        &:last-child {
+          border-bottom: none;
+        }
+
         button {
           font-size: 13px;
         }

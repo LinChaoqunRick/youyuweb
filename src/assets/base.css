@@ -1,9 +1,6 @@
 html, body {
-  height: auto;
-  width: auto;
   color: var(--youyu-body-text) !important;
   background-color: transparent !important;
-  transition: color 0.5s, background-color 0.5s;
   line-height: 1.6;
   font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
   Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
@@ -25,7 +22,7 @@ html {
 }
 
 * {
-  transition: background-color 0.5s, border 0.5s;
+  transition: background-color .3s, border .3s;
 }
 
 .router-link-active {
@@ -94,6 +91,13 @@ html {
 
 .i-icon-loading-four {
   animation: rotate .6s infinite linear;
+}
+
+.ant-card-head {
+  /*position: sticky;*/
+  /*top: 60px;*/
+  /*background-color: var(--youyu-background1) !important;*/
+  font-weight: bold !important;
 }
 
 @keyframes rotate {

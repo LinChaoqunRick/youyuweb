@@ -49,6 +49,8 @@
   .app {
     background-color: var(--youyu-body-background);
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 
     .header {
       height: 60px;

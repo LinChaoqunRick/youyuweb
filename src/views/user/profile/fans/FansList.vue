@@ -34,7 +34,11 @@
       padding: 0 10px;
 
       .list-item {
-        border-bottom: 1px solid #e4e6eb;
+        border-bottom: 1px solid var(--youyu-border-color);
+
+        &:last-child {
+          border-bottom: none;
+        }
       }
     }
   }
