@@ -4,7 +4,8 @@
       <Emoji @emojiHandler="emojiHandler"/>
     </template>
     <template #trigger>
-      <i-smiling-face theme="outline" size="17" fill="#3F4A54" style="padding: 0 3.5px"/>
+      <i-smiling-face theme="outline" size="17" fill="currentColor"
+                      style="padding: 0 3.5px;color:var(--editor-icon-color)"/>
     </template>
   </dropdown-toolbar>
 </template>
@@ -12,11 +13,9 @@
 <script lang="ts" setup>
   import {ref, reactive} from 'vue';
   import type {PropType} from 'vue';
-  import type { InsertContentGenerator } from 'md-editor-v3';
-  import MdEditor from 'md-editor-v3';
+  import type {InsertContentGenerator} from 'md-editor-v3';
+  import {DropdownToolbar} from 'md-editor-v3';
   import Emoji from '@/components/common/utils/emoji/index.vue';
-
-  const DropdownToolbar = MdEditor.DropdownToolbar;
 
   const props = defineProps({
     onInsert: {

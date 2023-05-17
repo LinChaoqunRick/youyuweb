@@ -20,7 +20,7 @@
 <script setup lang="ts">
   import {ref, reactive, toRef, computed} from 'vue';
   import {useStore} from "vuex";
-  import MdEditor from 'md-editor-v3';
+  import {MdEditor} from 'md-editor-v3';
   import type {ExposeParam, InsertContentGenerator} from 'md-editor-v3';
   import {message} from "ant-design-vue";
 

@@ -23,7 +23,7 @@
       />
     </div>
     <template #trigger>
-      <i-help theme="outline" size="17" fill="#3F4A54" style="padding: 0 3.5px"/>
+      <i-help theme="outline" size="17" fill="currentColor" style="padding: 0 3.5px;color:var(--editor-icon-color)"/>
     </template>
   </modal-toolbar>
 </template>
@@ -32,9 +32,7 @@
   import {reactive} from 'vue';
   import type {PropType} from 'vue';
   import {useStore} from 'vuex';
-  import MdEditor from 'md-editor-v3';
-
-  const ModalToolbar = MdEditor.ModalToolbar;
+  import {MdEditor, ModalToolbar} from 'md-editor-v3';
 
   const props = defineProps({
     mdText: {

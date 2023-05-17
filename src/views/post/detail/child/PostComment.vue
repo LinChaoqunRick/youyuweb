@@ -79,10 +79,6 @@
     'underline',
     'italic',
     '-',
-    'title',
-    'unorderedList',
-    'orderedList',
-    '-',
     'codeRow',
     'code',
     'link',
@@ -90,10 +86,7 @@
     1,
     2,
     '-',
-    'revoke',
-    'next',
     '=',
-    'prettier',
     'preview',
   ];
   const footers = ['markdownTotal', '=', 'scrollSwitch'];

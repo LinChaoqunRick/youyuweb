@@ -1,9 +1,9 @@
 <template>
-  <md-editor :modelValue="text" v-bind="editorConfig"/>
+  <MdPreview :modelValue="text" v-bind="editorConfig"/>
 </template>
 
 <script setup lang="ts">
-  import MdEditor from 'md-editor-v3';
+  import { MdPreview } from 'md-editor-v3';
   import {computed, reactive, toRef} from "vue";
   import {useStore} from "vuex";
 
@@ -27,6 +27,8 @@
   const editorConfig = computed(() => {
     return Object.assign({}, editorProps, props.extend);
   })
+
+  const mdHeadingId = (_text, _level, index) => `heading-${index}`;
 </script>
 
 <style scoped>

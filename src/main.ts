@@ -3,7 +3,6 @@ import App from './App.vue';
 import router from './router';
 import store from "@/store";
 import Antd from 'ant-design-vue';
-import MdEditor from 'md-editor-v3';
 import {install} from '@icon-park/vue-next/es/all';
 import animated from 'animate.css'
 
@@ -53,32 +52,5 @@ dayjs.locale('zh-cn') // use loaded locale globally
 // Install
 // install(app); // use default prefix 'icon', eg: icon is People, name is icon-people.
 install(app, 'i'); // use custom prefix 'i', eg: icon is People, name is i-people.
-
-MdEditor.config({
-  markedExtensions: [MarkExtension],
-  markedRenderer(renderer) {
-    renderer.heading = (text, level, _r, _s, _index, headingId) => {
-      return `<h${level} id="${headingId}"><a href="#${headingId}">${text}</a></h${level}>`;
-    };
-
-    renderer.link = (href, title, text) => {
-      return `<a href="${href}" title="${title || ''}" target="_blank">${text}</a>`;
-    };
-
-    return renderer;
-  },
-  editorConfig: {},
-  editorExtensions: {
-    highlight: {
-      css: {
-        atom: {
-          light:
-            'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css',
-          dark: 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css'
-        }
-      }
-    }
-  }
-});
 
 app.mount('#app');

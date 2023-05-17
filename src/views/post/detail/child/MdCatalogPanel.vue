@@ -36,7 +36,7 @@
 <script setup lang="ts">
   import {ref, onMounted} from 'vue';
   import {UseDraggable} from '@vueuse/components';
-  import MdEditor from 'md-editor-v3';
+  import {MdCatalog} from 'md-editor-v3';
 
   const prop = defineProps({
     editorId: {
@@ -51,7 +51,6 @@
   const panel = ref<HTMLElement | null>(null);
   const move = ref<boolean>(false);
   const show = ref<boolean>(false);
-  const MdCatalog = MdEditor.MdCatalog;
   const scrollElement = document.documentElement;
   const headerClientHeight = ref<number>(0)
 

@@ -8,10 +8,9 @@
 </template>
 
 <script setup lang="ts">
-  import MdEditor from 'md-editor-v3';
+  import {MdEditor, MdCatalog} from 'md-editor-v3';
   import {ref, onMounted} from "vue";
 
-  const MdCatalog = MdEditor.MdCatalog;
   const headerClientHeight = ref<number>(0)
 
   const props = defineProps({
