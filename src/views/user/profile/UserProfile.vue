@@ -164,7 +164,7 @@
     .user-main {
       display: flex;
       justify-content: center;
-      margin: 8px 0;
+      padding: 8px 0;
 
       .user-left {
         position: relative;
