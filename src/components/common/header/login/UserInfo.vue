@@ -180,7 +180,6 @@
     }
 
     .ope-list-item {
-      transition: .3s;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -188,6 +187,11 @@
       padding: 7px 8px;
       color: var(--youyu-body-text1) !important;
       font-weight: normal;
+      transition: .3s;
+
+      &:hover {
+        color: #1890ff !important;
+      }
 
       &.router-link-exact-active {
         color: #1890ff !important;
