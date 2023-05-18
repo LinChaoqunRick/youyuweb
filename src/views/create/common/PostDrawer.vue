@@ -50,7 +50,7 @@
           <div class="select-from-post">
             <a-button type="link" :disabled="formValidate.thumbnail.length>=3" @click="openModal">从文章中选取</a-button>
           </div>
-          <UploadFile :disabled="formValidate.thumbnail.length>=3" @uploadSuccess="uploadSuccess"/>
+          <UploadFile :disabled="formValidate.thumbnail.length>=3" accept=".jpg, .jpeg, .png" @uploadSuccess="uploadSuccess"/>
           <div class="file-list">
             <div v-for="(file, index) in formValidate.thumbnail" :key="file"
                  :style="{left: 40 * index + 'px',top: 8 * index + 'px'}" class="image-preview">
