@@ -8,7 +8,8 @@
                      :extend="{
                        maxLength: 500
                      }"
-                     class="write-comment-editor" ref="commentEditor"/>
+                     class="write-comment-editor"
+                     ref="commentEditor"/>
         <div class="action-box">
           <a-button type="primary" :disabled="submittable" :loading="submitLoading" @click="handleSubmit">发表评论
           </a-button>
@@ -94,6 +95,7 @@
   const setPostAttribute = inject('setPostAttribute');
   const submitLoading = ref(false);
   const restLoading = ref(false);
+  const commentEditor = ref(null);
 
   function updateActiveId(value) {
     activeId.value = value;
@@ -150,6 +152,14 @@
       submitLoading.value = false;
     })
   }
+
+  function handleFocus() {
+    commentEditor.value?.handleFocus();
+  }
+
+  defineExpose({
+    handleFocus
+  })
 </script>
 
 <style lang="scss" scoped>

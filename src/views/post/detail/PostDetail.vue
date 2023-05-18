@@ -90,11 +90,11 @@
           <MdCatalogPanel editorId="post-content"/>
         </div>
         <div class="post-operation">
-          <PostOperation v-if="post"/>
+          <PostOperation v-if="post" @scrollToComment="scrollToComment"/>
         </div>
       </div>
       <div class="post-comment">
-        <div class="post-comment-list">
+        <div class="post-comment-list" ref="commentRef">
           <PostComment ref="postComment"/>
         </div>
       </div>
@@ -105,10 +105,11 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import {ref, reactive, computed, provide, readonly, watch, inject} from 'vue';
   import {useRoute, useRouter} from 'vue-router';
   import {useStore} from 'vuex';
+  import {scrollToEle} from "@/assets/utils/utils";
 
   import PercentCounter from "@/components/common/utils/percentCounter/PercentCounter.vue";
   import MdPreview from "@/components/content/mdEditor/MdPreview.vue";
@@ -127,14 +128,13 @@
   const fold = ref(true);
   const userInfo = computed(() => getters['userInfo']);
   const tags = computed(() => post.value.tags?.length ? post.value.tags.split(",") : [])
+  const commentRef = ref(null);
   const postComment = ref(null);
+  const isLogin = computed(() => getters['isLogin']);
 
   function getPostDetail() {
     dispatch("getPostDetail", {postId: route.params.postId}).then(res => {
       post.value = res.data;
-      post.value.content = post.value.content.replace(/!\[.*?]\((https?:\/\/.+\.(png|jpe?g|webp|gif|svg))(.*\))/gi, (match) => {
-        return match.slice(0, match.length - 1) + '?x-oss-process=style/detailThumb)'
-      });
       document.title = res.data.title;
     })
   }
@@ -153,6 +153,13 @@
     fold.value = !fold.value;
   }
 
+  function scrollToComment() {
+    commentRef.value && scrollToEle(commentRef.value.offsetTop - 100);
+    if (isLogin.value) {
+      postComment.value?.handleFocus();
+    }
+  }
+
   function setPostAttribute(name, value) {
     post.value[name] = value;
   }
@@ -165,7 +172,7 @@
 <style lang="scss" scoped>
   .post-detail {
     display: flex;
-    margin: 8px 0;
+    padding: 8px 0;
     justify-content: center;
     /*align-items: flex-start;*/
 
@@ -294,6 +301,7 @@
               align-items: center;
 
               .operation-item {
+                position: relative;
                 height: 10px;
                 font-size: 12px;
                 cursor: pointer;
@@ -302,10 +310,15 @@
                 align-items: center;
 
                 &:nth-child(n+2) {
+                  margin-left: 8px;
+
                   &:before {
-                    content: '|';
-                    color: #e1e1e1;
-                    padding: 0 4px;
+                    position: absolute;
+                    left: -4px;
+                    content: '';
+                    height: 8px;
+                    width: 1px;
+                    background-color: var(--youyu-text1);
                   }
                 }
               }

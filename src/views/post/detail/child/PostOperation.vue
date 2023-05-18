@@ -30,13 +30,13 @@
 </template>
 
 <script lang="ts" setup>
-  import {scrollToEle} from "@/assets/utils/utils";
   import {computed, inject, reactive, ref} from "vue";
   import {useStore} from "vuex";
   import {message} from 'ant-design-vue';
 
   const {getters, commit, dispatch} = useStore();
 
+  const emit = defineEmits(['scrollToComment']);
   const post = inject('post');
   const setPostAttribute = inject('setPostAttribute');
   const item = ref(null);
@@ -45,8 +45,7 @@
   const isLogin = computed(() => getters['isLogin']);
 
   function scrollToComment() {
-    const commentEl: HTMLElement | null = document.querySelector("#post-comment-id");
-    commentEl && scrollToEle(commentEl.offsetTop - 100);
+    emit('scrollToComment');
   }
 
   function handleSetLike() {
