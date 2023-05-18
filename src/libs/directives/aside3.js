@@ -24,8 +24,10 @@ function handleScroll() {
       return;
     }
 
-    // 如果aside高度与asideParent一致，就是参考元素高度没aside高
-    if (aside.offsetHeight >= asideParent.offsetHeight) {
+    // 计算asideParent内容区域高度， 如果aside高度与asideParent内容区域高度一致，就是参考元素高度没aside高
+    const asideParentStyle = getComputedStyle(asideParent);
+    const asideParentContentHeight = asideParent.offsetHeight - parseInt(asideParentStyle.paddingTop) - parseInt(asideParentStyle.paddingBottom);
+    if (aside.offsetHeight >= asideParentContentHeight) {
       cacheTop = 0;
       aside.style.cssText = `position: relative;`;
       return;
