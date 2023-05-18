@@ -1,6 +1,6 @@
 <template>
   <div class="not-found">
-    <img src="http://demo.sucaihuo.com/modals/34/3444/demo/images/bgError.png"/>
+    <img src="https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/error/404Error.png"/>
     <p class="error-text text1">哎呀，你访问的页面不存在！</p>
     <p class="error-text text2">你输入的网址有误或链接已经过期</p>
     <a-button type="primary" ghost size="large" @click="$router.replace('/')">返回首页</a-button>
