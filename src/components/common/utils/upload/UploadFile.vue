@@ -9,6 +9,7 @@
       :before-upload="beforeUpload"
       :disabled="disabled"
       :max-count="1"
+      :accept="accept"
       @change="handleChange"
     >
       <slot :percent="percent">
@@ -28,16 +29,21 @@
 
 <script setup lang="ts">
   import {ref} from 'vue';
-  import {message} from "ant-design-vue";
+  import {message, Upload} from "ant-design-vue";
   import type {UploadChangeParam, UploadProps} from 'ant-design-vue';
   import {useStore} from 'vuex';
   import {createFileName} from "@/assets/utils/utils";
 
   const {dispatch} = useStore();
   const props = defineProps({
+    ...Upload.props,
     disabled: {
       type: Boolean,
       default: false
+    },
+    maxSize: {
+      type: Number,
+      default: 5
     }
   })
   const fileList = ref([]);
@@ -45,6 +51,7 @@
   const data = ref<object>({});
   const percent = ref<number>(100);
   const filename = ref<string>('');
+  let hide: () => void;
 
   const emit = defineEmits(['uploadSuccess']);
 
@@ -58,32 +65,43 @@
       fileList.value[0].url = `${data.value.host}/${data.value.dir}${filename.value}`;
       loading.value = false;
       emit('uploadSuccess', fileList.value);
+      message.success('上传成功');
+      hide();
     }
     if (info.file.status === 'error') {
       loading.value = false;
       message.error('上传失败，请重试');
+      hide();
     }
   };
 
-  const beforeUpload = async (file: UploadProps['fileList'][number]) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-      message.error('只能上传JPG或者PNG文件');
-    }
-    const isLt2M = file.size / 1024 / 1024 < 5;
-    if (!isLt2M) {
-      message.error('文件大小不能大于5MB');
-    }
+  const beforeUpload = (file: UploadProps['fileList'][number]) => {
+    // todo...添加所有类型例如 "image/*" 的判断
+    return new Promise(((resolve, reject) => {
+      const fileNameArr = file.name.split('.');
+      const suffix = fileNameArr[fileNameArr.length - 1];
+      const nameLegal = props.accept.indexOf(suffix) > -1;
+      if (!nameLegal) {
+        message.error(`只能上传${props.accept}类型的文件`);
+        return reject(false);
+      }
+      const sizeExceed = file.size / 1024 / 1024 < props.maxSize;
+      if (!sizeExceed) {
+        message.error(`文件大小不能大于${props.maxSize}MB`);
+        return reject(false);
+      }
 
-    await dispatch("getOssPolicy").then(res => {
-      filename.value = createFileName(file.name);
-      res.data.key = res.data.dir + filename.value;
-      res.data.success_action_status = 200;
-      data.value = res.data;
-      return isJpgOrPng && isLt2M;
-    }).catch(() => {
-      return false;
-    });
+      dispatch("getOssPolicy").then(res => {
+        filename.value = createFileName(file.name);
+        res.data.key = res.data.dir + filename.value;
+        res.data.success_action_status = 200;
+        data.value = res.data;
+        hide = message.loading('上传中...', 0);
+        return resolve(true);
+      }).catch(() => {
+        return reject(false);
+      });
+    }))
   };
 </script>
 
