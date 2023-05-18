@@ -3,7 +3,7 @@
     <div class="article-item" :class="{'flex-revert': !!(index % 2)}" v-if="thumbnails.length < 3">
       <div class="image-wrapper">
         <RouterLink class="post-link" :to="{name:'postDetail',params:{postId:data.id}}">
-          <img :src="thumbnails[0]+'?x-oss-process=style/smallThumb'">
+          <img :src="thumbnails[0]">
           <div class="item-slants">
             <div class="item-slant item-slant-top"></div>
             <div class="item-slant item-slant-bottom"></div>
