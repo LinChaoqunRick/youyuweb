@@ -202,7 +202,7 @@
       hotPosts.value = res.data;
     })
 
-    dispatch("getLimitPost", {userId: val, orderBy: 'create_time'}).then(res => {
+    dispatch("getLimitPost", {userId: val, orderBy: 'create_time', orderType: 'desc'}).then(res => {
       newPosts.value = res.data;
     })
 
