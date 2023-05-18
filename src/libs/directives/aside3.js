@@ -2,8 +2,9 @@ import {getElementTop} from "@/assets/utils/utils";
 
 /**
  *  cacheTop: 变化方向时，记录变化时刻的elementTop值
+ *  asideParent: 包含着aside元素和参考元素的那个元素
  */
-let header, footer, aside, elInitTop, cacheTop, mainApp;
+let header, footer, aside, asideParent, elInitTop, cacheTop;
 
 
 function handleScroll() {
@@ -18,15 +19,13 @@ function handleScroll() {
     let windowScrollTop = document.documentElement.scrollTop;
 
     // 如果aside高度比较小，直接sticky
-    // console.log(aside.clientHeight, document.documentElement.clientHeight - header.clientHeight);
-    if (aside.clientHeight < document.documentElement.clientHeight - header.clientHeight) {
+    if (aside.clientHeight < document.documentElement.offsetHeight - header.offsetHeight) {
       aside.style.cssText = `position: sticky;top: ${elInitTop}px`
       return;
     }
 
-    // console.log(aside.offsetHeight, mainApp.offsetHeight);
-    // 如果aside高度与mainApp一致，就是参考元素高度没aside高
-    if (aside.offsetHeight >= mainApp.offsetHeight) {
+    // 如果aside高度与asideParent一致，就是参考元素高度没aside高
+    if (aside.offsetHeight >= asideParent.offsetHeight) {
       cacheTop = 0;
       aside.style.cssText = `position: relative;`;
       return;
@@ -64,9 +63,9 @@ export default {
   mounted(el, binding) {
     header = document.getElementById("header");
     footer = document.getElementById("footer");
-    mainApp = document.getElementById("main-app");
     cacheTop = 0;
     aside = el;
+    asideParent = el.parentNode.parentNode;
     elInitTop = getElementTop(aside);
     document.addEventListener("scroll", onScroll, false);
   },
