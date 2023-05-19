@@ -1,6 +1,8 @@
 @import "./base.css";
 @import "./css/aside/aside.scss";
 
+$headerHeight: 60px;
+
 .fixed {
   position: fixed;
 }
