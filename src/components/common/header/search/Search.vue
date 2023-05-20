@@ -31,29 +31,61 @@
           </div>
           <a-button type="link" @click="handleSearch">搜索</a-button>
         </div>
+        <div class="search-content-items">
+          <div class="search-content-item">
+            <div class="item-label">
+              <span>历史搜索</span>
+              <i-delete theme="outline" size="13" fill="currentColor" @click="onClearHistory"/>
+            </div>
+            <div v-if="searchHistory.length" class="history-item">
+              <a-tag v-for="item in searchHistory" closable @click="onTagClick(item)" @close="onItemDelete(item)">
+                {{item}}
+              </a-tag>
+            </div>
+            <div v-else class="no-data">暂无记录</div>
+          </div>
+          <div class="search-content-item">
+            <div class="item-label">
+              <span>搜索发现</span>
+            </div>
+            <div v-if="false">
+              <a-tag v-for="item in searchHistory">{{item}}</a-tag>
+            </div>
+            <div v-else class="no-data">暂无记录</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-  import {ref} from 'vue';
+  import {computed, ref} from 'vue';
   import {useRoute, useRouter} from 'vue-router';
+  import {useStore} from 'vuex';
   import {vOnClickOutside} from '@vueuse/components'
-
-  const text = ref("");
-  const active = ref(false);
 
   const route = useRoute();
   const router = useRouter();
+  const {getters, commit} = useStore();
+
+  const text = ref("");
+  const active = ref(false);
   const menus = ['全部', '用户'];
   const activeIndex = ref(0);
+  const searchHistory = computed(() => getters['getSearchHistory']);
 
   const handleSearch = () => {
     if (text.value) {
       const type = route.query.type ?? 1;
       router.push(`/search?q=${text.value}&type=${type}`);
+      commit('addHistory', text.value);
     }
+  }
+
+  const onTagClick = (data) => {
+    text.value = data;
+    handleSearch();
   }
 
   const onOpen = () => {
@@ -66,6 +98,14 @@
 
   const onMenuChange = (index) => {
     activeIndex.value = index;
+  }
+
+  const onItemDelete = (text) => {
+    commit('deleteHistory', text);
+  }
+
+  const onClearHistory = () => {
+    commit('clearHistory');
   }
 </script>
 
@@ -159,7 +199,6 @@
       }
 
       .search-content {
-        height: 150px;
         background-color: var(--youyu-background1);
 
         .search-content-input {
@@ -180,6 +219,42 @@
               border: none;
               outline: none;
               box-shadow: none;
+              padding: 0;
+            }
+          }
+        }
+
+        .search-content-items {
+          padding: 12px 20px 4px 20px;
+
+          .search-content-item {
+            padding-bottom: 12px;
+
+            .item-label {
+              display: flex;
+              align-items: center;
+              font-size: 13px;
+              padding-bottom: 8px;
+
+              .i-icon {
+                margin-left: 3px;
+                cursor: pointer;
+              }
+            }
+
+            .history-item {
+              cursor: pointer;
+
+              ::v-deep(.ant-tag) {
+                transition: .3s;
+
+                &:hover {
+                  border-color: #1890ff;
+                }
+              }
+            }
+
+            .no-data {
               padding: 0;
             }
           }

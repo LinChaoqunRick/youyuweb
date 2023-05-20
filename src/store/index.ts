@@ -3,6 +3,7 @@ import {createStore} from 'vuex';
 import theme from "@/store/system/theme/theme";
 import login from "@/store/system/login/login";
 import message from "@/store/system/messae/message";
+import search from "@/store/system/search";
 import post from "@/store/post/post";
 import user from "@/store/user/user";
 import note from "@/store/note/note";
@@ -18,6 +19,7 @@ const store = createStore({
     theme,
     login,
     message,
+    search,
     post,
     user,
     note,
