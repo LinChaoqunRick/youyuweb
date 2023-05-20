@@ -1,11 +1,11 @@
 <template>
   <div class="moment-list mt-8">
-    <MomentList/>
+    <MomentEditor/>
   </div>
 </template>
 
 <script setup lang="ts">
-  import MomentList from "../components/MomentEditor.vue";
+  import MomentEditor from "../components/MomentEditor.vue";
 </script>
 
 <style lang="scss" scoped>
