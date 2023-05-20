@@ -13,7 +13,7 @@
       </a-menu>
     </template>
     <template #icon>
-      <i-down/>
+      <i-down-one theme="filled"/>
     </template>
   </a-dropdown-button>
 </template>
