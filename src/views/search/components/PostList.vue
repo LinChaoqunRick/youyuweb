@@ -30,6 +30,7 @@
   .post-list {
     background-color: var(--youyu-background1);
     padding-bottom: 6px;
+    padding-left: 10px;
 
     .post-item {
       margin-bottom: 6px;
