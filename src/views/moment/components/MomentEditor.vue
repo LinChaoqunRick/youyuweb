@@ -8,8 +8,7 @@
              @focus="onFocus"
              @blur="onBlur"
              @input="onInput"
-             placeholder="此刻在想什么..."
-             :maxLength="10"></div>
+             placeholder="此刻在想什么..."></div>
       </div>
       <div class="topic-wrapper">
         <div class="now-mood">
@@ -53,6 +52,7 @@
           <span class="tool-title">话题</span>
         </div>
       </div>
+      <a-button type="primary" :disabled="!isLogin || !currentLength">发布</a-button>
     </div>
   </div>
 </template>
@@ -65,7 +65,7 @@
   const {getters, commit} = useStore();
   const userInfo = computed(() => getters['userInfo']);
   const isLogin = computed(() => getters['isLogin']);
-  const maxLength = 100;
+  const maxLength = 500;
   const currentLength = computed(() => moment.content.length);
   const uploadDisabled = computed(() => moment.images.length >= 9)
 
@@ -74,7 +74,7 @@
     userId: userInfo.value.id,
     content: '',
     images: [
-      'https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/10000/20210203110431mario.jpg',
+      /*'https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/10000/20210203110431mario.jpg',
       'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0513/20230513105651_%E5%A3%81%E7%BA%B81.jpg',
       'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0513/20230513105651_%E5%A3%81%E7%BA%B81.jpg',
       'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0513/20230513105651_%E5%A3%81%E7%BA%B81.jpg',
@@ -82,13 +82,12 @@
       'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0513/20230513105651_%E5%A3%81%E7%BA%B81.jpg',
       'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0513/20230513105651_%E5%A3%81%E7%BA%B81.jpg',
       'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0513/20230513105651_%E5%A3%81%E7%BA%B81.jpg',
-      'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0513/20230513105651_%E5%A3%81%E7%BA%B81.jpg',
+      'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0513/20230513105651_%E5%A3%81%E7%BA%B81.jpg',*/
     ]
   });
 
   const onFocus = () => {
     active.value = true;
-    console.log(userInfo);
   }
   const onBlur = () => {
     active.value = false;
@@ -97,10 +96,10 @@
   const onInput = ($event: Event) => {
     const content = $event.target.innerText;
     if (content.length >= maxLength) {
-      moment.content = moment.content.substring(0, 100);
-      return;
+      $event.target.blur();
+      moment.content = $event.target.innerHTML;
+      $event.target.innerHTML = moment.content.substring(0, maxLength);
     }
-    moment.content = $event.target.innerText;
   }
 
   const uploadSuccess = (fileList: []) => {
@@ -261,6 +260,8 @@
     }
 
     .editor-bottom {
+      display: flex;
+      justify-content: space-between;
       padding: 10px 0;
 
       .tool-items {
@@ -271,7 +272,7 @@
         .tool-item {
           display: flex;
           align-items: center;
-          cursor: inherit;
+          cursor: pointer;
           margin-right: 16px;
           transition: .3s;
 
