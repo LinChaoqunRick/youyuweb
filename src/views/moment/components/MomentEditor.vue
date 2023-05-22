@@ -52,17 +52,18 @@
           <span class="tool-title">话题</span>
         </div>
       </div>
-      <a-button type="primary" :disabled="!isLogin || !currentLength">发布</a-button>
+      <a-button type="primary" :disabled="!isLogin || !currentLength" @click="onSubmit">发布</a-button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import {ref, reactive, computed} from 'vue';
+  import {ref, reactive, computed, toRaw} from 'vue';
   import {useStore} from "vuex";
   import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
+  import {message} from 'ant-design-vue';
 
-  const {getters, commit} = useStore();
+  const {getters, commit, dispatch} = useStore();
   const userInfo = computed(() => getters['userInfo']);
   const isLogin = computed(() => getters['isLogin']);
   const maxLength = 500;
@@ -97,13 +98,15 @@
     const content = $event.target.innerText;
     if (content.length >= maxLength) {
       $event.target.blur();
-      moment.content = $event.target.innerHTML;
-      $event.target.innerHTML = moment.content.substring(0, maxLength);
+      moment.content = content.substring(0, maxLength);
+      $event.target.innerHTML = moment.content;
+    } else {
+      moment.content = content;
     }
   }
 
   const uploadSuccess = (fileList: []) => {
-    const url = fileList[0].url;
+    const url = fileList[0].url + '?x-oss-process=style/smallThumb';
     moment.images.push(url);
   }
 
@@ -113,6 +116,14 @@
 
   const onImageDelete = (index: number) => {
     moment.images.splice(index, 1);
+  }
+
+  const onSubmit = () => {
+    const form = toRaw(moment);
+    form.images = form.images.join(",");
+    dispatch('createMoment', form).then(res => {
+      message.success("发布成功")
+    })
   }
 </script>
 
@@ -242,7 +253,7 @@
       }
 
       .upload-image {
-        cursor: inherit;
+        cursor: pointer;
         display: flex;
         justify-content: center;
         align-items: center;

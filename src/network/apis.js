@@ -59,6 +59,10 @@ export const SAVE_EMAIL = ApiBase + "/user/saveEmail"; // 修改邮箱
 export const GET_PROFILE_MENU = ApiBase + "/user/getProfileMenu"; // 获取主页菜单信息
 export const SET_PROFILE_MENU = ApiBase + "/user/setProfileMenu"; // 设置主页菜单信息
 
+// 时刻
+export const CREATE_MOMENT = ApiBase + "/moment/create"; // 创建时刻
+export const DELETE_MOMENT = ApiBase + "/moment/delete"; // 删除时刻
+
 // 邮件
 export const SEND_EMAIL_CODE = ApiBase + "/mail/sendCode"; // 获取邮箱验证码
 

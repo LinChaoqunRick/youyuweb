@@ -11,6 +11,7 @@
       :max-count="1"
       :accept="accept"
       @change="handleChange"
+      ref="uploadRef"
     >
       <slot :percent="percent">
         <div class="upload-box" :class="{'disabled':disabled}">
@@ -34,6 +35,8 @@
   import {useStore} from 'vuex';
   import {createFileName} from "@/assets/utils/utils";
 
+  const uploadRef = ref(null);
+
   const {dispatch} = useStore();
   const props = defineProps({
     ...Upload.props,
@@ -44,6 +47,9 @@
     maxSize: {
       type: Number,
       default: 5
+    },
+    query: {
+      type: String
     }
   })
   const fileList = ref([]);
