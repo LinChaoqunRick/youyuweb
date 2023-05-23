@@ -60,8 +60,9 @@ export const GET_PROFILE_MENU = ApiBase + "/user/getProfileMenu"; // 获取主�
 export const SET_PROFILE_MENU = ApiBase + "/user/setProfileMenu"; // 设置主页菜单信息
 
 // 时刻
-export const CREATE_MOMENT = ApiBase + "/moment/create"; // 创建时刻
-export const DELETE_MOMENT = ApiBase + "/moment/delete"; // 删除时刻
+export const MOMENT_CREATE = ApiBase + "/moment/create"; // 创建时刻
+export const MOMENT_DELETE = ApiBase + "/moment/delete"; // 删除时刻
+export const MOMENT_LIST = ApiBase + "/moment/list"; // 时刻列表
 
 // 邮件
 export const SEND_EMAIL_CODE = ApiBase + "/mail/sendCode"; // 获取邮箱验证码

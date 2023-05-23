@@ -62,6 +62,7 @@
   import {useStore} from "vuex";
   import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
   import {message} from 'ant-design-vue';
+  import {cloneDeep} from 'lodash';
 
   const {getters, commit, dispatch} = useStore();
   const userInfo = computed(() => getters['userInfo']);
@@ -119,7 +120,7 @@
   }
 
   const onSubmit = () => {
-    const form = toRaw(moment);
+    const form = cloneDeep(moment);
     form.images = form.images.join(",");
     dispatch('createMoment', form).then(res => {
       message.success("发布成功")
