@@ -30,3 +30,26 @@ export function getImgSize(naturalWidth: number, naturalHeight: number, maxWidth
   }
   return {width: width, height: height}
 }
+
+/**
+ * 获取图片缩放尺寸
+ * @param {number} naturalWidth
+ * @param {number} naturalHeight
+ * @param {number} maxWidth
+ * @returns
+ */
+export function getImgSizeByMaxWidth(naturalWidth: number, naturalHeight: number, maxWidth: number) {
+  return {width: maxWidth, height: naturalHeight * maxWidth / naturalWidth}
+}
+
+/**
+ * 获取图片缩放尺寸
+ * @param {number} naturalWidth
+ * @param {number} naturalHeight
+ * @param {number} maxWidth
+ * @param {number} maxHeight
+ * @returns
+ */
+export function getImgSizeByMaxHeight(naturalWidth: number, naturalHeight: number, maxHeight: number) {
+  return {width: naturalHeight / naturalWidth * maxHeight, height: max}
+}
