@@ -5,7 +5,7 @@
         <i-zoom-out theme="outline" size="16" fill="currentColor"/>
         <span class="action-name">收起</span>
       </div>
-      <div class="action-item">
+      <div class="action-item" @click="onDetail">
         <i-zoom-in theme="outline" size="16" fill="currentColor"/>
         <span class="action-name">查看大图</span>
       </div>
@@ -33,6 +33,7 @@
 
 <script setup lang="ts">
   import {ref, computed} from "vue";
+  import openImage from "@/libs/tools/openImage";
   import {getImgSizeByMaxWidth} from "@/components/common/utils/image/utils";
 
   const props = defineProps({
@@ -51,7 +52,7 @@
   const loading = ref<boolean>(false);
   const image = ref<HTMLElement>(null);
   const previewBody = ref<HTMLElement>(null);
-  let rotate: number = 0;
+  let rotate: number = 0, tx: number, ty: number;
 
   const onClick = (index) => {
     rotate = 0;
@@ -70,11 +71,33 @@
     } else if (direction === 'right') {
       rotate += 90;
     }
+    if (Math.abs(rotate % 360) === 0) {
+      tx = 0;
+      ty = 0;
+    } else if (Math.abs(rotate % 270) === 0) {
+      tx = 0;
+      ty = -100;
+    } else if (Math.abs(rotate % 180) === 0) {
+      tx = -100;
+      ty = -100;
+    } else {
+      tx = -100;
+      ty = 0;
+    }
     refreshTransform();
   }
 
+  const onDetail = () => {
+    openImage({
+      componentProps: {
+        list: props.list,
+        current
+      }
+    })
+  }
+
   function refreshTransform() {
-    image.value.style.transform = `rotate(${rotate}deg)`;
+    image.value.style.transform = `rotate(${rotate}deg) translate3d(${tx}%, ${ty}%, 0px)`;
     const result = getImgSizeByMaxWidth(image.value.naturalWidth, image.value.naturalHeight, previewBody.value.clientWidth);
     const is180Multiple = Math.abs(rotate % 180) === 0;
     previewBody.value.style.height = `${is180Multiple ? result.height : result.width}px`;
@@ -111,7 +134,7 @@
 
     .preview-body {
       background-color: #f4f5f7;
-      overflow: hidden;
+      /*overflow: hidden;*/
       transition: height .2s;
 
       img {
