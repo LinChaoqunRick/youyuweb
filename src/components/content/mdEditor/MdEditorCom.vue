@@ -44,7 +44,7 @@
     extend: {
       type: Object,
       default: {
-        previewTheme: 'cyanosis',
+        
       }
     },
     toolbars: {
@@ -104,6 +104,7 @@
     editorId: props.editorId,
     toolbars: props.toolbars,
     footers: props.footers,
+    previewTheme: 'cyanosis',
     codeTheme: 'github',
     showCodeRowNumber: true
   })
