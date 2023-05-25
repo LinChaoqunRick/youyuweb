@@ -97,10 +97,14 @@
 
   const onInput = ($event: Event) => {
     const content = $event.target.innerText;
-    if (content.length >= maxLength) {
-      $event.target.blur();
-      moment.content = content.substring(0, maxLength);
+    if (content.length >= maxLength + 1) {
+      $event.preventDefault();
       $event.target.innerHTML = moment.content;
+      $event.target.blur();
+      // $event.target.focus();
+      // let range = window.getSelection();
+      // range.selectAllChildren($event.target);
+      // range.collapseToEnd();
     } else {
       moment.content = content;
     }
