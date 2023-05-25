@@ -23,6 +23,9 @@
           <MdPreview :text="chapter.content || ''" editorId="note-content"/>
         </div>
         <div class="chapter-bottom" id="chapter-bottom"></div>
+        <Teleport to="#header">
+          <PercentCounter elementId="chapter-preview"/>
+        </Teleport>
       </div>
       <div class="chapter-editor" v-show="isEdit">
         <div class="editor-top">
@@ -50,6 +53,7 @@
   import MdEditorCom from "@/components/content/mdEditor/MdEditorCom.vue";
   import {cloneDeep} from 'lodash';
   import {message} from "ant-design-vue";
+  import PercentCounter from "@/components/common/utils/percentCounter/PercentCounter.vue";
 
   const emit = defineEmits(["contentLoaded", "saveSuccess", "noteInfoCollapse"])
   const props = defineProps({
