@@ -369,18 +369,18 @@
 
       .post-right {
         position: relative;
-        z-index: 10;
+        z-index: 2;
 
         .post-category {
           position: fixed;
           top: 100px;
-          right: 20px;
+          left: calc(100vw - 90px);
         }
 
         .post-operation {
           position: fixed;
           top: 260px;
-          right: 20px;
+          left: calc(100vw - 90px);
         }
       }
 
