@@ -26,8 +26,9 @@
 </template>
 
 <script setup lang="ts">
-  import {ref, onMounted} from 'vue';
+  import {ref, onMounted, onUnmounted} from 'vue';
   import {getImgSize} from "@/components/common/utils/image/utils";
+  import {disabledBodyScroll, enabledBodyScroll} from "@/assets/utils/utils.ts";
 
   const props = defineProps({
     list: {
@@ -229,6 +230,13 @@
   function onClose() {
     emit('onClose');
   }
+
+  disabledBodyScroll();
+
+  onUnmounted(() => {
+    enabledBodyScroll();
+  })
+
 </script>
 
 <style lang="scss" scoped>

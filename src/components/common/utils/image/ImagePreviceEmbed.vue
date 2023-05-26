@@ -34,7 +34,7 @@
 <script setup lang="ts">
   import {ref, computed} from "vue";
   import openImage from "@/libs/tools/openImage";
-  import {getImgSizeByMaxWidth} from "@/components/common/utils/image/utils";
+  import {getImgSizeByMaxWidth, getImgSizeByMaxHeight} from "@/components/common/utils/image/utils";
 
   const props = defineProps({
     list: {
@@ -56,6 +56,8 @@
 
   const onClick = (index) => {
     rotate = 0;
+    tx = 0;
+    ty = 0;
     loading.value = true;
     current.value = index;
   }
@@ -71,19 +73,29 @@
     } else if (direction === 'right') {
       rotate += 90;
     }
-    const remainder = Math.abs(rotate % 360);
-    if (remainder === 0) {
+    const remainder = rotate % 360;
+    if (Math.abs(remainder) === 0) {
       tx = 0;
       ty = 0;
-    } else if (remainder === 270) {
-      tx = 0;
-      ty = -100;
-    } else if (remainder === 180) {
+    } else if (Math.abs(remainder) === 270) {
+      if (remainder >= 0) {
+        tx = -100;
+        ty = 0;
+      } else {
+        tx = 0;
+        ty = -100;
+      }
+    } else if (Math.abs(remainder) === 180) {
       tx = -100;
       ty = -100;
     } else {
-      tx = -100;
-      ty = 0;
+      if (remainder >= 0) {
+        tx = 0;
+        ty = -100;
+      } else {
+        tx = -100;
+        ty = 0;
+      }
     }
     refreshTransform();
   }
@@ -92,16 +104,22 @@
     openImage({
       componentProps: {
         list: props.list,
-        current
+        current: current.value
       }
     })
   }
 
   function refreshTransform() {
-    image.value.style.transform = `rotate(${rotate}deg) translate3d(${tx}%, ${ty}%, 0px)`;
-    const result = getImgSizeByMaxWidth(image.value.naturalWidth, image.value.naturalHeight, previewBody.value.clientWidth);
     const is180Multiple = Math.abs(rotate % 180) === 0;
-    previewBody.value.style.height = `${is180Multiple ? result.height : result.width}px`;
+    let result;
+    if (is180Multiple) {
+      result = getImgSizeByMaxWidth(image.value.naturalWidth, image.value.naturalHeight, previewBody.value.clientWidth);
+    } else {
+      result = getImgSizeByMaxHeight(image.value.naturalWidth, image.value.naturalHeight, previewBody.value.clientWidth);
+    }
+    console.log(result);
+    image.value.style.transform = `rotate(${rotate}deg) translate3d(${tx}%, ${ty}%, 0px)`;
+    previewBody.value.style.height = `${image.value.getBoundingClientRect().height}px`;
   }
 </script>
 
@@ -112,6 +130,7 @@
       align-items: center;
       height: 32px;
       background-color: var(--youyu-body-background-4);
+      user-select: none;
 
       .action-item {
         display: inline-flex;

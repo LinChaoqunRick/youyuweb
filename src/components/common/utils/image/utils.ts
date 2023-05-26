@@ -51,5 +51,5 @@ export function getImgSizeByMaxWidth(naturalWidth: number, naturalHeight: number
  * @returns
  */
 export function getImgSizeByMaxHeight(naturalWidth: number, naturalHeight: number, maxHeight: number) {
-  return {width: naturalHeight / naturalWidth * maxHeight, height: max}
+  return {width: maxHeight, height: naturalHeight * maxHeight / naturalWidth}
 }
