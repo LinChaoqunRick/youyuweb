@@ -197,13 +197,17 @@ export function getMarkDownImages(content: string) {
 
 
 // 给元素添加class名称 el:要添加类名的元素 cn:添加的样式名称
-export const addClass = (el: HTMLElement, cn: string) => {
-  el.classList.add(cn);
+export const addClass = (el: HTMLElement, ...cn: string[]) => {
+  for (const name of cn) {
+    el.classList.add(name);
+  }
 }
 
 // 删除元素class名称 el:要删除类名的元素 cn:删除的样式名称
-export const removeClass = (el: HTMLElement, cn: string) => {
-  el.classList.remove(cn);
+export const removeClass = (el: HTMLElement, ...cn: string[]) => {
+  for (const name of cn) {
+    el.classList.remove(name);
+  }
 }
 
 // 判断元素是否有某个类名 el:要判断类名的元素 cn:判断的样式名称
@@ -238,6 +242,22 @@ export const cleanCookieLocalStorage = () => {
 /**
  * 判断body是否存在滚动条
  */
+
 export function hasScroll() {
   return document.body.scrollHeight > (window.innerHeight || document.documentElement.clientHeight);
+}
+
+/**
+ * 禁用body滚动
+ */
+export function disabledBodyScroll() {
+  const appScroll = hasScroll();
+  addClass(document.body, appScroll ? 'scrolling-effect-scroll' : 'scrolling-effect-noscroll');
+}
+
+/**
+ * 恢复body滚动
+ */
+export function enabledBodyScroll() {
+  removeClass(document.body, 'scrolling-effect-scroll', 'scrolling-effect-noscroll');
 }
