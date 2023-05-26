@@ -71,13 +71,14 @@
     } else if (direction === 'right') {
       rotate += 90;
     }
-    if (Math.abs(rotate % 360) === 0) {
+    const remainder = Math.abs(rotate % 360);
+    if (remainder === 0) {
       tx = 0;
       ty = 0;
-    } else if (Math.abs(rotate % 270) === 0) {
+    } else if (remainder === 270) {
       tx = 0;
       ty = -100;
-    } else if (Math.abs(rotate % 180) === 0) {
+    } else if (remainder === 180) {
       tx = -100;
       ty = -100;
     } else {
