@@ -42,7 +42,7 @@
   import LoginAccount from './LoginAccount.vue';
   import LoginTelephone from './LoginTelephone.vue';
   import RegisterPanel from './RegisterPanel.vue';
-  import {addClass, removeClass, hasScroll} from "@/assets/utils/utils.ts";
+  import {disabledBodyScroll, enabledBodyScroll} from "@/assets/utils/utils.ts";
 
   export default {
     name: "LoginPanel",
@@ -61,7 +61,6 @@
       return {
         type: 0, // 0:login, 1:register,
         loginType: 0, // 0:账密登录 2:手机登录,
-        isScroll: false
       }
     },
     methods: {
@@ -77,11 +76,10 @@
       }
     },
     created() {
-      this.isScroll = hasScroll();
-      addClass(document.body, this.isScroll ? "scrolling-effect-scroll" : 'scrolling-effect-noscroll');
+      disabledBodyScroll();
     },
     beforeUnmount() {
-      removeClass(document.body, this.isScroll ? "scrolling-effect-scroll" : 'scrolling-effect-noscroll');
+      enabledBodyScroll();
     }
   }
 </script>
