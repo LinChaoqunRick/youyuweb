@@ -20,15 +20,17 @@
       <div class="ope-icon next-icon" v-if="current!==props.list.length-1" @click="handleChange('next')">
         <i-left theme="outline" size="30" fill="#fff" style="transform: scale3d(-1,1,1)"/>
       </div>
-      <img :src="props.list[current]" @load="onLoad" id="preview-image"/>
+      <img :src="currentOriginUrl" @load="onLoad" id="preview-image"/>
     </div>
+    <spin size="large" class="a-spin" v-show="loading"/>
   </div>
 </template>
 
 <script setup lang="ts">
-  import {ref, onMounted, onUnmounted} from 'vue';
+  import {ref, computed, watch, onMounted, onUnmounted} from 'vue';
   import {getImgSize} from "@/components/common/utils/image/utils";
   import {disabledBodyScroll, enabledBodyScroll} from "@/assets/utils/utils.ts";
+  import {Spin} from "ant-design-vue";
 
   const props = defineProps({
     list: {
@@ -61,8 +63,14 @@
     moveDiff = {x: 0, y: 0}, // 相对于上一次pointermove移动差值
     lastPointermove = {x: 0, y: 0}; // 用于计算diff;
 
+  const loading = ref<boolean>(true);
   const scale = ref<number>(1);
   const current = ref<number>(props.current);
+  const currentOriginUrl = computed(() => props.list[current.value].split("?")[0]);
+
+  watch(() => current.value, () => {
+    loading.value = true;
+  })
 
   function initListen() {
     image = document.getElementById('preview-image');
@@ -71,6 +79,7 @@
   }
 
   function onLoad() {
+    loading.value = false;
     if (!image) {
       initListen();
     }
@@ -335,6 +344,12 @@
           left: 2px;
         }
       }
+    }
+
+    .a-spin{
+      position: absolute;
+      left: calc(50% - 16px);
+      top: calc(50% - 16px);
     }
   }
 </style>

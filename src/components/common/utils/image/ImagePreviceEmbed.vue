@@ -1,7 +1,7 @@
 <template>
   <div class="image-preview-embed">
     <div class="preview-top">
-      <div class="action-item">
+      <div class="action-item" @click="onClose">
         <i-zoom-out theme="outline" size="16" fill="currentColor"/>
         <span class="action-name">收起</span>
       </div>
@@ -19,9 +19,12 @@
       </div>
     </div>
     <div class="preview-body" ref="previewBody">
+      <div class="white-panel"></div>
       <a-spin :spinning="loading">
         <img :src="currentImage" @load="onLoad" ref="image"/>
       </a-spin>
+      <div class="change-btn last-btn" v-if="current>0" @click="onChange('left')"></div>
+      <div class="change-btn next-btn" v-if="current<list.length-1" @click="onChange('right')"></div>
     </div>
     <div class="preview-bottom">
       <div class="nav-list">
@@ -32,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-  import {ref, computed} from "vue";
+  import {ref, computed, watch} from "vue";
   import openImage from "@/libs/tools/openImage";
   import {getImgSizeByMaxWidth, getImgSizeByMaxHeight} from "@/components/common/utils/image/utils";
 
@@ -45,7 +48,8 @@
       type: Number,
       default: 0
     }
-  })
+  });
+  const emit = defineEmits(['onClose'])
 
   const current = ref<number>(props.current);
   const currentImage = computed(() => props.list[current.value].split("?")[0] + '?x-oss-process=style/detailThumb');
@@ -54,7 +58,12 @@
   const previewBody = ref<HTMLElement>(null);
   let rotate: number = 0, tx: number, ty: number;
 
-  const onClick = (index) => {
+  watch(() => current.value, () => {
+    loading.value = true;
+  })
+
+  const onClick = (index: number) => {
+    if (current.value === index) return;
     rotate = 0;
     tx = 0;
     ty = 0;
@@ -109,6 +118,14 @@
     })
   }
 
+  const onChange = (direction: string) => {
+    if (direction === 'left') {
+      current.value -= 1;
+    } else {
+      current.value += 1;
+    }
+  }
+
   function refreshTransform() {
     const is180Multiple = Math.abs(rotate % 180) === 0;
     let result;
@@ -117,14 +134,21 @@
     } else {
       result = getImgSizeByMaxHeight(image.value.naturalWidth, image.value.naturalHeight, previewBody.value.clientWidth);
     }
-    console.log(result);
     image.value.style.transform = `rotate(${rotate}deg) translate3d(${tx}%, ${ty}%, 0px)`;
+    image.value.style.height = `${result.height}px`;
+    image.value.style.width = `${result.width}px`;
     previewBody.value.style.height = `${image.value.getBoundingClientRect().height}px`;
+  }
+
+  const onClose = () => {
+    emit('onClose');
   }
 </script>
 
 <style lang="scss" scoped>
   .image-preview-embed {
+    position: relative;
+
     .preview-top {
       display: flex;
       align-items: center;
@@ -153,9 +177,47 @@
     }
 
     .preview-body {
+      position: relative;
       background-color: #f4f5f7;
-      /*overflow: hidden;*/
+      overflow: hidden;
+      height: 200px;
       transition: height .2s;
+
+      .white-panel {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 2;
+        animation: bufferHide .3s linear 1;
+        animation-fill-mode: forwards;
+      }
+
+      .change-btn {
+        width: 30%;
+        /*background-color: skyblue;*/
+
+        &.last-btn {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          cursor: url("../../../../assets/images/cursor/cursor_left.ico"), auto;
+        }
+
+        &.next-btn {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          right: 0;
+          cursor: url("../../../../assets/images/cursor/cursor_right.ico"), auto;
+        }
+      }
+
+      ::v-deep(.ant-spin-nested-loading) {
+        height: 100%;
+      }
 
       img {
         position: absolute;
@@ -192,6 +254,26 @@
           opacity: 1;
         }
       }
+    }
+  }
+
+  @keyframes bufferHide {
+    0% {
+      background-color: white;
+    }
+
+    60% {
+      background-color: rgba(255, 255, 255, 0.7);
+    }
+
+    99.9% {
+      background-color: transparent;
+    }
+
+
+    100% {
+      background-color: transparent;
+      height: 0;
     }
   }
 </style>

@@ -12,24 +12,39 @@
       </div>
       <div class="content-body">
         <div class="content-text">{{data.content}}</div>
-        <div class="content-images" :class="[imageClass]" v-if="images?.length">
-          <img :src="item" v-for="item in images"/>
+        <div class="content-images" :class="[imageClass]" v-if="images?.length && !preview">
+          <img :src="item" v-for="(item, index) in images" @click="onPreview(index)"/>
         </div>
-        <div content="content-image-preview" v-if="images?.length">
-          <ImagePreviewEmbed :list="images"/>
+        <div content="content-image-preview" v-if="images?.length && preview">
+          <ImagePreviewEmbed :list="images" :current="current" @onClose="onClose"/>
         </div>
       </div>
     </div>
     <div class="moment-item-bottom">
-      <div class="item-operation"></div>
-      <div class="item-operation"></div>
-      <div class="item-operation"></div>
+      <div class="item-operation">
+        <div class="item-icon">
+          <i-share-one theme="outline" size="14" fill="currentColor"/>
+        </div>
+        <div class="item-text">分享</div>
+      </div>
+      <div class="item-operation">
+        <div class="item-icon">
+          <i-comment theme="outline" size="14" fill="currentColor"/>
+        </div>
+        <div class="item-text"></div>
+      </div>
+      <div class="item-operation">
+        <div class="item-icon">
+          <i-thumbs-up theme="outline" size="14" fill="currentColor"/>
+        </div>
+        <div class="item-text"></div>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import {computed} from 'vue';
+  import {ref, computed} from 'vue';
   import type {PropType} from "vue";
   import type {momentListType} from "@/views/moment/types";
   import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
@@ -38,7 +53,9 @@
     data: {
       type: Object as PropType<momentListType>
     }
-  })
+  });
+  const preview = ref(false);
+  const current = ref(0);
 
   const images = computed(() => props.data.images?.split(","));
   const imageClass = computed(() => {
@@ -51,6 +68,13 @@
       return 'col-1';
     }
   })
+  const onPreview = (index: number) => {
+    preview.value = true;
+    current.value = index;
+  };
+  const onClose = () => {
+    preview.value = false;
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -137,10 +161,24 @@
 
       .item-operation {
         flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         height: 36px;
+        font-size: 13px;
+        color: var(--youyu-text1);
 
         &:nth-child(n+2) {
           border-left: 1px solid var(--youyu-border-color3);
+        }
+
+        .item-text {
+          margin-left: 6px;
+        }
+
+        .i-icon {
+          position: relative;
+          top: 1px;
         }
       }
     }
