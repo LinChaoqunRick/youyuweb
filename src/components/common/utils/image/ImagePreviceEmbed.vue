@@ -195,21 +195,18 @@
       }
 
       .change-btn {
+        position: absolute;
         width: 30%;
+        top: 0;
+        bottom: 20px;
         /*background-color: skyblue;*/
 
         &.last-btn {
-          position: absolute;
-          top: 0;
-          bottom: 0;
           left: 0;
           cursor: url("../../../../assets/images/cursor/cursor_left.ico"), auto;
         }
 
         &.next-btn {
-          position: absolute;
-          top: 0;
-          bottom: 0;
           right: 0;
           cursor: url("../../../../assets/images/cursor/cursor_right.ico"), auto;
         }
