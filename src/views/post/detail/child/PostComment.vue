@@ -140,6 +140,7 @@
     dispatch("createComment", {
       postId: post.value.id,
       userId: userInfo.value.id,
+      userIdTo: post.value.userId,
       content: content.value
     }).then(res => {
       message.success('评论成功');

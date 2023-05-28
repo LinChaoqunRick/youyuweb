@@ -65,7 +65,7 @@ export const MOMENT_DELETE = ApiBase + "/moment/delete"; // 删除时刻
 export const MOMENT_LIST = ApiBase + "/moment/list"; // 时刻列表
 
 // 邮件
-export const SEND_EMAIL_CODE = ApiBase + "/mail/sendCode"; // 获取邮箱验证码
+export const SEND_EMAIL_CODE = ApiBase + "/mail/sendRegisterCode"; // 获取邮箱验证码
 
 // 分类
 export const CATEGORY_LIST = ApiBase + "/category/list"; //
