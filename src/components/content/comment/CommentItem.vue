@@ -162,6 +162,7 @@
     dispatch("createComment", {
       postId: props.data.postId,
       userId: userInfo.value.id,
+      userIdTo: props.data.userId,
       rootId: props.data.id,
       content: content
     }).then(res => {
