@@ -3,7 +3,8 @@
     <a-popover v-model:visible="visible"
                placement="bottomRight"
                trigger="click"
-               overlayClassName="user-info-popover">
+               overlayClassName="user-info-popover"
+               :getPopupContainer="triggerNode=>triggerNode.parentNode">
       <template #content>
         <div class="user-info">
           <div class="avatar">

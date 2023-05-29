@@ -4,7 +4,11 @@
       <UserInfo/>
     </div>
     <div class="user-unlogin" v-else>
-      <a-popover v-model:visible="visible" trigger="click" overlayClassName="login-container" placement="bottomRight">
+      <a-popover v-model:visible="visible"
+                 trigger="click"
+                 overlayClassName="login-container"
+                 placement="bottomRight"
+                 :getPopupContainer="triggerNode=>triggerNode.parentNode">
         <template #content>
           <h3 class="login-tips">您尚未登录，登录后您可以：</h3>
           <ul class="login-guide-list">

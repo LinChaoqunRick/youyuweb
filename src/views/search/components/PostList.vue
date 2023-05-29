@@ -29,8 +29,7 @@
 <style lang="scss" scoped>
   .post-list {
     background-color: var(--youyu-background1);
-    padding-bottom: 6px;
-    padding-left: 10px;
+    padding: 10px 0 6px 10px;
 
     .post-item {
       margin-bottom: 6px;

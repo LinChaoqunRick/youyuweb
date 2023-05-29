@@ -80,6 +80,7 @@
       const type = route.query.type ?? 1;
       router.push(`/search?q=${text.value}&type=${type}`);
       commit('addHistory', text.value);
+      active.value = false;
     }
   }
 
