@@ -1,10 +1,6 @@
 import {createApp} from "vue";
 import {Image} from "ant-design-vue";
-import Antd from 'ant-design-vue';
-import store from "@/store";
-import router from "@/router";
-import {install} from '@icon-park/vue-next/es/all';
-
+import {IconPark} from "@/libs/plugins/iconpark";
 import ImagePreview from "@/components/common/utils/image/ImagePreview.vue";
 
 export default function openImage(config = {}) {
@@ -58,8 +54,7 @@ export default function openImage(config = {}) {
         this.visible = true;
       }
     }, config);
-
-    install(Comp, 'i');
+    IconPark(Comp);
     const preview = document.createElement("div");
     const instance = Comp.mount(preview);
     document.body.appendChild(preview);

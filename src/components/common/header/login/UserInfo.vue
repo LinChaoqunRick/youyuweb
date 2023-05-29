@@ -22,7 +22,7 @@
         <div class="action-notice">
           <div class="an-item">
             <i-list theme="outline" size="18" fill="currentColor"/>
-            <span class="item-text">TODO</span>
+            <span class="item-text">待办</span>
             <a-badge count="2"
                      :number-style="{
                        backgroundColor: '#1890ff',
@@ -185,7 +185,6 @@
         display: flex;
         align-items: center;
         color: var(--youyu-body-text);
-        margin-left: 10px;
         font-weight: bold;
         cursor: pointer;
       }

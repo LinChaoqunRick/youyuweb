@@ -3,7 +3,7 @@ import {Modal, Button} from "ant-design-vue";
 import Antd from 'ant-design-vue';
 import store from "@/store";
 import router from "@/router";
-import {install} from '@icon-park/vue-next/es/all';
+import {IconPark} from "@/libs/plugins/iconpark";
 
 export default function openModal(config = {}) {
   const modalProps = {...Modal.props};
@@ -107,9 +107,7 @@ export default function openModal(config = {}) {
         },
       }
     }, config).use(store).use(router).use(Antd);
-
-    install(Comp, 'i');
-
+    IconPark(Comp);
     const modal = document.createElement("div");
     const instance = Comp.mount(modal);
     document.body.appendChild(modal);
