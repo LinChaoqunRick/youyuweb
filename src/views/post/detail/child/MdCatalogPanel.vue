@@ -24,6 +24,7 @@
                 :scroll-element="scrollElement"
                 :offsetTop="80"
                 :scrollElementOffsetTop="headerClientHeight"
+                :mdHeadingId="createMdHeadingId"
               />
             </div>
           </div>
@@ -37,6 +38,7 @@
   import {ref, onMounted} from 'vue';
   import {UseDraggable} from '@vueuse/components';
   import {MdCatalog} from 'md-editor-v3';
+  import {createMdHeadingId} from "@/components/content/mdEditor/utils";
 
   const prop = defineProps({
     editorId: {

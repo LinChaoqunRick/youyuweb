@@ -35,7 +35,11 @@
             <a-button type="link" @click="handleSave">保存</a-button>
           </div>
         </div>
-        <MdEditorCom v-model="chapterCopy.content" editorId="note-content" class="edit-chapter-t-editor" ref="editor"/>
+        <MdEditorCom v-model="chapterCopy.content"
+                     editorId="note-content"
+                     class="edit-chapter-t-editor"
+                     :mdHeadingId="createMdHeadingId"
+                     ref="editor"/>
       </div>
     </div>
     <div v-if="loading" class="loading-box">
@@ -51,6 +55,7 @@
   import type {chapter} from "@/views/note/type";
   import MdPreview from "@/components/content/mdEditor/MdPreview.vue";
   import MdEditorCom from "@/components/content/mdEditor/MdEditorCom.vue";
+  import {createMdHeadingId} from "@/components/content/mdEditor/utils";
   import {cloneDeep} from 'lodash';
   import {message} from "ant-design-vue";
   import PercentCounter from "@/components/common/utils/percentCounter/PercentCounter.vue";

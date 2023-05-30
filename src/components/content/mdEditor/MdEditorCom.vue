@@ -4,6 +4,7 @@
                v-bind="editorConfig"
                @on-upload-img="onUploadImg"
                @update:modelValue="onChange"
+               :mdHeadingId="createMdHeadingId"
                ref="editorRef">
       <template #defToolbars>
         <mark-extension :on-insert="insert"/>
@@ -23,6 +24,7 @@
   import {MdEditor} from 'md-editor-v3';
   import type {ExposeParam, InsertContentGenerator} from 'md-editor-v3';
   import {message} from "ant-design-vue";
+  import {createMdHeadingId} from "@/components/content/mdEditor/utils";
 
   import EmojiExtension from '@/components/content/mdEditor/child/EmojiExtension/index.vue';
   import MarkExtension from '@/components/content/mdEditor/child/MarkExtension/index.vue';
@@ -44,7 +46,7 @@
     extend: {
       type: Object,
       default: {
-        
+
       }
     },
     toolbars: {

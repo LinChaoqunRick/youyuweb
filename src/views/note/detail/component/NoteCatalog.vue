@@ -3,12 +3,14 @@
     :editor-id="editorId"
     :scroll-element="scrollElement"
     :scrollElementOffsetTop="headerClientHeight"
+    :mdHeadingId="createMdHeadingId"
     class="note-catalog"
   />
 </template>
 
 <script setup lang="ts">
   import {MdEditor, MdCatalog} from 'md-editor-v3';
+  import {createMdHeadingId} from "@/components/content/mdEditor/utils";
   import {ref, onMounted} from "vue";
 
   const headerClientHeight = ref<number>(0)

@@ -275,6 +275,7 @@
         width: 112px;
         /*background-color: skyblue;*/
         border-radius: 4px;
+        /*border: 1px solid var(--youyu-border-color2);*/
 
         &.menu-item-separator {
           grid-column-start: span 2;

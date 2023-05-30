@@ -1,11 +1,14 @@
 <template>
-  <MdPreview :modelValue="text" v-bind="editorConfig"/>
+  <MdPreview :modelValue="text"
+             v-bind="editorConfig"
+             :mdHeadingId="createMdHeadingId"/>
 </template>
 
 <script setup lang="ts">
   import { MdPreview } from 'md-editor-v3';
   import {computed, reactive, toRef} from "vue";
   import {useStore} from "vuex";
+  import {createMdHeadingId} from "@/components/content/mdEditor/utils";
 
   const store = useStore();
   const props = defineProps({
