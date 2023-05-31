@@ -17,7 +17,7 @@
             </template>
             <div class="nickname-text" @click="handleProfile(data.user)">{{data.user.nickname}}</div>
           </a-popover>
-          <div class="author-text" v-if="post.userId === data.userId">(作者)</div>
+          <div class="author-text" v-if="post.userId === data.userId">作者</div>
         </div>
         <div class="create-time" :title="data.createTime">{{$dayjs().to(data.createTime)}}</div>
       </div>
@@ -93,6 +93,7 @@
   const {activeId, updateActiveId} = inject('active');
   const active = computed(() => activeId.value === props.data.id);
   const post = inject('post');
+  const setPostAttribute = inject('setPostAttribute');
   const replyLoading = ref(false);
 
   const emit = defineEmits(['deleteSuccess'])
@@ -169,6 +170,7 @@
       message.success('评论成功');
       loadReply();
       updateActiveId(-1);
+      setPostAttribute('commentCount', post.value.commentCount + 1);
     }).catch(e => {
       message.error("评论失败")
     }).finally(() => submitCallback())
@@ -233,8 +235,11 @@
           .author-text {
             font-size: 13px;
             font-weight: normal;
-            color: #8a919f;
+            color: #fff;
             margin-left: 5px;
+            background: linear-gradient(270deg, #30b6ec, #0692ef 95%);
+            border-radius: 12px;
+            padding: 0 8px;
           }
         }
 
