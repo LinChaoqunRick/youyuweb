@@ -31,13 +31,13 @@
         <div class="item-icon">
           <i-comment theme="outline" size="14" fill="currentColor"/>
         </div>
-        <div class="item-text"></div>
+        <div class="item-text">评论</div>
       </div>
       <div class="item-operation">
         <div class="item-icon">
           <i-thumbs-up theme="outline" size="14" fill="currentColor"/>
         </div>
-        <div class="item-text"></div>
+        <div class="item-text">点赞</div>
       </div>
     </div>
   </div>
@@ -167,6 +167,7 @@
         height: 36px;
         font-size: 13px;
         color: var(--youyu-text1);
+        cursor: pointer;
 
         &:nth-child(n+2) {
           border-left: 1px solid var(--youyu-border-color3);

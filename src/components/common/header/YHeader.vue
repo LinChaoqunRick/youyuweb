@@ -60,7 +60,6 @@
 
   .right-nav {
     height: 100%;
-    margin-right: 26px;
 
     .search, .create, .theme-switch {
       margin-right: 16px;

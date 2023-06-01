@@ -63,7 +63,7 @@
           <img :src="userInfo.avatar"/>
         </div>
         <div class="nickname">
-          <span>{{userInfo.nickname}}</span>
+          {{userInfo.nickname}}
         </div>
       </div>
     </a-popover>
@@ -162,6 +162,7 @@
 
 <style lang="scss" scoped>
   .user-info-container {
+    margin-right: 20px;
 
     .user-info {
       display: flex;
@@ -182,11 +183,15 @@
       }
 
       .nickname {
-        display: flex;
+        max-width: 80px;
         align-items: center;
         color: var(--youyu-body-text);
         font-weight: bold;
         cursor: pointer;
+        margin-left: 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
   }
@@ -221,6 +226,7 @@
           text-overflow: ellipsis;
           white-space: nowrap;
           color: var(--youyu-text);
+          margin-left: 0;
         }
 
         .uid {

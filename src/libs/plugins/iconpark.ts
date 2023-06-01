@@ -73,6 +73,8 @@ import {
   Pencil,
   Like,
   SettingOne,
+  AddPicture,
+  Topic
 } from '@icon-park/vue-next'
 
 export const IconPark = (app) => {
@@ -150,4 +152,6 @@ export const IconPark = (app) => {
   app.component('IPencil', Pencil);
   app.component('ILike', Like);
   app.component('ISettingOne', SettingOne);
+  app.component('IAddPicture', AddPicture);
+  app.component('ITopic', Topic);
 }

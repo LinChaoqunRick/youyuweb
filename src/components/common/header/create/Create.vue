@@ -66,7 +66,16 @@
         padding: 4px 6px;
         /*background-color: var(--youyu-body-background);*/
 
+        .ant-dropdown-menu-item {
+          &:hover {
+            .ant-dropdown-menu-title-content {
+              color: #1890ff !important;
+            }
+          }
+        }
+
         .ant-dropdown-menu-title-content {
+          transition: .3s;
           color: #909090;
         }
 
