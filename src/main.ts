@@ -11,8 +11,9 @@ import aside from "@/libs/directives/aside.js";
 import aside2 from "@/libs/directives/aside2.js";
 import aside3 from "@/libs/directives/aside3.js";
 import aside4 from "@/libs/directives/aside4.js";
+import login from "@/libs/directives/login";
 import scrollToEl from "@/libs/directives/scrollToEl.js";
-import row from "@/libs/directives/row.ts";
+import row from "@/libs/directives/row";
 import focus from "@/libs/directives/focus";
 
 
@@ -43,6 +44,7 @@ app.directive("aside4", aside4);
 app.directive("scroll-to-el", scrollToEl);
 app.directive("row", row);
 app.directive("focus", focus);
+app.directive("login", login);
 
 dayjs.extend(RelativeTime)
 app.config.globalProperties.$dayjs = dayjs;
