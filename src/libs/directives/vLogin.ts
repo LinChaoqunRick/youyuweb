@@ -3,16 +3,14 @@
  * 案例：
  * <div v-login="onSetLike">点赞</div>
  */
-import type {DirectiveBinding} from 'vue';
+import type {DirectiveBinding, ref} from 'vue';
 import store from "@/store";
-
-const isLogin = store.getters.isLogin;
 
 export default {
   created(el: HTMLElement, binding: DirectiveBinding) {
     const callback = binding.value;
     el.addEventListener('click', () => {
-      if (!isLogin) {
+      if (!store.getters.isLogin) {
         store.commit('changeLogin', true);
       } else {
         callback && callback();
