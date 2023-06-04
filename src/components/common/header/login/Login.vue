@@ -97,6 +97,10 @@
 </script>
 
 <style lang="scss" scoped>
+  .user-info {
+    margin-right: 20px;
+  }
+
   .login-button {
     background: rgba(30, 128, 255, .05);
     border: 1px solid rgba(30, 128, 255, .3);

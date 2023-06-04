@@ -162,7 +162,6 @@
 
 <style lang="scss" scoped>
   .user-info-container {
-    margin-right: 20px;
 
     .user-info {
       display: flex;

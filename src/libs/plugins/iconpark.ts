@@ -74,7 +74,10 @@ import {
   Like,
   SettingOne,
   AddPicture,
-  Topic
+  Topic,
+  Write,
+  Notes,
+  NewspaperFolding
 } from '@icon-park/vue-next'
 
 export const IconPark = (app) => {
@@ -154,4 +157,7 @@ export const IconPark = (app) => {
   app.component('ISettingOne', SettingOne);
   app.component('IAddPicture', AddPicture);
   app.component('ITopic', Topic);
+  app.component('IWrite', Write);
+  app.component('INotes', Notes);
+  app.component('INewspaperFolding', NewspaperFolding);
 }
