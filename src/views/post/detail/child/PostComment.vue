@@ -43,7 +43,7 @@
                      :key="item.id"
                      @deleteSuccess="handleSort(true)"/>
         <div class="more-btn" v-if="total - commentList.length> 0" @click="handleLoadALl">
-          加载剩余 {{total - commentList.length}} 条评论
+          加载全部 {{post.commentCount}} 条评论
           <i-down v-if="!restLoading" theme="outline" size="14" fill="#1890ff"/>
           <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
         </div>
