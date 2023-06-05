@@ -125,7 +125,7 @@
 
   const onSubmit = () => {
     const form = cloneDeep(moment);
-    form.images = form.images.join(",");
+    form.images = form.images.length ? form.images.join(",") : null;
     dispatch('createMoment', form).then(res => {
       message.success("发布成功")
     })

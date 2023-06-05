@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="content-body">
-        <div class="content-text">{{data.content}}</div>
+        <div class="content-text" v-html="data.content"></div>
         <div class="content-images" :class="[imageClass]" v-if="images?.length && !preview">
           <img :src="item" v-for="(item, index) in images" @click="onPreview(index)"/>
         </div>
@@ -57,7 +57,7 @@
   const preview = ref(false);
   const current = ref(0);
 
-  const images = computed(() => props.data.images?.split(","));
+  const images = computed(() => props.data.images ? props.data.images?.split(",") : null);
   const imageClass = computed(() => {
     const imageLength = images.value?.length ?? 0;
     if (imageLength >= 5 || imageLength === 3) {
