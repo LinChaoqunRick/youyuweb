@@ -78,17 +78,28 @@
           }
         }
       }
-
+      
       .momentSpin-box {
-        height: 40px;
-        opacity: 0;
+        height: 50px;
         display: flex;
         justify-content: center;
         align-items: center;
         background-color: var(--youyu-background1);
         border-radius: 4px;
         margin-bottom: 8px;
+        overflow: hidden;
       }
     }
+  }
+  
+  .momentSpin-enter-active,
+  .momentSpin-leave-active {
+    transition: .3s ease;
+  }
+
+  .momentSpin-enter-from,
+  .momentSpin-leave-to {
+    opacity: 0;
+    height: 0;
   }
 </style>
