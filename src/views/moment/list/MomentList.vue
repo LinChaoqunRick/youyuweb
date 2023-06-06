@@ -6,8 +6,15 @@
         <MomentItem v-for="item in momentList" :data="item"/>
       </div>
       <transition name="momentSpin">
-        <div class="momentSpin-box" v-show="loading">
-          <a-momentSpin/>
+        <div class="load-more-box" v-show="loading || failed">
+          <div v-show="loading">
+            <a-spin/>
+            <span class="loading-text">加载中...</span>
+          </div>
+          <div v-show="failed" @click="onLoadMore" class="retry-load">
+            <i-refresh theme="outline" size="16" fill="#1890ff"/>
+            <span class="loading-text">重新加载</span>
+          </div>
         </div>
       </transition>
     </div>
@@ -27,8 +34,10 @@
   let totalPageNum: number = 0;
   const momentList = ref<Array<momentListType>>([]);
   const loading = ref<boolean>(false);
+  const failed = ref<boolean>(false);
 
   function getListData() {
+    failed.value = false;
     dispatch('momentList', {
       pageNum,
       pageSize: 10,
@@ -37,10 +46,12 @@
       momentList.value.push(...res.data.list);
       pageNum++;
       totalPageNum = res.data.pages;
+    }).catch(e => {
+      failed.value = true;
     }).finally(() => {
       loading.value = false;
     })
-  }
+  };
 
   getListData();
 
@@ -78,23 +89,43 @@
           }
         }
       }
-      
-      .momentSpin-box {
+
+      .load-more-box {
         height: 50px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
         background-color: var(--youyu-background1);
         border-radius: 4px;
         margin-bottom: 8px;
         overflow: hidden;
+
+        > div {
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        ::v-deep(.ant-spin) {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .loading-text {
+          font-size: 14px;
+          color: #1890ff;
+          margin-left: 8px;
+        }
+
+        .retry-load {
+          cursor: pointer;
+        }
       }
     }
   }
-  
+
   .momentSpin-enter-active,
   .momentSpin-leave-active {
-    transition: .3s ease;
+    transition: .6s ease-out;
   }
 
   .momentSpin-enter-from,

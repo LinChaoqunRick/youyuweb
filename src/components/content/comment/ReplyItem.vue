@@ -220,8 +220,8 @@
 
     .reply-content {
       font-size: 16px;
-      margin: 8px 0;
-      margin-left: 30px;
+      margin: 8px 0 8px 30px;
+      white-space: pre-wrap;
     }
 
     .reply-operation {

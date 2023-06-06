@@ -77,7 +77,8 @@ import {
   Topic,
   Write,
   Notes,
-  NewspaperFolding
+  NewspaperFolding,
+  Refresh
 } from '@icon-park/vue-next'
 
 export const IconPark = (app) => {
@@ -160,4 +161,5 @@ export const IconPark = (app) => {
   app.component('IWrite', Write);
   app.component('INotes', Notes);
   app.component('INewspaperFolding', NewspaperFolding);
+  app.component('IRefresh', Refresh);
 }

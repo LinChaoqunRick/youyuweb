@@ -123,6 +123,7 @@
 
         .content-text {
           margin: 4px 0;
+          white-space: pre-wrap;
         }
 
         .content-images {
