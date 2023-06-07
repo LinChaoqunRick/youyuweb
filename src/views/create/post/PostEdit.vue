@@ -42,7 +42,7 @@
   }
   initData();
 
-  const handleSubmit = () => {
+  const handleSubmit = (callback: Function) => {
     const form = JSON.parse(JSON.stringify(toRaw(formValidate.value)));
     form.tags = form.tags.join(",");
     form.thumbnail = form.thumbnail.join(",");
@@ -60,6 +60,8 @@
       })
       isSave.value = true;
       router.replace({name: 'postDetail', params: {postId: form.id}})
+    }).finally(() => {
+      callback();
     })
   };
 
