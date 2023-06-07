@@ -27,7 +27,7 @@
   });
   const isSave = ref(false);
 
-  const handleSubmit = (callback) => {
+  const handleSubmit = (callback: Function) => {
     const form = JSON.parse(JSON.stringify(toRaw(formValidate.value)));
     form.tags = form.tags.join(",");
     form.thumbnail = form.thumbnail.join(",");
