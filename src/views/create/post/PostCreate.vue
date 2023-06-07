@@ -36,6 +36,7 @@
         message: '发布失败',
         description: '文章标题与内容不能为空'
       })
+      callback();
       return;
     }
     form.userId = userInfo.value.id;
