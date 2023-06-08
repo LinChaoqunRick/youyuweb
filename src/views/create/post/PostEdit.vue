@@ -42,7 +42,7 @@
   }
   initData();
 
-  const handleSubmit = () => {
+  const handleSubmit = (callback: Function) => {
     const form = JSON.parse(JSON.stringify(toRaw(formValidate.value)));
     form.tags = form.tags.join(",");
     form.thumbnail = form.thumbnail.join(",");
@@ -51,6 +51,7 @@
         message: '发布失败',
         description: '文章标题与内容不能为空'
       })
+      callback();
       return;
     }
     dispatch("updatePost", form).then(res => {
@@ -60,6 +61,8 @@
       })
       isSave.value = true;
       router.replace({name: 'postDetail', params: {postId: form.id}})
+    }).finally(() => {
+      callback();
     })
   };
 

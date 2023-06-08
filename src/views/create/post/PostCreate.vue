@@ -27,7 +27,7 @@
   });
   const isSave = ref(false);
 
-  const handleSubmit = (callback) => {
+  const handleSubmit = (callback: Function) => {
     const form = JSON.parse(JSON.stringify(toRaw(formValidate.value)));
     form.tags = form.tags.join(",");
     form.thumbnail = form.thumbnail.join(",");
@@ -36,6 +36,7 @@
         message: '发布失败',
         description: '文章标题与内容不能为空'
       })
+      callback();
       return;
     }
     form.userId = userInfo.value.id;
