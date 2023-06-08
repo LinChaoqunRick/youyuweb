@@ -59,6 +59,9 @@
     NoteCategoryRef.value.generatePreNext()
     nextTick(() => {
       showCatalog.value = true;
+    });
+    setTimeout(() => {
+      document.title = chapter.value.title;
     })
   }
 
@@ -74,6 +77,7 @@
     NoteCategoryRef.value.initData();
   }
 
+  console.log(123);
 </script>
 
 <style lang="scss" scoped>
