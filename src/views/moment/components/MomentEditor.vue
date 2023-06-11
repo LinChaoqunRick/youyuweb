@@ -8,7 +8,8 @@
              @focus="onFocus"
              @blur="onBlur"
              @input="onInput"
-             placeholder="此刻在想什么..."></div>
+             placeholder="此刻在想什么..."
+             ref="richEditor"></div>
       </div>
       <div class="topic-wrapper">
         <div class="now-mood">
@@ -64,6 +65,8 @@
   import {message} from 'ant-design-vue';
   import {cloneDeep} from 'lodash';
 
+  const emit = defineEmits(['saveSuccess']);
+
   const {getters, commit, dispatch} = useStore();
   const userInfo = computed(() => getters['userInfo']);
   const isLogin = computed(() => getters['isLogin']);
@@ -71,9 +74,10 @@
   const currentLength = computed(() => moment.content.length);
   const uploadDisabled = computed(() => moment.images.length >= 9)
 
+  const richEditor = ref(null);
   const active = ref(false);
   const moment = reactive({
-    userId: userInfo.value.id,
+    userId: '',
     content: '',
     images: [
       /*'https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/10000/20210203110431mario.jpg',
@@ -125,10 +129,20 @@
 
   const onSubmit = () => {
     const form = cloneDeep(moment);
+    form.userId = userInfo.value.id;
     form.images = form.images.length ? form.images.join(",") : null;
     dispatch('createMoment', form).then(res => {
-      message.success("发布成功")
+      message.success("发布成功");
+      resetEditor();
+      emit('saveSuccess', toRaw(res.data));
     })
+  }
+
+  const resetEditor = () => {
+    moment.userId = '';
+    moment.content = '';
+    moment.images = [];
+    richEditor.value.innerHTML = '';
   }
 </script>
 

@@ -1,7 +1,7 @@
 <template>
   <div class="moment-list mt-8">
     <div class="moment-middle">
-      <MomentEditor/>
+      <MomentEditor @saveSuccess="saveSuccess"/>
       <div class="moment-list-body">
         <MomentItem v-for="item in momentList" :data="item"/>
       </div>
@@ -24,7 +24,7 @@
 <script setup lang="ts">
   import {ref, watch} from 'vue';
   import {useStore} from 'vuex';
-  import type {momentListType} from "@/views/moment/types";
+  import type {momentType} from "@/views/moment/types";
   import {useScroll} from '@vueuse/core'
   import MomentEditor from "../components/MomentEditor.vue";
   import MomentItem from "./MomentItem.vue";
@@ -32,7 +32,7 @@
   const {dispatch} = useStore();
   let pageNum: number = 1;
   let totalPageNum: number = 0;
-  const momentList = ref<Array<momentListType>>([]);
+  const momentList = ref<Array<momentType>>([]);
   const loading = ref<boolean>(false);
   const failed = ref<boolean>(false);
 
@@ -68,6 +68,10 @@
       loading.value = true;
       getListData();
     }
+  }
+
+  const saveSuccess = (data: momentType) => {
+    momentList.value.unshift(data);
   }
 </script>
 
