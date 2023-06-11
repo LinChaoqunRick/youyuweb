@@ -1,9 +1,13 @@
 <template>
   <div class="post-list">
     <div class="article-list">
-      <YTable listUrl="getPostList" :params="{pageSize: 15}" @onLoaded="onLoaded">
+      <YTable listUrl="getPostList" :params="{pageSize: 15}">
         <template #default="{dataList}">
-          <div v-for="(item, index) in dataList" class="article-body" :key="item.postId" ref="postItem">
+          <div v-for="(item, index) in dataList"
+               v-slide-in
+               class="article-body"
+               :key="item.postId"
+               ref="postItem">
             <PostItem :data="item" :index="index"/>
           </div>
         </template>
@@ -25,23 +29,6 @@
   import PostAside from "../aside/PostAside.vue";
 
   const postItem = ref([]);
-
-  const onLoaded = () => {
-    // nextTick(() => {
-    //   postItem.value.forEach(item => {
-    //     const {stop} = useIntersectionObserver(
-    //       item,
-    //       ([{isIntersecting}], observerElement) => {
-    //         if (isIntersecting) {
-    //           addClass(item, "animate__animated")
-    //           addClass(item, "animate__fadeIn")
-    //           stop();
-    //         }
-    //       },
-    //     )
-    //   })
-    // })
-  }
 </script>
 
 <style lang="scss" scoped>
