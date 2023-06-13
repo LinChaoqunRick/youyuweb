@@ -1,12 +1,34 @@
 import {fileURLToPath, URL} from 'node:url'
 
-import {defineConfig} from 'vite'
-import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
+import {defineConfig} from 'vite';
+import vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx';
+import {autoComplete, Plugin as importToCDN} from 'vite-plugin-cdn-import';
+import {visualizer} from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(), vueJsx()],
+  plugins: [
+    vue(),
+    vueJsx(),
+    visualizer({open: true}),
+    importToCDN({
+      modules: [
+        // autoComplete("vue"),
+        autoComplete("lodash"),
+        autoComplete("axios"),
+        // {
+        //   name: "ant-design-vue",
+        //   var: "Antd", // 根据main.ts中定义的来
+        //   path: "https://cdn.jsdelivr.net/npm/ant-design-vue@3.2.17/dist/antd.min.js",
+        //   css: [
+        //     "https://cdn.jsdelivr.net/npm/ant-design-vue@3.2.17/dist/antd.css",
+        //     "https://cdn.jsdelivr.net/npm/ant-design-vue@3.2.17/dist/antd.dark.css"
+        //   ],
+        // },
+      ],
+    })
+  ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -19,7 +41,7 @@ export default defineConfig({
     open: false, //启动后是否自动打开浏览器,
     proxy: {
       '/plat': {
-        target: "http://localhost:8090",
+        target: "http://localhost:8080",
         // target: "http://124.222.79.236:8080",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/plat/, '')

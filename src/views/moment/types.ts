@@ -1,6 +1,6 @@
 import type {userType} from "@/types/user";
 
-export interface momentListType {
+export interface momentType {
   id: number,
   userId: number,
   content: string,

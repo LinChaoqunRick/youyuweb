@@ -31,11 +31,12 @@ router.beforeEach(async (to, from, next) => {
   isInit = true;
 })
 
-router.beforeResolve((to) => {
+router.beforeEach((to, from, next) => {
   const title = to.meta.title
   if (title) {
     document.title = <string>title;
   }
+  next();
 })
 
 router.afterEach((to, from): any => {

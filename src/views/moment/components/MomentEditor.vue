@@ -38,17 +38,25 @@
     </div>
     <div class="editor-bottom">
       <div class="tool-items">
-        <div class="tool-item">
-          <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
-          <span class="tool-title">表情</span>
-        </div>
+        <a-popover placement="bottomLeft"
+                   overlayClassName="emoji-picker-popover"
+                   :getPopupContainer="triggerNode=>triggerNode.parentNode"
+                   :visible="emojiVisible">
+          <template #content>
+            <EmojiPicker @onPick="onPick" v-on-click-outside="onEmojiClose"/>
+          </template>
+          <div class="tool-item" @click="onClickEmoji">
+            <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
+            <span class="tool-title">表情</span>
+          </div>
+        </a-popover>
         <UploadFile accept=".jpg, .jpeg, .png" @uploadSuccess="uploadSuccess" :disabled="uploadDisabled">
-          <div class="tool-item item-upload-image">
+          <div class="tool-item item-upload-image" @click="onCheckLogin">
             <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
             <span class="tool-title">图片</span>
           </div>
         </UploadFile>
-        <div class="tool-item">
+        <div class="tool-item" @click="onCheckLogin">
           <i-topic theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
           <span class="tool-title">话题</span>
         </div>
@@ -61,9 +69,12 @@
 <script setup lang="ts">
   import {ref, reactive, computed, toRaw} from 'vue';
   import {useStore} from "vuex";
-  import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
   import {message} from 'ant-design-vue';
   import {cloneDeep} from 'lodash';
+  import {vOnClickOutside} from '@vueuse/components'
+  import {setPosition} from "@/assets/utils/utils";
+  import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
+  import EmojiPicker from "@/components/common/utils/emoji/EmojiPicker.vue";
 
   const emit = defineEmits(['saveSuccess']);
 
@@ -76,6 +87,8 @@
 
   const richEditor = ref(null);
   const active = ref(false);
+  const emojiVisible = ref(false);
+  let position = '';
   const moment = reactive({
     userId: '',
     content: '',
@@ -97,6 +110,7 @@
   }
   const onBlur = () => {
     active.value = false;
+    position = window.getSelection().getRangeAt(0);
   }
 
   const onInput = ($event: Event) => {
@@ -143,6 +157,48 @@
     moment.content = '';
     moment.images = [];
     richEditor.value.innerHTML = '';
+  }
+
+  const onPick = (value: HTMLElement | string) => {
+    richEditor.value.focus();
+    if (position === '') {
+      // 如果div没有光标，则在div内容末尾插入
+      const range = window.getSelection();
+      range.selectAllChildren(richEditor.value)
+      range.collapseToEnd()
+      position = window.getSelection().getRangeAt(0);
+    }
+    position.insertNode(value);
+  }
+
+
+  const onCheckLogin = (e: Event) => {
+    if (!isLogin.value) {
+      commit("changeLogin", true);
+      if (e && e.stopPropagation) {
+        e.stopPropagation();
+      } else {
+        window.event.cancelBubble = true;
+      }
+
+      if (e && e.preventDefault) {
+        e.preventDefault();
+      } else {
+        window.event.returnValue = false;
+      }
+    }
+  }
+
+  const onClickEmoji = () => {
+    if (!isLogin.value) {
+      commit("changeLogin", true);
+      return;
+    }
+    emojiVisible.value = true;
+  }
+
+  const onEmojiClose = () => {
+    emojiVisible.value = false;
   }
 </script>
 
@@ -344,6 +400,23 @@
 
     .item-upload-image {
       color: #8a919f !important;
+    }
+  }
+</style>
+
+<style lang="scss">
+  .emoji-picker-popover {
+    .ant-popover-inner-content {
+      padding: 0;
+    }
+  }
+
+  .rich-editor {
+    img {
+      vertical-align: sub;
+      height: 24px;
+      cursor: default;
+      margin: 0 2px;
     }
   }
 </style>
