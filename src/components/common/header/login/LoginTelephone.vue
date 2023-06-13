@@ -87,18 +87,14 @@
   const {resetFields, validate, validateInfos} = useForm(formState, rulesRef);
 
   const onSubmit = () => {
+    if (tryCount.value >= 6) {
+      message.error("尝试次数过多，请稍后再试");
+      return;
+    }
     validate().then(async () => {
       tip.showTip = false;
       loading.value = true;
-      const result = await dispatch('messageVerify', formState).catch(console.log);
-      if (result.data) {
-        handleLogin(toRaw(formState));
-      } else {
-        tryCount.value++;
-        tip.showTip = true;
-        tip.message = '验证码错误或已过期，请重试';
-        loading.value = false;
-      }
+      handleLogin(toRaw(formState));
     }).catch(err => {
       console.log('error', err);
     });
@@ -114,8 +110,15 @@
       // 生成权限路由
       generateAuthRoutes();
     }).catch(e => {
-      tip.showTip = true;
-      tip.message = e.message;
+      if (e.code === 514) {
+        tryCount.value++;
+        tip.showTip = true;
+        tip.message = '验证码错误或已过期，请重试';
+        loading.value = false;
+      } else {
+        tip.showTip = true;
+        tip.message = e.message;
+      }
     }).finally(_ => {
       loading.value = false;
     })
