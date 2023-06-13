@@ -54,3 +54,26 @@ html {
   overflow: hidden;
 }
 
+.youyu-scrollbar {
+  /* 滚动条整体部分 */
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  /*滚动条轨道*/
+  &::-webkit-scrollbar-track {
+    background-color: #eaecf1;
+  }
+
+  /*滚动条*/
+  &::-webkit-scrollbar-thumb {
+    background-color: #c6c6c9;
+    border-radius: 3px;
+  }
+
+  /*边角*/
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
