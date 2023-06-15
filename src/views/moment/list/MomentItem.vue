@@ -11,7 +11,9 @@
         </div>
       </div>
       <div class="content-body">
-        <div class="content-text" v-html="data.content"></div>
+        <div class="content-text" :class="{'content-expand': expand}" v-html="data.content" v-row="{set: set}"></div>
+        <div class="limit-btn" @click="expand = true" v-show="row>7 && !expand">展开</div>
+        <div class="limit-btn" @click="expand = false" v-show="row>7 && expand">收起</div>
         <div class="content-images" :class="[imageClass]" v-if="images?.length && !preview">
           <img :src="item" v-for="(item, index) in images" @click="onPreview(index)"/>
         </div>
@@ -56,7 +58,8 @@
   });
   const preview = ref(false);
   const current = ref(0);
-
+  const row = ref<number>(0);
+  const expand = ref<boolean>(false);
   const images = computed(() => props.data.images ? props.data.images?.split(",") : null);
   const imageClass = computed(() => {
     const imageLength = images.value?.length ?? 0;
@@ -67,7 +70,12 @@
     } else {
       return 'col-1';
     }
-  })
+  });
+
+  function set(value: number) {
+    row.value = value;
+  }
+
   const onPreview = (index: number) => {
     preview.value = true;
     current.value = index;
@@ -121,9 +129,23 @@
       .content-body {
         margin-left: 56px;
 
-        .content-text {
+        ::v-deep(.content-text) {
           margin: 4px 0;
           white-space: pre-wrap;
+          line-height: 2rem;
+          max-height: 12rem;
+          overflow: hidden;
+
+          &.content-expand {
+            max-height: none !important;
+          }
+
+          img {
+            vertical-align: sub;
+            width: auto;
+            height: 20px;
+            margin: 0 2px;
+          }
         }
 
         .content-images {
@@ -152,6 +174,14 @@
             cursor: zoom-in;
             filter: brightness(.94);
           }
+        }
+
+        .limit-btn {
+          cursor: pointer;
+          font-size: 14px;
+          line-height: 22px;
+          color: #1e80ff;
+          margin-right: 20px;
         }
       }
     }

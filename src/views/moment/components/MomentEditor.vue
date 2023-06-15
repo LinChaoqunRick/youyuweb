@@ -3,21 +3,19 @@
     <div class="editor-body">
       <div class="login-mask" @click="toLogin" v-if="!isLogin"></div>
       <div class="editor-content">
-        <div class="rich-editor"
-             contenteditable
-             @focus="onFocus"
-             @blur="onBlur"
-             @input="onInput"
-             placeholder="此刻在想什么..."
-             ref="richEditor"></div>
-      </div>
-      <div class="topic-wrapper">
-        <div class="now-mood">
-          <i-ulikecam theme="multi-color" size="13" :fill="['#1890ff' ,'#fff' ,'#1890ff' ,'#1890ff']"/>
-          <span class="mood-text">现在的心情</span>
-          <i-right theme="outline" size="13" fill="currentColor"/>
-        </div>
-        <div class="word-counter">{{currentLength}}/{{maxLength}}</div>
+        <ContentEditableDiv v-model="moment.content"
+                            placeholder="此刻在想什么..."
+                            ref="richEditor">
+          <template #bottom>
+            <div class="topic-wrapper">
+              <div class="now-mood">
+                <i-ulikecam theme="multi-color" size="13" :fill="['#1890ff' ,'#fff' ,'#1890ff' ,'#1890ff']"/>
+                <span class="mood-text">现在的心情</span>
+                <i-right theme="outline" size="13" fill="currentColor"/>
+              </div>
+            </div>
+          </template>
+        </ContentEditableDiv>
       </div>
     </div>
     <div class="image-wrapper" v-if="moment.images?.length">
@@ -43,7 +41,7 @@
                    :getPopupContainer="triggerNode=>triggerNode.parentNode"
                    :visible="emojiVisible">
           <template #content>
-            <EmojiPicker @onPick="onPick" v-on-click-outside="onEmojiClose"/>
+            <EmojiPicker @onImagePick="onImagePick" @onEmojiPick="onEmojiPick" v-on-click-outside="onEmojiClose"/>
           </template>
           <div class="tool-item" @click="onClickEmoji">
             <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
@@ -61,7 +59,8 @@
           <span class="tool-title">话题</span>
         </div>
       </div>
-      <a-button type="primary" :disabled="!isLogin || !currentLength" @click="onSubmit">发布</a-button>
+      <a-button type="primary" :disabled="!isLogin || !currentLength || contentLengthExceed" @click="onSubmit">发布
+      </a-button>
     </div>
   </div>
 </template>
@@ -75,6 +74,7 @@
   import {setPosition} from "@/assets/utils/utils";
   import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
   import EmojiPicker from "@/components/common/utils/emoji/EmojiPicker.vue";
+  import ContentEditableDiv from "@/components/common/utils/contenteditable/ContentEditableDiv.vue";
 
   const emit = defineEmits(['saveSuccess']);
 
@@ -82,7 +82,8 @@
   const userInfo = computed(() => getters['userInfo']);
   const isLogin = computed(() => getters['isLogin']);
   const maxLength = 500;
-  const currentLength = computed(() => moment.content.length);
+  const currentLength = computed(() => richEditor.value?.totalStrLength);
+  const contentLengthExceed = computed(() => richEditor.value?.contentLengthExceed);
   const uploadDisabled = computed(() => moment.images.length >= 9)
 
   const richEditor = ref(null);
@@ -104,29 +105,6 @@
       'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0513/20230513105651_%E5%A3%81%E7%BA%B81.jpg',*/
     ]
   });
-
-  const onFocus = () => {
-    active.value = true;
-  }
-  const onBlur = () => {
-    active.value = false;
-    position = window.getSelection().getRangeAt(0);
-  }
-
-  const onInput = ($event: Event) => {
-    const content = $event.target.innerText;
-    if (content.length >= maxLength + 1) {
-      $event.preventDefault();
-      $event.target.innerHTML = moment.content;
-      $event.target.blur();
-      // $event.target.focus();
-      // let range = window.getSelection();
-      // range.selectAllChildren($event.target);
-      // range.collapseToEnd();
-    } else {
-      moment.content = content;
-    }
-  }
 
   const uploadSuccess = (fileList: []) => {
     const url = fileList[0].url + '?x-oss-process=style/smallThumb';
@@ -156,19 +134,15 @@
     moment.userId = '';
     moment.content = '';
     moment.images = [];
-    richEditor.value.innerHTML = '';
+    richEditor.value.clearContent();
   }
 
-  const onPick = (value: HTMLElement | string) => {
-    richEditor.value.focus();
-    if (position === '') {
-      // 如果div没有光标，则在div内容末尾插入
-      const range = window.getSelection();
-      range.selectAllChildren(richEditor.value)
-      range.collapseToEnd()
-      position = window.getSelection().getRangeAt(0);
-    }
-    position.insertNode(value);
+  const onImagePick = (value: HTMLElement | string) => {
+    richEditor.value.insertImage(value.src)
+  }
+
+  const onEmojiPick = (value: string) => {
+    richEditor.value.insertText(value)
   }
 
 
@@ -228,7 +202,7 @@
       .editor-content {
         position: relative;
         margin-bottom: 2px;
-        max-height: 180px;
+        max-height: 216px;
         overflow-y: auto;
         word-wrap: break-word;
 
@@ -250,15 +224,12 @@
       }
 
       .topic-wrapper {
-        height: 32px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         font-size: 12px;
 
         .now-mood {
-          margin-left: 12px;
-          margin-bottom: 8px;
           padding: 0 6px;
           line-height: 24px;
           border-radius: 50px;
@@ -406,6 +377,8 @@
 
 <style lang="scss">
   .emoji-picker-popover {
+    z-index: 9;
+
     .ant-popover-inner-content {
       padding: 0;
     }

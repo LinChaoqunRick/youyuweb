@@ -2,10 +2,12 @@ const route = [
   {
     path: '/post',
     name: 'post',
-    redirect: "/post/list/1",
+    redirect: () => {
+      return {name: 'postList', params: {page: 1}}
+    },
     meta: {
       title: "文章",
-      code: "POST"
+      code: "POST",
     },
     component: () => import("@/views/post/Post.vue"),
     children: [
@@ -15,6 +17,7 @@ const route = [
         meta: {
           title: "帖子列表",
           hide: true,
+          keepAlive: true,
           code: "POST_LIST"
         },
         component: () => import("@/views/post/list/PostList.vue")

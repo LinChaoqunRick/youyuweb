@@ -58,7 +58,7 @@
           </div>
         </div>
       </template>
-      <div class="user-info">
+      <div class="user-info-simple">
         <div class="avatar">
           <img :src="userInfo.avatar"/>
         </div>
@@ -163,7 +163,7 @@
 <style lang="scss" scoped>
   .user-info-container {
 
-    .user-info {
+    .user-info-simple {
       display: flex;
       align-items: center;
 
@@ -182,7 +182,7 @@
       }
 
       .nickname {
-        max-width: 80px;
+        max-width: 100px;
         align-items: center;
         color: var(--youyu-body-text);
         font-weight: bold;
@@ -217,9 +217,11 @@
       }
 
       .nickname-uid {
+        flex: 1;
         margin-left: 12px;
 
         .nickname {
+          width: 100%;
           font-weight: bold;
           overflow: hidden;
           text-overflow: ellipsis;

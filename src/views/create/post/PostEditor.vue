@@ -1,7 +1,7 @@
 <template>
   <div class="create-post">
     <div class="top-box">
-      <input v-model="formValidate.title" placeholder="请输入文章标题" maxlength="60"/>
+      <input v-model="formValidate.title" placeholder="请输入文章标题" maxlength="255"/>
       <span class="top-tips">文章将自动保存至草稿箱</span>
       <a-button type="primary">草稿箱</a-button>
       <a-button type="primary" @click="handlePost">发布</a-button>

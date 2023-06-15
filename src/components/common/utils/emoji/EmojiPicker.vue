@@ -2,18 +2,21 @@
   <div class="emoji-picker">
     <div class="emoji-picker-header">
       <div class="emoji-switch emoji-first" :class="{'item-active': activeIndex === 0}" @click="onSwitch(0)">
-        <img
-          src="https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0611/20230611225945_Expression_41@2x.png"/>
+        <img :src="youyuEmojis[0].src"/>
       </div>
       <div class="emoji-switch emoji-second" :class="{'item-active': activeIndex === 1}" @click="onSwitch(1)">
         <div>😃</div>
       </div>
     </div>
     <div class="emoji-picker-body">
-      <div class="list-youyu-emoji youyu-scrollbar" @click="onPick">
+      <div v-if="activeIndex === 0" class="list-youyu-emoji youyu-scrollbar" @click="onImagePick">
         <div v-for="item in youyuEmojis" class="emoji-image" :title="item.title">
-          <img
-            src="https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0611/20230611225945_Expression_41@2x.png"/>
+          <img :src="item.src"/>
+        </div>
+      </div>
+      <div v-else class="list-youyu-emoji youyu-scrollbar" @click="onEmojiPick">
+        <div v-for="item in emojiList" class="emoji-image emoji-item" :title="item.title">
+          <span v-html="item.char"/>
         </div>
       </div>
     </div>
@@ -23,18 +26,27 @@
 <script setup lang="ts">
   import {ref} from 'vue';
   import {youyuEmojis} from "@/components/common/utils/emoji/youyu_emoji";
+  import emojis from "@/components/common/utils/emoji/data";
+
+  const emojiList = emojis.map(item => item.emojis).reduce((a, b) => a.concat(b));
 
   const activeIndex = ref<number>(0);
 
-  const emit = defineEmits(['onPick']);
+  const emit = defineEmits(['onImagePick', 'onImagePick']);
 
   const onSwitch = (index: number) => {
     activeIndex.value = index;
   }
 
-  const onPick = (event: Event) => {
+  const onImagePick = (event: Event) => {
     if (event.target.tagName === "IMG") {
-      emit("onPick", event.target.cloneNode());
+      emit("onImagePick", event.target.cloneNode());
+    }
+  }
+
+  const onEmojiPick = (event: Event) => {
+    if (event.target.tagName === "SPAN") {
+      emit('onEmojiPick', event.target.innerHTML);
     }
   }
 
@@ -130,6 +142,15 @@
           width: 32px;
           cursor: pointer;
           margin: 0 7px 7px 0;
+          transition: .3s;
+
+          &.emoji-item {
+            font-size: 24px;
+
+            &:hover {
+              transform: scale(1.1);
+            }
+          }
 
           &:hover {
             img {

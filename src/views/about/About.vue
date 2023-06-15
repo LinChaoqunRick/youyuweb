@@ -1,11 +1,15 @@
 <template>
   <div class="about-container">
-    <MusicPlayer/>
+    <router-view v-slot="{ Component }">
+      <keep-alive>
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
   </div>
 </template>
 
 <script setup>
-  import MusicPlayer from "@/components/common/utils/player/MusicPlayer.vue"
+  console.log(123123123);
 </script>
 
 <style lang="scss" scoped>

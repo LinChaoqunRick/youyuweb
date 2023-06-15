@@ -19,8 +19,14 @@
   </div>
 </template>
 
-<script setup>
-  import {ref, nextTick} from "vue";
+<script lang="ts">
+  export default {
+    name: "PostList"
+  }
+</script>
+
+<script setup lang="ts">
+  import {ref, onMounted} from "vue";
   import {useIntersectionObserver} from '@vueuse/core';
   import {addClass} from "@/assets/utils/utils.ts"
 
@@ -29,6 +35,9 @@
   import PostAside from "../aside/PostAside.vue";
 
   const postItem = ref([]);
+  onMounted(() => {
+    console.log(123123);
+  })
 </script>
 
 <style lang="scss" scoped>
