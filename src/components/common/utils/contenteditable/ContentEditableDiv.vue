@@ -4,201 +4,190 @@
       <div id="box"
            ref="box"
            :contenteditable="contenteditable"
-           :placeholder="placeholder"
+           :placeholder="placeHolder"
            @focus="onFocus"
            @blur="onBlur"
-           @keyup="keyupFn"
-           @keydown="keydownFn"
-           @mouseup="mouseupFn"
-           @input="inputFn"
+           @keyup="onKeyup"
+           @keydown="onKeydown"
+           @mouseup="onMouseup"
+           @input="onInput"
            @paste="onPaste"
       ></div>
     </div>
     <div class="editor-bottom">
-      <slot name="bottom"></slot>
       <div v-if="showLimit" class="length-limit" :class="{'exceed-error':contentLengthExceed}">
-        {{totalStrLength}}/{{this.maxLength}}
+        {{totalStrLength}}/{{maxLength}}
       </div>
     </div>
   </div>
 </template>
 
-<script>
+<script lang="ts">
   export default {
-    props: {
-      modelValue: {
-        type: String,
-      },
-      placeholder: {
-        type: String,
-        default: '请输入内容...'
-      },
-      maxLength: {
-        type: Number,
-        default: 500
-      },
-      showLimit: {
-        type: Boolean,
-        default: true
-      }
+    name: "ContentEditableDiv2"
+  }
+</script>
+
+<script setup lang="ts">
+  import {ref, computed, nextTick} from 'vue';
+
+  const props = defineProps({
+    modelValue: {
+      type: String,
     },
-    computed: {
-      contentLengthExceed() {
-        return this.totalStrLength > this.maxLength;
-      }
+    placeHolder: {
+      type: String,
+      default: '请输入内容...'
     },
-    data() {
-      return {
-        contenteditable: true,
-        currentRange: null,
-        _parentElem: null,
-        supportRange: typeof document.createRange === "function",
-        box: null,
-        totalStrLength: 0,
-        active: false
-      };
+    maxLength: {
+      type: Number,
+      default: 500
     },
-    methods: {
-      onFocus() {
-        this.active = true;
-      },
-      onBlur() {
-        this.active = false;
-      },
-      // 去除粘贴文本的样式
-      onPaste(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        let text = '', event = (e.originalEvent || e);
-        if (event.clipboardData && event.clipboardData.getData) {
-          text = event.clipboardData.getData('text/plain');
-        } else if (window.clipboardData && window.clipboardData.getData) {
-          text = window.clipboardData.getData('Text');
-        }
-        if (this.totalStrLength + text.length > this.maxLength) {
-          return;
-        }
-        if (document.queryCommandSupported('insertText')) {
-          document.execCommand('insertText', false, text);
-        } else {
-          document.execCommand('paste', false, text);
-        }
-      },
-      inputFn(e) {
-        this.calcTextAreaLength();
-        this.updateModelValue();
-      },
-      // 计算输入框的字数
-      calcTextAreaLength() {
-        let reg = /<img[^>]*>/gi;
-        let stringHtml = this.box.innerHTML;
-        let stringText = this.box.innerText; //  拿到输入框中字符长度
-        let emojiArr = stringHtml.match(reg) || [];
-        this.totalStrLength = stringText.length + emojiArr.length;
-        return stringText.length + emojiArr.length;
-      },
-      keydownFn(e) {
-        //  因为先执行keydownup事件 当到达长度后重新计算字符数 避免到达字符限制输入框无法输入
-        // 换行 空格  以及字符超出最大限制  禁止输入    超出最大限制后除了退格其他都不可以输入
-        this.contenteditable = !(this.totalStrLength >= this.maxLength && e.keyCode !== 8);
-        if (!this.contenteditable) {
-          e.preventDefault();
-        }
-        setTimeout(() => {
-          this.contenteditable = true;
-          this.$nextTick(() => {
-            this.box.focus();
-          });
-        });
-      },
-      keyupFn(e) {
-        this.saveSelection();
-      },
-      mouseupFn() {
-        this.saveSelection();
-      },
-      insertImage(html) {
-        this.restoreSelection();
-        if (document.selection) {
-          this.currentRange.pasteHTML(html);
-        } else {
-          this.box.focus();
-          document.execCommand("insertImage", false, html);
-          this.currentRange && this.currentRange.collapse(false);
-        }
-        this.saveSelection();
-      },
-      insertText(string) {
-        this.restoreSelection();
-        if (document.selection) {
-          this.currentRange.pasteHTML(string);
-        } else {
-          this.box.focus();
-          document.execCommand("insertText", false, string);
-          this.currentRange?.collapse(false);
-        }
-        this.saveSelection();
-      },
-      getCurrentRange() {
-        let selection,
-          range,
-          txt = this.box;
-        if (this.supportRange) {
-          selection = document.getSelection();
-          if (selection.getRangeAt && selection.rangeCount) {
-            range = document.getSelection().getRangeAt(0);
-            this._parentElem = range.commonAncestorContainer;
-          }
-        } else {
-          range = document.selection.createRange();
-          this._parentElem = range.parentElement();
-        }
-        // && (avalon.contains(txt, _parentElem)
-        if (this._parentElem || txt === this._parentElem) {
-          this._parentElem = txt;
-          return range;
-        }
-        return range;
-      },
-      saveSelection() {
-        this.currentRange = this.getCurrentRange();
-      },
-      restoreSelection() {
-        if (!this.currentRange) {
-          return;
-        }
-        let selection, range;
-        if (this.supportRange) {
-          selection = document.getSelection();
-          selection.removeAllRanges();
-          selection.addRange(this.currentRange);
-        } else {
-          range = document.selection.createRange();
-          range.setEndPoint("EndToEnd", this.currentRange);
-          if (this.currentRange.text.length === 0) {
-            range.collapse(false);
-          } else {
-            range.setEndPoint("StartToStart", this.currentRange);
-          }
-          range.select();
-        }
-      },
-      updateModelValue() {
-        this.$emit("update:modelValue", this.box.innerHTML);
-      },
-      clearContent() {
-        this.box.innerHTML = '';
-        this.updateModelValue();
-      }
-    },
-    mounted() {
-      this.box = document.querySelector("#box");
-    },
+    showLimit: {
+      type: Boolean,
+      default: true
+    }
+  });
+
+  const emit = defineEmits(['update:modalValue']);
+
+  const contenteditable = ref<boolean>(true);
+  const box = ref<HTMLElement | null>(null);
+  const totalStrLength = ref<number>(0);
+  const active = ref<boolean>(false);
+  let currentRange = null;
+  let _parentElem = null;
+  const supportRange = typeof document.createRange === "function";
+
+  const contentLengthExceed = computed(() => totalStrLength.value > props.maxLength)
+
+  const onFocus = () => {
+    active.value = true;
   };
+  const onBlur = () => {
+    active.value = false;
+    updateModelValue();
+  };
+  const onKeydown = (e) => {
+    //  因为先执行keydownup事件 当到达长度后重新计算字符数 避免到达字符限制输入框无法输入
+    // 换行 空格  以及字符超出最大限制  禁止输入    超出最大限制后除了退格其他都不可以输入
+    contenteditable.value = !(totalStrLength.value >= props.maxLength && e.keyCode !== 8);
+    if (!contenteditable.value) {
+      e.preventDefault();
+    }
+    setTimeout(() => {
+      contenteditable.value = true;
+      nextTick(() => {
+        box.value.focus();
+      });
+    });
+  };
+  const onKeyup = (e) => {
+    saveSelection();
+  };
+  const onMouseup = () => {
+    saveSelection();
+  };
+  const onInput = (e) => {
+    calcTextAreaLength();
+  };
+  // 计算输入框的字数
+  const calcTextAreaLength = () => {
+    let reg = /<img[^>]*>/gi;
+    let stringHtml = box.value.innerHTML;
+    let stringText = box.value.innerText; //  拿到输入框中字符长度
+    let emojiArr = stringHtml.match(reg) || [];
+    totalStrLength.value = stringText.length + emojiArr.length;
+    return stringText.length + emojiArr.length;
+  };
+  const saveSelection = () => {
+    currentRange = getCurrentRange();
+  };
+  const updateModelValue = () => {
+    emit("update:modalValue", box.value.innerHTML);
+  };
+  const insertHtml = (html) => {
+    box.value.focus();
+    // 创建一个新的选区
+    const selection = window.getSelection();
+    // 如果光标位置原来就存在，就用原来的。
+    // 原来不存在，就重新创建一个
+    const range = currentRange ?? selection.getRangeAt(0);
+    // 插入表情图标
+    range.insertNode(html.cloneNode());
+    // 插入后，光标显示在表情图片后面
+    range.collapse();
+    // 移除其他的区域
+    selection.removeAllRanges();
+    // 把带有表情图片的区域插入到选区内
+    selection.addRange(range);
+    dispatchInputEvent();
+  };
+  const insertText = (text) => {
+    box.value.focus();
+    const selection = window.getSelection();
+    const range = currentRange ?? selection.getRangeAt(0);
+    const node = range.createContextualFragment(text);
+    range.insertNode(node);
+    range.collapse();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    dispatchInputEvent();
+  };
+  const getCurrentRange = () => {
+    let selection,
+      range,
+      txt = box.value;
+    if (supportRange) {
+      selection = document.getSelection();
+      if (selection.getRangeAt && selection.rangeCount) {
+        range = document.getSelection().getRangeAt(0);
+        _parentElem = range.commonAncestorContainer;
+      }
+    } else {
+      range = document.selection.createRange();
+      _parentElem = range.parentElement();
+    }
+    // && (avalon.contains(txt, _parentElem)
+    if (_parentElem || txt === _parentElem) {
+      _parentElem = txt;
+      return range;
+    }
+    return range;
+  };
+  const onPaste = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    let text = '', event = (e.originalEvent || e);
+    if (event.clipboardData && event.clipboardData.getData) {
+      text = event.clipboardData.getData('text/plain');
+    } else if (window.clipboardData && window.clipboardData.getData) {
+      text = window.clipboardData.getData('Text');
+    }
+    if (totalStrLength.value + text.length > props.maxLength) {
+      return false;
+    } else {
+      insertText(text);
+      dispatchInputEvent();
+    }
+  };
+  const dispatchInputEvent = () => {
+    const inputEvent = new Event('input', {bubbles: false, cancelable: false});
+    box.value.dispatchEvent(inputEvent);
+  };
+
+
+  defineExpose({
+    totalStrLength,
+    active,
+    insertHtml,
+    insertText,
+  })
 </script>
 
 <style lang="scss" scoped>
   .editor-body {
+    background: var(--youyu-background2);
     transition: background .2s;
 
     .editor-content {
@@ -250,6 +239,6 @@
   }
 
   .editor-active {
-
+    background: var(--youyu-background1);
   }
 </style>
