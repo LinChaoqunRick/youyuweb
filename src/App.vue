@@ -15,12 +15,14 @@
 <script setup lang="ts">
   import {nextTick, ref, provide, computed, watch} from 'vue';
   import {useStore} from "vuex";
+  import Cookies from "js-cookie";
 
   import zhCN from 'ant-design-vue/es/locale/zh_CN';
   import YHeader from '@/components/common/header/YHeader.vue';
   import YFooter from "@/components/common/footer/YFooter.vue";
+  import {message} from "ant-design-vue";
 
-  const {getters} = useStore();
+  const {getters, commit} = useStore();
 
   const isRouterAlive = ref<boolean>(true);
 
@@ -43,6 +45,23 @@
   })
 
   provide('reload', reload);
+
+  /**
+   * fix: #12
+   * 如果localStorage存在user信息但是Cookie中的token失效，那么清空localStorage中的user信息
+   */
+  const checkTokenValid = () => {
+    const token = Cookies.get("token");
+    if (!token && isLogin.value) {
+      message.warning('登录凭证已过期，请重新登录！');
+      commit("changeUser", {});
+      setTimeout(() => {
+        location.reload();
+      }, 1500)
+    }
+  }
+
+  checkTokenValid();
 </script>
 
 <style lang="scss" scoped>
