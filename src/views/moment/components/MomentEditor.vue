@@ -2,7 +2,7 @@
   <div class="moment-editor" :class="{'editor-active': active}">
     <div class="editor-body">
       <div class="login-mask" @click="toLogin" v-if="!isLogin"></div>
-      <div class="editor-content">
+      <div class="editor-content-wrapper">
         <ContentEditableDiv v-model="moment.content"
                             placeholder="此刻在想什么..."
                             ref="richEditor">
@@ -87,7 +87,7 @@
   const uploadDisabled = computed(() => moment.images.length >= 9)
 
   const richEditor = ref(null);
-  const active = ref(false);
+  const active = computed(() => richEditor.value?.active);
   const emojiVisible = ref(false);
   let position = '';
   const moment = reactive({
@@ -138,7 +138,7 @@
   }
 
   const onImagePick = (value: HTMLElement | string) => {
-    richEditor.value.insertImage(value.src)
+    richEditor.value.insertHtml(value)
   }
 
   const onEmojiPick = (value: string) => {
@@ -199,7 +199,7 @@
         z-index: 1;
       }
 
-      .editor-content {
+      .editor-content-wrapper {
         position: relative;
         margin-bottom: 2px;
         max-height: 216px;
@@ -358,7 +358,7 @@
   .editor-active {
     .editor-body {
       border-color: #1890ff;
-      background: var(--youyu-background1);
+      background: var(--youyu-background1) !important;
 
       .now-mood {
         background: #eaf2ff !important;

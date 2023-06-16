@@ -7,7 +7,7 @@
         </div>
         <div class="user-nickname-time">
           <div class="user-nickname">{{data.userInfo.nickname}}</div>
-          <div class="publish-time">{{$dayjs().to(data.createTime)}}</div>
+          <div class="publish-time" :title="data.createTime">{{$dayjs().to(data.createTime)}}</div>
         </div>
       </div>
       <div class="content-body">

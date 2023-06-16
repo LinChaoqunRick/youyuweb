@@ -17,7 +17,7 @@ import qs from 'qs';
 // 配置axios默认Content-type
 // axios.defaults.headers["Content-Type"] = "application/x-www-form-urlencoded";
 
-const showMessageCode = [508, 509, 510, 600, 800];
+const showMessageCode = [403, 508, 509, 510, 600, 800];
 
 // 创建axios的对象
 const instance = axios.create({
@@ -52,6 +52,7 @@ instance.interceptors.response.use((response) => {
     router.replace({name: 'NotFound'});
     return Promise.reject(res);
   } else if (showMessageCode.includes(res.code)) { // 需要message提示
+    console.log(res.code);
     message.error(res.message);
     return Promise.reject(res)
   } else {

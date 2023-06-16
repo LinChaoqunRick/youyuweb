@@ -64,13 +64,13 @@ html {
   /*滚动条轨道*/
   &::-webkit-scrollbar-track {
     background-color: var(--youyu-background3);
-    border-radius: 3px;
+    border-radius: 8px;
   }
 
   /*滚动条*/
   &::-webkit-scrollbar-thumb {
     background-color: #c6c6c9;
-    border-radius: 3px;
+    border-radius: 8px;
   }
 
   /*边角*/

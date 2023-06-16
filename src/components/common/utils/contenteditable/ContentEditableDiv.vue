@@ -1,5 +1,5 @@
 <template>
-  <div class="editor-body" :class="{'editor-active': active}">
+  <div class="editable-div" :class="{'editor-active': active}">
     <div class="editor-content youyu-scrollbar">
       <div id="box"
            ref="box"
@@ -15,6 +15,7 @@
       ></div>
     </div>
     <div class="editor-bottom">
+      <slot name="bottom"></slot>
       <div v-if="showLimit" class="length-limit" :class="{'exceed-error':contentLengthExceed}">
         {{totalStrLength}}/{{maxLength}}
       </div>
@@ -49,7 +50,7 @@
     }
   });
 
-  const emit = defineEmits(['update:modalValue']);
+  const emit = defineEmits(['update:modelValue']);
 
   const contenteditable = ref<boolean>(true);
   const box = ref<HTMLElement | null>(null);
@@ -104,7 +105,7 @@
     currentRange = getCurrentRange();
   };
   const updateModelValue = () => {
-    emit("update:modalValue", box.value.innerHTML);
+    emit("update:modelValue", box.value.innerHTML);
   };
   const insertHtml = (html) => {
     box.value.focus();
@@ -171,6 +172,9 @@
       dispatchInputEvent();
     }
   };
+  const clearContent = () => {
+    box.value.innerHTML = '';
+  }
   const dispatchInputEvent = () => {
     const inputEvent = new Event('input', {bubbles: false, cancelable: false});
     box.value.dispatchEvent(inputEvent);
@@ -182,12 +186,13 @@
     active,
     insertHtml,
     insertText,
+    clearContent
   })
 </script>
 
 <style lang="scss" scoped>
-  .editor-body {
-    background: var(--youyu-background2);
+  .editable-div {
+    /*background: var(--youyu-background2);*/
     transition: background .2s;
 
     .editor-content {
@@ -239,6 +244,6 @@
   }
 
   .editor-active {
-    background: var(--youyu-background1);
+    /*background: var(--youyu-background1);*/
   }
 </style>
