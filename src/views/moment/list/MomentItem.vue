@@ -22,16 +22,16 @@
         </div>
       </div>
     </div>
-    <div class="moment-item-bottom">
+    <div class="moment-item-actions">
       <div class="item-operation">
         <div class="item-icon">
           <i-share-one theme="outline" size="14" fill="currentColor"/>
         </div>
         <div class="item-text">分享</div>
       </div>
-      <div class="item-operation">
+      <div class="item-operation" v-login="()=>replyShow = !replyShow" :class="{'action-active':replyShow}">
         <div class="item-icon">
-          <i-comment theme="outline" size="14" fill="currentColor"/>
+          <i-comment :theme="replyShow?'filled':'outline'" size="14" fill="currentColor"/>
         </div>
         <div class="item-text">评论</div>
       </div>
@@ -42,14 +42,61 @@
         <div class="item-text">点赞</div>
       </div>
     </div>
+    <div class="moment-item-bottom" v-if="replyShow">
+      <div class="moment-item-reply-box">
+        <div class="user-avatar">
+          <img :src="userInfo.avatar"/>
+        </div>
+        <div class="reply-box">
+          <ContentEditableDiv :row="1" ref="richEditor" :maxLength="300"/>
+          <div class="reply-box-bottom">
+            <a-popover placement="bottomLeft"
+                       overlayClassName="emoji-picker-popover"
+                       :getPopupContainer="triggerNode=>triggerNode.parentNode"
+                       :visible="emojiVisible">
+              <template #content>
+                <EmojiPicker
+                  @onImagePick="onImagePick"
+                  @onEmojiPick="onEmojiPick"
+                  v-on-click-outside="onEmojiClose"/>
+              </template>
+              <div class="tool-item" v-login="onClickEmoji">
+                <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
+                <span class="tool-title">表情</span>
+              </div>
+            </a-popover>
+            <UploadFile accept=".jpg, .jpeg, .png" @uploadSuccess="uploadSuccess" :disabled="uploadDisabled">
+              <div class="tool-item item-upload-image" @click="onCheckLogin">
+                <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
+                <span class="tool-title">图片</span>
+              </div>
+            </UploadFile>
+            <a-button type="primary"
+                      :disabled="!isLogin || !currentLength || contentLengthExceed"
+                      @click="onSubmit"
+                      class="submit-btn">
+              发表评论
+            </a-button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import {ref, computed} from 'vue';
+  import {ref, computed, reactive} from 'vue';
   import type {PropType} from "vue";
+  import {useStore} from "vuex";
   import type {momentListType} from "@/views/moment/types";
+  import {onCheckLogin} from "@/assets/utils/utils";
+  import {vOnClickOutside} from '@vueuse/components'
   import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
+  import ContentEditableDiv from "@/components/common/utils/contenteditable/ContentEditableDiv.vue";
+  import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
+  import EmojiPicker from "@/components/common/utils/emoji/EmojiPicker.vue";
+
+  const {getters} = useStore();
 
   const props = defineProps({
     data: {
@@ -60,6 +107,7 @@
   const current = ref(0);
   const row = ref<number>(0);
   const expand = ref<boolean>(false);
+  const replyShow = ref<boolean>(false);
   const images = computed(() => props.data.images ? props.data.images?.split(",") : null);
   const imageClass = computed(() => {
     const imageLength = images.value?.length ?? 0;
@@ -71,6 +119,18 @@
       return 'col-1';
     }
   });
+  const userInfo = computed(() => getters['userInfo']);
+  const emojiVisible = ref(false);
+  const richEditor = ref(null);
+  const reply = reactive({
+    userId: userInfo.value.id,
+    content: '',
+    images: []
+  });
+  const uploadDisabled = computed(() => reply.images.length >= 1);
+  const isLogin = computed(() => getters['isLogin']);
+  const currentLength = computed(() => richEditor.value?.totalStrLength);
+  const contentLengthExceed = computed(() => richEditor.value?.contentLengthExceed);
 
   function set(value: number) {
     row.value = value;
@@ -82,6 +142,27 @@
   };
   const onClose = () => {
     preview.value = false;
+  }
+
+  const onClickEmoji = () => {
+    emojiVisible.value = true;
+  }
+
+  const onEmojiClose = () => {
+    emojiVisible.value = false;
+  }
+
+  const onImagePick = (value: HTMLElement | string) => {
+    richEditor.value.insertHtml(value)
+  }
+
+  const onEmojiPick = (value: string) => {
+    richEditor.value.insertText(value)
+  }
+
+  const uploadSuccess = (fileList: []) => {
+    const url = fileList[0].url + '?x-oss-process=style/smallThumb';
+    reply.images.push(url);
   }
 </script>
 
@@ -186,7 +267,7 @@
       }
     }
 
-    .moment-item-bottom {
+    .moment-item-actions {
       display: flex;
       border-top: 1px solid var(--youyu-border-color3);
 
@@ -199,6 +280,16 @@
         font-size: 13px;
         color: var(--youyu-text1);
         cursor: pointer;
+        user-select: none;
+
+        &.action-active {
+          background-color: var(--youyu-background4);
+          color: #1890ff;
+        }
+
+        &:hover {
+          background-color: var(--youyu-background4);
+        }
 
         &:nth-child(n+2) {
           border-left: 1px solid var(--youyu-border-color3);
@@ -211,6 +302,83 @@
         .i-icon {
           position: relative;
           top: 1px;
+        }
+      }
+    }
+
+    .moment-item-bottom {
+      .moment-item-reply-box {
+        margin: 0 24px;
+        padding: 16px 0;
+        border-top: 1px solid var(--youyu-border-color3);
+        display: flex;
+        align-items: flex-start;
+
+        .user-avatar {
+          height: 36px;
+          width: 36px;
+          border-radius: 100%;
+          overflow: hidden;
+          margin: 0 12px 0 4px;
+
+          img {
+            height: 100%;
+            width: 100%;
+          }
+        }
+
+        .reply-box {
+          flex: 1;
+
+          .reply-box-bottom {
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+
+            .tool-item {
+              display: flex;
+              align-items: center;
+              cursor: pointer;
+              margin-right: 16px;
+              transition: .3s;
+
+              .i-icon {
+                position: relative;
+                top: .5px;
+              }
+
+              .tool-title {
+                font-size: 13px;
+                padding-left: 4px;
+              }
+
+              &:hover {
+                color: #1890ff;
+              }
+            }
+
+            ::v-deep(.avatar-uploader) {
+              display: flex;
+            }
+
+            .submit-btn {
+              margin-left: auto;
+            }
+          }
+        }
+
+        ::v-deep(.editable-div) {
+          border-radius: 2px;
+          border: 1px solid transparent;
+          transition: .3s;
+
+          &.editor-active {
+            border: 1px solid #1890ff;
+          }
+
+          #box {
+            padding: 6px 12px;
+          }
         }
       }
     }

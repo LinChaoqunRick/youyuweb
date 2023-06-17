@@ -265,9 +265,12 @@
           max-height: none !important;
         }
 
-        ::v-deep(p) {
-          margin-top: 0 !important;
-          margin-bottom: 0 !important;
+        ::v-deep(.md-editor-preview-wrapper) {
+          padding: 0 !important;
+
+          p {
+            margin: 0;
+          }
         }
       }
 

@@ -4,6 +4,7 @@
       <div class="login-mask" @click="toLogin" v-if="!isLogin"></div>
       <div class="editor-content-wrapper">
         <ContentEditableDiv v-model="moment.content"
+                            showLimit
                             placeholder="此刻在想什么..."
                             ref="richEditor">
           <template #bottom>
@@ -29,7 +30,7 @@
                   @uploadSuccess="uploadSuccess"
                   :disabled="uploadDisabled"
                   v-if="!uploadDisabled">
-        <div class="upload-image" @click="onUpload">
+        <div class="upload-image">
           <i-plus theme="outline" size="40" fill="currentColor" :strokeWidth="1"/>
         </div>
       </UploadFile>
@@ -71,17 +72,17 @@
   import {message} from 'ant-design-vue';
   import {cloneDeep} from 'lodash';
   import {vOnClickOutside} from '@vueuse/components'
-  import {setPosition} from "@/assets/utils/utils";
+  import {onCheckLogin} from "@/assets/utils/utils";
   import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
   import EmojiPicker from "@/components/common/utils/emoji/EmojiPicker.vue";
   import ContentEditableDiv from "@/components/common/utils/contenteditable/ContentEditableDiv.vue";
 
   const emit = defineEmits(['saveSuccess']);
 
+  const maxLength = 500;
   const {getters, commit, dispatch} = useStore();
   const userInfo = computed(() => getters['userInfo']);
   const isLogin = computed(() => getters['isLogin']);
-  const maxLength = 500;
   const currentLength = computed(() => richEditor.value?.totalStrLength);
   const contentLengthExceed = computed(() => richEditor.value?.contentLengthExceed);
   const uploadDisabled = computed(() => moment.images.length >= 9)
@@ -145,24 +146,6 @@
     richEditor.value.insertText(value)
   }
 
-
-  const onCheckLogin = (e: Event) => {
-    if (!isLogin.value) {
-      commit("changeLogin", true);
-      if (e && e.stopPropagation) {
-        e.stopPropagation();
-      } else {
-        window.event.cancelBubble = true;
-      }
-
-      if (e && e.preventDefault) {
-        e.preventDefault();
-      } else {
-        window.event.returnValue = false;
-      }
-    }
-  }
-
   const onClickEmoji = () => {
     if (!isLogin.value) {
       commit("changeLogin", true);
@@ -185,8 +168,8 @@
 
     .editor-body {
       position: relative;
-      background: var(--youyu-background2);
-      border-radius: 4px;
+      background: var(--youyu-background5);
+      border-radius: 2px;
       transition: .3s;
       border: 1px solid transparent;
 
@@ -206,19 +189,9 @@
         overflow-y: auto;
         word-wrap: break-word;
 
-        .rich-editor {
-          position: relative;
-          font-size: 14px;
-          line-height: 24px;
-          min-height: 80px;
-          outline: none;
-          padding: 5px 12px;
-          box-sizing: border-box;
-          white-space: pre-wrap;
-
-          &[contenteditable]:empty:before {
-            content: attr(placeholder);
-            color: #8a919f;
+        ::v-deep(.editable-div) {
+          .editor-bottom {
+            padding: 4px 12px;
           }
         }
       }
@@ -381,15 +354,6 @@
 
     .ant-popover-inner-content {
       padding: 0;
-    }
-  }
-
-  .rich-editor {
-    img {
-      vertical-align: sub;
-      height: 24px;
-      cursor: default;
-      margin: 0 2px;
     }
   }
 </style>

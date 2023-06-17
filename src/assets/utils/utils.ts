@@ -261,3 +261,24 @@ export function disabledBodyScroll() {
 export function enabledBodyScroll() {
   removeClass(document.body, 'scrolling-effect-scroll', 'scrolling-effect-noscroll');
 }
+
+/**
+ * 检查是否登录，如果没登录，弹出登录框
+ * @param e: Event
+ */
+export const onCheckLogin = (e: Event) => {
+  if (!store.getters.isLogin) {
+    store.commit("changeLogin", true);
+    if (e && e.stopPropagation) {
+      e.stopPropagation();
+    } else {
+      window.event.cancelBubble = true;
+    }
+
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    } else {
+      window.event.returnValue = false;
+    }
+  }
+}

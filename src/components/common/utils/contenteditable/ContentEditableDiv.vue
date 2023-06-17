@@ -12,6 +12,7 @@
            @mouseup="onMouseup"
            @input="onInput"
            @paste="onPaste"
+           :style="{'min-height': 2*props.row+'rem'}"
       ></div>
     </div>
     <div class="editor-bottom">
@@ -36,6 +37,10 @@
     modelValue: {
       type: String,
     },
+    row: {
+      type: Number,
+      default: 3
+    },
     placeHolder: {
       type: String,
       default: '请输入内容...'
@@ -46,7 +51,7 @@
     },
     showLimit: {
       type: Boolean,
-      default: true
+      default: false
     }
   });
 
@@ -192,12 +197,13 @@
 
 <style lang="scss" scoped>
   .editable-div {
-    /*background: var(--youyu-background2);*/
+    background: var(--youyu-background5);
     transition: background .2s;
+    line-height: 2rem;
+    min-height: 2rem;
 
     .editor-content {
       position: relative;
-      margin-bottom: 2px;
       max-height: 180px;
       overflow-y: auto;
       word-wrap: break-word;
@@ -206,10 +212,10 @@
         position: relative;
         font-size: 14px;
         line-height: 24px;
-        min-height: 80px;
+        /*min-height: 80px;*/
         outline: none;
-        padding: 5px 8px 5px 12px;
-        box-sizing: border-box;
+        padding: 5px 12px;
+        box-sizing: content-box;
         white-space: pre-wrap;
 
         &[contenteditable]:empty:before {
@@ -229,7 +235,6 @@
     .editor-bottom {
       display: flex;
       align-items: center;
-      padding: 4px 12px;
 
       .length-limit {
         margin-left: auto;
@@ -244,6 +249,6 @@
   }
 
   .editor-active {
-    /*background: var(--youyu-background1);*/
+    background: var(--youyu-background1);
   }
 </style>
