@@ -1,5 +1,5 @@
 <template>
-  <div class="upload-file">
+  <div class="upload-file" :class="{'disabled':disabled}">
     <a-upload
       v-model:file-list="fileList"
       :data="data"
@@ -14,7 +14,7 @@
       ref="uploadRef"
     >
       <slot :percent="percent">
-        <div class="upload-box" :class="{'disabled':disabled}">
+        <div class="upload-box">
           <div class="progress-box" :style="{'width': `${percent}%`}"></div>
           <div class="upload-button">
             <i-upload-one theme="outline" size="18" fill="currentColor"/>
@@ -113,6 +113,8 @@
 
 <style lang="scss" scoped>
   .upload-file {
+    cursor: pointer;
+
     .upload-box {
       position: relative;
       display: inline-flex;
@@ -150,16 +152,19 @@
         background-color: #1890ff;
         transition: .2s;
       }
+    }
 
-      &.disabled {
-        .upload-button {
-          cursor: not-allowed !important;
-          color: #00000040 !important;
-        }
+    &.disabled {
+      cursor: not-allowed !important;
+      color: #00000040 !important;
 
-        .progress-box {
-          background: #f5f5f5 !important;
-        }
+      .upload-button {
+        cursor: not-allowed !important;
+        color: #00000040 !important;
+      }
+
+      .progress-box {
+        background: #f5f5f5 !important;
       }
     }
   }
