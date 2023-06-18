@@ -12,6 +12,7 @@
            @mouseup="onMouseup"
            @input="onInput"
            @paste="onPaste"
+           v-focus
            :style="{'min-height': 2*props.row+'rem'}"
       ></div>
     </div>
