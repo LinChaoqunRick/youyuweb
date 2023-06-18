@@ -21,7 +21,7 @@
     <div class="preview-body" ref="previewBody">
       <div class="white-panel"></div>
       <a-spin :spinning="loading">
-        <img :src="currentImage" @load="onLoad" ref="image"/>
+        <img :src="currentImage" @load="onLoad" @click="onClose" ref="image"/>
       </a-spin>
       <div class="change-btn last-btn" v-if="current>0" @click="onChange('left')"></div>
       <div class="change-btn next-btn" v-if="current<list.length-1" @click="onChange('right')"></div>
@@ -222,6 +222,7 @@
         left: 0;
         width: 100%;
         transform-origin: top left;
+        cursor: zoom-out;
       }
     }
 

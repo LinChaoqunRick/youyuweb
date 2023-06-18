@@ -3,7 +3,12 @@
     <div class="moment-item-content">
       <div class="content-top">
         <div class="user-avatar">
-          <img :src="data.userInfo.avatar"/>
+          <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3" trigger="click">
+            <template #content>
+              <UserCardMoment :user="data.userInfo"/>
+            </template>
+            <img :src="data.userInfo.avatar"/>
+          </a-popover>
         </div>
         <div class="user-nickname-time">
           <div class="user-nickname">{{data.userInfo.nickname}}</div>
@@ -17,7 +22,7 @@
         <div class="content-images" :class="[imageClass]" v-if="images?.length && !preview">
           <img :src="item" v-for="(item, index) in images" @click="onPreview(index)"/>
         </div>
-        <div content="content-image-preview" v-if="images?.length && preview">
+        <div class="content-image-preview" v-if="images?.length && preview">
           <ImagePreviewEmbed :list="images" :current="current" @onClose="onClose"/>
         </div>
       </div>
@@ -47,37 +52,8 @@
         <div class="user-avatar">
           <img :src="userInfo.avatar"/>
         </div>
-        <div class="reply-box">
-          <ContentEditableDiv :row="1" ref="richEditor" :maxLength="300"/>
-          <div class="reply-box-bottom">
-            <a-popover placement="bottomLeft"
-                       overlayClassName="emoji-picker-popover"
-                       :getPopupContainer="triggerNode=>triggerNode.parentNode"
-                       :visible="emojiVisible">
-              <template #content>
-                <EmojiPicker
-                  @onImagePick="onImagePick"
-                  @onEmojiPick="onEmojiPick"
-                  v-on-click-outside="onEmojiClose"/>
-              </template>
-              <div class="tool-item" v-login="onClickEmoji">
-                <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
-                <span class="tool-title">表情</span>
-              </div>
-            </a-popover>
-            <UploadFile accept=".jpg, .jpeg, .png" @uploadSuccess="uploadSuccess" :disabled="uploadDisabled">
-              <div class="tool-item item-upload-image" @click="onCheckLogin">
-                <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
-                <span class="tool-title">图片</span>
-              </div>
-            </UploadFile>
-            <a-button type="primary"
-                      :disabled="!isLogin || !currentLength || contentLengthExceed"
-                      @click="onSubmit"
-                      class="submit-btn">
-              发表评论
-            </a-button>
-          </div>
+        <div class="reply-box-wrapper">
+          <ReplyEditor/>
         </div>
       </div>
     </div>
@@ -89,12 +65,9 @@
   import type {PropType} from "vue";
   import {useStore} from "vuex";
   import type {momentListType} from "@/views/moment/types";
-  import {onCheckLogin} from "@/assets/utils/utils";
-  import {vOnClickOutside} from '@vueuse/components'
   import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
-  import ContentEditableDiv from "@/components/common/utils/contenteditable/ContentEditableDiv.vue";
-  import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
-  import EmojiPicker from "@/components/common/utils/emoji/EmojiPicker.vue";
+  import ReplyEditor from "@/views/moment/components/ReplyEditor.vue";
+  import UserCardMoment from "../components/UserCardMoment.vue";
 
   const {getters} = useStore();
 
@@ -120,17 +93,7 @@
     }
   });
   const userInfo = computed(() => getters['userInfo']);
-  const emojiVisible = ref(false);
   const richEditor = ref(null);
-  const reply = reactive({
-    userId: userInfo.value.id,
-    content: '',
-    images: []
-  });
-  const uploadDisabled = computed(() => reply.images.length >= 1);
-  const isLogin = computed(() => getters['isLogin']);
-  const currentLength = computed(() => richEditor.value?.totalStrLength);
-  const contentLengthExceed = computed(() => richEditor.value?.contentLengthExceed);
 
   function set(value: number) {
     row.value = value;
@@ -142,27 +105,6 @@
   };
   const onClose = () => {
     preview.value = false;
-  }
-
-  const onClickEmoji = () => {
-    emojiVisible.value = true;
-  }
-
-  const onEmojiClose = () => {
-    emojiVisible.value = false;
-  }
-
-  const onImagePick = (value: HTMLElement | string) => {
-    richEditor.value.insertHtml(value)
-  }
-
-  const onEmojiPick = (value: string) => {
-    richEditor.value.insertText(value)
-  }
-
-  const uploadSuccess = (fileList: []) => {
-    const url = fileList[0].url + '?x-oss-process=style/smallThumb';
-    reply.images.push(url);
   }
 </script>
 
@@ -327,44 +269,8 @@
           }
         }
 
-        .reply-box {
+        .reply-box-wrapper {
           flex: 1;
-
-          .reply-box-bottom {
-            margin-top: 12px;
-            display: flex;
-            align-items: center;
-
-            .tool-item {
-              display: flex;
-              align-items: center;
-              cursor: pointer;
-              margin-right: 16px;
-              transition: .3s;
-
-              .i-icon {
-                position: relative;
-                top: .5px;
-              }
-
-              .tool-title {
-                font-size: 13px;
-                padding-left: 4px;
-              }
-
-              &:hover {
-                color: #1890ff;
-              }
-            }
-
-            ::v-deep(.avatar-uploader) {
-              display: flex;
-            }
-
-            .submit-btn {
-              margin-left: auto;
-            }
-          }
         }
 
         ::v-deep(.editable-div) {

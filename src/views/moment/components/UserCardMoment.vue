@@ -9,7 +9,7 @@
     </div>
     <div class="user-data">
       <div class="statis-data" v-for="item in dataItems" @click="handleClickStat(item)">
-        <div class="data-value">{{user.extraInfo?.[item.value]}}</div>
+        <div class="data-value">{{user[item.value]}}</div>
         <div class="data-label">{{item.label}}</div>
       </div>
     </div>
@@ -30,16 +30,8 @@
 
   const dataItems = [
     {
-      value: 'postCount',
-      label: '原创'
-    },
-    {
-      value: 'viewCount',
-      label: '阅读'
-    },
-    {
-      value: 'likeCount',
-      label: '点赞'
+      value: 'momentCount',
+      label: '时刻'
     },
     {
       value: 'fansCount',

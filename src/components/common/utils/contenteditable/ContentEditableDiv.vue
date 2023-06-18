@@ -4,7 +4,7 @@
       <div id="box"
            ref="box"
            :contenteditable="contenteditable"
-           :placeholder="placeHolder"
+           :placeholder="placeholder"
            @focus="onFocus"
            @blur="onBlur"
            @keyup="onKeyup"
@@ -31,17 +31,18 @@
 </script>
 
 <script setup lang="ts">
-  import {ref, computed, nextTick} from 'vue';
+  import {ref, computed, nextTick, onMounted} from 'vue';
 
   const props = defineProps({
     modelValue: {
       type: String,
+      default: ''
     },
     row: {
       type: Number,
       default: 3
     },
-    placeHolder: {
+    placeholder: {
       type: String,
       default: '请输入内容...'
     },
@@ -64,8 +65,11 @@
   let currentRange = null;
   let _parentElem = null;
   const supportRange = typeof document.createRange === "function";
+  const contentLengthExceed = computed(() => totalStrLength.value > props.maxLength);
 
-  const contentLengthExceed = computed(() => totalStrLength.value > props.maxLength)
+  onMounted(() => {
+    box.value.innerHTML = props.modelValue;
+  })
 
   const onFocus = () => {
     active.value = true;
@@ -110,7 +114,7 @@
     currentRange = getCurrentRange();
   };
   const updateModelValue = () => {
-    emit("update:modelValue", box.value.innerHTML);
+    emit("update:modelValue", box.value?.innerHTML);
   };
   const insertHtml = (html) => {
     box.value.focus();
