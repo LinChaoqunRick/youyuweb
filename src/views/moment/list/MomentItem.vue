@@ -3,15 +3,24 @@
     <div class="moment-item-content">
       <div class="content-top">
         <div class="user-avatar">
-          <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3" trigger="click">
+          <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
             <template #content>
               <UserCardMoment :user="data.userInfo"/>
             </template>
-            <img :src="data.userInfo.avatar"/>
+            <RouterLink :to="{name:'userHome', params: {userId: data.userInfo.id}}">
+              <img :src="data.userInfo.avatar"/>
+            </RouterLink>
           </a-popover>
         </div>
         <div class="user-nickname-time">
-          <div class="user-nickname">{{data.userInfo.nickname}}</div>
+          <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+            <template #content>
+              <UserCardMoment :user="data.userInfo"/>
+            </template>
+            <RouterLink :to="{name:'userHome', params: {userId: data.userInfo.id}}">
+              <div class="user-nickname">{{data.userInfo.nickname}}</div>
+            </RouterLink>
+          </a-popover>
           <div class="publish-time" :title="data.createTime">{{$dayjs().to(data.createTime)}}</div>
         </div>
       </div>
@@ -35,6 +44,7 @@
         <div class="item-text">分享</div>
       </div>
       <div class="item-operation" v-login="()=>replyShow = !replyShow" :class="{'action-active':replyShow}">
+        <div class="pointer-arrow" v-if="replyShow"></div>
         <div class="item-icon">
           <i-comment :theme="replyShow?'filled':'outline'" size="14" fill="currentColor"/>
         </div>
@@ -53,7 +63,7 @@
           <img :src="userInfo.avatar"/>
         </div>
         <div class="reply-box-wrapper">
-          <ReplyEditor/>
+          <MomentReply @onSubmit="onSubmit"/>
         </div>
       </div>
     </div>
@@ -63,13 +73,15 @@
 <script lang="ts" setup>
   import {ref, computed, reactive} from 'vue';
   import type {PropType} from "vue";
+  import {RouterLink} from "vue-router";
   import {useStore} from "vuex";
   import type {momentListType} from "@/views/moment/types";
+  import {message} from "ant-design-vue";
   import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
-  import ReplyEditor from "@/views/moment/components/ReplyEditor.vue";
+  import MomentReply from "@/views/moment/components/MomentReply.vue";
   import UserCardMoment from "../components/UserCardMoment.vue";
 
-  const {getters} = useStore();
+  const {getters, dispatch} = useStore();
 
   const props = defineProps({
     data: {
@@ -105,6 +117,19 @@
   };
   const onClose = () => {
     preview.value = false;
+  };
+  const onSubmit = (reply: object, callback: Function) => {
+    reply.images = reply.length ? reply.images.join(",") : null;
+    reply.momentId = props.data.id;
+    reply.userId = userInfo.value.id;
+    dispatch('createMomentComment', reply).then(res => {
+      console.log(res);
+      if (res) {
+        message.success("发布成功");
+      }
+    }).finally(() => {
+      callback();
+    })
   }
 </script>
 
@@ -137,8 +162,13 @@
         .user-nickname-time {
           margin-left: 8px;
 
+          a {
+            color: inherit;
+          }
+
           .user-nickname {
             font-weight: bold;
+            cursor: pointer;
           }
 
           .publish-time {
@@ -214,6 +244,7 @@
       border-top: 1px solid var(--youyu-border-color3);
 
       .item-operation {
+        position: relative;
         flex: 1;
         display: flex;
         justify-content: center;
@@ -244,6 +275,21 @@
         .i-icon {
           position: relative;
           top: 1px;
+        }
+
+        .pointer-arrow {
+          position: absolute;
+          bottom: -6px;
+          left: 50%;
+          margin: -6px 0 0 -6px;
+          pointer-events: none;
+          width: 12px;
+          height: 12px;
+          border-top: 1px solid var(--youyu-border-color3);
+          border-left: 1px solid var(--youyu-border-color3);
+          transform: rotate(45deg);
+          display: inline-block;
+          background-color: var(--youyu-background1);
         }
       }
     }

@@ -2,7 +2,8 @@ import http from "@/network/https";
 import {
   MOMENT_CREATE,
   MOMENT_DELETE,
-  MOMENT_LIST
+  MOMENT_LIST,
+  CREATE_MOMENT_COMMENT
 } from "@/network/apis";
 
 export default {
@@ -15,6 +16,9 @@ export default {
     },
     momentList(state: any, params: object) {
       return http.post(MOMENT_LIST, params);
+    },
+    createMomentComment(state: any, params: object) {
+      return http.post(CREATE_MOMENT_COMMENT, params);
     },
   }
 }
