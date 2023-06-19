@@ -38,6 +38,7 @@
 
   function getListData() {
     failed.value = false;
+    loading.value = true;
     dispatch('momentList', {
       pageNum,
       pageSize: 10,
@@ -65,7 +66,6 @@
 
   const onLoadMore = () => {
     if (!loading.value && pageNum <= totalPageNum) {
-      loading.value = true;
       getListData();
     }
   }
@@ -87,10 +87,6 @@
         ::v-deep(.moment-item) {
           margin-top: 8px;
           border-radius: 4px;
-
-          &:last-child {
-            margin-bottom: 8px;
-          }
         }
       }
 
@@ -98,7 +94,7 @@
         height: 50px;
         background-color: var(--youyu-background1);
         border-radius: 4px;
-        margin-bottom: 8px;
+        margin: 8px 0;
         overflow: hidden;
 
         > div {

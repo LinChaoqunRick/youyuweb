@@ -73,6 +73,7 @@
   import {cloneDeep} from 'lodash';
   import {vOnClickOutside} from '@vueuse/components'
   import {onCheckLogin} from "@/assets/utils/utils";
+  import {transformHTMLToTag} from "@/components/common/utils/emoji/youyu_emoji";
   import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
   import EmojiPicker from "@/components/common/utils/emoji/EmojiPicker.vue";
   import ContentEditableDiv from "@/components/common/utils/contenteditable/ContentEditableDiv.vue";
@@ -94,17 +95,7 @@
   const moment = reactive({
     userId: '',
     content: '',
-    images: [
-      /*'https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/10000/20210203110431mario.jpg',
-      'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0513/20230513105651_%E5%A3%81%E7%BA%B81.jpg',
-      'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0513/20230513105651_%E5%A3%81%E7%BA%B81.jpg',
-      'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0513/20230513105651_%E5%A3%81%E7%BA%B81.jpg',
-      'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0513/20230513105651_%E5%A3%81%E7%BA%B81.jpg',
-      'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0513/20230513105651_%E5%A3%81%E7%BA%B81.jpg',
-      'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0513/20230513105651_%E5%A3%81%E7%BA%B81.jpg',
-      'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0513/20230513105651_%E5%A3%81%E7%BA%B81.jpg',
-      'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2023/0513/20230513105651_%E5%A3%81%E7%BA%B81.jpg',*/
-    ]
+    images: []
   });
 
   const uploadSuccess = (fileList: []) => {
@@ -124,6 +115,7 @@
     const form = cloneDeep(moment);
     form.userId = userInfo.value.id;
     form.images = form.images.length ? form.images.join(",") : null;
+    form.content = transformHTMLToTag(form.content);
     dispatch('createMoment', form).then(res => {
       message.success("发布成功");
       resetEditor();

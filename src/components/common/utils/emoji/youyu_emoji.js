@@ -578,9 +578,46 @@ const titleUrlMap = new Map();
 const urlTitleMap = new Map();
 
 youyuEmojis.forEach(item => {
-  titleUrlMap[item.title] = item.src;
-  urlTitleMap[item.src] = item.title;
+  urlTitleMap.set(item.src, item.title);
+  titleUrlMap.set(item.title, item.src);
 })
 
+const urlToTitle = (url) => {
+  return urlTitleMap.get(url);
+}
 
-export {youyuEmojis}
+const titleToUrl = (title) => {
+  return titleUrlMap.get(title);
+}
+
+const isEmojiImg = (url, title) => {
+  return urlToTitle(url) === title;
+}
+
+const transformHTMLToTag = (content) => {
+  const imgReg = /<img.*?src="(.*?)".*?title="(.*?)".*?>/gi;
+  const emojiArr = content.match(imgReg) || [];
+  for (const item of emojiArr) {
+    const matcher = imgReg.exec(item);
+    imgReg.lastIndex = 0;
+    if (isEmojiImg(matcher[1], matcher[2])) {
+      content = content.replaceAll(item, `[${matcher[2]}]`)
+    }
+  }
+  return content;
+}
+
+const transformTagToHTML = (content) => {
+  const tagReg = /\[(.*?)]/gi;
+  const tagArr = content.match(tagReg) || [];
+  for (const item of tagArr) {
+    const matcher = tagReg.exec(item);
+    tagReg.lastIndex = 0;
+    if (titleToUrl(matcher?.[1])) {
+      content = content.replaceAll(item, `<img src="${titleToUrl(matcher?.[1])}" title="${matcher?.[1]}">`)
+    }
+  }
+  return content;
+}
+
+export {youyuEmojis, urlTitleMap, titleUrlMap, urlToTitle, titleToUrl, transformHTMLToTag, transformTagToHTML}

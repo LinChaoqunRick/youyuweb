@@ -3,7 +3,8 @@ import {
   MOMENT_CREATE,
   MOMENT_DELETE,
   MOMENT_LIST,
-  CREATE_MOMENT_COMMENT
+  CREATE_MOMENT_COMMENT,
+  GET_REPLIES_BY_COMMENT_ID
 } from "@/network/apis";
 
 export default {
@@ -19,6 +20,9 @@ export default {
     },
     createMomentComment(state: any, params: object) {
       return http.post(CREATE_MOMENT_COMMENT, params);
+    },
+    getRepliesByCommentId(state: any, params: object) {
+      return http.post(GET_REPLIES_BY_COMMENT_ID, params);
     },
   }
 }

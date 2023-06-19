@@ -70,6 +70,7 @@
 
   onMounted(() => {
     box.value.innerHTML = props.modelValue;
+    calcTextAreaLength();
   })
 
   const onFocus = () => {

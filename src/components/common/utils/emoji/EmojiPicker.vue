@@ -10,13 +10,13 @@
     </div>
     <div class="emoji-picker-body">
       <div v-if="activeIndex === 0" class="list-youyu-emoji youyu-scrollbar" @click="onImagePick">
-        <div v-for="item in youyuEmojis" class="emoji-image" :title="item.title">
-          <img :src="item.src"/>
+        <div v-for="item in youyuEmojis" class="emoji-image">
+          <img :src="item.src"  :title="item.title"/>
         </div>
       </div>
       <div v-else class="list-youyu-emoji youyu-scrollbar" @click="onEmojiPick">
-        <div v-for="item in emojiList" class="emoji-image emoji-item" :title="item.title">
-          <span v-html="item.char"/>
+        <div v-for="item in emojiList" class="emoji-image emoji-item">
+          <span v-html="item.char" :title="item.title"/>
         </div>
       </div>
     </div>

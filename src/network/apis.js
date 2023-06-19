@@ -64,6 +64,7 @@ export const MOMENT_CREATE = ApiBase + "/moment/create"; // 创建时刻
 export const MOMENT_DELETE = ApiBase + "/moment/delete"; // 删除时刻
 export const MOMENT_LIST = ApiBase + "/moment/list"; // 时刻列表
 export const CREATE_MOMENT_COMMENT = ApiBase + "/momentComment/create"; // 发表评论
+export const GET_REPLIES_BY_COMMENT_ID = ApiBase + "/momentComment/getRepliesByMomentId"; // 发表评论
 
 // 邮件
 export const SEND_EMAIL_CODE = ApiBase + "/mail/sendRegisterCode"; // 获取邮箱验证码

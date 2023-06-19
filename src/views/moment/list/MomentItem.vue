@@ -25,7 +25,9 @@
         </div>
       </div>
       <div class="content-body">
-        <div class="content-text" :class="{'content-expand': expand}" v-html="data.content" v-row="{set: set}"></div>
+        <div class="content-text" :class="{'content-expand': expand}"
+             v-html="transformTagToHTML(data.content)"
+             v-row="{set: set}"></div>
         <div class="limit-btn" @click="expand = true" v-show="row>7 && !expand">展开</div>
         <div class="limit-btn" @click="expand = false" v-show="row>7 && expand">收起</div>
         <div class="content-images" :class="[imageClass]" v-if="images?.length && !preview">
@@ -43,12 +45,12 @@
         </div>
         <div class="item-text">分享</div>
       </div>
-      <div class="item-operation" v-login="()=>replyShow = !replyShow" :class="{'action-active':replyShow}">
+      <div class="item-operation" v-login="onClickReply" :class="{'action-active':replyShow}">
         <div class="pointer-arrow" v-if="replyShow"></div>
         <div class="item-icon">
           <i-comment :theme="replyShow?'filled':'outline'" size="14" fill="currentColor"/>
         </div>
-        <div class="item-text">评论</div>
+        <div class="item-text">{{data.replyCount || '评论'}}</div>
       </div>
       <div class="item-operation">
         <div class="item-icon">
@@ -58,12 +60,20 @@
       </div>
     </div>
     <div class="moment-item-bottom" v-if="replyShow">
-      <div class="moment-item-reply-box">
+      <div class="moment-comment-editor">
         <div class="user-avatar">
           <img :src="userInfo.avatar"/>
         </div>
         <div class="reply-box-wrapper">
           <MomentReply @onSubmit="onSubmit"/>
+        </div>
+      </div>
+      <div class="moment-comment-list" v-if="commentList.length">
+        <div class="comment-count">全部评论（{{data.commentCount || 0}}）</div>
+        <div class="comment-list">
+          <div v-for="item in commentList" class="comment-item">
+            <MomentCommentItem :data="item"/>
+          </div>
         </div>
       </div>
     </div>
@@ -77,9 +87,11 @@
   import {useStore} from "vuex";
   import type {momentListType} from "@/views/moment/types";
   import {message} from "ant-design-vue";
+  import {transformTagToHTML} from "@/components/common/utils/emoji/youyu_emoji";
   import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
   import MomentReply from "@/views/moment/components/MomentReply.vue";
   import UserCardMoment from "../components/UserCardMoment.vue";
+  import MomentCommentItem from "../components/MomentCommentItem.vue";
 
   const {getters, dispatch} = useStore();
 
@@ -106,6 +118,7 @@
   });
   const userInfo = computed(() => getters['userInfo']);
   const richEditor = ref(null);
+  const commentList = ref([]);
 
   function set(value: number) {
     row.value = value;
@@ -123,12 +136,19 @@
     reply.momentId = props.data.id;
     reply.userId = userInfo.value.id;
     dispatch('createMomentComment', reply).then(res => {
-      console.log(res);
-      if (res) {
+      if (res.data) {
         message.success("发布成功");
+        commentList.value.unshift(res.data)
       }
     }).finally(() => {
       callback();
+    })
+  }
+
+  const onClickReply = () => {
+    replyShow.value = !replyShow.value;
+    dispatch('getRepliesByCommentId', {momentId: props.data.id}).then(res => {
+      commentList.value = res.data.list;
     })
   }
 </script>
@@ -295,7 +315,7 @@
     }
 
     .moment-item-bottom {
-      .moment-item-reply-box {
+      .moment-comment-editor {
         margin: 0 24px;
         padding: 16px 0;
         border-top: 1px solid var(--youyu-border-color3);
@@ -330,6 +350,31 @@
 
           #box {
             padding: 6px 12px;
+          }
+        }
+      }
+
+      .moment-comment-list {
+        border-top: 1px solid var(--youyu-border-color);
+        padding: 8px 24px;
+
+        .comment-count {
+          font-size: 16px;
+          margin-bottom: 8px;
+          font-weight: bold;
+        }
+
+        ::v-deep(.comment-list) {
+          .comment-item {
+            .moment-comment-item {
+              border-bottom: 1px solid var(--youyu-border-color);
+            }
+
+            &:last-child {
+              .moment-comment-item {
+                border-bottom: none;
+              }
+            }
           }
         }
       }
