@@ -48,16 +48,27 @@
 
   /**
    * fix: #12
-   * 如果localStorage存在user信息但是Cookie中的token失效，那么清空localStorage中的user信息
+   * 1. 如果token存在，则更新用户数据。
+   * 2. 如果token不存在
+   *   2.1 如果用户数据存在，清空用户数据并提示过期
+   *   2.2 如果用户数据不存在，用户信息设置为初始值
    */
   const checkTokenValid = () => {
     const token = Cookies.get("token");
-    if (!token && isLogin.value) {
-      message.warning('登录凭证已过期，请重新登录！');
-      commit("changeUser", {});
-      setTimeout(() => {
-        location.reload();
-      }, 1500)
+    if (token) {
+      dispatch('getCurrentUser').then(res => {
+        commit("changeUser", res.data);
+      })
+    } else {
+      if (isLogin.value) {
+        message.warning('登录凭证已过期，请重新登录！');
+        commit("changeUser", {});
+        setTimeout(() => {
+          location.reload();
+        }, 1500)
+      } else {
+        commit("changeUser", {});
+      }
     }
   }
 
