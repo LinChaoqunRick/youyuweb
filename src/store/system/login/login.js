@@ -5,7 +5,8 @@ import {
   ACCOUNT_LOGOUT,
   GET_AUTH_ROUTES,
   SEND_EMAIL_CODE,
-  ACCOUNT_REGISTER
+  ACCOUNT_REGISTER,
+  GET_CURRENT_USER
 } from "@/network/apis";
 
 export default {
@@ -56,6 +57,8 @@ export default {
     register(state, params) {
       return http.post(ACCOUNT_REGISTER, params);
     },
-
+    getCurrentUser(state, params) {
+      return http.post(GET_CURRENT_USER, params);
+    },
   },
 }
