@@ -45,12 +45,12 @@
         </div>
         <div class="item-text">分享</div>
       </div>
-      <div class="item-operation" v-login="onClickReply" :class="{'action-active':replyShow}">
+      <div class="item-operation" @click="onClickReply" :class="{'action-active':replyShow}">
         <div class="pointer-arrow" v-if="replyShow"></div>
         <div class="item-icon">
           <i-comment :theme="replyShow?'filled':'outline'" size="14" fill="currentColor"/>
         </div>
-        <div class="item-text">{{data.replyCount || '评论'}}</div>
+        <div class="item-text">{{data.commentCount || '评论'}}</div>
       </div>
       <div class="item-operation">
         <div class="item-icon">
@@ -62,17 +62,19 @@
     <div class="moment-item-bottom" v-if="replyShow">
       <div class="moment-comment-editor">
         <div class="user-avatar">
-          <img :src="userInfo.avatar"/>
+          <img v-if="isLogin" :src="userInfo.avatar"/>
+          <img v-else src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png"/>
         </div>
         <div class="reply-box-wrapper">
-          <MomentReply @onSubmit="onSubmit"/>
+          <MomentReplyEditor @onSubmit="onSubmit"/>
         </div>
       </div>
       <div class="moment-comment-list" v-if="commentList.length">
         <div class="comment-count">全部评论（{{data.commentCount || 0}}）</div>
         <div class="comment-list">
           <div v-for="item in commentList" class="comment-item">
-            <MomentCommentItem :data="item"/>
+            <MomentCommentItem :data="item"
+                               @deleteSuccess="deleteSuccess"/>
           </div>
         </div>
       </div>
@@ -81,15 +83,16 @@
 </template>
 
 <script lang="ts" setup>
-  import {ref, computed, reactive} from 'vue';
+  import {ref, computed, reactive, provide} from 'vue';
   import type {PropType} from "vue";
   import {RouterLink} from "vue-router";
   import {useStore} from "vuex";
   import type {momentListType} from "@/views/moment/types";
   import {message} from "ant-design-vue";
+  import {transformHTMLToTag} from "@/components/common/utils/emoji/youyu_emoji";
   import {transformTagToHTML} from "@/components/common/utils/emoji/youyu_emoji";
   import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
-  import MomentReply from "@/views/moment/components/MomentReply.vue";
+  import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
   import UserCardMoment from "../components/UserCardMoment.vue";
   import MomentCommentItem from "../components/MomentCommentItem.vue";
 
@@ -119,6 +122,15 @@
   const userInfo = computed(() => getters['userInfo']);
   const richEditor = ref(null);
   const commentList = ref([]);
+  const isLogin = computed(() => getters['isLogin']);
+
+  provide('moment', {moment: props.data, updateMomentAttribute});
+
+  function updateMomentAttribute(name: string, value: any) {
+    if (Reflect.has(props.data, name)) {
+      props.data[name] = value;
+    }
+  }
 
   function set(value: number) {
     row.value = value;
@@ -135,10 +147,12 @@
     reply.images = reply.length ? reply.images.join(",") : null;
     reply.momentId = props.data.id;
     reply.userId = userInfo.value.id;
+    reply.content = transformHTMLToTag(reply.content);
     dispatch('createMomentComment', reply).then(res => {
       if (res.data) {
         message.success("发布成功");
-        commentList.value.unshift(res.data)
+        commentList.value.unshift(res.data);
+        props.data.commentCount += 1;
       }
     }).finally(() => {
       callback();
@@ -150,6 +164,11 @@
     dispatch('getRepliesByCommentId', {momentId: props.data.id}).then(res => {
       commentList.value = res.data.list;
     })
+  }
+
+  const deleteSuccess = (moment: momentListType) => {
+    commentList.value = commentList.value.filter(item => item.id !== moment.id);
+    props.data.commentCount -= 1;
   }
 </script>
 

@@ -22,9 +22,18 @@
           <i-comment :theme="active?'filled':'outline'" size="14" fill="currentColor"/>
           {{active?'取消回复':'回复'}}<span v-if="data.replyCount">({{data.replyCount}})</span>
         </div>
-        <div class="ope-item delete-ope" v-if="userInfo.id === data.userId" @click="handleDelete">
-          删除
-        </div>
+        <a-popconfirm
+          v-model:visible="deleteVisible"
+          title="确认删除此条评论?"
+          ok-text="是"
+          cancel-text="否"
+          @confirm="onConfirmDelete"
+          :getPopupContainer="triggerNode=>triggerNode.parentNode">
+          <div class="ope-item delete-ope" :class="{'visible': deleteVisible}" v-if="userInfo.id === data.userId"
+               @click="onDelete">
+            删除
+          </div>
+        </a-popconfirm>
       </div>
     </div>
   </div>
@@ -37,9 +46,10 @@
 </script>
 
 <script setup lang="ts">
-  import {ref, computed} from "vue";
+  import {ref, computed, inject} from "vue";
   import {useStore} from "vuex";
   import {transformTagToHTML} from "@/components/common/utils/emoji/youyu_emoji";
+  import {message} from "ant-design-vue";
 
   const {getters, dispatch} = useStore();
   const props = defineProps({
@@ -48,13 +58,34 @@
       required: true
     }
   })
+  const emit = defineEmits(['deleteSuccess']);
 
   const row = ref<number>(0);
   const expand = ref<boolean>(false);
+  const active = ref<boolean>(false);
+  const deleteVisible = ref<boolean>(false);
   const userInfo = computed(() => getters['userInfo']);
+  const {moment, updateMomentAttribute} = inject('moment');
 
   function set(value: number) {
     row.value = value;
+  }
+
+  const onDelete = () => {
+    deleteVisible.value = true;
+  }
+
+  const onConfirmDelete = () => {
+    dispatch('deleteMomentComment', {commentId: props.data.id}).then(res => {
+      if (res) {
+        message.success('删除成功');
+      }
+      emit('deleteSuccess', props.data);
+    })
+  }
+
+  const handleReply = () => {
+
   }
 </script>
 
@@ -107,7 +138,7 @@
       }
 
       ::v-deep(.comment-content) {
-        margin: 4px 0;
+        margin: 8px 0;
         white-space: pre-wrap;
         line-height: 2rem;
         max-height: 12rem;
@@ -158,6 +189,10 @@
             color: #ff4d4f;
             margin-left: auto;
             display: none;
+
+            &.visible {
+              display: inherit !important;
+            }
           }
 
           ::v-deep(.i-icon) {
@@ -169,6 +204,12 @@
             }
           }
         }
+      }
+    }
+
+    &:hover {
+      .delete-ope {
+        display: inline-block !important;
       }
     }
   }

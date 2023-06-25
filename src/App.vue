@@ -22,7 +22,7 @@
   import YFooter from "@/components/common/footer/YFooter.vue";
   import {message} from "ant-design-vue";
 
-  const {getters, commit} = useStore();
+  const {getters, commit, dispatch} = useStore();
 
   const isRouterAlive = ref<boolean>(true);
 

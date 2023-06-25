@@ -1,6 +1,9 @@
 <template>
   <div class="reply-editor">
-    <ContentEditableDiv v-model="reply.content" :row="1" ref="richEditor" :maxLength="300"/>
+    <div class="editor-box">
+      <div class="login-mask" @click="toLogin" v-if="!isLogin"></div>
+      <ContentEditableDiv v-model="reply.content" :row="1" ref="richEditor" :maxLength="300"/>
+    </div>
     <div class="image-wrapper" v-if="reply.images?.length">
       <div v-for="item in reply.images" class="image-item">
         <img :src="item"/>
@@ -59,7 +62,7 @@
   import EmojiPicker from "@/components/common/utils/emoji/EmojiPicker.vue";
 
 
-  const {getters} = useStore();
+  const {getters, commit} = useStore();
 
   const emit = defineEmits(['onSubmit']);
 
@@ -73,7 +76,7 @@
     content: '',
     images: []
   });
-  const uploadDisabled = computed(() => reply.images.length >= 1);
+  const uploadDisabled = computed(() => reply.images.length >= 1 || !isLogin.value);
   const currentLength = computed(() => richEditor.value?.totalStrLength);
   const contentLengthExceed = computed(() => richEditor.value?.contentLengthExceed);
   const loading = ref<boolean>(false);
@@ -103,6 +106,10 @@
     reply.images.splice(index, 1);
   }
 
+  const toLogin = () => {
+    commit("changeLogin", true);
+  }
+
   const onSubmit = () => {
     loading.value = true;
     const successCallback = () => {
@@ -115,6 +122,19 @@
 
 <style lang="scss" scoped>
   .reply-editor {
+
+    .editor-box {
+      position: relative;
+
+      .login-mask {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 1;
+      }
+    }
 
     .image-wrapper {
       display: flex;

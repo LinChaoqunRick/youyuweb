@@ -86,7 +86,7 @@
   const isLogin = computed(() => getters['isLogin']);
   const currentLength = computed(() => richEditor.value?.totalStrLength);
   const contentLengthExceed = computed(() => richEditor.value?.contentLengthExceed);
-  const uploadDisabled = computed(() => moment.images.length >= 9)
+  const uploadDisabled = computed(() => moment.images.length >= 9 || !isLogin.value)
 
   const richEditor = ref(null);
   const active = computed(() => richEditor.value?.active);
@@ -335,7 +335,7 @@
     cursor: not-allowed !important;
 
     .item-upload-image {
-      color: #8a919f !important;
+      /*color: #8a919f !important;*/
     }
   }
 </style>
