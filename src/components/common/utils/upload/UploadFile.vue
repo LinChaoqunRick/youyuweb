@@ -10,6 +10,7 @@
       :disabled="disabled"
       :max-count="1"
       :accept="accept"
+      :capture="null"
       @change="handleChange"
       ref="uploadRef"
     >
