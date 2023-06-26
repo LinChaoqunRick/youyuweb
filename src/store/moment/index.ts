@@ -4,7 +4,8 @@ import {
   MOMENT_DELETE,
   MOMENT_LIST,
   CREATE_MOMENT_COMMENT,
-  GET_REPLIES_BY_COMMENT_ID,
+  LIST_MOMENT_COMMENT_PAGE,
+  LIST_MOMENT_COMMENT_ALL,
   DELETE_MOMENT_COMMENT
 } from "@/network/apis";
 
@@ -22,8 +23,11 @@ export default {
     createMomentComment(state: any, params: object) {
       return http.post(CREATE_MOMENT_COMMENT, params);
     },
-    getRepliesByCommentId(state: any, params: object) {
-      return http.post(GET_REPLIES_BY_COMMENT_ID, params);
+    listMomentCommentPage(state: any, params: object) {
+      return http.post(LIST_MOMENT_COMMENT_PAGE, params);
+    },
+    listMomentCommentAll(state: any, params: object) {
+      return http.post(LIST_MOMENT_COMMENT_ALL, params);
     },
     deleteMomentComment(state: any, params: object) {
       return http.post(DELETE_MOMENT_COMMENT, params);

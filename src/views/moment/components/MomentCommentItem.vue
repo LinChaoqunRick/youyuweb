@@ -116,6 +116,7 @@
 
         .user-nickname {
           font-size: 14px;
+          font-weight: bold;
         }
 
         .publish-time {

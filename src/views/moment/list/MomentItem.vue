@@ -70,11 +70,32 @@
         </div>
       </div>
       <div class="moment-comment-list" v-if="commentList.length">
-        <div class="comment-count">全部评论（{{data.commentCount || 0}}）</div>
+        <div class="comment-list-top">
+          <div class="comment-count">
+            全部评论（{{data.commentCount || 0}}）
+          </div>
+          <div class="sort-type">
+            <div class="sort-item" :class="{'active': sort}" @click="handleSort(true)">
+              <i-time theme="filled" size="13" fill="currentColor"/>
+              最新
+            </div>
+            <div class="sort-item" :class="{'active': !sort}" @click="handleSort(false)">
+              <i-fire theme="filled" size="13" fill="currentColor"/>
+              最热
+            </div>
+          </div>
+        </div>
         <div class="comment-list">
           <div v-for="item in commentList" class="comment-item">
             <MomentCommentItem :data="item"
                                @deleteSuccess="deleteSuccess"/>
+          </div>
+        </div>
+        <div class="comment-load-all" v-if="data.commentCount - commentList.length> 0">
+          <div class="more-btn" @click="getCommentsAll">
+            加载全部{{data.commentCount}}条评论
+            <i-down v-if="!restLoading" theme="outline" size="14" fill="#1890ff"/>
+            <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
           </div>
         </div>
       </div>
@@ -108,6 +129,9 @@
   const row = ref<number>(0);
   const expand = ref<boolean>(false);
   const replyShow = ref<boolean>(false);
+  const restLoading = ref<boolean>(false);
+  const sort = ref<boolean>(true); // true:最新 false:最热
+  const order = computed(() => sort.value ? 'create_time' : 'support_count');
   const images = computed(() => props.data.images ? props.data.images?.split(",") : null);
   const imageClass = computed(() => {
     const imageLength = images.value?.length ?? 0;
@@ -161,14 +185,45 @@
 
   const onClickReply = () => {
     replyShow.value = !replyShow.value;
-    dispatch('getRepliesByCommentId', {momentId: props.data.id}).then(res => {
+    if (replyShow.value) {
+      getCommentsPage();
+    }
+  }
+
+  const getCommentsPage = () => {
+    dispatch('listMomentCommentPage', {
+      momentId: props.data.id,
+      orderBy: order.value
+    }).then(res => {
       commentList.value = res.data.list;
+    })
+  }
+
+  const getCommentsAll = () => {
+    restLoading.value = true;
+    dispatch('listMomentCommentAll', {
+      momentId: props.data.id,
+      orderBy: order.value
+    }).then(res => {
+      commentList.value = res.data;
+    }).finally(() => {
+      restLoading.value = false;
     })
   }
 
   const deleteSuccess = (moment: momentListType) => {
     commentList.value = commentList.value.filter(item => item.id !== moment.id);
     props.data.commentCount -= 1;
+  }
+
+  function handleSort(value: boolean) {
+    sort.value = value;
+    // 如果已经加载完全部的，就不再进行分页查询
+    if (commentList.value.length >= props.data.commentCount) {
+      getCommentsAll();
+    } else {
+      getCommentsPage();
+    }
   }
 </script>
 
@@ -377,10 +432,51 @@
         border-top: 1px solid var(--youyu-border-color);
         padding: 8px 24px;
 
-        .comment-count {
-          font-size: 16px;
-          margin-bottom: 8px;
-          font-weight: bold;
+        .comment-list-top {
+          margin-top: 8px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .comment-count {
+            font-size: 16px;
+            font-weight: bold;
+          }
+
+          .sort-type {
+            display: inline-flex;
+            align-items: center;
+            font-size: 14px;
+            color: #4e5969;
+            font-weight: 400;
+            cursor: pointer;
+            background: var(--youyu-body-background-ligth);
+            border-radius: 2px;
+            padding: 3px;
+
+            .sort-item {
+              display: flex;
+              align-items: center;
+              padding: 2px 12px;
+              line-height: 22px;
+              font-size: 1.167rem;
+              color: #8a919f;
+
+              ::v-deep(svg) {
+                margin-right: 4px;
+              }
+            }
+
+            .active {
+              color: #1890ff;
+              border-radius: 2px;
+              background: var(--youyu-body-background2);
+
+              ::v-deep(svg) {
+                margin-right: 4px;
+              }
+            }
+          }
         }
 
         ::v-deep(.comment-list) {
@@ -394,6 +490,17 @@
                 border-bottom: none;
               }
             }
+          }
+        }
+
+        .comment-load-all {
+          display: flex;
+          justify-content: center;
+          color: #1890ff;
+          padding: 4px 0;
+
+          .more-btn {
+            cursor: pointer;
           }
         }
       }

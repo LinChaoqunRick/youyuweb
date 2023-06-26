@@ -65,7 +65,8 @@ export const MOMENT_CREATE = ApiBase + "/moment/create"; // 创建时刻
 export const MOMENT_DELETE = ApiBase + "/moment/delete"; // 删除时刻
 export const MOMENT_LIST = ApiBase + "/moment/list"; // 时刻列表
 export const CREATE_MOMENT_COMMENT = ApiBase + "/momentComment/create"; // 发表评论
-export const GET_REPLIES_BY_COMMENT_ID = ApiBase + "/momentComment/getRepliesByMomentId"; // 获取评论列表
+export const LIST_MOMENT_COMMENT_PAGE = ApiBase + "/momentComment/listMomentCommentPage"; // 获取评论列表(分页，默认第一页)
+export const LIST_MOMENT_COMMENT_ALL = ApiBase + "/momentComment/listMomentCommentAll"; // 获取评论列表(全部，不分页)
 export const DELETE_MOMENT_COMMENT = ApiBase + "/momentComment/delete"; // 删除评论
 
 // 邮件
