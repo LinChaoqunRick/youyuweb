@@ -6,15 +6,19 @@
         <MomentItem v-for="item in momentList" :data="item"/>
       </div>
       <transition name="momentSpin">
-        <div class="load-more-box" v-show="loading || failed">
+        <div class="load-more-box" ref="loadMoreBox">
           <div v-show="loading">
             <a-spin/>
             <span class="loading-text">加载中...</span>
           </div>
-          <div v-show="failed" @click="onLoadMore" class="retry-load">
-            <i-refresh theme="outline" size="16" fill="#1890ff"/>
+          <div v-if="failed" @click="onLoadRetry" class="retry-load">
+            <i-refresh theme="outline" size="15" fill="#1890ff"/>
             <span class="loading-text">重新加载</span>
           </div>
+          <div v-if="totalPageNum === 0" class="no-data">
+            暂无数据
+          </div>
+          <div v-if="finish" class="data-finished">已加载全部数据</div>
         </div>
       </transition>
     </div>
@@ -22,31 +26,32 @@
 </template>
 
 <script setup lang="ts">
-  import {ref, watch} from 'vue';
+  import {ref, onMounted, computed, onUnmounted} from 'vue';
   import {useStore} from 'vuex';
   import type {momentType} from "@/views/moment/types";
-  import {useScroll} from '@vueuse/core'
   import MomentEditor from "../components/MomentEditor.vue";
   import MomentItem from "./MomentItem.vue";
 
   const {dispatch} = useStore();
-  let pageNum: number = 1;
-  let totalPageNum: number = 0;
+  const pageNum = ref<number>(1);
+  const totalPageNum = ref<number>(-1);
   const momentList = ref<Array<momentType>>([]);
   const loading = ref<boolean>(false);
   const failed = ref<boolean>(false);
+  const finish = computed(() => totalPageNum.value !== -1 && pageNum.value > totalPageNum.value); // 是否完成加载（还能不能加载下一页）
+  const loadMoreBox = ref<HTMLElement>(null);
 
   function getListData() {
     failed.value = false;
     loading.value = true;
     dispatch('momentList', {
-      pageNum,
+      pageNum: pageNum.value,
       pageSize: 10,
       orderBy: 'create_time',
     }).then(res => {
       momentList.value.push(...res.data.list);
-      pageNum++;
-      totalPageNum = res.data.pages;
+      pageNum.value === 1 && (totalPageNum.value = res.data.pages);
+      pageNum.value++;
     }).catch(e => {
       failed.value = true;
     }).finally(() => {
@@ -54,28 +59,40 @@
     })
   };
 
-  getListData();
-
-  const {arrivedState} = useScroll(document);
-
-  watch(() => arrivedState.bottom, (newVal) => {
-    if (newVal) {
-      onLoadMore();
-    }
-  })
-
   const onLoadMore = () => {
-    if (!loading.value && pageNum <= totalPageNum) {
+    if (!loading.value && !finish.value && !failed.value) {
       getListData();
     }
+  }
+
+  const onLoadRetry = () => {
+    failed.value = false;
+    onLoadMore();
   }
 
   const saveSuccess = (data: momentType) => {
     momentList.value.unshift(data);
   }
+
+  const ob = new IntersectionObserver(entries => {
+    if (!entries[0].isIntersecting) return;
+    onLoadMore();
+  });
+
+  onMounted(() => {
+    ob.observe(loadMoreBox.value);
+  })
+
+  onUnmounted(() => {
+    ob.disconnect();
+  })
 </script>
 
 <style lang="scss" scoped>
+  .no-data {
+
+  }
+
   .moment-list {
     display: flex;
     justify-content: center;
@@ -113,11 +130,19 @@
         .loading-text {
           font-size: 14px;
           color: #1890ff;
-          margin-left: 8px;
+          margin-left: 6px;
         }
 
         .retry-load {
           cursor: pointer;
+        }
+
+        .data-finished {
+          color: var(--youyu-text1);
+        }
+
+        .no-data {
+          color: var(--youyu-text1);
         }
       }
     }
