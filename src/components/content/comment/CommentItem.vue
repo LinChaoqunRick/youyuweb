@@ -199,7 +199,7 @@
   .comment-item {
     /*border-bottom: 1px solid #f0f0f0;*/
     display: flex;
-    padding: 16px 0;
+    padding-top: 16px;
 
     &:first-child {
       padding-top: 0;

@@ -13,6 +13,12 @@
            v-html="transformTagToHTML(data.content)"></div>
       <div class="limit-btn" @click="expand = true" v-show="row>7 && !expand">展开</div>
       <div class="limit-btn" @click="expand = false" v-show="row>7 && expand">收起</div>
+      <div class="content-images" v-if="images?.length && !preview">
+        <img :src="item" v-for="(item, index) in images" @click="onPreview(index)"/>
+      </div>
+      <div class="content-image-preview" v-if="images?.length && preview">
+        <ImagePreviewEmbed :list="images" :current="current" @onClose="onClose"/>
+      </div>
       <div class="comment-operation">
         <div class="ope-item" :class="{'ope-active': data.commentLike}" @click="handleLike">
           <i-good-two :theme="data.commentLike?'filled':'outline'" size="14" fill="currentColor"/>
@@ -49,6 +55,7 @@
   import {ref, computed, inject} from "vue";
   import {useStore} from "vuex";
   import {transformTagToHTML} from "@/components/common/utils/emoji/youyu_emoji";
+  import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
   import {message} from "ant-design-vue";
 
   const {getters, dispatch} = useStore();
@@ -64,8 +71,12 @@
   const expand = ref<boolean>(false);
   const active = ref<boolean>(false);
   const deleteVisible = ref<boolean>(false);
+  const preview = ref<boolean>(false);
+  const current = ref(0);
+
   const userInfo = computed(() => getters['userInfo']);
   const {moment, updateMomentAttribute} = inject('moment');
+  const images = computed(() => props.data.images ? props.data.images.split(",") : null);
 
   function set(value: number) {
     row.value = value;
@@ -85,8 +96,17 @@
   }
 
   const handleReply = () => {
-
+    active.value = !active.value;
   }
+
+  const onPreview = (index: number) => {
+    preview.value = true;
+    current.value = index;
+  };
+
+  const onClose = () => {
+    preview.value = false;
+  };
 </script>
 
 <style lang="scss" scoped>
@@ -163,6 +183,19 @@
         line-height: 22px;
         color: #1e80ff;
         margin-right: 20px;
+      }
+
+      .content-images {
+        margin-bottom: 8px;
+
+        img {
+          height: 90px;
+          width: 90px;
+          margin: 0 4px 4px 0;
+          object-fit: cover;
+          cursor: zoom-in;
+          filter: brightness(.94);
+        }
       }
 
       .comment-operation {

@@ -184,6 +184,7 @@
   };
   const clearContent = () => {
     box.value.innerHTML = '';
+    calcTextAreaLength();
   }
   const dispatchInputEvent = () => {
     const inputEvent = new Event('input', {bubbles: false, cancelable: false});

@@ -92,10 +92,8 @@
           </div>
         </div>
         <div class="comment-load-all" v-if="data.commentCount - commentList.length> 0">
-          <div class="more-btn" @click="getCommentsAll">
-            加载全部{{data.commentCount}}条评论
-            <i-down v-if="!restLoading" theme="outline" size="14" fill="#1890ff"/>
-            <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
+          <div class="more-btn" @click="onDetail">
+            查看全部 <span class="comment-count">{{data.commentCount}}</span> 条评论
           </div>
         </div>
       </div>
@@ -129,7 +127,6 @@
   const row = ref<number>(0);
   const expand = ref<boolean>(false);
   const replyShow = ref<boolean>(false);
-  const restLoading = ref<boolean>(false);
   const sort = ref<boolean>(true); // true:最新 false:最热
   const order = computed(() => sort.value ? 'create_time' : 'support_count');
   const images = computed(() => props.data.images ? props.data.images?.split(",") : null);
@@ -168,7 +165,7 @@
     preview.value = false;
   };
   const onSubmit = (reply: object, callback: Function) => {
-    reply.images = reply.length ? reply.images.join(",") : null;
+    reply.images = reply.images.length ? reply.images.join(",") : null;
     reply.momentId = props.data.id;
     reply.userId = userInfo.value.id;
     reply.content = transformHTMLToTag(reply.content);
@@ -193,21 +190,10 @@
   const getCommentsPage = () => {
     dispatch('listMomentCommentPage', {
       momentId: props.data.id,
+      pageSize: 5,
       orderBy: order.value
     }).then(res => {
       commentList.value = res.data.list;
-    })
-  }
-
-  const getCommentsAll = () => {
-    restLoading.value = true;
-    dispatch('listMomentCommentAll', {
-      momentId: props.data.id,
-      orderBy: order.value
-    }).then(res => {
-      commentList.value = res.data;
-    }).finally(() => {
-      restLoading.value = false;
     })
   }
 
@@ -216,14 +202,14 @@
     props.data.commentCount -= 1;
   }
 
-  function handleSort(value: boolean) {
+  const handleSort = (value: boolean) => {
+    if (sort.value === value) return;
     sort.value = value;
-    // 如果已经加载完全部的，就不再进行分页查询
-    if (commentList.value.length >= props.data.commentCount) {
-      getCommentsAll();
-    } else {
-      getCommentsPage();
-    }
+    getCommentsPage();
+  }
+
+  const onDetail = () => {
+
   }
 </script>
 
@@ -484,23 +470,19 @@
             .moment-comment-item {
               border-bottom: 1px solid var(--youyu-border-color);
             }
-
-            &:last-child {
-              .moment-comment-item {
-                border-bottom: none;
-              }
-            }
           }
         }
 
         .comment-load-all {
-          display: flex;
-          justify-content: center;
-          color: #1890ff;
-          padding: 4px 0;
 
           .more-btn {
+            padding: 10px 0 4px 0;
             cursor: pointer;
+            text-align: center;
+
+            .comment-count {
+              color: #1890ff;
+            }
           }
         }
       }

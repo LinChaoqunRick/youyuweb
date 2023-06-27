@@ -114,6 +114,8 @@
     loading.value = true;
     const successCallback = () => {
       richEditor.value.clearContent();
+      reply.content = '';
+      reply.images = [];
       loading.value = false;
     }
     emit("onSubmit", cloneDeep(reply), successCallback)
