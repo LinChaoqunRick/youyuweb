@@ -19,7 +19,7 @@
         <CommentHint/>
       </div>
     </a-card>
-    <a-card style="width: 100%">
+    <a-card style="width: 100%" class="comment-list-card">
       <template #title>
         <div class="title-container">
           <div class="title-text large-font">
@@ -42,10 +42,18 @@
                      :data="item"
                      :key="item.id"
                      @deleteSuccess="handleSort(true)"/>
-        <div class="more-btn" v-if="total - commentList.length> 0" @click="handleLoadALl">
-          加载全部 {{post.commentCount}} 条评论
-          <i-down v-if="!restLoading" theme="outline" size="14" fill="#1890ff"/>
-          <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
+        <div class="operation-tip-box">
+          <div class="failed-box" v-if="failed" @click="onRetry">
+            <i-refresh theme="outline" size="15" fill="#1890ff"/>
+            重新加载
+          </div>
+          <div class="no-data" v-else-if="totalPageNum <= 0">暂无数据</div>
+          <div class="more-btn" v-else-if="pageNum <= totalPageNum" @click="onUnlock" ref="loadMoreRef">
+            加载全部 {{post.commentCount}} 条评论
+            <i-down v-if="!restLoading" theme="outline" size="14" fill="#1890ff"/>
+            <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
+          </div>
+          <div class="no-more" v-else-if="pageNum >= totalPageNum">已加载全部评论</div>
         </div>
       </div>
     </a-card>
@@ -66,12 +74,12 @@
 
   const {getters, dispatch} = useStore();
 
-  const content = ref('');
-  const total = ref(0);
-  const activeId = ref(-1);
+  const content = ref<string>('');
+  const total = ref<number>(0);
+  const activeId = ref<number>(-1);
   const sort = ref(true); // true:最新 false:最热
   const commentList = ref([]);
-  const text = ref('');
+  const text = ref<string>('');
   const submittable = computed(() => !content.value);
   const order = computed(() => sort.value ? 'create_time' : 'support_count');
   const userInfo = computed(() => getters['userInfo']);
@@ -91,46 +99,56 @@
   const footers = ['markdownTotal', '=', 'scrollSwitch'];
   const post = inject('post');
   const setPostAttribute = inject('setPostAttribute');
-  const submitLoading = ref(false);
-  const restLoading = ref(false);
+  const submitLoading = ref<boolean>(false);
+  const restLoading = ref<boolean>(false);
+  const failed = ref<boolean>(false);
   const commentEditor = ref(null);
+  const loadMoreRef = ref(null);
+  const pageNum = ref<number>(1);
+  const totalPageNum = ref<number>(-1);
+  const pageSize = ref<number>(10);
 
-  function updateActiveId(value) {
+  const updateActiveId = (value: number) => {
     activeId.value = value;
   }
 
   provide('active', {activeId, updateActiveId});
 
-  watch(() => post.value, ({id}) => {
-    handlePage(id);
+  watch(() => post.value, () => {
+    loadComment();
   })
 
-  function handlePage(postId: string | number) {
-    dispatch("getCommentsPage", {postId, orderBy: order.value}).then(res => {
+  function loadComment() {
+    if (totalPageNum.value !== -1 && pageNum > totalPageNum || failed.value) return;
+    restLoading.value = true;
+    dispatch("getCommentsPage", {
+      postId: post.value.id,
+      pageNum: pageNum.value,
+      pageSize: pageSize.value,
+      orderBy: order.value
+    }).then(res => {
+      totalPageNum.value === -1 && (commentList.value = []);
       total.value = res.data.total;
-      commentList.value = res.data.list;
+      commentList.value.push(...res.data.list);
+      totalPageNum.value === -1 && (totalPageNum.value = res.data.pages);
+      pageNum.value++;
+      keepScrollTop();
+    }).catch(() => {
+      failed.value = true;
+    }).finally(() => {
+      restLoading.value = false;
     });
   }
 
-  function handleLoadALl() {
-    restLoading.value = true;
-    dispatch("getCommentsAll", {postId: post.value.id, orderBy: order.value}).then(res => {
-      total.value = res.data.length;
-      commentList.value = res.data;
-      keepScrollTop();
-    }).finally(() => {
-      restLoading.value = false;
-    })
-  }
 
   function handleSort(value: boolean) {
+    if (sort.value === value) return;
     sort.value = value;
-    // 如果已经加载完全部的，就不再进行分页查询
-    if (commentList.value.length >= total.value) {
-      handleLoadALl();
-    } else {
-      handlePage(post.value.id);
-    }
+    total.value = 0;
+    pageNum.value = 1;
+    totalPageNum.value = -1;
+    pageSize.value = 10;
+    loadComment();
   }
 
   function handleSubmit() {
@@ -156,6 +174,20 @@
     commentEditor.value?.handleFocus();
   }
 
+  const onUnlock = () => {
+    const ob = new IntersectionObserver(entries => {
+      if (!entries[0].isIntersecting) return;
+      loadComment();
+    });
+
+    ob.observe(loadMoreRef.value);
+  }
+
+  const onRetry = () => {
+    failed.value = false;
+    loadComment();
+  }
+
   defineExpose({
     handleFocus
   })
@@ -168,60 +200,61 @@
       ::v-deep(.ant-card-body) {
         padding: 0 24px 10px 24px;
       }
-    }
 
-    .write-comment {
-      .write-comment-editor {
-        height: 240px !important;
-      }
+      .write-comment {
+        .write-comment-editor {
+          height: 240px !important;
+        }
 
-      .action-box {
-        padding-top: 6px;
-        display: flex;
-        justify-content: flex-end;
-      }
-    }
-
-    .title-container {
-      display: flex;
-      justify-content: space-between;
-
-      .sort-type {
-        display: inline-flex;
-        align-items: center;
-        font-size: 14px;
-        color: #4e5969;
-        font-weight: 400;
-        cursor: pointer;
-        background: var(--youyu-body-background-ligth);
-        border-radius: 2px;
-        padding: 3px;
-
-        .sort-item {
+        .action-box {
+          padding-top: 6px;
           display: flex;
-          align-items: center;
-          padding: 2px 12px;
-          line-height: 22px;
-          font-size: 1.167rem;
-          color: #8a919f;
-
-          ::v-deep(svg) {
-            margin-right: 4px;
-          }
-        }
-
-        .active {
-          color: #1890ff;
-          border-radius: 2px;
-          background: var(--youyu-body-background2);
-
-          ::v-deep(svg) {
-            margin-right: 4px;
-          }
+          justify-content: flex-end;
         }
       }
     }
 
+    .comment-list-card {
+      .title-container {
+        display: flex;
+        justify-content: space-between;
+
+        .sort-type {
+          display: inline-flex;
+          align-items: center;
+          font-size: 14px;
+          color: #4e5969;
+          font-weight: 400;
+          cursor: pointer;
+          background: var(--youyu-body-background-ligth);
+          border-radius: 2px;
+          padding: 3px;
+
+          .sort-item {
+            display: flex;
+            align-items: center;
+            padding: 2px 12px;
+            line-height: 22px;
+            font-size: 1.167rem;
+            color: #8a919f;
+
+            ::v-deep(svg) {
+              margin-right: 4px;
+            }
+          }
+
+          .active {
+            color: #1890ff;
+            border-radius: 2px;
+            background: var(--youyu-body-background2);
+
+            ::v-deep(svg) {
+              margin-right: 4px;
+            }
+          }
+        }
+      }
+    }
 
     ::v-deep(.ant-card) {
 
@@ -249,13 +282,26 @@
       }
     }
 
-    .more-btn {
-      margin-top: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      line-height: 22px;
-      color: #1e80ff;
-      text-align: center;
+    .operation-tip-box {
+      .failed-box {
+        cursor: pointer;
+        text-align: center;
+        margin: 6px 0;
+      }
+
+      .more-btn {
+        margin-top: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 22px;
+        color: #1e80ff;
+        text-align: center;
+      }
+
+      .no-more {
+        margin-top: 6px;
+        text-align: center;
+      }
     }
   }
 </style>

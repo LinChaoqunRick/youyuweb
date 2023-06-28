@@ -15,8 +15,8 @@ export default defineConfig({
     importToCDN({
       modules: [
         // autoComplete("vue"),
-        autoComplete("lodash"),
-        autoComplete("axios"),
+        // autoComplete("lodash"),
+        // autoComplete("axios"),
         // {
         //   name: "ant-design-vue",
         //   var: "Antd", // 根据main.ts中定义的来
