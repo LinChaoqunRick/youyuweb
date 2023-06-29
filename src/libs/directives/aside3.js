@@ -14,6 +14,8 @@ function handleScroll() {
   let beforeScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
 
   return () => {
+    elInitTop = getElementTop(asideParent);
+
     let afterScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
     let dir = afterScrollTop - beforeScrollTop >= 0 ? 1 : 0;
 
@@ -38,13 +40,12 @@ function handleScroll() {
     }
 
     if (dir) { // 向下滚动
-      console.log(cacheTop);
       if (windowScrollBottom >= getElementTop(footer)) { // 超过footer
         aside.style.cssText = `position: absolute;bottom: 0px;`
         cacheTop = getElementTop(aside) - elInitTop; // absolute是可以使用getElementTop计算
         // console.log("down 1", cacheTop);
       } else if (windowScrollBottom >= getElementTop(aside) + aside.clientHeight + defaultGap) { // 超过下限
-        cacheTop = windowScrollBottom - elInitTop - aside.clientHeight - defaultGap;
+        cacheTop = windowScrollBottom - elInitTop - aside.clientHeight - 2 * defaultGap;
         // console.log("down 2", cacheTop);
         aside.style.cssText = `position: fixed;bottom: 8px;`;
       } else { // 其他
@@ -53,13 +54,15 @@ function handleScroll() {
       }
     } else { // 向上滚动
       if (windowScrollTop <= header.clientHeight) {
+        // console.log("up 1");
         cacheTop = 0;
-      } else if (windowScrollTop + header.clientHeight < getElementTop(aside)) { // 超过上限
-        cacheTop = windowScrollTop - (elInitTop - header.clientHeight - defaultGap);
-        // console.log("up 1", cacheTop);
+        aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px;`
+      } else if (windowScrollTop + header.clientHeight + defaultGap <= getElementTop(aside)) { // 超过上限
+        cacheTop = windowScrollTop - (elInitTop - header.clientHeight);
+        // console.log("up 2", cacheTop);
         aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px;`
       } else { // 其他
-        // console.log("up 2")
+        // console.log("up 3")
         aside.style.cssText = `position: relative;top: ${cacheTop}px`;
       }
     }
@@ -75,7 +78,6 @@ export default {
     cacheTop = 0;
     aside = el;
     asideParent = el.parentNode.parentNode;
-    elInitTop = getElementTop(aside);
     document.addEventListener("scroll", onScroll, false);
     useResizeObserver(document.getElementById("app"), (entries) => {
       onScroll();
