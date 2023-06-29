@@ -9,6 +9,8 @@ let header, footer, aside, asideParent, elInitTop, cacheTop;
 
 const defaultGap = 8;
 
+let stopObserve;
+
 
 function handleScroll() {
   let beforeScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
@@ -79,9 +81,14 @@ export default {
     aside = el;
     asideParent = el.parentNode.parentNode;
     document.addEventListener("scroll", onScroll, false);
-    useResizeObserver(document.getElementById("app"), (entries) => {
+    const {stop} = useResizeObserver(document.getElementById("app"), (entries) => {
       onScroll();
     })
+    stopObserve = stop;
+  },
+
+  beforeUnmount() {
+    stopObserve();
   },
 
   unmounted() {
