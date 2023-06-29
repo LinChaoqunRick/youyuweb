@@ -5,7 +5,10 @@
     </div>
     <div class="comment-right">
       <div class="comment-right-top">
-        <div class="user-nickname">{{data.user.nickname}}</div>
+        <div class="user-nickname">
+          {{data.user.nickname}}
+          <div class="author-text" v-if="data.user.id === moment.userId">作者</div>
+        </div>
         <div class="publish-time" :title="data.createTime">{{$dayjs().to(data.createTime)}}</div>
       </div>
       <div class="comment-content" :class="{'content-expand': expand}"
@@ -137,6 +140,17 @@
         .user-nickname {
           font-size: 14px;
           font-weight: bold;
+
+          .author-text {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: normal;
+            color: #fff;
+            margin-left: 5px;
+            background: linear-gradient(270deg, #30b6ec, #0692ef 95%);
+            border-radius: 12px;
+            padding: 0 6px;
+          }
         }
 
         .publish-time {
