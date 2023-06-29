@@ -6,6 +6,7 @@ import {
   CREATE_MOMENT_COMMENT,
   LIST_MOMENT_COMMENT_PAGE,
   LIST_MOMENT_COMMENT_ALL,
+  LIST_MOMENT_REPLY_PAGE,
   DELETE_MOMENT_COMMENT
 } from "@/network/apis";
 
@@ -28,6 +29,9 @@ export default {
     },
     listMomentCommentAll(state: any, params: object) {
       return http.post(LIST_MOMENT_COMMENT_ALL, params);
+    },
+    listMomentReplyPage(state: any, params: object) {
+      return http.post(LIST_MOMENT_REPLY_PAGE, params);
     },
     deleteMomentComment(state: any, params: object) {
       return http.post(DELETE_MOMENT_COMMENT, params);

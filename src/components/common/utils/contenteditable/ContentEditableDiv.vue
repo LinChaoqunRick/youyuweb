@@ -227,6 +227,7 @@
         &[contenteditable]:empty:before {
           content: attr(placeholder);
           color: #8a919f;
+          cursor: text;
         }
 
         img {

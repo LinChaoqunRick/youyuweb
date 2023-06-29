@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-  import {ref, onMounted, computed, onUnmounted} from 'vue';
+  import {ref, provide, onMounted, computed, onUnmounted} from 'vue';
   import {useStore} from 'vuex';
   import type {momentType} from "@/views/moment/types";
   import MomentEditor from "../components/MomentEditor.vue";
@@ -40,6 +40,7 @@
   const failed = ref<boolean>(false);
   const finish = computed(() => totalPageNum.value !== -1 && pageNum.value > totalPageNum.value); // 是否完成加载（还能不能加载下一页）
   const loadMoreBox = ref<HTMLElement>(null);
+  const activeId = ref<number>(-1);
 
   function getListData() {
     failed.value = false;
@@ -73,6 +74,12 @@
   const saveSuccess = (data: momentType) => {
     momentList.value.unshift(data);
   }
+
+  const updateActiveId = (value: number) => {
+    activeId.value = value;
+  }
+
+  provide('active', {activeId, updateActiveId});
 
   const ob = new IntersectionObserver(entries => {
     if (!entries[0].isIntersecting) return;

@@ -23,6 +23,29 @@
           </a-popover>
           <div class="publish-time" :title="data.createTime">{{$dayjs().to(data.createTime)}}</div>
         </div>
+        <a-popover placement="bottomRight"
+                   overlayClassName="moment-item-top-popover"
+                   :getPopupContainer="triggerNode=>triggerNode.parentNode">
+          <template #content>
+            <div class="operation-items">
+              <div class="operation-item delete-moment">
+                <i-delete theme="outline" size="14" fill="currentColor"/>
+                删除
+              </div>
+              <div class="operation-item">
+                <i-people-unknown theme="outline" size="14" fill="currentColor"/>
+                屏蔽作者
+              </div>
+              <div class="operation-item">
+                <i-caution theme="outline" size="14" fill="currentColor"/>
+                举报
+              </div>
+            </div>
+          </template>
+          <div class="content-top-operation">
+            <i-more-one theme="outline" size="22" fill="currentColor"/>
+          </div>
+        </a-popover>
       </div>
       <div class="content-body">
         <div class="content-text" :class="{'content-expand': expand}"
@@ -175,7 +198,6 @@
         commentList.value.unshift(res.data);
         props.data.commentCount += 1;
       }
-    }).finally(() => {
       callback();
     })
   }
@@ -255,6 +277,30 @@
             font-size: 13px;
             color: #909090;
             margin-top: 1px;
+          }
+        }
+
+        .content-top-operation {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 24px;
+          margin-left: auto;
+          cursor: pointer;
+          border-radius: 3px;
+          transition: .3s;
+
+          &:hover {
+            background-color: var(--youyu-background2);
+
+            ::v-deep(.i-icon) {
+              color: #1890ff;
+              transition: .3s;
+            }
+          }
+
+          ::v-deep(.i-icon) {
+            color: var(--youyu-text1);
           }
         }
       }
@@ -484,6 +530,34 @@
               color: #1890ff;
             }
           }
+        }
+      }
+    }
+  }
+</style>
+
+<style lang="scss">
+  .moment-item-top-popover {
+
+    .ant-popover-inner-content {
+      padding: 8px !important;
+
+      .operation-items {
+        .operation-item {
+          cursor: pointer;
+          padding: 3px 8px;
+
+          &:hover {
+            background-color: var(--youyu-background2);
+          }
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+
+        .delete-moment {
+          color: #fc2a2a;
         }
       }
     }

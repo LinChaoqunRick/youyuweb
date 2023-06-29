@@ -120,6 +120,10 @@
     }
     emit("onSubmit", cloneDeep(reply), successCallback)
   }
+
+  defineExpose({
+    reply
+  })
 </script>
 
 <style lang="scss" scoped>
