@@ -20,9 +20,11 @@
     </div>
     <div class="preview-body" ref="previewBody">
       <div class="white-panel"></div>
-      <a-spin :spinning="loading">
-        <img :src="currentImage" @load="onLoad" @click="onClose" ref="image"/>
-      </a-spin>
+      <transition name="toggle" mode="in-out">
+        <a-spin :spinning="loading" :key="currentImage">
+          <img :src="currentImage" @load="onLoad" @click="onClose" ref="image"/>
+        </a-spin>
+      </transition>
       <div class="change-btn last-btn" v-if="current>0" @click="onChange('left')"></div>
       <div class="change-btn next-btn" v-if="current<list.length-1" @click="onChange('right')"></div>
     </div>
@@ -273,5 +275,15 @@
       background-color: transparent;
       height: 0;
     }
+  }
+
+  .toggle-enter-active,
+  .toggle-leave-active {
+    transition: opacity 0.05s;
+  }
+
+  .toggle-enter-from,
+  .toggle-leave-to {
+    opacity: 0.95;
   }
 </style>
