@@ -3,7 +3,10 @@
     <div class="moment-middle">
       <MomentEditor @saveSuccess="saveSuccess"/>
       <div class="moment-list-body">
-        <MomentItem v-for="item in momentList" :data="item"/>
+        <MomentItem v-for="item in momentList"
+                    :data="item"
+                    :key="item.id"
+                    @deleteSuccess="deleteSuccess"/>
       </div>
       <transition name="momentSpin">
         <div class="load-more-box" ref="loadMoreBox">
@@ -77,6 +80,10 @@
 
   const updateActiveId = (value: number) => {
     activeId.value = value;
+  }
+
+  const deleteSuccess = (moment) => {
+    momentList.value = momentList.value.filter(item => item.id !== moment.id);
   }
 
   provide('active', {activeId, updateActiveId});

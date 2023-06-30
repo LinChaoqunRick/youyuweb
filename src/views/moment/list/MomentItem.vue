@@ -23,12 +23,15 @@
           </a-popover>
           <div class="publish-time" :title="data.createTime">{{$dayjs().to(data.createTime)}}</div>
         </div>
-        <a-popover placement="bottomRight"
+        <a-popover v-model:visible="visible"
+                   placement="bottomRight"
                    overlayClassName="moment-item-top-popover"
                    :getPopupContainer="triggerNode=>triggerNode.parentNode">
           <template #content>
             <div class="operation-items">
-              <div class="operation-item delete-moment">
+              <div v-if="data.userId === userInfo.id"
+                   class="operation-item delete-moment"
+                   @click="onDelete">
                 <i-delete theme="outline" size="14" fill="currentColor"/>
                 删除
               </div>
@@ -109,10 +112,11 @@
           </div>
         </div>
         <div class="comment-list">
-          <div v-for="item in commentList" class="comment-item">
-            <MomentCommentItem :data="item"
-                               @deleteSuccess="deleteSuccess"/>
-          </div>
+          <MomentCommentItem v-for="item in commentList"
+                             :key="item.id"
+                             class="comment-item"
+                             :data="item"
+                             @deleteSuccess="deleteSuccess"/>
         </div>
         <div class="comment-load-all" v-if="data.commentCount - commentList.length> 0">
           <div class="more-btn" @click="onDetail">
@@ -130,7 +134,7 @@
   import {RouterLink} from "vue-router";
   import {useStore} from "vuex";
   import type {momentListType} from "@/views/moment/types";
-  import {message} from "ant-design-vue";
+  import {message, Modal} from "ant-design-vue";
   import {transformHTMLToTag} from "@/components/common/utils/emoji/youyu_emoji";
   import {transformTagToHTML} from "@/components/common/utils/emoji/youyu_emoji";
   import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
@@ -145,11 +149,14 @@
       type: Object as PropType<momentListType>
     }
   });
+  const emit = defineEmits(["deleteSuccess"]);
+
   const preview = ref(false);
   const current = ref(0);
   const row = ref<number>(0);
   const expand = ref<boolean>(false);
   const replyShow = ref<boolean>(false);
+  const visible = ref<boolean>(false);
   const sort = ref<boolean>(true); // true:最新 false:最热
   const order = computed(() => sort.value ? 'create_time' : 'support_count');
   const images = computed(() => props.data.images ? props.data.images?.split(",") : null);
@@ -232,6 +239,23 @@
 
   const onDetail = () => {
 
+  }
+
+  const onDelete = () => {
+    visible.value = false;
+    Modal.confirm({
+      title: '删除评论',
+      icon: '', // <help theme="outline" size="24" fill="#1890ff"/>
+      content: '确定删除这条时刻吗？',
+      onOk() {
+        return dispatch("deleteMoment", {
+          momentId: props.data.id
+        }).then(res => {
+          message.success('删除成功');
+          emit("deleteSuccess", props.data);
+        }).catch(console.log)
+      },
+    });
   }
 </script>
 
@@ -511,10 +535,12 @@
           }
         }
 
-        ::v-deep(.comment-list) {
-          .comment-item {
-            .moment-comment-item {
-              border-bottom: 1px solid var(--youyu-border-color);
+        .comment-list {
+          ::v-deep(.comment-item) {
+            border-bottom: 1px solid var(--youyu-border-color);
+
+            &:last-child {
+              border-bottom: none;
             }
           }
         }
