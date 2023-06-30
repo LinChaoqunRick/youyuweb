@@ -1,5 +1,7 @@
 <template>
   <div class="app" id="youyu-app">
+    <!--<button @click="count++">count++</button>
+    <div v-for="item of count">{{item}}</div>-->
     <a-config-provider :locale="zhCN">
       <div class="header" id="header">
         <YHeader/>
@@ -24,6 +26,7 @@
   const {getters, commit, dispatch} = useStore();
 
   const isRouterAlive = ref<boolean>(true);
+  const count = ref<number>(1);
 
   const isLogin = computed(() => getters['isLogin']);
 

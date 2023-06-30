@@ -1,5 +1,5 @@
 <template>
-  <div class="editable-div" :class="{'editor-active': active}">
+  <div class="editable-div" :class="{'editor-active': totalStrLength || active}">
     <div class="editor-content youyu-scrollbar">
       <div id="box"
            ref="box"

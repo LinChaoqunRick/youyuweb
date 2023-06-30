@@ -2,12 +2,26 @@
   <div class="moment-comment-item" v-on-click-outside="onClickOutside">
     <div class="moment-comment-detail">
       <div class="user-avatar">
-        <img :src="data.user.avatar"/>
+        <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+          <template #content>
+            <UserCardMoment :user="data.user"/>
+          </template>
+          <RouterLink :to="{name:'userHome', params: {userId: data.user.id}}">
+            <img :src="data.user.avatar"/>
+          </RouterLink>
+        </a-popover>
       </div>
       <div class="comment-right">
         <div class="comment-right-top">
           <div class="user-nickname">
-            {{data.user.nickname}}
+            <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+              <template #content>
+                <UserCardMoment :user="data.user"/>
+              </template>
+              <RouterLink :to="{name:'userHome', params: {userId: data.user.id}}">
+                <span>{{data.user.nickname}}</span>
+              </RouterLink>
+            </a-popover>
             <div class="author-text" v-if="data.user.id === moment.userId">作者</div>
           </div>
           <div class="publish-time" :title="data.createTime">{{$dayjs().to(data.createTime)}}</div>
@@ -56,17 +70,20 @@
         <MomentReplyEditor @onSubmit="onSubmit" ref="MomentReplyEditorRef"/>
       </div>
     </div>
-    <div class="more-btn" @click="onLoadReply" v-if="data.replyCount>0 && !replyList.length">
-      <span>共{{data.replyCount}}条回复</span>
-      <i-down v-if="!replyLoading" theme="outline" size="14" fill="#1890ff"/>
-      <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
-    </div>
-    <div class="reply-list">
+    <div class="reply-list" v-if="replyList?.length">
       <MomentReplyItem v-for="item in replyList"
                        :data="item"
                        :root="data"
                        @saveSuccess="saveSuccess"
                        @deleteSuccess="deleteSuccess"/>
+    </div>
+    <div v-if="data.replyCount>0 && currentPageNum<=pageNum"
+         class="more-btn"
+         @click="onLoadReply"
+         ref="replyCountRef">
+      <span>{{(currentPageNum===1)?`共${data.replyCount}条回复`:`查看更多回复`}}</span>
+      <i-down v-if="!replyLoading" theme="outline" size="14" fill="#1890ff"/>
+      <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
     </div>
   </div>
 </template>
@@ -78,14 +95,17 @@
 </script>
 
 <script setup lang="ts">
-  import {ref, computed, inject} from "vue";
+  import {ref, computed, inject, onMounted} from "vue";
   import {useStore} from "vuex";
+  import {RouterLink} from "vue-router";
   import {message} from "ant-design-vue";
-  import {vOnClickOutside} from '@vueuse/components'
+  import {vOnClickOutside} from '@vueuse/components';
+  import {useIntersectionObserver} from '@vueuse/core'
   import {transformHTMLToTag, transformTagToHTML} from "@/components/common/utils/emoji/youyu_emoji";
   import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
   import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
   import MomentReplyItem from "@/views/moment/components/MomentReplyItem.vue";
+  import UserCardMoment from "../components/UserCardMoment.vue";
 
 
   const {getters, dispatch} = useStore();
@@ -103,8 +123,9 @@
   const deleteVisible = ref<boolean>(false);
   const preview = ref<boolean>(false);
   const replyLoading = ref<boolean>(false);
-  const current = ref(0);
+  const current = ref<number>(0);
   const MomentReplyEditorRef = ref(null);
+  const replyCountRef = ref<HTMLElement | null>(null);
   const replyList = ref([]);
   const pageNum = ref<number>(1);
   const currentPageNum = ref<number>(1);
@@ -113,6 +134,14 @@
   const {moment, updateMomentAttribute} = inject('moment');
   const images = computed(() => props.data.images ? props.data.images.split(",") : null);
   const isLogin = computed(() => getters['isLogin']);
+
+  onMounted(() => {
+    if (replyCountRef.value) {
+      useIntersectionObserver(replyCountRef.value, () => {
+
+      })
+    }
+  })
 
   function set(value: number) {
     row.value = value;
@@ -162,7 +191,8 @@
       if (res.data) {
         message.success("发布成功");
         replyList.value.unshift(res.data);
-        props.data.commentCount += 1;
+        props.data.replyCount += 1;
+        updateMomentAttribute("commentCount", moment.commentCount + 1);
         active.value = false;
       }
       successCallback();
@@ -223,6 +253,10 @@
           .user-nickname {
             font-size: 14px;
             font-weight: bold;
+
+            a {
+              color: inherit;
+            }
 
             .author-text {
               display: inline-block;
@@ -387,7 +421,19 @@
 
     .reply-list {
       margin-top: 6px;
-      margin-left: 44px;
+      margin-left: 45px;
+      background-color: var(--youyu-background4);
+      padding: 0 12px;
+      border-radius: 6px;
+
+      ::v-deep(.moment-reply-item) {
+        border-top: 1px solid var(--youyu-border-color);
+        padding: 10px 0;
+
+        &:first-child {
+          border-top: none;
+        }
+      }
     }
 
     &:hover {

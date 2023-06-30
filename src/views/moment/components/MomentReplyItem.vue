@@ -5,20 +5,48 @@
         <div class="reply-right-top">
           <div class="user-info">
             <div class="user-avatar">
-              <img :src="data.user.avatar"/>
+              <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+                <template #content>
+                  <UserCardMoment :user="data.user"/>
+                </template>
+                <RouterLink :to="{name:'userHome', params: {userId: data.user.id}}">
+                  <img :src="data.user.avatar"/>
+                </RouterLink>
+              </a-popover>
             </div>
             <div class="user-nickname">
-              {{data.user.nickname}}
+              <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+                <template #content>
+                  <UserCardMoment :user="data.user"/>
+                </template>
+                <RouterLink :to="{name:'userHome', params: {userId: data.user.id}}">
+                  <span>{{data.user.nickname}}</span>
+                </RouterLink>
+              </a-popover>
               <div class="author-text" v-if="data.user.id === moment.userId">作者</div>
             </div>
           </div>
           <div class="user-to-info" v-if="data.userTo">
             <div class="reply-text">回复</div>
             <div class="user-avatar">
-              <img :src="data.userTo.avatar"/>
+              <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+                <template #content>
+                  <UserCardMoment :user="data.userTo"/>
+                </template>
+                <RouterLink :to="{name:'userHome', params: {userId: data.userTo.id}}">
+                  <img :src="data.userTo.avatar"/>>
+                </RouterLink>
+              </a-popover>
             </div>
             <div class="user-nickname">
-              {{data.userTo.nickname}}
+              <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+                <template #content>
+                  <UserCardMoment :user="data.userTo"/>
+                </template>
+                <RouterLink :to="{name:'userHome', params: {userId: data.userTo.id}}">
+                  <span>{{data.userTo.nickname}}</span>
+                </RouterLink>
+              </a-popover>
               <div class="author-text" v-if="data.userTo.id === moment.userId">作者</div>
             </div>
           </div>
@@ -80,11 +108,13 @@
 <script setup lang="ts">
   import {ref, computed, inject} from "vue";
   import {useStore} from "vuex";
+  import {RouterLink} from "vue-router";
   import {message} from "ant-design-vue";
   import {vOnClickOutside} from '@vueuse/components'
   import {transformHTMLToTag, transformTagToHTML} from "@/components/common/utils/emoji/youyu_emoji";
   import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
   import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
+  import UserCardMoment from "../components/UserCardMoment.vue";
 
 
   const {getters, dispatch} = useStore();
@@ -190,14 +220,12 @@
 
 <style lang="scss" scoped>
   .moment-reply-item {
-    padding-top: 12px;
 
     .moment-reply-detail {
       display: flex;
 
       .reply-right {
         flex: 1;
-        margin-left: 8px;
         margin-top: 2px;
 
         .reply-right-top {
@@ -234,6 +262,10 @@
             font-size: 14px;
             font-weight: bold;
             margin-left: 6px;
+
+            a {
+              color: inherit;
+            }
 
             .author-text {
               display: inline-block;
