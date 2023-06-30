@@ -138,7 +138,7 @@
     box.value.focus();
     const selection = window.getSelection();
     const range = currentRange ?? selection.getRangeAt(0);
-    const node = range.createContextualFragment(text);
+    const node = document.createTextNode(text);
     range.insertNode(node);
     range.collapse();
     selection.removeAllRanges();
