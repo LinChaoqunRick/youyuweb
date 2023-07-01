@@ -31,6 +31,9 @@
 
 <style lang="scss" scoped>
   .follow-list {
+    background-color: var(--youyu-background1);
+    padding-bottom: 6px;
+
     .follow-menu {
       height: 40px;
     }

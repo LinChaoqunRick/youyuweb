@@ -271,11 +271,11 @@
 
 <style lang="scss" scoped>
   .moment-item {
-    width: 750px;
+    max-width: 750px;
     background-color: var(--youyu-background1);
 
     .moment-item-content {
-      padding: 20px 20px 12px 20px;
+      padding: 12px 16px;
 
       .content-top {
         display: flex;

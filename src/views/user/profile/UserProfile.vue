@@ -389,8 +389,8 @@
           }
 
           .content-component {
-            padding: 6px 10px;
-            background-color: var(--youyu-body-background2);
+            /*padding: 6px 10px;*/
+            /*background-color: var(--youyu-body-background2);*/
           }
         }
 

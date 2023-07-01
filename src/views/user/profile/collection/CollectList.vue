@@ -48,6 +48,9 @@
 
 <style lang="scss" scoped>
   .collect-list {
+    background-color: var(--youyu-background1);
+    padding-bottom: 6px;
+
     .list-body {
       .article-item {
         border-bottom: 1px solid var(--youyu-border-color);

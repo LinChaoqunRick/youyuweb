@@ -35,6 +35,7 @@
   import {ref, provide, onMounted, computed, onUnmounted} from 'vue';
   import {useStore} from 'vuex';
   import type {momentType} from "@/views/moment/types";
+  import {keepScrollTop} from "@/assets/utils/utils";
   import MomentItem from "./MomentItem.vue";
 
   const {dispatch} = useStore();
@@ -44,7 +45,6 @@
       type: Number
     }
   })
-
 
   const pageNum = ref<number>(1);
   const totalPageNum = ref<number>(-1);
@@ -62,10 +62,12 @@
       pageNum: pageNum.value,
       pageSize: 10,
       orderBy: 'create_time',
+      userId: props.userId
     }).then(res => {
       momentList.value.push(...res.data.list);
       pageNum.value === 1 && (totalPageNum.value = res.data.pages);
       pageNum.value++;
+      keepScrollTop();
     }).catch(e => {
       failed.value = true;
     }).finally(() => {
@@ -122,6 +124,7 @@
       ::v-deep(.moment-item) {
         margin-top: 8px;
         border-radius: 4px;
+        overflow: hidden;
       }
     }
 

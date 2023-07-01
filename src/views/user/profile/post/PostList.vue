@@ -100,7 +100,8 @@
 
 <style lang="scss" scoped>
   .post-list {
-    padding: 0 6px;
+    padding: 6px 10px;
+    background-color: var(--youyu-background1);
 
     .list-top {
       display: flex;

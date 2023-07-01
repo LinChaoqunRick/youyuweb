@@ -30,6 +30,9 @@
 
 <style lang="scss" scoped>
   .fans-list {
+    padding-bottom: 6px;
+    background-color: var(--youyu-background1);
+
     .list-body {
       padding: 0 10px;
 

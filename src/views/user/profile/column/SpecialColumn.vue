@@ -35,6 +35,8 @@
 
 <style lang="scss" scoped>
   .special-column {
+    background-color: var(--youyu-background1);
+
     .no-data {
       display: flex;
       justify-content: center;
