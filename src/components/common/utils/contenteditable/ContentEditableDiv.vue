@@ -1,5 +1,5 @@
 <template>
-  <div class="editable-div" :class="{'editor-active': totalStrLength || active}">
+  <div class="editable-div" :class="{'editor-active': active}">
     <div class="editor-content youyu-scrollbar">
       <div id="box"
            ref="box"
@@ -61,7 +61,8 @@
   const contenteditable = ref<boolean>(true);
   const box = ref<HTMLElement | null>(null);
   const totalStrLength = ref<number>(0);
-  const active = ref<boolean>(false);
+  const active = computed(() => focusActive.value || totalStrLength.value);
+  const focusActive = ref<boolean>(false);
   let currentRange = null;
   let _parentElem = null;
   const supportRange = typeof document.createRange === "function";
@@ -73,10 +74,10 @@
   })
 
   const onFocus = () => {
-    active.value = true;
+    focusActive.value = true;
   };
   const onBlur = () => {
-    active.value = false;
+    focusActive.value = false;
     updateModelValue();
   };
   const onKeydown = (e) => {
