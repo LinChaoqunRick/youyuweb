@@ -9,11 +9,11 @@
                             ref="richEditor">
           <template #bottom>
             <div class="topic-wrapper">
-              <div class="now-mood">
+              <!--<div class="now-mood">
                 <i-ulikecam theme="multi-color" size="13" :fill="['#1890ff' ,'#fff' ,'#1890ff' ,'#1890ff']"/>
                 <span class="mood-text">现在的心情</span>
                 <i-right theme="outline" size="13" fill="currentColor"/>
-              </div>
+              </div>-->
             </div>
           </template>
         </ContentEditableDiv>
@@ -55,10 +55,10 @@
             <span class="tool-title">图片</span>
           </div>
         </UploadFile>
-        <div class="tool-item" @click="onCheckLogin">
+        <!--<div class="tool-item" @click="onCheckLogin">
           <i-topic theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
           <span class="tool-title">话题</span>
-        </div>
+        </div>-->
       </div>
       <a-button type="primary" :disabled="!isLogin || !currentLength || contentLengthExceed" @click="onSubmit">发布
       </a-button>
@@ -322,7 +322,7 @@
 
   .editor-active {
     .editor-body {
-      border-color: #1890ff;
+      border-color: #1890ff !important;
       background: var(--youyu-background1) !important;
 
       .now-mood {

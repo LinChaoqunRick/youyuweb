@@ -35,6 +35,12 @@
                 <i-delete theme="outline" size="14" fill="currentColor"/>
                 删除
               </div>
+              <div v-if="data.userId === userInfo.id"
+                   class="operation-item edit-moment"
+                   @click="onEdit">
+                <i-editor theme="outline" size="14" fill="currentColor"/>
+                编辑
+              </div>
               <div class="operation-item">
                 <i-people-unknown theme="outline" size="14" fill="currentColor"/>
                 屏蔽作者
@@ -244,7 +250,7 @@
   const onDelete = () => {
     visible.value = false;
     Modal.confirm({
-      title: '删除评论',
+      title: '删除时刻',
       icon: '', // <help theme="outline" size="24" fill="#1890ff"/>
       content: '确定删除这条时刻吗？',
       onOk() {
@@ -256,6 +262,10 @@
         }).catch(console.log)
       },
     });
+  }
+
+  const onEdit = () => {
+
   }
 </script>
 
@@ -584,6 +594,10 @@
 
         .delete-moment {
           color: #fc2a2a;
+        }
+
+        .edit-moment {
+          color: #1890ff;
         }
       }
     }
