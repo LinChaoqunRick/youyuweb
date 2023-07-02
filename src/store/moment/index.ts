@@ -7,7 +7,10 @@ import {
   LIST_MOMENT_COMMENT_PAGE,
   LIST_MOMENT_COMMENT_ALL,
   LIST_MOMENT_REPLY_PAGE,
-  DELETE_MOMENT_COMMENT
+  DELETE_MOMENT_COMMENT,
+  SET_MOMENT_LIKE,
+  IS_MOMENT_LIKE,
+  CANCEL_MOMENT_LIKE,
 } from "@/network/apis";
 
 export default {
@@ -35,6 +38,15 @@ export default {
     },
     deleteMomentComment(state: any, params: object) {
       return http.post(DELETE_MOMENT_COMMENT, params);
+    },
+    setMomentLike(state: any, params: object) {
+      return http.post(SET_MOMENT_LIKE, params);
+    },
+    isMomentLike(state: any, params: object) {
+      return http.post(IS_MOMENT_LIKE, params);
+    },
+    cancalMomentLike(state: any, params: object) {
+      return http.post(CANCEL_MOMENT_LIKE, params);
     },
   }
 }

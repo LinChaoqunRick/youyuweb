@@ -84,7 +84,7 @@
         </div>
         <div class="item-text">{{data.commentCount || '评论'}}</div>
       </div>
-      <div class="item-operation">
+      <div class="item-operation" :class="{'active': likeActive}" @click="onLike">
         <div class="item-icon">
           <i-thumbs-up theme="outline" size="14" fill="currentColor"/>
         </div>
@@ -266,6 +266,16 @@
 
   const onEdit = () => {
 
+  }
+
+  const onLike = () => {
+    dispatch('setMomentLike', {
+      momentId: props.data.id,
+      userId: userInfo.value.id,
+      userIdTo: props.data.userId
+    }).then(res => {
+      console.log(res);
+    })
   }
 </script>
 
