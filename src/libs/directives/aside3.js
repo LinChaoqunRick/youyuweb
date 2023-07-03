@@ -44,10 +44,10 @@ function handleScroll() {
     if (dir) { // 向下滚动
       if (windowScrollBottom >= getElementTop(footer)) { // 超过footer
         aside.style.cssText = `position: absolute;bottom: 0px;`
-        cacheTop = getElementTop(aside) - elInitTop - defaultGap; // absolute是可以使用getElementTop计算
+        cacheTop = getElementTop(aside) - elInitTop; // absolute是可以使用getElementTop计算
         // console.log("down 1", cacheTop);
       } else if (windowScrollBottom >= getElementTop(aside) + aside.clientHeight + defaultGap) { // 超过下限
-        cacheTop = windowScrollBottom - elInitTop - aside.clientHeight - 2 * defaultGap;
+        cacheTop = windowScrollBottom - elInitTop - aside.clientHeight - defaultGap;
         // console.log("down 2", cacheTop);
         aside.style.cssText = `position: fixed;bottom: 8px;`;
       } else { // 其他
@@ -79,7 +79,7 @@ export default {
     footer = document.getElementById("footer");
     cacheTop = 0;
     aside = el;
-    asideParent = el.parentNode.parentNode;
+    asideParent = el.parentNode;
     document.addEventListener("scroll", onScroll, false);
     const {stop} = useResizeObserver(document.getElementById("app"), (entries) => {
       onScroll();
