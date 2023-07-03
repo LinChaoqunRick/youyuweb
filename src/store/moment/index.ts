@@ -45,7 +45,7 @@ export default {
     isMomentLike(state: any, params: object) {
       return http.post(IS_MOMENT_LIKE, params);
     },
-    cancalMomentLike(state: any, params: object) {
+    cancelMomentLike(state: any, params: object) {
       return http.post(CANCEL_MOMENT_LIKE, params);
     },
   }

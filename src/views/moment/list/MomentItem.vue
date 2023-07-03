@@ -84,11 +84,11 @@
         </div>
         <div class="item-text">{{data.commentCount || '评论'}}</div>
       </div>
-      <div class="item-operation" :class="{'active': likeActive}" @click="onLike">
+      <div class="item-operation" :class="{'like-active': likeActive}" v-login="onLike">
         <div class="item-icon">
-          <i-thumbs-up theme="outline" size="14" fill="currentColor"/>
+          <i-thumbs-up :theme="likeActive?'filled':'outline'" size="14" fill="currentColor"/>
         </div>
-        <div class="item-text">点赞</div>
+        <div class="item-text">{{data.likeCount || '点赞'}}</div>
       </div>
     </div>
     <div class="moment-item-bottom" v-if="replyShow">
@@ -180,6 +180,7 @@
   const richEditor = ref(null);
   const commentList = ref([]);
   const isLogin = computed(() => getters['isLogin']);
+  const likeActive = computed(() => props.data.momentLike);
 
   provide('moment', {moment: props.data, updateMomentAttribute});
 
@@ -269,19 +270,30 @@
   }
 
   const onLike = () => {
-    dispatch('setMomentLike', {
-      momentId: props.data.id,
-      userId: userInfo.value.id,
-      userIdTo: props.data.userId
-    }).then(res => {
-      console.log(res);
-    })
+    if (props.data.momentLike) {
+      dispatch('cancelMomentLike', {
+        momentId: props.data.id,
+        userId: userInfo.value.id,
+        userIdTo: props.data.userId
+      }).then(res => {
+        props.data.momentLike = null;
+        props.data.likeCount -= 1;
+      })
+    } else {
+      dispatch('setMomentLike', {
+        momentId: props.data.id,
+        userId: userInfo.value.id,
+        userIdTo: props.data.userId
+      }).then(res => {
+        props.data.momentLike = res.data;
+        props.data.likeCount += 1;
+      })
+    }
   }
 </script>
 
 <style lang="scss" scoped>
   .moment-item {
-    max-width: 750px;
     background-color: var(--youyu-background1);
 
     .moment-item-content {
@@ -292,8 +304,8 @@
         align-items: center;
 
         .user-avatar {
-          height: 48px;
-          width: 48px;
+          height: 42px;
+          width: 42px;
           border-radius: 50%;
           cursor: pointer;
           overflow: hidden;
@@ -427,6 +439,10 @@
 
         &.action-active {
           background-color: var(--youyu-background4);
+          color: #1890ff;
+        }
+
+        &.like-active {
           color: #1890ff;
         }
 
