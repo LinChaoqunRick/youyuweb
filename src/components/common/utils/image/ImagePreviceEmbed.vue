@@ -22,11 +22,17 @@
       <div class="white-panel"></div>
       <transition name="toggle" mode="in-out">
         <a-spin :spinning="loading" :key="currentImage">
-          <img :src="currentImage" @load="onLoad" @click="onClose" ref="image"/>
+          <img v-if="showImage" :src="currentImage" @load="onLoad" @error="onError" @click="onClose" ref="image"/>
+          <div class="reload-image" v-if="fail">
+            <div class="reload-btn" @click="onReload">
+              <i-refresh theme="outline" size="16" fill="currentColor"/>
+              重新加载
+            </div>
+          </div>
         </a-spin>
       </transition>
-      <div class="change-btn last-btn" v-if="current>0" @click="onChange('left')"></div>
-      <div class="change-btn next-btn" v-if="current<list.length-1" @click="onChange('right')"></div>
+      <div class="change-btn last-btn" title="上一张" v-if="current>0" @click="onChange('left')"></div>
+      <div class="change-btn next-btn" title="下一张" v-if="current<list.length-1" @click="onChange('right')"></div>
     </div>
     <div class="preview-bottom">
       <div class="nav-list">
@@ -37,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-  import {ref, computed, watch} from "vue";
+  import {ref, computed, watch, nextTick} from "vue";
   import openImage from "@/libs/tools/openImage";
   import {getImgSizeByMaxWidth, getImgSizeByMaxHeight} from "@/components/common/utils/image/utils";
 
@@ -53,15 +59,18 @@
   });
   const emit = defineEmits(['onClose'])
 
+  const showImage = ref<boolean>(true);
   const current = ref<number>(props.current);
   const currentImage = computed(() => props.list[current.value].split("?")[0] + '?x-oss-process=style/detailThumb');
   const loading = ref<boolean>(false);
-  const image = ref<HTMLElement>(null);
-  const previewBody = ref<HTMLElement>(null);
+  const fail = ref<boolean>(false);
+  const image = ref<HTMLElement | null>(null);
+  const previewBody = ref<HTMLElement | null>(null);
   let rotate: number = 0, tx: number, ty: number;
 
   watch(() => current.value, () => {
     loading.value = true;
+    fail.value = false;
   })
 
   const onClick = (index: number) => {
@@ -145,6 +154,19 @@
   const onClose = () => {
     emit('onClose');
   }
+
+  const onError = () => {
+    loading.value = false;
+    fail.value = true;
+  }
+
+  const onReload = () => {
+    fail.value = false;
+    showImage.value = false;
+    nextTick(() => {
+      showImage.value = true;
+    })
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -216,6 +238,43 @@
 
       ::v-deep(.ant-spin-nested-loading) {
         height: 100%;
+
+        > div {
+          height: 100%;
+
+          .ant-spin {
+            max-height: fit-content;
+          }
+        }
+
+        .ant-spin-container {
+          .reload-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+
+            .reload-btn {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              padding: 4px 13px;
+              border-radius: 20px;
+              border: 2px solid var(--youyu-background1);
+              cursor: pointer;
+              color: #1890ff;
+
+              &:hover {
+                background-color: var(--youyu-background2);
+              }
+
+              .i-icon {
+                margin-right: 4px;
+              }
+            }
+          }
+        }
       }
 
       img {

@@ -69,6 +69,14 @@
           <ImagePreviewEmbed :list="images" :current="current" @onClose="onClose"/>
         </div>
       </div>
+      <div class="content-bottom">
+        <div class="like-users" v-if="data.likeUsers?.length">
+          <div class="user-avatars">
+            <img v-for="(item, index) in data.likeUsers" :src="item.avatar" :style="{'z-index': index}"/>
+          </div>
+          <div class="like-text">等人赞过</div>
+        </div>
+      </div>
     </div>
     <div class="moment-item-actions">
       <div class="item-operation">
@@ -417,6 +425,42 @@
           line-height: 22px;
           color: #1e80ff;
           margin-right: 20px;
+        }
+      }
+
+      .content-bottom {
+        display: flex;
+        flex-direction: row-reverse;
+
+        .like-users {
+          display: flex;
+          align-items: center;
+          padding-top: 8px;
+          margin-left: auto;
+          cursor: pointer;
+
+          .user-avatars {
+            display: flex;
+            flex-direction: row-reverse;
+            margin-right: 10px;
+
+            img {
+              width: 30px;
+              height: 30px;
+              border: 2px solid var(--youyu-border-color);
+              border-radius: 50%;
+              margin-right: -6px;
+              display: inline-block;
+              position: relative;
+              background-position: 50%;
+              background-size: cover;
+              background-repeat: no-repeat;
+            }
+          }
+
+          .like-text {
+            color: var(--youyu-text1);
+          }
         }
       }
     }
