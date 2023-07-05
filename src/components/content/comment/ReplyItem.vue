@@ -6,13 +6,13 @@
           <template #content>
             <UserCard :user="data.user"/>
           </template>
-          <img :src="data.user.avatar" @click="handleProfile(data.user)"/>
+          <img :src="data.user.avatar" @mouseenter="onMouseEnterUser" @click="handleProfile(data.user)"/>
         </a-popover>
         <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
           <template #content>
             <UserCard :user="data.user"/>
           </template>
-          <div class="user-nickname" @click="handleProfile(data.user)">{{data.user.nickname}}</div>
+          <div class="user-nickname" @mouseenter="onMouseEnterUser" @click="handleProfile(data.user)">{{data.user.nickname}}</div>
         </a-popover>
         <div class="author-text" v-if="post.userId === data.userId">作者</div>
       </div>
@@ -22,13 +22,13 @@
           <template #content>
             <UserCard :user="data.userTo"/>
           </template>
-          <img :src="data.userTo.avatar" @click="handleProfile(data.userTo)"/>
+          <img :src="data.userTo.avatar" @mouseenter="onMouseEnterUserTo" @click="handleProfile(data.userTo)"/>
         </a-popover>
         <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
           <template #content>
             <UserCard :user="data.userTo"/>
           </template>
-          <div class="user-nickname" @click="handleProfile(data.userTo)">{{data.userTo.nickname}}</div>
+          <div class="user-nickname" @mouseenter="onMouseEnterUserTo" @click="handleProfile(data.userTo)">{{data.userTo.nickname}}</div>
         </a-popover>
         <div class="author-text" v-if="post.userId === data.userIdTo">作者</div>
       </div>
@@ -169,6 +169,18 @@
 
   function handleProfile(user: userType) {
     router.push({path: `/user/${user.id}`})
+  }
+
+  const onMouseEnterUser = () => {
+    dispatch('getPostUserById', {userId: props.data.user.id}).then(res => {
+      props.data.user = res.data;
+    })
+  }
+
+  const onMouseEnterUserTo = () => {
+    dispatch('getPostUserById', {userId: props.data.userTo.id}).then(res => {
+      props.data.userTo = res.data;
+    })
   }
 </script>
 

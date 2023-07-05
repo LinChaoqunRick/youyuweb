@@ -188,7 +188,7 @@
 
   watch(() => props.id, (val) => {
     if (!props.id) return;
-    dispatch("getUserById", {userId: val}).then(res => {
+    dispatch("getPostUserById", {userId: val}).then(res => {
       if (!res.data) {
         router.replace("/404")
         return;

@@ -60,6 +60,7 @@ import {
   CheckOne,
   ListMiddle,
   DirectionAdjustmentTwo,
+  DirectionAdjustmentThree,
   Time,
   Fire,
   Star,
@@ -145,6 +146,7 @@ export const IconPark = (app) => {
   app.component('ICheckOne', CheckOne);
   app.component('IListMiddle', ListMiddle);
   app.component('IDirectionAdjustmentTwo', DirectionAdjustmentTwo);
+  app.component('IDirectionAdjustmentThree', DirectionAdjustmentThree);
   app.component('ITime', Time);
   app.component('IFire', Fire);
   app.component('IStar', Star);
@@ -164,6 +166,6 @@ export const IconPark = (app) => {
   app.component('INotes', Notes);
   app.component('INewspaperFolding', NewspaperFolding);
   app.component('IMoreOne', MoreOne),
-  app.component('IPeopleUnknown', PeopleUnknown),
-  app.component('IRefresh', Refresh);
+    app.component('IPeopleUnknown', PeopleUnknown),
+    app.component('IRefresh', Refresh);
 }

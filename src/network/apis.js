@@ -9,7 +9,7 @@ export const ACCOUNT_REGISTER = ApiBase + "/login/register"; // 注销
 export const GET_CURRENT_USER = ApiBase + "/login/getCurrentUser"; // 获取当前登录用户信息
 
 // 帖子
-export const GET_USER_BY_ID = ApiBase + "/post/getUserById"; // 根据id获取用户详细信息（包括帖子数、粉丝数等）
+export const GET_USER_BY_ID = ApiBase + "/post/getUserDetailById"; // 根据id获取用户详细信息（包括帖子数、粉丝数等）
 export const GET_POST_LIST = ApiBase + "/post/list";
 export const GET_POST_DETAIL = ApiBase + "/post/get";
 export const SET_POST_LIKE = ApiBase + "/post/setPostLike";

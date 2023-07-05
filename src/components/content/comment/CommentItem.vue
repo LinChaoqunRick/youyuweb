@@ -1,11 +1,11 @@
 <template>
   <div class="comment-item">
     <div class="user-avatar">
-      <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+      <a-popover placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3">
         <template #content>
           <UserCard :user="data.user"/>
         </template>
-        <img :src="data.user.avatar" @click="handleProfile(data.user)"/>
+        <img :src="data.user.avatar" @mouseenter="onMouseEnter" @click="handleProfile(data.user)"/>
       </a-popover>
     </div>
     <div class="content-box">
@@ -15,7 +15,7 @@
             <template #content>
               <UserCard :user="data.user"/>
             </template>
-            <div class="nickname-text" @click="handleProfile(data.user)">{{data.user.nickname}}</div>
+            <div class="nickname-text" @mouseenter="onMouseEnter" @click="handleProfile(data.user)">{{data.user.nickname}}</div>
           </a-popover>
           <div class="author-text" v-if="post.userId === data.userId">作者</div>
         </div>
@@ -192,6 +192,12 @@
 
   function handleProfile(user: userType) {
     router.push({path: `/user/${user.id}`})
+  }
+
+  const onMouseEnter = () => {
+    dispatch('getPostUserById', {userId: props.data.user.id}).then(res => {
+      props.data.user = res.data;
+    })
   }
 </script>
 

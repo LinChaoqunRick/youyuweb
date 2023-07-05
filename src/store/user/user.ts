@@ -23,7 +23,7 @@ export default {
     getUserList(state: any, params: object) {
       return http.get(GET_USER_LIST, params);
     },
-    getUserById(state: any, params: object) {
+    getPostUserById(state: any, params: object) {
       return http.get(GET_USER_BY_ID, params);
     },
     getLimitPost(state: any, params: object) {

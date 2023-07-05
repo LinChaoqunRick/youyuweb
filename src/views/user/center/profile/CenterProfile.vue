@@ -80,7 +80,7 @@
   };
 
   function initData() {
-    dispatch("getUserById", {userId: userInfo.value.id}).then(res => {
+    dispatch("getPostUserById", {userId: userInfo.value.id}).then(res => {
       formValidate.value = res.data;
     });
   }
@@ -97,7 +97,7 @@
       message.error(e.message);
     })
     // 保存成功后更新Vuex数据
-    await dispatch("getUserById", {userId: formValidate.value.id}).then(res => {
+    await dispatch("getPostUserById", {userId: formValidate.value.id}).then(res => {
       commit("changeUser", res.data);
     })
   }
