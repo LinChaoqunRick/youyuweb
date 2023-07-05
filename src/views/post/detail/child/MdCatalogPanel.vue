@@ -5,30 +5,26 @@
         <i-list-middle theme="outline" size="22" fill="currentColor"/>
       </div>
       <div class="drag-container" v-show="show">
-        <UseDraggable
-          class="bg-$vp-c-bg select-none cursor-move z-20"
-          :class="{'fixed':move}"
-          :initialValue="{ x: innerWidth - 360, y: 100 }"
-          :handle="handle"
-        >
-          <div class="md-catalog-wrapper">
-            <div ref="handle" class="catalog-title">
-              <div>目录</div>
-              <div class="move-switch" @click="handleMove">
-                <i-direction-adjustment-two theme="outline" size="18" fill="#000"/>
-              </div>
-            </div>
-            <div class="catalog-body">
-              <md-catalog
-                :editor-id="editorId"
-                :scroll-element="scrollElement"
-                :offsetTop="80"
-                :scrollElementOffsetTop="headerClientHeight"
-                :mdHeadingId="createMdHeadingId"
-              />
+        <div :style="styleRef"
+             class="md-catalog-wrapper"
+             :class="{'fixed': move, 'dragging': isDraggingRef}"
+             ref="mdCatalogRef">
+          <div ref="handle" class="catalog-title">
+            <div>目录</div>
+            <div class="move-switch" @click="handleMove">
+              <i-direction-adjustment-three theme="outline" :strokeWidth="3" size="18" fill="#141414"/>
             </div>
           </div>
-        </UseDraggable>
+          <div class="catalog-body youyu-scrollbar">
+            <md-catalog
+              :editor-id="editorId"
+              :scroll-element="scrollElement"
+              :offsetTop="80"
+              :scrollElementOffsetTop="headerClientHeight"
+              :mdHeadingId="createMdHeadingId"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -36,8 +32,9 @@
 
 <script setup lang="ts">
   import {ref, onMounted} from 'vue';
-  import {UseDraggable} from '@vueuse/components';
+  import {useDraggable} from '@vueuse/core';
   import {MdCatalog} from 'md-editor-v3';
+  import {getElementTop, getElementLeft} from "@/assets/utils/utils";
   import {createMdHeadingId} from "@/components/content/mdEditor/utils";
 
   const prop = defineProps({
@@ -48,13 +45,15 @@
   })
 
   const innerWidth = window.innerWidth;
-
+  const mdCatalogRef = ref<HTMLElement | null>(null);
   const handle = ref<HTMLElement | null>(null);
   const panel = ref<HTMLElement | null>(null);
   const move = ref<boolean>(false);
   const show = ref<boolean>(false);
   const scrollElement = document.documentElement;
-  const headerClientHeight = ref<number>(0)
+  const headerClientHeight = ref<number>(0);
+  let styleRef = ref<string>('');
+  let isDraggingRef = ref<boolean>(false);
 
   function handleShow() {
     show.value = !show.value;
@@ -62,6 +61,14 @@
 
   function handleMove() {
     move.value = !move.value;
+    if (move.value) {
+      const {style, isDragging} = useDraggable(mdCatalogRef, {
+        initialValue: {x: getElementLeft(mdCatalogRef.value) ?? 0, y: getElementTop(mdCatalogRef.value) ?? 0},
+        handle
+      })
+      styleRef = style;
+      isDraggingRef = isDragging;
+    }
   }
 
   onMounted(() => {
@@ -97,6 +104,12 @@
           background-color: var(--post-detail-background);
           border: 1px solid #9ca3af4d;
           border-radius: 6px;
+          opacity: 1;
+          transition: opacity .2s;
+
+          &.dragging.fixed {
+            opacity: 0.6;
+          }
 
           .catalog-title {
             font-size: 18px;
@@ -126,7 +139,7 @@
           .catalog-body {
             height: 300px;
             overflow: auto;
-            padding: 8px 16px;
+            padding: 0 10px;
           }
         }
 
@@ -137,7 +150,5 @@
         }
       }
     }
-
   }
-
 </style>
