@@ -61,7 +61,7 @@ function handleScroll() {
         cacheTop = 0;
         // aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px;`
       } else if (Math.floor(windowScrollTop + header.clientHeight + defaultGap) <= getElementTop(aside)) { // 超过上限
-        cacheTop = windowScrollTop - (elInitTop - header.clientHeight);
+        cacheTop = windowScrollTop - (elInitTop - header.clientHeight - defaultGap);
         // console.log("up 2", cacheTop);
         aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px;`
       } else { // 其他
