@@ -28,9 +28,11 @@
       </a-popover>
     </div>
   </div>
-  <transition name="fade">
-    <LoginPanel ref="LoginPanelRef" v-if="loginPanelStatus"/>
-  </transition>
+  <Teleport to="#app">
+    <transition name="fade">
+      <LoginPanel ref="LoginPanelRef" v-if="loginPanelStatus"/>
+    </transition>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
