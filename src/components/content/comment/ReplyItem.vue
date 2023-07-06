@@ -2,33 +2,53 @@
   <div class="reply-container">
     <div class="reply-info">
       <div class="user-info">
-        <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+        <a-popover placement="top"
+                   :mouseEnterDelay="0.6"
+                   :mouseLeaveDelay="0.3"
+                   @visibleChange="onUserVisibleChange">
           <template #content>
             <UserCard :user="data.user"/>
           </template>
-          <img :src="data.user.avatar" @mouseenter="onMouseEnterUser" @click="handleProfile(data.user)"/>
+          <RouterLink :to="`/user/${data.user.id}`">
+            <img :src="data.user.avatar"/>
+          </RouterLink>
         </a-popover>
-        <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+        <a-popover placement="top"
+                   :mouseEnterDelay="0.6"
+                   :mouseLeaveDelay="0.3"
+                   @visibleChange="onUserVisibleChange">
           <template #content>
             <UserCard :user="data.user"/>
           </template>
-          <div class="user-nickname" @mouseenter="onMouseEnterUser" @click="handleProfile(data.user)">{{data.user.nickname}}</div>
+          <RouterLink :to="`/user/${data.user.id}`">
+            <div class="user-nickname">{{data.user.nickname}}</div>
+          </RouterLink>
         </a-popover>
         <div class="author-text" v-if="post.userId === data.userId">作者</div>
       </div>
       <p class="reply-text" v-if="data.userTo">回复</p>
       <div class="user-info" v-if="data.userTo">
-        <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+        <a-popover placement="top"
+                   :mouseEnterDelay="0.6"
+                   :mouseLeaveDelay="0.3"
+                   @visibleChange="onUserToVisibleChange">
           <template #content>
             <UserCard :user="data.userTo"/>
           </template>
-          <img :src="data.userTo.avatar" @mouseenter="onMouseEnterUserTo" @click="handleProfile(data.userTo)"/>
+          <RouterLink :to="`/user/${data.userTo.id}`">
+            <img :src="data.userTo.avatar"/>
+          </RouterLink>
         </a-popover>
-        <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+        <a-popover placement="top"
+                   :mouseEnterDelay="0.6"
+                   :mouseLeaveDelay="0.3"
+                   @visibleChange="onUserToVisibleChange">
           <template #content>
             <UserCard :user="data.userTo"/>
           </template>
-          <div class="user-nickname" @mouseenter="onMouseEnterUserTo" @click="handleProfile(data.userTo)">{{data.userTo.nickname}}</div>
+          <RouterLink :to="`/user/${data.userTo.id}`">
+            <div class="user-nickname">{{data.userTo.nickname}}</div>
+          </RouterLink>
         </a-popover>
         <div class="author-text" v-if="post.userId === data.userIdTo">作者</div>
       </div>
@@ -57,13 +77,12 @@
 <script setup lang="ts">
   import {computed, inject} from "vue";
   import {useStore} from "vuex";
-  import {useRouter} from "vue-router";
+  import {useRouter, RouterLink} from "vue-router";
   import {message, Modal} from "ant-design-vue";
 
   import ReplyEditor from "@/components/content/comment/ReplyEditor.vue";
   import UserCard from "@/components/content/comment/UserCard.vue";
   import type {userType} from "@/types/user";
-
 
   const {getters, commit, dispatch} = useStore();
   const router = useRouter();
@@ -171,16 +190,20 @@
     router.push({path: `/user/${user.id}`})
   }
 
-  const onMouseEnterUser = () => {
-    dispatch('getPostUserById', {userId: props.data.user.id}).then(res => {
-      props.data.user = res.data;
-    })
+  const onUserVisibleChange = (visible: boolean) => {
+    if (visible) {
+      dispatch('getPostUserById', {userId: props.data.user.id}).then(res => {
+        props.data.user = res.data;
+      })
+    }
   }
 
-  const onMouseEnterUserTo = () => {
-    dispatch('getPostUserById', {userId: props.data.userTo.id}).then(res => {
-      props.data.userTo = res.data;
-    })
+  const onUserToVisibleChange = (visible: boolean) => {
+    if (visible) {
+      dispatch('getPostUserById', {userId: props.data.userTo.id}).then(res => {
+        props.data.userTo = res.data;
+      })
+    }
   }
 </script>
 
@@ -201,6 +224,10 @@
           width: 30px;
           border-radius: 50%;
           margin-right: 6px;
+        }
+
+        a {
+          color: inherit;
         }
 
         .user-nickname {
