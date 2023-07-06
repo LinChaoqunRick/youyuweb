@@ -7,6 +7,14 @@
         <div class="user-signature">{{user.signature}}</div>
       </div>
     </div>
+    <div class="action-button" v-if="!isOwn">
+      <a-button type="primary" v-login="onFollow" :ghost="user.follow" :loading="followLoading">
+        {{user.follow?'已关注':'关注'}}
+      </a-button>
+      <a-button v-login="onMessage">
+        私信
+      </a-button>
+    </div>
     <div class="user-data">
       <div class="statis-data" v-for="item in dataItems" @click="handleClickStat(item)">
         <div class="data-value">{{user.extraInfo?.[item.value]}}</div>
@@ -17,8 +25,13 @@
 </template>
 
 <script setup lang="ts">
+  import {ref, computed} from "vue";
+  import {useStore} from "vuex";
   import {useRouter} from "vue-router";
-  import {Modal} from "ant-design-vue";
+  import {message, Modal} from "ant-design-vue";
+
+  const router = useRouter();
+  const {getters, dispatch} = useStore();
 
   const props = defineProps({
     user: {
@@ -26,7 +39,10 @@
       required: true
     }
   })
-  const router = useRouter();
+
+  const followLoading = ref<boolean>(false);
+  const userInfo = computed(() => getters['userInfo']);
+  const isOwn = computed(() => userInfo.value.id === props.user.id);
 
   const dataItems = [
     {
@@ -65,6 +81,25 @@
   function handleProfile() {
     router.push({path: `/user/${props.user.id}/post`})
   }
+
+  const onFollow = () => {
+    const isFollow = props.user.follow;
+    if (isFollow == null) return;
+    followLoading.value = true;
+    dispatch(isFollow ? 'cancelUserFollow' : 'setUserFollow', {
+      userId: userInfo.value.id,
+      userIdTo: props.user.id
+    }).then(res => {
+      props.user.follow = !props.user.follow;
+      message.success(isFollow ? "已取消关注" : "已添加关注")
+    }).finally(() => {
+      followLoading.value = false;
+    })
+  }
+
+  const onMessage = () => {
+    message.info("功能未开放！");
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -87,11 +122,13 @@
         justify-content: center;
 
         .user-nickname {
+          flex: 1;
           font-weight: bold;
           cursor: pointer;
         }
 
         .user-signature {
+          flex: 1;
           font-size: 12px;
           color: #8f969c;
           overflow: hidden;
@@ -101,6 +138,19 @@
       }
 
       display: flex;
+    }
+
+    .action-button {
+      display: flex;
+      margin-bottom: 10px;
+
+      button {
+        flex: 1;
+
+        &:nth-child(n+2) {
+          margin-left: 12px;
+        }
+      }
     }
 
     .user-data {
