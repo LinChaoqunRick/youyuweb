@@ -55,7 +55,8 @@ function handleScroll() {
         aside.style.cssText = `position: relative;top: ${cacheTop}px`;
       }
     } else { // 向上滚动
-      if (windowScrollTop < header.clientHeight) {
+      console.log(windowScrollTop, Math.floor(windowScrollTop + header.clientHeight + defaultGap), getElementTop(aside));
+      if (windowScrollTop < header.clientHeight - cacheTop) {
         // console.log("up 1");
         cacheTop = 0;
         // aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px;`
