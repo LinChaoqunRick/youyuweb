@@ -370,7 +370,7 @@
       }
 
       .content-body {
-        margin-left: 56px;
+        margin-left: 50px;
 
         ::v-deep(.content-text) {
           margin: 4px 0;
