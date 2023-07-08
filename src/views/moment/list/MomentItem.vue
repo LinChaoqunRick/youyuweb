@@ -3,7 +3,10 @@
     <div class="moment-item-content">
       <div class="content-top">
         <div class="user-avatar">
-          <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+          <a-popover placement="top"
+                     :mouseEnterDelay="0.6"
+                     :mouseLeaveDelay="0.3"
+                     @visibleChange="onUserVisibleChange">
             <template #content>
               <UserCardMoment :user="data.userInfo"/>
             </template>
@@ -13,7 +16,10 @@
           </a-popover>
         </div>
         <div class="user-nickname-time">
-          <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+          <a-popover placement="top"
+                     :mouseEnterDelay="0.6"
+                     :mouseLeaveDelay="0.3"
+                     @visibleChange="onUserVisibleChange">
             <template #content>
               <UserCardMoment :user="data.userInfo"/>
             </template>
@@ -295,6 +301,14 @@
       }).then(res => {
         props.data.momentLike = res.data;
         props.data.likeCount += 1;
+      })
+    }
+  }
+
+  const onUserVisibleChange = (visible: boolean) => {
+    if (visible) {
+      dispatch("getMomentUserDetail", {userId: props.data.userId}).then(res => {
+        props.data.user = res.data;
       })
     }
   }

@@ -3,6 +3,7 @@ import {
   MOMENT_CREATE,
   MOMENT_DELETE,
   MOMENT_LIST,
+  GET_MOMENT_USER_DETAIL,
   CREATE_MOMENT_COMMENT,
   LIST_MOMENT_COMMENT_PAGE,
   LIST_MOMENT_COMMENT_ALL,
@@ -23,6 +24,9 @@ export default {
     },
     momentList(state: any, params: object) {
       return http.post(MOMENT_LIST, params);
+    },
+    getMomentUserDetail(state: any, params: object) {
+      return http.post(GET_MOMENT_USER_DETAIL, params);
     },
     createMomentComment(state: any, params: object) {
       return http.post(CREATE_MOMENT_COMMENT, params);

@@ -24,6 +24,14 @@
               :mdHeadingId="createMdHeadingId"
             />
           </div>
+          <div class="resize-n" @mousemove="onmousemove"></div>
+          <div class="resize-s"></div>
+          <div class="resize-w"></div>
+          <div class="resize-e"></div>
+          <div class="resize-nw"></div>
+          <div class="resize-ne"></div>
+          <div class="resize-se"></div>
+          <div class="resize-sw"></div>
         </div>
       </div>
     </div>
@@ -36,6 +44,7 @@
   import {MdCatalog} from 'md-editor-v3';
   import {getElementTop, getElementLeft} from "@/assets/utils/utils";
   import {createMdHeadingId} from "@/components/content/mdEditor/utils";
+  import { useMousePressed } from '@vueuse/core'
 
   const prop = defineProps({
     editorId: {
@@ -55,11 +64,11 @@
   let styleRef = ref<string>('');
   let isDraggingRef = ref<boolean>(false);
 
-  function handleShow() {
+  const handleShow = () => {
     show.value = !show.value;
   }
 
-  function handleMove() {
+  const handleMove = () => {
     move.value = !move.value;
     if (move.value) {
       const {style, isDragging} = useDraggable(mdCatalogRef, {
@@ -71,6 +80,13 @@
     }
   }
 
+  const onResize = (dir: string) => {
+
+  }
+  const onmousemove = () => {
+    console.log("onmousemove");
+  }
+
   onMounted(() => {
     const header = document.getElementById("header");
     headerClientHeight.value = header?.clientHeight ?? 40;
@@ -79,6 +95,7 @@
 
 <style lang="scss" scoped>
   .md-catalog-panel {
+    user-select: none;
 
     .fold-panel {
       position: relative;
@@ -98,6 +115,70 @@
         position: absolute;
         left: -265px;
         top: 0;
+
+        .resize-n, .resize-s, .resize-nw, .resize-ne, .resize-se, .resize-sw {
+          height: 10px;
+          position: absolute;
+          /*background-color: skyblue;*/
+        }
+
+        .resize-w, .resize-e, .resize-nw, .resize-ne, .resize-se, .resize-sw {
+          width: 10px;
+          position: absolute;
+          /*background-color: skyblue;*/
+        }
+
+        .resize-n {
+          top: -5px;
+          right: 0;
+          left: 0;
+          cursor: n-resize;
+        }
+
+        .resize-s {
+          bottom: -5px;
+          right: 0;
+          left: 0;
+          cursor: s-resize;
+        }
+
+        .resize-w {
+          bottom: 0;
+          top: 0;
+          left: -5px;
+          cursor: w-resize;
+        }
+
+        .resize-e {
+          bottom: 0;
+          top: 0;
+          right: -5px;
+          cursor: e-resize;
+        }
+
+        .resize-nw {
+          top: -5px;
+          left: -5px;
+          cursor: nw-resize;
+        }
+
+        .resize-ne {
+          top: -5px;
+          right: -5px;
+          cursor: ne-resize;
+        }
+
+        .resize-se {
+          bottom: -5px;
+          right: -5px;
+          cursor: nw-resize;
+        }
+
+        .resize-sw {
+          bottom: -5px;
+          left: -5px;
+          cursor: sw-resize;
+        }
 
         .md-catalog-wrapper {
           width: 260px;

@@ -9,7 +9,7 @@ export const ACCOUNT_REGISTER = ApiBase + "/login/register"; // 注销
 export const GET_CURRENT_USER = ApiBase + "/login/getCurrentUser"; // 获取当前登录用户信息
 
 // 帖子
-export const GET_USER_BY_ID = ApiBase + "/post/getUserDetailById"; // 根据id获取用户详细信息（包括帖子数、粉丝数等）
+export const GET_POST_USER_DETAIL = ApiBase + "/post/getUserDetailById"; // 根据id获取用户详细信息（包括帖子数、粉丝数等）
 export const GET_POST_LIST = ApiBase + "/post/list";
 export const GET_POST_DETAIL = ApiBase + "/post/get";
 export const SET_POST_LIKE = ApiBase + "/post/setPostLike";
@@ -64,6 +64,7 @@ export const SET_PROFILE_MENU = ApiBase + "/user/setProfileMenu"; // 设置主�
 export const MOMENT_CREATE = ApiBase + "/moment/create"; // 创建时刻
 export const MOMENT_DELETE = ApiBase + "/moment/delete"; // 删除时刻
 export const MOMENT_LIST = ApiBase + "/moment/list"; // 时刻列表
+export const GET_MOMENT_USER_DETAIL = ApiBase + "/moment/getUserDetailById"; // 时刻列表
 export const CREATE_MOMENT_COMMENT = ApiBase + "/momentComment/create"; // 发表评论
 export const LIST_MOMENT_COMMENT_PAGE = ApiBase + "/momentComment/listMomentCommentPage"; // 获取评论列表(分页，默认第一页)
 export const LIST_MOMENT_COMMENT_ALL = ApiBase + "/momentComment/listMomentCommentAll"; // 获取评论列表(全部，不分页)
