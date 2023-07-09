@@ -41,7 +41,7 @@
         <CommentItem v-for="item in commentList"
                      :data="item"
                      :key="item.id"
-                     @deleteSuccess="handleSort(true)"/>
+                     @deleteSuccess="deleteSuccess"/>
         <div class="operation-tip-box">
           <div class="failed-box" v-if="failed" @click="onRetry">
             <i-refresh theme="outline" size="15" fill="#1890ff"/>
@@ -161,9 +161,10 @@
     }).then(res => {
       message.success('评论成功');
       content.value = '';
-      handleSort(true);
+      commentList.value.unshift(res.data);
       setPostAttribute('commentCount', post.value.commentCount + 1);
     }).catch(e => {
+      console.log(e);
       message.error("评论失败")
     }).finally(() => {
       submitLoading.value = false;
@@ -186,6 +187,11 @@
   const onRetry = () => {
     failed.value = false;
     loadComment();
+  }
+
+  const deleteSuccess = (data) => {
+    commentList.value = commentList.value.filter(item => item.id !== data.id);
+    setPostAttribute('commentCount', post.value.commentCount - 1);
   }
 
   defineExpose({

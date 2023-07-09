@@ -3,11 +3,12 @@ import {
   GET_POST_LIST,
   GET_POST_DETAIL,
   CATEGORY_LIST,
-  GET_COMMENTS_PAGE,
-  GET_COMMENTS_ALL,
-  GET_SUB_COMMENTS_ALL,
-  CREATE_COMMENT,
-  DELETE_COMMENT,
+  GET_POST_COMMENTS_PAGE,
+  GET_POST_COMMENTS_ALL,
+  GET_POST_SUB_COMMENTS_ALL,
+  GET_POST_SUB_COMMENTS_PAGE,
+  CREATE_POST_COMMENT,
+  DELETE_POST_COMMENT,
   IS_POST_LIKE,
   SET_POST_LIKE,
   CANCEL_POST_LIKE,
@@ -16,8 +17,8 @@ import {
   GET_POST_EDIT_DETAIL,
   UPDATE_POST,
   DELETE_POST,
-  SET_COMMENT_LIKE,
-  CANCEL_COMMENT_LIKE,
+  SET_POST_COMMENT_LIKE,
+  CANCEL_POST_COMMENT_LIKE,
   SET_POST_COLLECT,
   IS_POST_COLLECT,
   CANCEL_POST_COLLECT,
@@ -39,19 +40,22 @@ export default {
       return http.get(CATEGORY_LIST, params);
     },
     getCommentsPage(state, params) {
-      return http.get(GET_COMMENTS_PAGE, params);
+      return http.get(GET_POST_COMMENTS_PAGE, params);
     },
     getCommentsAll(state, params) {
-      return http.get(GET_COMMENTS_ALL, params);
+      return http.get(GET_POST_COMMENTS_ALL, params);
     },
-    getSubCommentsAll(state, params) {
-      return http.get(GET_SUB_COMMENTS_ALL, params);
+    getPostSubCommentsAll(state, params) {
+      return http.get(GET_POST_SUB_COMMENTS_ALL, params);
+    },
+    getSubCommentsPage(state, params) {
+      return http.get(GET_POST_SUB_COMMENTS_PAGE, params);
     },
     createComment(state, params) {
-      return http.post(CREATE_COMMENT, params);
+      return http.post(CREATE_POST_COMMENT, params);
     },
     deleteComment(state, params) {
-      return http.post(DELETE_COMMENT, params);
+      return http.post(DELETE_POST_COMMENT, params);
     },
     setPostLike(state, params) {
       return http.post(SET_POST_LIKE, params);
@@ -78,10 +82,10 @@ export default {
       return http.post(DELETE_POST, params);
     },
     setCommentLike(state, params) {
-      return http.post(SET_COMMENT_LIKE, params);
+      return http.post(SET_POST_COMMENT_LIKE, params);
     },
     cancelCommentLike(state, params) {
-      return http.post(CANCEL_COMMENT_LIKE, params);
+      return http.post(CANCEL_POST_COMMENT_LIKE, params);
     },
     setPostCollect(state, params) {
       return http.post(SET_POST_COLLECT, params);

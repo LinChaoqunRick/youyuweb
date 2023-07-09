@@ -55,19 +55,19 @@
       <div class="comment-operation">
         <div class="limit-btn" @click="expand = true" v-show="row>7 && !expand">展开</div>
         <div class="limit-btn" @click="expand = false" v-show="row>7 && expand">收起</div>
-        <div class="more-btn" @click="loadReply" v-if="data.replyCount>0 && !replies.length">
-          共{{data.replyCount}}条回复
-          <i-down v-if="!replyLoading" theme="outline" size="14" fill="#1890ff"/>
-          <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
-        </div>
       </div>
-      <div class="sub-comment-wrapper" v-if="replies.length">
+      <div class="sub-comment-wrapper" v-if="replyList.length">
         <ReplyItem class="reply-item"
                    :activeId="activeId"
-                   v-for="item in replies"
+                   v-for="item in replyList"
                    :data="item"
-                   @saveSuccess="loadReply"
-                   @deleteSuccess="loadReply"/>
+                   @saveSuccess="saveSuccess"
+                   @deleteSuccess="deleteSuccess"/>
+      </div>
+      <div class="more-btn" @click="loadReply" v-if="showLoadReply">
+        <span>{{(currentPageNum===1)?`共${data.replyCount}条回复`:`查看更多回复`}}</span>
+        <i-down v-if="!replyLoading" theme="outline" size="14" fill="#1890ff"/>
+        <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
       </div>
     </div>
   </div>
@@ -94,11 +94,14 @@
       type: Object,
       required: true
     },
-  })
+  });
+  const showLoadReply = computed(() => props.data.replyCount > 0 && currentPageNum.value <= pageNum.value);
 
   const expand = ref<boolean>(false);
   const row = ref<number>(0);
-  const replies = ref([]);
+  const replyList = ref([]);
+  const pageNum = ref<number>(1);
+  const currentPageNum = ref<number>(1);
   const replyEditor = ref(null);
   const {activeId, updateActiveId} = inject('active');
   const active = computed(() => activeId.value === props.data.id);
@@ -115,9 +118,13 @@
   function loadReply() {
     replyLoading.value = true;
     const commentId = props.data.id;
-    dispatch("getSubCommentsAll", {commentId}).then(res => {
-      replies.value = res.data;
-      props.data.replyCount = res.data.length;
+    dispatch("getSubCommentsPage", {
+      commentId,
+      pageNum: currentPageNum.value
+    }).then(res => {
+      pageNum.value = res.data.pages;
+      currentPageNum.value++;
+      replyList.value.push(...res.data.list);
     }).finally(() => {
       replyLoading.value = false;
     })
@@ -177,10 +184,11 @@
       rootId: props.data.id,
       content: content
     }).then(res => {
+      replyList.value.unshift(res.data);
       message.success('评论成功');
-      loadReply();
       updateActiveId(-1);
       setPostAttribute('commentCount', post.value.commentCount + 1);
+      props.data.replyCount = props.data.replyCount + 1;
     }).catch(e => {
       message.error("评论失败")
     }).finally(() => submitCallback())
@@ -193,8 +201,12 @@
       content: '确定删除这条评论吗？',
       onOk() {
         return dispatch("deleteComment", {commentId: props.data.id}).then(res => {
-          message.success('删除成功');
-          emit("deleteSuccess");
+          if (res.data) {
+            message.success('删除成功');
+            emit("deleteSuccess", props.data);
+          } else {
+            message.error('删除失败');
+          }
         }).catch(console.log)
       },
     });
@@ -210,6 +222,19 @@
         props.data.user = res.data;
       })
     }
+  }
+
+  const saveSuccess = (data) => {
+    replyList.value.unshift(data);
+    setPostAttribute('commentCount', post.value.commentCount + 1);
+    props.data.replyCount = props.data.replyCount + 1;
+  }
+
+  const deleteSuccess = (data) => {
+    console.log(data, replyList.value);
+    replyList.value = replyList.value.filter(item => item.id !== data.id);
+    setPostAttribute('commentCount', post.value.commentCount - 1);
+    props.data.replyCount = props.data.replyCount - 1;
   }
 </script>
 
@@ -273,25 +298,25 @@
       }
 
       .comment-content {
-        font-weight: 400;
-        font-size: 14px;
         line-height: 2rem;
         color: #515767;
         margin-top: 8px;
         max-height: 12rem;
         overflow: hidden;
-        /*display: -webkit-box;*/
-        /*-webkit-line-clamp: 6;*/
 
         &.content-expand {
           max-height: none !important;
         }
 
-        ::v-deep(.md-editor-preview-wrapper) {
-          padding: 0 !important;
+        ::v-deep(.md-editor) {
+          background-color: transparent !important;
 
-          p {
-            margin: 0;
+          .md-editor-preview-wrapper {
+            padding: 0 !important;
+
+            p {
+              margin: 0;
+            }
           }
         }
       }
@@ -307,14 +332,6 @@
           line-height: 22px;
           color: #1e80ff;
           margin-right: 20px;
-        }
-
-        .more-btn {
-          margin-top: 8px;
-          cursor: pointer;
-          font-size: 14px;
-          line-height: 22px;
-          color: #1890ff;
         }
 
         .ope-item {
@@ -370,6 +387,15 @@
             margin-top: 1rem;
           }
         }
+      }
+
+      .more-btn {
+        display: inline-block;
+        margin-top: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 22px;
+        color: #1890ff;
       }
     }
 

@@ -38,13 +38,14 @@ export const UPDATE_NOTE_CHAPTER = ApiBase + "/noteChapter/update"; // 章节修
 export const DELETE_NOTE_CHAPTER = ApiBase + "/noteChapter/delete"; // 章节删除
 
 // 评论
-export const GET_COMMENTS_PAGE = ApiBase + "/comment/getCommentsPage";
-export const GET_COMMENTS_ALL = ApiBase + "/comment/getCommentsAll";
-export const GET_SUB_COMMENTS_ALL = ApiBase + "/comment/getSubCommentsAll";
-export const CREATE_COMMENT = ApiBase + "/comment/createComment";
-export const DELETE_COMMENT = ApiBase + "/comment/deleteComment";
-export const SET_COMMENT_LIKE = ApiBase + "/comment/setLike";
-export const CANCEL_COMMENT_LIKE = ApiBase + "/comment/cancelLike";
+export const GET_POST_COMMENTS_PAGE = ApiBase + "/comment/getCommentsPage";
+export const GET_POST_COMMENTS_ALL = ApiBase + "/comment/getCommentsAll";
+export const GET_POST_SUB_COMMENTS_ALL = ApiBase + "/comment/getPostSubCommentsAll";
+export const GET_POST_SUB_COMMENTS_PAGE = ApiBase + "/comment/getPostSubCommentsPage";
+export const CREATE_POST_COMMENT = ApiBase + "/comment/createComment";
+export const DELETE_POST_COMMENT = ApiBase + "/comment/deleteComment";
+export const SET_POST_COMMENT_LIKE = ApiBase + "/comment/setLike";
+export const CANCEL_POST_COMMENT_LIKE = ApiBase + "/comment/cancelLike";
 
 // 用户
 export const GET_USER_LIST = ApiBase + "/user/list"; // 用户列表

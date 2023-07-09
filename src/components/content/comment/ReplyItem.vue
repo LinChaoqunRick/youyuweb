@@ -26,8 +26,8 @@
         </a-popover>
         <div class="author-text" v-if="post.userId === data.userId">作者</div>
       </div>
-      <p class="reply-text" v-if="data.userTo">回复</p>
-      <div class="user-info" v-if="data.userTo">
+      <div class="user-info" v-if="data.userTo && data.replyId !== -1">
+        <p class="reply-text">回复</p>
         <a-popover placement="top"
                    :mouseEnterDelay="0.6"
                    :mouseLeaveDelay="0.3"
@@ -179,15 +179,15 @@
       content: '确定删除这条评论吗？',
       onOk() {
         return dispatch("deleteComment", {commentId: props.data.id}).then(res => {
-          message.success('删除成功');
-          emit("deleteSuccess");
+          if (res.data) {
+            message.success('删除成功');
+            emit("deleteSuccess", props.data);
+          } else {
+            message.error("删除失败");
+          }
         }).catch(console.log)
       },
     });
-  }
-
-  function handleProfile(user: userType) {
-    router.push({path: `/user/${user.id}`})
   }
 
   const onUserVisibleChange = (visible: boolean) => {
@@ -258,15 +258,14 @@
     }
 
     .reply-content {
-      font-size: 16px;
-      margin: 8px 0 8px 30px;
+      margin: 8px 0 8px 36px;
       white-space: pre-wrap;
     }
 
     .reply-operation {
       display: flex;
       align-items: center;
-      margin-left: 30px;
+      margin-left: 36px;
 
 
       .ope-item {
@@ -275,7 +274,6 @@
         align-items: center;
         color: #8a919f;
         margin-right: 10px;
-        padding-top: 6px;
         cursor: pointer;
 
         &:hover {

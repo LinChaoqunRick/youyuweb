@@ -9,7 +9,6 @@
 </template>
 
 <script setup>
-  console.log(1111);
 </script>
 
 <style lang="scss" scoped>

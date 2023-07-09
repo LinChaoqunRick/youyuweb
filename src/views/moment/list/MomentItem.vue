@@ -8,10 +8,10 @@
                      :mouseLeaveDelay="0.3"
                      @visibleChange="onUserVisibleChange">
             <template #content>
-              <UserCardMoment :user="data.userInfo"/>
+              <UserCardMoment :user="data.user"/>
             </template>
-            <RouterLink :to="{name:'userHome', params: {userId: data.userInfo.id}}">
-              <img :src="data.userInfo.avatar"/>
+            <RouterLink :to="{name:'userHome', params: {userId: data.user.id}}">
+              <img :src="data.user.avatar"/>
             </RouterLink>
           </a-popover>
         </div>
@@ -21,10 +21,10 @@
                      :mouseLeaveDelay="0.3"
                      @visibleChange="onUserVisibleChange">
             <template #content>
-              <UserCardMoment :user="data.userInfo"/>
+              <UserCardMoment :user="data.user"/>
             </template>
-            <RouterLink :to="{name:'userHome', params: {userId: data.userInfo.id}}">
-              <div class="user-nickname">{{data.userInfo.nickname}}</div>
+            <RouterLink :to="{name:'userHome', params: {userId: data.user.id}}">
+              <div class="user-nickname">{{data.user.nickname}}</div>
             </RouterLink>
           </a-popover>
           <div class="publish-time" :title="data.createTime">{{$dayjs().to(data.createTime)}}</div>
