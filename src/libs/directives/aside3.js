@@ -55,11 +55,12 @@ function handleScroll() {
         aside.style.cssText = `position: relative;top: ${cacheTop}px`;
       }
     } else { // 向上滚动
-      console.log(windowScrollTop, Math.floor(windowScrollTop + header.clientHeight + defaultGap), getElementTop(aside));
-      if (windowScrollTop < header.clientHeight - cacheTop) {
+      if (windowScrollTop < header.clientHeight) {
         // console.log("up 1");
         cacheTop = 0;
-        // aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px;`
+        if (cacheTop < header.clientHeight) {
+          aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px;`
+        }
       } else if (Math.floor(windowScrollTop + header.clientHeight + defaultGap) <= getElementTop(aside)) { // 超过上限
         cacheTop = windowScrollTop - (elInitTop - header.clientHeight - defaultGap);
         // console.log("up 2", cacheTop);
