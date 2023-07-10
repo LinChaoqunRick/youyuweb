@@ -95,12 +95,12 @@
       required: true
     },
   });
-  const showLoadReply = computed(() => props.data.replyCount > 0 && currentPageNum.value <= pageNum.value);
+  const showLoadReply = computed(() => (props.data.replyCount > 0 && !replyList.value.length) || currentPageNum.value <= pageNum.value);
 
   const expand = ref<boolean>(false);
   const row = ref<number>(0);
   const replyList = ref([]);
-  const pageNum = ref<number>(1);
+  const pageNum = ref<number>(0);
   const currentPageNum = ref<number>(1);
   const replyEditor = ref(null);
   const {activeId, updateActiveId} = inject('active');
@@ -231,7 +231,6 @@
   }
 
   const deleteSuccess = (data) => {
-    console.log(data, replyList.value);
     replyList.value = replyList.value.filter(item => item.id !== data.id);
     setPostAttribute('commentCount', post.value.commentCount - 1);
     props.data.replyCount = props.data.replyCount - 1;

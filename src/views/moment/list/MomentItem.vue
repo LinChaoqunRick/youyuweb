@@ -80,7 +80,7 @@
           <div class="user-avatars">
             <img v-for="(item, index) in data.likeUsers" :src="item.avatar" :style="{'z-index': index}"/>
           </div>
-          <div class="like-text">等人赞过</div>
+          <div class="like-text"><span v-if="data.likeCount>3">等人</span>赞过</div>
         </div>
       </div>
     </div>
@@ -284,25 +284,25 @@
   }
 
   const onLike = () => {
-    if (props.data.momentLike) {
-      dispatch('cancelMomentLike', {
-        momentId: props.data.id,
-        userId: userInfo.value.id,
-        userIdTo: props.data.userId
-      }).then(res => {
+    const isLike = !!props.data.momentLike;
+    dispatch(isLike ? "cancelMomentLike" : "setMomentLike", {
+      momentId: props.data.id,
+      userId: userInfo.value.id,
+      userIdTo: props.data.userId
+    }).then(res => {
+      if (isLike) {
         props.data.momentLike = null;
         props.data.likeCount -= 1;
-      })
-    } else {
-      dispatch('setMomentLike', {
-        momentId: props.data.id,
-        userId: userInfo.value.id,
-        userIdTo: props.data.userId
-      }).then(res => {
+        props.data.likeUsers = props.data.likeUsers.filter(item => item.id !== userInfo.value.id);
+      } else {
         props.data.momentLike = res.data;
         props.data.likeCount += 1;
-      })
-    }
+        if (!props.data.likeUsers) {
+          props.data.likeUsers = [];
+        }
+        props.data.likeUsers.unshift(userInfo.value);
+      }
+    })
   }
 
   const onUserVisibleChange = (visible: boolean) => {

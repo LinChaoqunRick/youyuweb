@@ -77,7 +77,7 @@
                        @saveSuccess="saveSuccess"
                        @deleteSuccess="deleteSuccess"/>
     </div>
-    <div v-if="data.replyCount>0 && currentPageNum<=pageNum"
+    <div v-if="showLoadReply"
          class="more-btn"
          @click="onLoadReply"
          ref="replyCountRef">
@@ -100,7 +100,6 @@
   import {RouterLink} from "vue-router";
   import {message} from "ant-design-vue";
   import {vOnClickOutside} from '@vueuse/components';
-  import {useIntersectionObserver} from '@vueuse/core'
   import {transformHTMLToTag, transformTagToHTML} from "@/components/common/utils/emoji/youyu_emoji";
   import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
   import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
@@ -127,21 +126,14 @@
   const MomentReplyEditorRef = ref(null);
   const replyCountRef = ref<HTMLElement | null>(null);
   const replyList = ref([]);
-  const pageNum = ref<number>(1);
+  const pageNum = ref<number>(0);
   const currentPageNum = ref<number>(1);
 
   const userInfo = computed(() => getters['userInfo']);
   const {moment, updateMomentAttribute} = inject('moment');
   const images = computed(() => props.data.images ? props.data.images.split(",") : null);
   const isLogin = computed(() => getters['isLogin']);
-
-  onMounted(() => {
-    if (replyCountRef.value) {
-      useIntersectionObserver(replyCountRef.value, () => {
-
-      })
-    }
-  })
+  const showLoadReply = computed(() => (props.data.replyCount > 0 && !replyList.value.length) || currentPageNum.value <= pageNum.value);
 
   function set(value: number) {
     row.value = value;
@@ -219,7 +211,8 @@
 
   const deleteSuccess = (data) => {
     replyList.value = replyList.value.filter(item => item.id !== data.id);
-    props.data.commentCount -= 1;
+    props.data.replyCount -= 1;
+    updateMomentAttribute("commentCount", moment.commentCount - 1);
   }
 </script>
 
