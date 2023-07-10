@@ -12,6 +12,8 @@ import {
   SET_MOMENT_LIKE,
   IS_MOMENT_LIKE,
   CANCEL_MOMENT_LIKE,
+  SET_MOMENT_COMMENT_LIKE,
+  CANCEL_MOMENT_COMMENT_LIKE,
 } from "@/network/apis";
 
 export default {
@@ -51,6 +53,12 @@ export default {
     },
     cancelMomentLike(state: any, params: object) {
       return http.post(CANCEL_MOMENT_LIKE, params);
+    },
+    setMomentCommentLike(state: any, params: object) {
+      return http.post(SET_MOMENT_COMMENT_LIKE, params);
+    },
+    cancelMomentCommentLike(state: any, params: object) {
+      return http.post(CANCEL_MOMENT_COMMENT_LIKE, params);
     },
   }
 }

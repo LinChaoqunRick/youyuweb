@@ -74,6 +74,8 @@ export const DELETE_MOMENT_COMMENT = ApiBase + "/momentComment/delete"; // 删�
 export const SET_MOMENT_LIKE = ApiBase + "/momentLike/setMomentLike"; // 点赞时刻
 export const IS_MOMENT_LIKE = ApiBase + "/momentLike/isMomentLike"; // 是否点赞
 export const CANCEL_MOMENT_LIKE = ApiBase + "/momentLike/cancelMomentLike"; // 取消点赞
+export const SET_MOMENT_COMMENT_LIKE = ApiBase + "/momentCommentLike/setMomentCommentLike"; // 评论点赞
+export const CANCEL_MOMENT_COMMENT_LIKE = ApiBase + "/momentCommentLike/cancelMomentCommentLike"; // 取消评论点赞
 
 // 邮件
 export const SEND_EMAIL_CODE = ApiBase + "/mail/sendRegisterCode"; // 获取邮箱验证码
