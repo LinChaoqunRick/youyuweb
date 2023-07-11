@@ -1,9 +1,13 @@
 <template>
   <div class="user-card">
     <div class="user-info">
-      <img :src="user.avatar" @click="handleProfile"/>
+      <RouterLink :to="`/user/${user.id}`">
+        <img :src="user.avatar"/>
+      </RouterLink>
       <div class="user-info-basic">
-        <div class="user-nickname" @click="handleProfile">{{user.nickname}}</div>
+        <RouterLink :to="`/user/${user.id}`">
+          <div class="user-nickname">{{user.nickname}}</div>
+        </RouterLink>
         <div class="user-signature">{{user.signature}}</div>
       </div>
     </div>
@@ -27,7 +31,7 @@
 <script setup lang="ts">
   import {ref, computed} from "vue";
   import {useStore} from "vuex";
-  import {useRouter} from "vue-router";
+  import {useRouter, RouterLink} from "vue-router";
   import {message, Modal} from "ant-design-vue";
 
   const router = useRouter();
@@ -120,6 +124,10 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+
+        a {
+          color: inherit;
+        }
 
         .user-nickname {
           flex: 1;
