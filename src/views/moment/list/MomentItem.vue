@@ -178,6 +178,7 @@
   const replyShow = ref<boolean>(false);
   const visible = ref<boolean>(false);
   const sort = ref<boolean>(true); // true:最新 false:最热
+  const likeLoading = ref<boolean>(false);
   const order = computed(() => sort.value ? 'create_time' : 'support_count');
   const images = computed(() => props.data.images ? props.data.images?.split(",") : null);
   const imageClass = computed(() => {
@@ -284,6 +285,8 @@
   }
 
   const onLike = () => {
+    if (likeLoading.value) return;
+    likeLoading.value = true;
     const isLike = !!props.data.momentLike;
     dispatch(isLike ? "cancelMomentLike" : "setMomentLike", {
       momentId: props.data.id,
@@ -302,6 +305,8 @@
         }
         props.data.likeUsers.unshift(userInfo.value);
       }
+    }).finally(() => {
+      likeLoading.value = false;
     })
   }
 

@@ -44,11 +44,11 @@
           <ImagePreviewEmbed :list="images" :current="current" @onClose="onClose"/>
         </div>
         <div class="comment-operation">
-          <div class="ope-item" :class="{'ope-active': data.commentLike}" @click="handleLike">
+          <div class="ope-item" :class="{'ope-active': data.commentLike}" @click="onLike">
             <i-good-two :theme="data.commentLike?'filled':'outline'" size="14" fill="currentColor"/>
-            点赞<span v-if="data.supportCount">({{data.supportCount}})</span>
+            点赞<span v-if="data.likeCount">({{data.likeCount}})</span>
           </div>
-          <div class="ope-item" :class="{'ope-active': active}" @click="handleReply">
+          <div class="ope-item" :class="{'ope-active': active}" @click="onReply">
             <i-comment :theme="active?'filled':'outline'" size="14" fill="currentColor"/>
             {{active?'取消回复':'回复'}}<span v-if="data.replyCount">({{data.replyCount}})</span>
           </div>
@@ -128,6 +128,7 @@
   const deleteVisible = ref<boolean>(false);
   const preview = ref<boolean>(false);
   const replyLoading = ref<boolean>(false);
+  const likeLoading = ref<boolean>(false);
   const current = ref<number>(0);
   const MomentReplyEditorRef = ref(null);
   const replyCountRef = ref<HTMLElement | null>(null);
@@ -158,7 +159,26 @@
     })
   }
 
-  const handleReply = () => {
+  const onLike = () => {
+    if (likeLoading.value) return;
+    likeLoading.value = true;
+    const isLike = !!props.data.commentLike;
+    dispatch(isLike ? "cancelMomentCommentLike" : "setMomentCommentLike", {
+      commentId: props.data.id
+    }).then(res => {
+      if (isLike) {
+        props.data.likeCount -= 1;
+        props.data.commentLike = null;
+      } else {
+        props.data.likeCount += 1;
+        props.data.commentLike = res.data;
+      }
+    }).finally(() => {
+      likeLoading.value = false;
+    })
+  }
+
+  const onReply = () => {
     active.value = !active.value;
   }
 
