@@ -6,95 +6,93 @@ import {useResizeObserver} from '@vueuse/core'
  *  asideParent: aside的外层元素
  *
  */
-let header, footer, aside, asideParent, elInitTop, cacheTop;
-
-const defaultGap = 8;
-
-let stopObserve;
-
-
-function handleScroll() {
-  let beforeScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-
-  return () => {
-    elInitTop = getElementTop(asideParent);
-
-    let afterScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-    let dir = afterScrollTop - beforeScrollTop >= 0 ? 1 : 0;
-
-    beforeScrollTop = afterScrollTop;
-
-    let windowScrollBottom = document.documentElement.scrollTop + document.documentElement.clientHeight;
-    let windowScrollTop = document.documentElement.scrollTop;
-
-    // 如果aside高度比较小，直接sticky
-    if (aside.clientHeight < document.documentElement.offsetHeight - header.offsetHeight) {
-      aside.style.cssText = `position: sticky;top: ${elInitTop}px`
-      return;
-    }
-
-    // 计算asideParent内容区域高度， 如果aside高度与asideParent内容区域高度一致，就是参考元素高度没aside高
-    const asideParentStyle = getComputedStyle(asideParent);
-    const asideParentContentHeight = asideParent.offsetHeight - parseInt(asideParentStyle.paddingTop) - parseInt(asideParentStyle.paddingBottom);
-    if (aside.offsetHeight >= asideParentContentHeight) {
-      cacheTop = 0;
-      aside.style.cssText = `position: relative;`;
-      return;
-    }
-
-    if (dir) { // 向下滚动
-      if (windowScrollBottom >= getElementTop(footer)) { // 超过footer
-        aside.style.cssText = `position: absolute;bottom: 0px;`
-        cacheTop = getElementTop(aside) - elInitTop; // absolute是可以使用getElementTop计算
-        // console.log("down 1", cacheTop);
-      } else if (windowScrollBottom >= getElementTop(aside) + aside.clientHeight + defaultGap) { // 超过下限
-        cacheTop = windowScrollBottom - elInitTop - aside.clientHeight - defaultGap;
-        // console.log("down 2", cacheTop);
-        aside.style.cssText = `position: fixed;bottom: 8px;`;
-      } else { // 其他
-        // console.log("down 3")
-        aside.style.cssText = `position: relative;top: ${cacheTop}px`;
-      }
-    } else { // 向上滚动
-      if (windowScrollTop < header.clientHeight - cacheTop) {
-        // console.log("up 1", cacheTop, header.clientHeight);
-        if (cacheTop > 0 && cacheTop < header.clientHeight) {
-          aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px;`
-        }
-        cacheTop = 0;
-      } else if (Math.floor(windowScrollTop + header.clientHeight + defaultGap) <= getElementTop(aside)) { // 超过上限
-        cacheTop = windowScrollTop - (elInitTop - header.clientHeight - defaultGap);
-        // console.log("up 2", cacheTop);
-        aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px;`
-      } else { // 其他
-        // console.log("up 3")
-        aside.style.cssText = `position: relative;top: ${cacheTop}px`;
-      }
-    }
-  }
-}
-
-const onScroll = handleScroll();
 
 export default {
   mounted(el, binding) {
+    let header, footer, aside, asideParent, elInitTop, cacheTop;
+
+    const defaultGap = 8;
+
+    function handleScroll() {
+      let beforeScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+
+      return () => {
+        elInitTop = getElementTop(asideParent);
+
+        let afterScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+        let dir = afterScrollTop - beforeScrollTop >= 0 ? 1 : 0;
+
+        beforeScrollTop = afterScrollTop;
+
+        let windowScrollBottom = document.documentElement.scrollTop + document.documentElement.clientHeight;
+        let windowScrollTop = document.documentElement.scrollTop;
+
+        // 如果aside高度比较小，直接sticky
+        if (aside.clientHeight < document.documentElement.offsetHeight - header.offsetHeight) {
+          aside.style.cssText = `position: sticky;top: ${elInitTop}px`
+          return;
+        }
+
+        // 计算asideParent内容区域高度， 如果aside高度与asideParent内容区域高度一致，就是参考元素高度没aside高
+        const asideParentStyle = getComputedStyle(asideParent);
+        const asideParentContentHeight = asideParent.offsetHeight - parseInt(asideParentStyle.paddingTop) - parseInt(asideParentStyle.paddingBottom);
+        if (aside.offsetHeight >= asideParentContentHeight) {
+          cacheTop = 0;
+          aside.style.cssText = `position: relative;`;
+          return;
+        }
+
+        if (dir) { // 向下滚动
+          if (windowScrollBottom >= getElementTop(footer)) { // 超过footer
+            aside.style.cssText = `position: absolute;bottom: 0px;`
+            cacheTop = getElementTop(aside) - elInitTop; // absolute是可以使用getElementTop计算
+            // console.log("down 1", cacheTop);
+          } else if (windowScrollBottom >= getElementTop(aside) + aside.clientHeight + defaultGap) { // 超过下限
+            cacheTop = windowScrollBottom - elInitTop - aside.clientHeight - defaultGap;
+            // console.log("down 2", cacheTop);
+            aside.style.cssText = `position: fixed;bottom: 8px;`;
+          } else { // 其他
+            // console.log("down 3")
+            aside.style.cssText = `position: relative;top: ${cacheTop}px`;
+          }
+        } else { // 向上滚动
+          if (windowScrollTop < header.clientHeight - cacheTop) {
+            // console.log("up 1", cacheTop, header.clientHeight);
+            if (cacheTop > 0 && cacheTop < header.clientHeight) {
+              aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px;`
+            }
+            cacheTop = 0;
+          } else if (Math.floor(windowScrollTop + header.clientHeight + defaultGap) <= getElementTop(aside)) { // 超过上限
+            cacheTop = windowScrollTop - (elInitTop - header.clientHeight - defaultGap);
+            // console.log("up 2", cacheTop);
+            aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px;`
+          } else { // 其他
+            // console.log("up 3")
+            aside.style.cssText = `position: relative;top: ${cacheTop}px`;
+          }
+        }
+      }
+    }
+
+    el.onScroll = handleScroll();
+
     header = document.getElementById("header");
     footer = document.getElementById("footer");
     cacheTop = 0;
     aside = el;
     asideParent = el.parentNode;
-    document.addEventListener("scroll", onScroll, false);
+    document.addEventListener("scroll", el.onScroll, false);
     const {stop} = useResizeObserver(document.getElementById("app"), (entries) => {
-      onScroll();
+      el.onScroll()
     })
-    stopObserve = stop;
+    el.stopObserve = stop;
   },
 
-  beforeUnmount() {
-    stopObserve();
+  beforeUnmount(el) {
+    el.stopObserve();
   },
 
-  unmounted() {
-    document.removeEventListener("scroll", onScroll, false);
+  unmounted(el) {
+    document.removeEventListener("scroll", el.onScroll, false);
   }
 }
