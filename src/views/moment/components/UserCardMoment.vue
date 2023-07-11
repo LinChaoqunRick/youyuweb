@@ -1,11 +1,23 @@
 <template>
   <div class="user-card">
     <div class="user-info">
-      <img :src="user.avatar" @click="handleProfile"/>
+      <RouterLink :to="`/user/${user.id}`">
+        <img :src="user.avatar"/>
+      </RouterLink>
       <div class="user-info-basic">
-        <div class="user-nickname" @click="handleProfile">{{user.nickname}}</div>
+        <RouterLink :to="`/user/${user.id}`">
+          <div class="user-nickname">{{user.nickname}}</div>
+        </RouterLink>
         <div class="user-signature">{{user.signature}}</div>
       </div>
+    </div>
+    <div class="action-button" v-if="!isOwn">
+      <a-button type="primary" v-login="onFollow" :ghost="user.follow" :loading="followLoading">
+        {{user.follow?'已关注':'关注'}}
+      </a-button>
+      <a-button v-login="onMessage">
+        私信
+      </a-button>
     </div>
     <div class="user-data">
       <div class="statis-data" v-for="item in dataItems" @click="handleClickStat(item)">
@@ -17,8 +29,10 @@
 </template>
 
 <script setup lang="ts">
-  import {useRouter} from "vue-router";
-  import {Modal} from "ant-design-vue";
+  import {useStore} from "vuex";
+  import {useRouter, RouterLink} from "vue-router";
+  import {message, Modal} from "ant-design-vue";
+  import {computed, ref} from "vue";
 
   const props = defineProps({
     user: {
@@ -26,7 +40,13 @@
       required: true
     }
   })
+
   const router = useRouter();
+  const {getters, dispatch} = useStore();
+
+  const followLoading = ref<boolean>(false);
+  const userInfo = computed(() => getters['userInfo']);
+  const isOwn = computed(() => userInfo.value.id === props.user.id);
 
   const dataItems = [
     {
@@ -41,21 +61,33 @@
 
   function handleClickStat(item) {
     const {value} = item;
-    if (value === 'postCount') {
-      handleProfile();
-    } else if (value === 'viewCount') {
-      // Modal.info({
-      //   content: `Ta的文章已被阅读${props.user.extraInfo[item.value]}次`,
-      // });
-    } else if (value === 'likeCount') {
-      // Modal.info({
-      //   content: `Ta共收获了${props.user.extraInfo[item.value]}个点赞`,
-      // });
+    switch (value) {
+      case "momentCount":
+        router.push({path: `/user/${props.user.id}/moment`});
+        break;
+      case "fansCount":
+        router.push({path: `/user/${props.user.id}/fans`});
+        break;
     }
   }
+  
+  const onFollow = () => {
+    const isFollow = props.user.follow;
+    if (isFollow == null) return;
+    followLoading.value = true;
+    dispatch(isFollow ? 'cancelUserFollow' : 'setUserFollow', {
+      userId: userInfo.value.id,
+      userIdTo: props.user.id
+    }).then(res => {
+      props.user.follow = !props.user.follow;
+      message.success(isFollow ? "已取消关注" : "已添加关注")
+    }).finally(() => {
+      followLoading.value = false;
+    })
+  }
 
-  function handleProfile() {
-    router.push({path: `/user/${props.user.id}/post`})
+  const onMessage = () => {
+    message.info("功能未开放！");
   }
 </script>
 
@@ -78,12 +110,18 @@
         flex-direction: column;
         justify-content: center;
 
+        a {
+          color: inherit;
+        }
+
         .user-nickname {
+          flex: 1;
           font-weight: bold;
           cursor: pointer;
         }
 
         .user-signature {
+          flex: 1;
           font-size: 12px;
           color: #8f969c;
           overflow: hidden;
@@ -93,6 +131,19 @@
       }
 
       display: flex;
+    }
+
+    .action-button {
+      display: flex;
+      margin-bottom: 10px;
+
+      button {
+        flex: 1;
+
+        &:nth-child(n+2) {
+          margin-left: 12px;
+        }
+      }
     }
 
     .user-data {
