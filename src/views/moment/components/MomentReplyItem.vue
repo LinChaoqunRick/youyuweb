@@ -5,7 +5,10 @@
         <div class="reply-right-top">
           <div class="user-info">
             <div class="user-avatar">
-              <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+              <a-popover placement="top"
+                         :mouseEnterDelay="0.6"
+                         :mouseLeaveDelay="0.3"
+                         @visibleChange="onUserVisibleChange">
                 <template #content>
                   <UserCardMoment :user="data.user"/>
                 </template>
@@ -15,7 +18,10 @@
               </a-popover>
             </div>
             <div class="user-nickname">
-              <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+              <a-popover placement="top"
+                         :mouseEnterDelay="0.6"
+                         :mouseLeaveDelay="0.3"
+                         @visibleChange="onUserVisibleChange">
                 <template #content>
                   <UserCardMoment :user="data.user"/>
                 </template>
@@ -29,7 +35,10 @@
           <div class="user-to-info" v-if="data.userTo">
             <div class="reply-text">回复</div>
             <div class="user-avatar">
-              <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+              <a-popover placement="top"
+                         :mouseEnterDelay="0.6"
+                         :mouseLeaveDelay="0.3"
+                         @visibleChange="onUserToVisibleChange">
                 <template #content>
                   <UserCardMoment :user="data.userTo"/>
                 </template>
@@ -39,7 +48,10 @@
               </a-popover>
             </div>
             <div class="user-nickname">
-              <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+              <a-popover placement="top"
+                         :mouseEnterDelay="0.6"
+                         :mouseLeaveDelay="0.3"
+                         @visibleChange="onUserToVisibleChange">
                 <template #content>
                   <UserCardMoment :user="data.userTo"/>
                 </template>
@@ -215,6 +227,22 @@
     }).finally(() => {
       replyLoading.value = false;
     })
+  }
+
+  const onUserVisibleChange = (visible: boolean) => {
+    if (visible) {
+      dispatch('getMomentUserDetail', {userId: props.data.user.id}).then(res => {
+        props.data.user = res.data;
+      })
+    }
+  }
+
+  const onUserToVisibleChange = (visible: boolean) => {
+    if (visible) {
+      dispatch('getMomentUserDetail', {userId: props.data.userTo.id}).then(res => {
+        props.data.userTo = res.data;
+      })
+    }
   }
 </script>
 

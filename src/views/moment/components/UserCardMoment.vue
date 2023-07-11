@@ -21,7 +21,7 @@
     </div>
     <div class="user-data">
       <div class="statis-data" v-for="item in dataItems" @click="handleClickStat(item)">
-        <div class="data-value">{{user[item.value]}}</div>
+        <div class="data-value">{{user.extraInfo?.[item.value]}}</div>
         <div class="data-label">{{item.label}}</div>
       </div>
     </div>
@@ -70,7 +70,7 @@
         break;
     }
   }
-  
+
   const onFollow = () => {
     const isFollow = props.user.follow;
     if (isFollow == null) return;

@@ -4,7 +4,7 @@
       <div class="user-left">
         <UserInfoPanel v-aside3 :id="userId" @onLoaded="onLoaded" ref="UserInfoRef"></UserInfoPanel>
       </div>
-      <div class="user-content" id="aside-right">
+      <div class="user-content">
         <div class="user-menu-content">
           <div class="content-menu">
             <RouterLink v-for="item in showMenuItems" :to="item.path"
@@ -29,14 +29,12 @@
             </router-view>
           </div>
         </div>
-        <div class="user-extra-info">
-          <div class="user-achievement">
-            <div v-for="item in 10">
-              12312312312
-            </div>
-            <div style="position: fixed;">45645645645</div>
-            <div v-for="item in 10">
-              12312312312
+      </div>
+      <div class="user-right">
+        <div class="user-right-inner" v-aside3>
+          <div class="user-right-achievement">
+            <div v-for="item in 60">
+              {{item}}
             </div>
           </div>
         </div>
@@ -89,7 +87,11 @@
       userFollow: 'showFollow',
       userFans: 'showFans',
     }
-    return !!menuPermit.value[nameMap[name]];
+    const isPermit = !!menuPermit.value[nameMap[name]];
+    if (!isPermit) {
+      message.error("无权访问！")
+    }
+    return isPermit;
   }
 
   async function onLoaded(userData: userType) {
@@ -161,10 +163,11 @@
 
 <style lang="scss" scoped>
   .user-profile {
+    padding: 8px 0;
+
     .user-main {
       display: flex;
       justify-content: center;
-      padding: 8px 0;
 
       .user-left {
         position: relative;
@@ -329,12 +332,13 @@
 
       .user-content {
         display: flex;
-        width: 64%;
+        max-width: 1300px;
+        width: 50%;
         margin-left: 8px;
         padding-top: 90px;
 
         .user-menu-content {
-          width: 75%;
+          width: 100%;
           overflow: hidden;
 
           .content-menu {
@@ -380,6 +384,7 @@
                 color: var(--youyu-text1);
                 cursor: pointer;
                 transition: .3s;
+                line-height: 0;
 
                 &:hover {
                   color: var(--youyu-text2);
@@ -393,15 +398,19 @@
             /*background-color: var(--youyu-body-background2);*/
           }
         }
+      }
 
-        .user-extra-info {
-          width: 25%;
-          margin-left: 8px;
+      .user-right {
+        margin-top: 90px;
+        position: relative;
+        width: 300px;
+        margin-left: 8px;
 
-          .user-achievement {
+        .user-right-inner {
+          width: 300px;
+
+          .user-right-achievement {
             background-color: var(--youyu-body-background2);
-            position: sticky;
-            top: 68px;
           }
         }
       }

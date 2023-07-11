@@ -2,7 +2,10 @@
   <div class="moment-comment-item" v-on-click-outside="onClickOutside">
     <div class="moment-comment-detail">
       <div class="user-avatar">
-        <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+        <a-popover placement="top"
+                   :mouseEnterDelay="0.6"
+                   :mouseLeaveDelay="0.3"
+                   @visibleChange="onUserVisibleChange">
           <template #content>
             <UserCardMoment :user="data.user"/>
           </template>
@@ -14,7 +17,10 @@
       <div class="comment-right">
         <div class="comment-right-top">
           <div class="user-nickname">
-            <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3">
+            <a-popover placement="top"
+                       :mouseEnterDelay="0.6"
+                       :mouseLeaveDelay="0.3"
+                       @visibleChange="onUserVisibleChange">
               <template #content>
                 <UserCardMoment :user="data.user"/>
               </template>
@@ -213,6 +219,14 @@
     replyList.value = replyList.value.filter(item => item.id !== data.id);
     props.data.replyCount -= 1;
     updateMomentAttribute("commentCount", moment.commentCount - 1);
+  }
+
+  const onUserVisibleChange = (visible: boolean) => {
+    if (visible) {
+      dispatch("getMomentUserDetail", {userId: props.data.userId}).then(res => {
+        props.data.user = res.data;
+      })
+    }
   }
 </script>
 
