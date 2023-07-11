@@ -3,7 +3,8 @@ import {useResizeObserver} from '@vueuse/core'
 
 /**
  *  cacheTop: 变化方向时，记录变化时刻的elementTop值
- *  asideParent: 包含着aside元素和参考元素的那个元素
+ *  asideParent: aside的外层元素
+ *
  */
 let header, footer, aside, asideParent, elInitTop, cacheTop;
 
@@ -55,12 +56,12 @@ function handleScroll() {
         aside.style.cssText = `position: relative;top: ${cacheTop}px`;
       }
     } else { // 向上滚动
-      if (windowScrollTop < header.clientHeight) {
-        // console.log("up 1");
-        cacheTop = 0;
-        if (cacheTop < header.clientHeight) {
+      if (windowScrollTop < header.clientHeight - cacheTop) {
+        // console.log("up 1", cacheTop, header.clientHeight);
+        if (cacheTop > 0 && cacheTop < header.clientHeight) {
           aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px;`
         }
+        cacheTop = 0;
       } else if (Math.floor(windowScrollTop + header.clientHeight + defaultGap) <= getElementTop(aside)) { // 超过上限
         cacheTop = windowScrollTop - (elInitTop - header.clientHeight - defaultGap);
         // console.log("up 2", cacheTop);
