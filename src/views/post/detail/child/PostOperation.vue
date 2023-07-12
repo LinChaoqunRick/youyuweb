@@ -1,7 +1,7 @@
 <template>
   <div class="post-operation">
     <a-badge :count="post.likeCount" color="#1890ff" :overflow-count="99">
-      <div class="ope-item" :class="{'active':post.postLike}" @click="handleSetLike"
+      <div class="ope-item" :class="{'active':post.postLike}" v-login="onLike"
            :title="`${post.postLike?'取消点赞':'点赞'}`">
         <i-good-two theme="filled" size="21" fill="currentColor"/>
       </div>
@@ -11,7 +11,7 @@
         <i-comment theme="filled" size="19" fill="currentColor"/>
       </div>
     </a-badge>
-    <div class="ope-item" :class="{'active':post.postCollect}" @click="handleSetCollect"
+    <div class="ope-item" :class="{'active':post.postCollect}" v-login="onCollect"
          :title="post.postCollect?'取消收藏':'收藏'">
       <i-star theme="filled" size="22" fill="currentColor"/>
     </div>
@@ -40,6 +40,8 @@
   const post = inject('post');
   const setPostAttribute = inject('setPostAttribute');
   const item = ref(null);
+  const likeLoading = ref<boolean>(false);
+  const collectLoading = ref<boolean>(false);
 
   const userInfo = computed(() => getters['userInfo']);
   const isLogin = computed(() => getters['isLogin']);
@@ -48,56 +50,46 @@
     emit('scrollToComment');
   }
 
-  function handleSetLike() {
-    if (!isLogin.value) {
-      commit("changeLogin", true);
-      return;
-    }
-    if (post.value.postLike) {
-      dispatch("cancelPostLike", {
-        postId: post.value.id,
-        userId: userInfo.value.id,
-        // userIdTo: post.value.userId
-      }).then(res => {
+  function onLike() {
+    if (likeLoading.value) return;
+    likeLoading.value = true;
+    const isLike = post.value.postLike;
+    dispatch(isLike ? "cancelPostLike" : "setPostLike", {
+      postId: post.value.id,
+      userId: userInfo.value.id,
+      userIdTo: post.value.userId
+    }).then(res => {
+      if (isLike) {
         setPostAttribute('postLike', false);
         setPostAttribute('likeCount', post.value.likeCount - 1);
-      })
-    } else {
-      dispatch("setPostLike", {
-        postId: post.value.id,
-        userId: userInfo.value.id,
-        userIdTo: post.value.userId
-      }).then(res => {
+      } else {
         setPostAttribute('postLike', true);
         setPostAttribute('likeCount', post.value.likeCount + 1);
-      })
-    }
+      }
+    }).finally(() => {
+      likeLoading.value = false;
+    })
   }
 
-  function handleSetCollect() {
-    if (!isLogin.value) {
-      commit("changeLogin", true);
-      return;
-    }
-    if (post.value.postCollect) {
-      dispatch("cancelPostCollect", {
-        postId: post.value.id,
-        userId: userInfo.value.id,
-        userIdTo: post.value.userId
-      }).then(res => {
+  function onCollect() {
+    if (collectLoading.value) return;
+    collectLoading.value = true;
+    const isCollect = post.value.postCollect;
+    dispatch(isCollect ? "cancelPostCollect" : "setPostCollect", {
+      postId: post.value.id,
+      userId: userInfo.value.id,
+      userIdTo: post.value.userId
+    }).then(res => {
+      if (isCollect) {
         setPostAttribute('postCollect', false);
         message.success('已从您的收藏夹中移除');
-      })
-    } else {
-      dispatch("setPostCollect", {
-        postId: post.value.id,
-        userId: userInfo.value.id,
-        userIdTo: post.value.userId
-      }).then(res => {
+      } else {
         setPostAttribute('postCollect', true);
         message.success('已添加至您的收藏夹');
-      })
-    }
+      }
+    }).finally(() => {
+      collectLoading.value = false;
+    })
   }
 </script>
 

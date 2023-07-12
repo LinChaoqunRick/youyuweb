@@ -67,7 +67,7 @@ router.beforeEach(async (to, from, next) => {
 router.beforeEach((to, from, next) => {
   const title = to.meta.title
   if (title) {
-    document.title = <string>title;
+    document.title = <string>title + '-有语';
   }
   next();
 })
