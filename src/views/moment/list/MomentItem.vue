@@ -63,7 +63,12 @@
         </a-popover>
       </div>
       <div class="content-body">
-        <div class="content-text" :class="{'content-expand': expand}"
+        <RouterLink :to="`/moment/details/${data.id}`" v-if="!isDetailPage">
+          <div class="content-text" :class="{'content-expand': expand}"
+               v-html="transformTagToHTML(data.content)"
+               v-row="{set: set}"></div>
+        </RouterLink>
+        <div v-else class="content-text" :class="{'content-expand': expand}"
              v-html="transformTagToHTML(data.content)"
              v-row="{set: set}"></div>
         <div class="limit-btn" @click="expand = true" v-show="row>7 && !expand">展开</div>
@@ -151,7 +156,7 @@
 <script lang="ts" setup>
   import {ref, computed, reactive, provide} from 'vue';
   import type {PropType} from "vue";
-  import {RouterLink} from "vue-router";
+  import {useRoute, RouterLink} from "vue-router";
   import {useStore} from "vuex";
   import type {momentListType} from "@/views/moment/types";
   import {message, Modal} from "ant-design-vue";
@@ -163,6 +168,8 @@
   import MomentCommentItem from "../components/MomentCommentItem.vue";
 
   const {getters, dispatch} = useStore();
+
+  const route = useRoute();
 
   const props = defineProps({
     data: {
@@ -196,6 +203,7 @@
   const commentList = ref([]);
   const isLogin = computed(() => getters['isLogin']);
   const likeActive = computed(() => props.data.momentLike);
+  const isDetailPage = computed(()=>route.name === "momentDetail")
 
   provide('moment', {moment: props.data, updateMomentAttribute});
 
@@ -390,6 +398,10 @@
 
       .content-body {
         margin-left: 50px;
+
+        a {
+          color: inherit;
+        }
 
         ::v-deep(.content-text) {
           margin: 4px 0;

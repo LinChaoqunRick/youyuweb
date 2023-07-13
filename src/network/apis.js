@@ -65,6 +65,7 @@ export const SET_PROFILE_MENU = ApiBase + "/user/setProfileMenu"; // 设置主�
 export const MOMENT_CREATE = ApiBase + "/moment/create"; // 创建时刻
 export const MOMENT_DELETE = ApiBase + "/moment/delete"; // 删除时刻
 export const MOMENT_LIST = ApiBase + "/moment/list"; // 时刻列表
+export const GET_MOMENT = ApiBase + "/moment/get"; // 时刻列表
 export const GET_MOMENT_USER_DETAIL = ApiBase + "/moment/getMomentUserDetailById"; // 获取时刻用户详情
 export const CREATE_MOMENT_COMMENT = ApiBase + "/momentComment/create"; // 发表评论
 export const LIST_MOMENT_COMMENT_PAGE = ApiBase + "/momentComment/listMomentCommentPage"; // 获取评论列表(分页，默认第一页)
