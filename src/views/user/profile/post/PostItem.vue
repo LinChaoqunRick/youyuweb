@@ -1,18 +1,18 @@
 <template>
   <div class="post-item">
     <div class="post-left">
-      <RouterLink :to="{name: 'postDetail', params: {postId: data?.id}}">
+      <RouterLink :to="{name: 'PostDetail', params: {postId: data?.id}}">
         <img :src="thumbnails[0]">
       </RouterLink>
     </div>
     <div class="post-right">
       <div class="post-title">
-        <RouterLink :to="{name: 'postDetail', params: {postId: data?.id}}">
+        <RouterLink :to="{name: 'PostDetail', params: {postId: data?.id}}">
           <div class="title-text" v-html="data.title"/>
         </RouterLink>
       </div>
       <div class="post-summary">
-        <RouterLink :to="{name: 'postDetail', params: {postId: data?.id}}">
+        <RouterLink :to="{name: 'PostDetail', params: {postId: data?.id}}">
           <div class="summary-text" v-html="data.summary"/>
         </RouterLink>
       </div>

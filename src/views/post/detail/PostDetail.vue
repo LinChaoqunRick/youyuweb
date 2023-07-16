@@ -141,8 +141,10 @@
 
   getPostDetail();
 
-  watch(() => route.params.postId, (() => {
-    reload();
+  watch(() => route.params.postId, ((newVal) => {
+    if (newVal) {
+      reload();
+    }
   }))
 
   function handleEdit() {

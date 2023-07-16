@@ -41,14 +41,12 @@ export const router = createRouter({
     ...whiteList,
   ],
   scrollBehavior(to, from, savedPosition) {
-    // 始终滚动到顶部
-    return {top: 0}
     // 返回 savedPosition，在按下 后退/前进 按钮时，就会像浏览器的原生表现那样
-    // if (savedPosition) {
-    //   return savedPosition
-    // } else {
-    //   return { top: 0 }
-    // }
+    if (to.meta.keepAlive) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
   },
 })
 

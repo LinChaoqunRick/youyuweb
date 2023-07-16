@@ -60,7 +60,7 @@
         description: '你的文章已经成功修改'
       })
       isSave.value = true;
-      router.replace({name: 'postDetail', params: {postId: form.id}})
+      router.replace({name: 'PostDetail', params: {postId: form.id}})
     }).finally(() => {
       callback();
     })

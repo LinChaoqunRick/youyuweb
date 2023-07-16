@@ -7,8 +7,14 @@
   </div>
 </template>
 
+<script lang="ts">
+  export default {
+    name: "MomentList"
+  }
+</script>
+
 <script setup lang="ts">
-  import {ref} from 'vue';
+  import {ref, onBeforeUnmount} from 'vue';
 
   import MomentEditor from "../components/MomentEditor.vue";
   import UserMomentList from "@/views/moment/list/UserMomentList.vue";
@@ -18,6 +24,10 @@
   const saveSuccess = (data) => {
     UserMomentListRef.value.unshiftItem(data);
   }
+
+  onBeforeUnmount(()=>{
+    console.log("onBeforeUnmount");
+  })
 </script>
 
 <style lang="scss" scoped>

@@ -46,7 +46,7 @@
         description: '你的文章已经成功发布'
       })
       isSave.value = true;
-      router.replace({name: 'postDetail', params: {postId: res.data}})
+      router.replace({name: 'PostDetail', params: {postId: res.data}})
     }).finally(() => {
       callback();
     })

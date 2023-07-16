@@ -62,16 +62,6 @@
   const dataList = ref([]);
   const finished = ref(false);
 
-  watch(() => route, (newVal, oldVal) => {;
-    // console.log(newVal.name);
-    // console.log(oldVal.name);
-    // console.log(oldVal.params.page);
-    // console.log(newVal.params.page);
-    // if (newVal.name === oldVal.name && newVal.params.page !== oldVal.params.page){
-    //   initData();
-    // }
-  }, {deep: true})
-
   const initData = async () => {
     finished.value = false;
     dataList.value = [];
@@ -89,7 +79,9 @@
       document.documentElement.scrollTop = 0;
       const params = route.params;
       const query = route.query;
-      router.push({params: Object.assign(params, {page: res.data.current}), query})
+      if (route.params.page != res.data.current) {
+        router.push({params: Object.assign(params, {page: res.data.current}), query})
+      }
       total.value = res.data.total;
       dataList.value = res.data.list;
       emit("onLoaded");

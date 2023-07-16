@@ -26,7 +26,7 @@
 </script>
 
 <script setup lang="ts">
-  import {ref, onMounted} from "vue";
+  import {ref, onMounted, onBeforeUnmount} from "vue";
   import {useIntersectionObserver} from '@vueuse/core';
   import {addClass} from "@/assets/utils/utils.ts"
 
@@ -35,9 +35,6 @@
   import PostAside from "../aside/PostAside.vue";
 
   const postItem = ref([]);
-  onMounted(() => {
-    console.log(123123);
-  })
 </script>
 
 <style lang="scss" scoped>

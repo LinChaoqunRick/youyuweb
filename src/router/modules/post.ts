@@ -3,28 +3,28 @@ const route = [
     path: '/post',
     name: 'post',
     redirect: () => {
-      return {name: 'postList', params: {page: 1}}
+      return {name: 'PostList', params: {page: 1}}
     },
     meta: {
       title: "文章",
       code: "POST",
     },
-    component: () => import("@/views/post/Post.vue"),
+    component: () => import("@/components/common/system/EmptyPage.vue"),
     children: [
       {
         path: "list/:page(\\d+)?",
-        name: "postList",
+        name: "PostList",
         meta: {
-          title: "帖子列表",
+          title: "文章列表",
           hide: true,
-          keepAlive: true,
-          code: "POST_LIST"
+          code: "POST_LIST",
+          keepAlive: true
         },
         component: () => import("@/views/post/list/PostList.vue")
       },
       {
         path: 'details/:postId(\\d+)',
-        name: 'postDetail',
+        name: 'PostDetail',
         meta: {
           title: "文章详情",
           hide: true,

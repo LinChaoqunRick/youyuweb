@@ -7,7 +7,7 @@ const route = [
       title: "时刻",
       code: "MOMENT"
     },
-    component: () => import('@/views/moment/Moment.vue'),
+    component: () => import('@/components/common/system/EmptyPage.vue'),
     children: [
       {
         path: "list",
@@ -15,7 +15,8 @@ const route = [
         meta: {
           title: "时刻列表",
           hide: true,
-          code: "MOMENT_LIST"
+          code: "MOMENT_LIST",
+          keepAlive: true
         },
         component: () => import("@/views/moment/list/MomentList.vue")
       },

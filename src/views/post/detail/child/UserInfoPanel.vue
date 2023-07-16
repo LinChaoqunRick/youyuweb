@@ -71,7 +71,7 @@
         <div class="post-list">
           <ul v-if="hotPosts.length">
             <li v-for="item in hotPosts">
-              <router-link :to="{name:'postDetail',params:{postId:item.id}}" v-html="item.title"></router-link>
+              <router-link :to="{name:'PostDetail',params:{postId:item.id}}" v-html="item.title"></router-link>
             </li>
           </ul>
           <div v-else class="no-data">暂无数据</div>
@@ -83,7 +83,7 @@
         <div class="post-list">
           <ul v-if="newPosts.length">
             <li v-for="item in newPosts">
-              <router-link :to="{name:'postDetail',params:{postId:item.id}}" v-html="item.title"></router-link>
+              <router-link :to="{name:'PostDetail',params:{postId:item.id}}" v-html="item.title"></router-link>
             </li>
           </ul>
           <div v-else class="no-data">暂无数据</div>

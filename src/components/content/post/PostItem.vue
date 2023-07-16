@@ -2,7 +2,7 @@
   <div class="post-item" ref="thisRef">
     <div class="article-item" :class="{'flex-revert': !!(index % 2)}" v-if="thumbnails.length < 3">
       <div class="image-wrapper">
-        <RouterLink class="post-link" :to="{name:'postDetail',params:{postId:data.id}}">
+        <RouterLink class="post-link" :to="{name:'PostDetail',params:{postId:data.id}}">
           <img :src="thumbnails[0]">
           <div class="item-slants">
             <div class="item-slant item-slant-top"></div>
@@ -12,12 +12,12 @@
       </div>
       <div class="content-wrapper">
         <div class="article-title">
-          <RouterLink class="post-link" :to="{name:'postDetail',params:{postId:data.id}}">
+          <RouterLink class="post-link" :to="{name:'PostDetail',params:{postId:data.id}}">
             <p v-html="data.title"/>
           </RouterLink>
         </div>
         <RouterLink class="post-link article-caption" v-html="data.summary"
-                    :to="{name:'postDetail',params:{postId:data.id}}"/>
+                    :to="{name:'PostDetail',params:{postId:data.id}}"/>
         <div class="article-info">
           <RouterLink class="info-item info-nickname" :to="`/user/${data.user.id}`">{{data.user.nickname}}</RouterLink>
           <span class="info-item create-type"
@@ -32,13 +32,13 @@
     <div class="article-item article-item-more-pic" v-else>
       <div class="content-wrapper">
         <div class="article-title">
-          <RouterLink class="post-link" :to="{name:'postDetail',params:{postId:data.id}}">
+          <RouterLink class="post-link" :to="{name:'PostDetail',params:{postId:data.id}}">
             <p v-html="data.title"/>
           </RouterLink>
         </div>
       </div>
       <div class="image-wrapper">
-        <RouterLink class="post-link" :to="{name:'postDetail',params:{postId:data.id}}">
+        <RouterLink class="post-link" :to="{name:'PostDetail',params:{postId:data.id}}">
           <div class="img-container" v-for="img in thumbnails">
             <img :src="img">
           </div>
