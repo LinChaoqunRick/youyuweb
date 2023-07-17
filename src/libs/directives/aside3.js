@@ -38,7 +38,7 @@ export default {
         const asideParentContentHeight = asideParent.offsetHeight - parseInt(asideParentStyle.paddingTop) - parseInt(asideParentStyle.paddingBottom);
         if (aside.offsetHeight >= asideParentContentHeight) {
           cacheTop = 0;
-          aside.style.cssText = `position: relative;`;
+          aside.style.cssText = `position: relative;top:0px;`;
           return;
         }
 
@@ -52,7 +52,7 @@ export default {
             // console.log("down 2", cacheTop);
             aside.style.cssText = `position: fixed;bottom: 8px;`;
           } else { // 其他
-            // console.log("down 3")
+            // console.log("down 3", aside)
             aside.style.cssText = `position: relative;top: ${cacheTop}px`;
           }
         } else { // 向上滚动
@@ -67,7 +67,7 @@ export default {
             // console.log("up 2", cacheTop);
             aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px;`
           } else { // 其他
-            // console.log("up 3")
+            // console.log("up 3", aside)
             aside.style.cssText = `position: relative;top: ${cacheTop}px`;
           }
         }
@@ -83,6 +83,7 @@ export default {
     asideParent = el.parentNode;
     document.addEventListener("scroll", el.onScroll, false);
     const {stop} = useResizeObserver(document.getElementById("app"), (entries) => {
+      console.log("useResizeObserver", el);
       el.onScroll()
     })
     el.stopObserve = stop;
