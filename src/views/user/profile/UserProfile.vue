@@ -24,9 +24,7 @@
             </div>
           </div>
           <div class="content-component">
-            <router-view v-slot="{ Component }">
-              <component :is="Component" v-if="user && isPermit($route.name)" :key="$route.name"/>
-            </router-view>
+            <EmptyPage v-if="user && isPermit($route.name)"/>
           </div>
         </div>
       </div>
@@ -51,6 +49,7 @@
   import type {userType, statType} from "@/types/user";
   import {message, Modal} from "ant-design-vue";
   import openModal from "@/libs/tools/openModal";
+  import EmptyPage from "@/components/common/system/EmptyPage.vue";
   import MenuSetting from "./components/menu/MenuSetting.vue"
 
   const {getters, dispatch} = useStore();

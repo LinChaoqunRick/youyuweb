@@ -8,7 +8,7 @@
         <a-skeleton active avatar v-for="item in 10" v-else></a-skeleton>
       </slot>
     </div>
-    <div class="table-pagination" v-if="!!dataList.length">
+    <div class="table-pagination">
       <a-pagination v-model:current="current"
                     v-model:pageSize="size"
                     :total="total"
@@ -76,6 +76,7 @@
       pageNum: current.value,
       pageSize: size.value
     }, props.params)).then(res => {
+      // debugger;
       document.documentElement.scrollTop = 0;
       const params = route.params;
       const query = route.query;

@@ -2,11 +2,12 @@ export interface userType {
   username: string
   nickname: string,
   id: number,
-  signature: string,
-  email: string,
-  birthday: string,
+  signature?: string,
+  email?: string,
+  birthday?: string,
   avatar: string,
-  extraInfo: object
+  follow?: boolean,
+  extraInfo?: object
 }
 
 export interface statType {

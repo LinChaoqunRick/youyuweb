@@ -40,6 +40,9 @@ const route = [
             redirect: to => {
               return {name: 'userPost', params: {userId: to.params.userId, page: 1}}
             },
+            meta: {
+              title: "Ta的文章",
+            },
             children: [
               {
                 path: ':page(\\d+)',

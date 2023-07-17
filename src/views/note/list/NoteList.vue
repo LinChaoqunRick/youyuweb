@@ -55,7 +55,10 @@
 
 <style lang="scss" scoped>
   .note-list {
-    padding: 8px;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
 
     .create-button {
       position: absolute;
@@ -64,17 +67,36 @@
     }
 
     .note-list-items {
-      padding-top: 20px;
+      height: 100%;
+      padding: 3% 5% 0 5%;
 
-      ::v-deep(.table-body) {
-        display: grid;
-        grid-template-columns: repeat(5, 220px);
-        grid-gap: 50px;
-        justify-items: center;
+      .note-body {
+        display: flex;
         justify-content: center;
+        align-items: center;
+        width: 20%;
+        min-width: 220px;
 
-        .ant-skeleton {
-          height: 240px;
+        &:nth-child(n+6) {
+          margin-bottom: 3%;
+        }
+      }
+
+      ::v-deep(.y-table) {
+        height: 100%;
+        width: 100%;
+
+        .table-body {
+          height: 100%;
+          width: 100%;
+          display: flex;
+          flex-wrap: wrap;
+          align-items: flex-start;
+
+          .ant-skeleton {
+            height: 240px;
+            width: 20%;
+          }
         }
       }
 

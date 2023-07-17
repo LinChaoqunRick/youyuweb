@@ -51,7 +51,7 @@
             <!--            <i-mail theme="outline" size="14" fill="currentColor"/>-->
             私信
           </a-button>
-          <a-button type="primary" danger @click="handleFollow" v-if="!isOwn">
+          <a-button type="primary" danger v-login="handleFollow" v-if="!isOwn">
             <!--            <i-remind theme="outline" size="14" fill="currentColor"/>-->
             {{user.follow?'取消关注':'关注'}}
           </a-button>
@@ -98,7 +98,7 @@
   import {useStore} from 'vuex';
   import {useRoute, useRouter, RouterLink} from 'vue-router';
   import {message, Modal} from 'ant-design-vue';
-  import type {statType} from "@/types/user";
+  import type {statType, userType} from "@/types/user";
   import ColumnItemMini from '@/components/content/user/column/ColumnItemMini.vue';
 
   const route = useRoute();
@@ -120,7 +120,7 @@
   const dataItems = [
     {
       value: 'postCount',
-      label: '原创'
+      label: '原创',
     },
     {
       value: 'viewCount',
@@ -137,7 +137,7 @@
   ]
 
   const isOwn = ref(true);
-  const user = ref({});
+  const user = ref<userType | object>({});
   const columnList = ref([]);
   const hotPosts = ref([]);
   const newPosts = ref([]);
@@ -152,6 +152,8 @@
       Modal.info({
         content: `Ta共收获了${user.value.extraInfo[item.value]}个点赞`,
       });
+    } else if (value === 'postCount') {
+      router.push(`/user/${props.id}/post`)
     }
   };
 
@@ -163,27 +165,19 @@
   }
 
   function handleFollow() {
-    if (!isLogin.value) {
-      commit("changeLogin", true);
-      return;
-    }
-    if (user.value.follow) { // 已经关注了，取消关注
-      dispatch("cancelUserFollow", {
-        userId: userInfo.value.id,
-        userIdTo: user.value.id
-      }).then(res => {
+    const isFollow = user.value.follow;
+    dispatch(isFollow ? "cancelUserFollow" : "setUserFollow", {
+      userId: userInfo.value.id,
+      userIdTo: user.value.id
+    }).then(res => {
+      if (isFollow) {
         user.value.follow = false;
-        message.success("已取消关注")
-      })
-    } else { // 还没有关注，关注
-      dispatch("setUserFollow", {
-        userId: userInfo.value.id,
-        userIdTo: user.value.id
-      }).then(res => {
+        message.success("已取消关注");
+      } else {
         user.value.follow = true;
         message.success("已添加关注")
-      })
-    }
+      }
+    })
   }
 
   watch(() => props.id, (val) => {

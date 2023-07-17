@@ -203,7 +203,7 @@
   const commentList = ref([]);
   const isLogin = computed(() => getters['isLogin']);
   const likeActive = computed(() => props.data.momentLike);
-  const isDetailPage = computed(()=>route.name === "momentDetail")
+  const isDetailPage = computed(() => route.name === "momentDetail")
 
   provide('moment', {moment: props.data, updateMomentAttribute});
 
@@ -356,7 +356,7 @@
           margin-left: 8px;
 
           a {
-            color: inherit;
+            color: inherit !important;
           }
 
           .user-nickname {

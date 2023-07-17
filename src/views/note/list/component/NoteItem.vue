@@ -1,12 +1,12 @@
 <template>
   <div class="note-item-body">
     <div class="item-cover">
-      <RouterLink :to="{name: 'noteDetail', params: {noteId: data.id}}">
+      <RouterLink :to="{name: 'NoteDetail', params: {noteId: data.id}}">
         <img :src="data.cover"/>
       </RouterLink>
     </div>
     <div class="item-bottom">
-      <RouterLink :to="{name: 'noteDetail', params: {noteId: data.id}}">
+      <RouterLink :to="{name: 'NoteDetail', params: {noteId: data.id}}">
         <div class="item-title" :title="data.name">{{data.name}}</div>
       </RouterLink>
       <RouterLink :to="`/user/${data.user.id}`">
@@ -71,6 +71,12 @@
     cursor: pointer;
     transition: box-shadow .3s, border-color .3s;
 
+    &:hover {
+      .item-title {
+        color: #1890ff;
+      }
+    }
+
     .item-cover {
       height: 130px;
       width: 100%;
@@ -82,6 +88,7 @@
         width: 100%;
         border-radius: 2px 2px 0 0;
         transition: .3s;
+        cursor: pointer;
       }
     }
 
@@ -92,7 +99,7 @@
       border-color: var(--youyu-border-color2);
 
       a {
-        color: inherit;
+        color: var(--youyu-text) !important;
       }
 
       .item-title {
@@ -105,28 +112,28 @@
         white-space: nowrap;
         border-bottom: var(--youyu-border2);
         transition: .3s;
-
-        &:hover {
-          color: #1890ff;
-        }
+        cursor: pointer;
       }
 
       .item-author {
         display: flex;
         align-items: center;
-        padding: 6px 16px;
+        padding: 6px 12px;
         border-bottom: var(--youyu-border2);
 
         img {
+          display: inline-block;
           height: 30px;
           width: 30px;
           border-radius: 50%;
+          cursor: pointer;
         }
 
         .author-nickname {
-          margin-left: 10px;
+          display: inline-block;
+          margin-left: 8px;
           font-weight: bold;
-          color: #1890ff;
+          cursor: pointer;
         }
       }
 

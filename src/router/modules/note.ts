@@ -2,26 +2,29 @@ const route = [
   {
     path: '/note',
     name: 'note',
-    redirect: "/note/list",
+    redirect: () => {
+      return {name: 'NoteList', params: {page: 1}}
+    },
     meta: {
       title: "笔记",
       code: "NOTE"
     },
-    component: () => import("@/views/note/Note.vue"),
+    component: () => import("@/components/common/system/EmptyPage.vue"),
     children: [
       {
-        path: "list",
-        name: "noteList",
+        path: "list/:page(\\d+)?",
+        name: "NoteList",
         meta: {
           title: "笔记列表",
           hide: true,
-          code: "NOTE_LIST"
+          code: "NOTE_LIST",
+          keepAlive: true
         },
         component: () => import("@/views/note/list/NoteList.vue")
       },
       {
         path: 'details/:noteId(\\d+)?',
-        name: 'noteDetail',
+        name: 'NoteDetail',
         meta: {
           title: "笔记详情",
           hide: true,
