@@ -5,7 +5,7 @@
         <div class="table-no-data" v-if="finished && !dataList.length">
           暂无数据
         </div>
-        <a-skeleton active avatar v-for="item in 10" v-else></a-skeleton>
+        <a-skeleton active avatar v-for="item in params.pageSize" v-else></a-skeleton>
       </slot>
     </div>
     <div class="table-pagination">
