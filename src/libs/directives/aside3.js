@@ -29,7 +29,7 @@ export default {
 
         // 如果aside高度比较小，直接sticky
         if (aside.clientHeight < document.documentElement.offsetHeight - header.offsetHeight) {
-          aside.style.cssText = `position: sticky;top: ${elInitTop}px`
+          aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px`
           return;
         }
 
@@ -52,7 +52,7 @@ export default {
             // console.log("down 2", cacheTop);
             aside.style.cssText = `position: fixed;bottom: 8px;`;
           } else { // 其他
-            // console.log("down 3", aside)
+            // console.log("down 3")
             aside.style.cssText = `position: relative;top: ${cacheTop}px`;
           }
         } else { // 向上滚动
@@ -67,7 +67,7 @@ export default {
             // console.log("up 2", cacheTop);
             aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px;`
           } else { // 其他
-            // console.log("up 3", aside)
+            // console.log("up 3")
             aside.style.cssText = `position: relative;top: ${cacheTop}px`;
           }
         }
@@ -83,7 +83,6 @@ export default {
     asideParent = el.parentNode;
     document.addEventListener("scroll", el.onScroll, false);
     const {stop} = useResizeObserver(document.getElementById("app"), (entries) => {
-      console.log("useResizeObserver", el);
       el.onScroll()
     })
     el.stopObserve = stop;
