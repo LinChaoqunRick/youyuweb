@@ -205,9 +205,15 @@
 <style lang="scss" scoped>
   .editable-div {
     background: var(--youyu-background5);
-    transition: background .2s;
+    transition: .2s;
     line-height: 2rem;
     min-height: 2rem;
+    border: 1px solid transparent;
+    border-radius: 2px;
+
+    &.editor-active {
+      border: 1px solid #1890ff;
+    }
 
     .editor-content {
       position: relative;

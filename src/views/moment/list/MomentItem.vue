@@ -96,7 +96,7 @@
         </div>
         <div class="item-text">分享</div>
       </div>
-      <div class="item-operation" @click="onClickReply" :class="{'action-active':replyShow}">
+      <div class="item-operation comment-operation" @click="onClickReply" :class="{'action-active':replyShow}">
         <div class="pointer-arrow" v-if="replyShow"></div>
         <div class="item-icon">
           <i-comment :theme="replyShow?'filled':'outline'" size="14" fill="currentColor"/>
@@ -117,7 +117,7 @@
           <img v-else src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png"/>
         </div>
         <div class="reply-box-wrapper">
-          <MomentReplyEditor @onSubmit="onSubmit"/>
+          <MomentReplyEditor @onSubmit="onCommentSubmit"/>
         </div>
       </div>
       <div class="moment-comment-list" v-if="commentList.length">
@@ -224,7 +224,7 @@
   const onClose = () => {
     preview.value = false;
   };
-  const onSubmit = (reply: object, callback: Function) => {
+  const onCommentSubmit = (reply: object, callback: Function) => {
     reply.images = reply.images.length ? reply.images.join(",") : null;
     reply.momentId = props.data.id;
     reply.userId = userInfo.value.id;
@@ -325,6 +325,10 @@
       })
     }
   }
+
+  defineExpose({
+    onCommentSubmit
+  })
 </script>
 
 <style lang="scss" scoped>
@@ -584,10 +588,6 @@
           border-radius: 2px;
           border: 1px solid transparent;
           transition: .3s;
-
-          &.editor-active {
-            border: 1px solid #1890ff;
-          }
 
           #box {
             padding: 6px 12px;
