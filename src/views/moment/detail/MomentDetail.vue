@@ -32,18 +32,22 @@
                                :data="item"
                                @deleteSuccess="onCommentDeleteSuccess"/>
           </div>
+
           <div class="failed-box" v-if="failed" @click="onRetry">
             <i-refresh theme="outline" size="15" fill="#1890ff"/>
             重新加载
           </div>
           <div class="no-data" v-else-if="moment.commentCount===0">暂无数据</div>
-          <div class="comment-load-all" v-else-if="pageNum <= totalPageNum" @click="onUnlock" ref="loadMoreRef">
+          <div class="comment-load-all"
+               v-else-if="moment.commentCount && pageNum <= totalPageNum"
+               @click="onUnlock" ref="loadMoreRef">
             <div class="more-btn">
               查看全部 <span class="comment-count">{{moment.commentCount}}</span> 条评论
               <i-down v-if="!restLoading" theme="outline" size="14" fill="#1890ff"/>
               <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
             </div>
           </div>
+          <div class="loaded-all" v-else-if="pageNum>totalPageNum">已加载全部评论~</div>
         </div>
       </div>
     </div>
@@ -71,7 +75,7 @@
   const sort = ref<boolean>(true); // true:最新 false:最热
   const order = computed(() => sort.value ? 'create_time' : 'support_count');
   const pageNum = ref<number>(1);
-  const totalPageNum = ref<number>(-1);
+  const totalPageNum = ref<number>(1);
   const restLoading = ref<boolean>(false);
   const failed = ref<boolean>(false);
 
@@ -101,9 +105,8 @@
       pageNum: pageNum.value,
       orderBy: order.value
     }).then(res => {
-      totalPageNum.value === -1 && (commentList.value = []);
       commentList.value.push(...res.data.list);
-      totalPageNum.value === -1 && (totalPageNum.value = res.data.pages);
+      totalPageNum.value = res.data.pages;
       pageNum.value++;
     }).catch(() => {
       failed.value = true;
@@ -119,6 +122,13 @@
   const handleSort = (value: boolean) => {
     if (sort.value === value) return;
     sort.value = value;
+    pageNum.value = 1;
+    totalPageNum.value = 1;
+    getCommentsPage();
+  }
+
+  const onRetry = () => {
+    failed.value = false;
     getCommentsPage();
   }
 
@@ -231,19 +241,36 @@
           }
         }
 
+        .failed-box {
+          padding: 6px 0;
+          text-align: center;
+          cursor: pointer;
+        }
+
+        .no-data {
+          padding: 6px 0;
+          text-align: center;
+          cursor: pointer;
+        }
+
         .comment-load-all {
 
           .more-btn {
-            padding: 10px 0;
+            padding: 6px 0;
             cursor: pointer;
             text-align: center;
-            background-color: var(--youyu-body-background5);
             color: #1890ff;
 
             &:hover {
 
             }
           }
+        }
+
+        .loaded-all {
+          padding: 6px 0;
+          text-align: center;
+          color: var(--youyu-text2);
         }
       }
     }

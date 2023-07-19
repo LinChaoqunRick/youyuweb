@@ -78,7 +78,7 @@
         <div class="reply-operation">
           <div class="ope-item" :class="{'ope-active': data.commentLike}" @click="onLike">
             <i-good-two :theme="data.commentLike?'filled':'outline'" size="14" fill="currentColor"/>
-            点赞<span v-if="data.likeCount">({{data.likeCount}})</span>
+            点赞<span v-if="data.supportCount">({{data.supportCount}})</span>
           </div>
           <div class="ope-item" :class="{'ope-active': active}" @click="onReply">
             <i-comment :theme="active?'filled':'outline'" size="14" fill="currentColor"/>
@@ -185,10 +185,10 @@
       commentId: props.data.id
     }).then(res => {
       if (isLike) {
-        props.data.likeCount -= 1;
+        props.data.supportCount -= 1;
         props.data.commentLike = null;
       } else {
-        props.data.likeCount += 1;
+        props.data.supportCount += 1;
         props.data.commentLike = res.data;
       }
     }).finally(() => {

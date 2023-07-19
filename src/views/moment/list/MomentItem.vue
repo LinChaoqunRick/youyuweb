@@ -85,7 +85,7 @@
           <div class="user-avatars">
             <img v-for="(item, index) in data.likeUsers" :src="item.avatar" :style="{'z-index': index}"/>
           </div>
-          <div class="like-text"><span v-if="data.likeCount>3">等人</span>赞过</div>
+          <div class="like-text"><span v-if="data.supportCount>3">等人</span>赞过</div>
         </div>
       </div>
     </div>
@@ -107,7 +107,7 @@
         <div class="item-icon">
           <i-thumbs-up :theme="likeActive?'filled':'outline'" size="14" fill="currentColor"/>
         </div>
-        <div class="item-text">{{data.likeCount || '点赞'}}</div>
+        <div class="item-text">{{data.supportCount || '点赞'}}</div>
       </div>
     </div>
     <div class="moment-item-bottom" v-if="replyShow">
@@ -303,11 +303,11 @@
     }).then(res => {
       if (isLike) {
         props.data.momentLike = null;
-        props.data.likeCount -= 1;
+        props.data.supportCount -= 1;
         props.data.likeUsers = props.data.likeUsers.filter(item => item.id !== userInfo.value.id);
       } else {
         props.data.momentLike = res.data;
-        props.data.likeCount += 1;
+        props.data.supportCount += 1;
         if (!props.data.likeUsers) {
           props.data.likeUsers = [];
         }
