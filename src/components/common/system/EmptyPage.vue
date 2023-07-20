@@ -1,9 +1,15 @@
 <template>
   <router-view v-slot="{ Component }">
     <keep-alive>
-      <component :is="Component" v-if="$route.meta.keepAlive && isRouterAlive" :key="$route.name"></component>
+      <component :is="Component"
+                 v-if="$route.meta.keepAlive && isRouterAlive"
+                 :key="$route.name"
+                 ref="Component"></component>
     </keep-alive>
-    <component :is="Component" v-if="!$route.meta.keepAlive && isRouterAlive" :key="$route.name"></component>
+    <component :is="Component"
+               v-if="!$route.meta.keepAlive && isRouterAlive"
+               :key="$route.name"
+               ref="Component"></component>
   </router-view>
 </template>
 
@@ -18,6 +24,8 @@
 
   const isRouterAlive = ref<boolean>(true);
 
+  const Component = ref(null);
+
   function reload() {
     isRouterAlive.value = false;
     nextTick(function () {
@@ -26,6 +34,10 @@
   }
 
   provide('reload', reload);
+
+  defineExpose({
+    Component
+  })
 </script>
 
 <style scoped>

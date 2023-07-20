@@ -239,6 +239,7 @@
         width: 260px;
         min-width: 120px;
         min-height: 120px;
+        height: 360px;
         background-color: var(--post-detail-background);
         border: 1px solid #9ca3af4d;
         border-radius: 6px;

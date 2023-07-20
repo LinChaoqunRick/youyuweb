@@ -3,6 +3,7 @@ import {
   MOMENT_CREATE,
   MOMENT_DELETE,
   MOMENT_LIST,
+  MOMENT_LIST_FOLLOWING,
   GET_MOMENT,
   GET_MOMENT_USER_DETAIL,
   CREATE_MOMENT_COMMENT,
@@ -27,6 +28,9 @@ export default {
     },
     momentList(state: any, params: object) {
       return http.post(MOMENT_LIST, params);
+    },
+    momentListFollowing(state: any, params: object) {
+      return http.post(MOMENT_LIST_FOLLOWING, params);
     },
     getMoment(state: any, params: object) {
       return http.post(GET_MOMENT, params);

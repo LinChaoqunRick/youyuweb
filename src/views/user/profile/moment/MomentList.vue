@@ -1,6 +1,6 @@
 <template>
   <div class="moment-list">
-    <UserMomentList :userId="user.id"/>
+    <UserMomentList :userIds="user.id"/>
   </div>
 </template>
 

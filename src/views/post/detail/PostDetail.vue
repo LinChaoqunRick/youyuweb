@@ -21,7 +21,7 @@
             <div class="post-info-data-category">
               <div class="post-info-data">
                 <div class="post-info-data-item">
-                  <i-calendar theme="filled" size="13" fill="#797979"/>
+                  <i-calendar theme="outline" size="13" fill="currentColor"/>
                   <a-tooltip placement="top">
                     <template #title>
                       <div>首次发布：{{post.createTime}}</div>
@@ -31,7 +31,7 @@
                   </a-tooltip>
                 </div>
                 <div class="post-info-data-item">
-                  <i-preview-open theme="filled" size="14" fill="#797979"/>
+                  <i-preview-open theme="outline" size="14" fill="currentColor"/>
                   <span>{{post.viewCount}}</span>Views
                 </div>
               </div>
@@ -230,11 +230,16 @@
 
                 .post-info-data-item {
                   display: flex;
-                  font-size: 12px;
+                  font-size: 13px;
                   align-items: center;
-                  margin-right: 6px;
-                  color: #797979;
+                  margin-right: 10px;
+                  color: var(--youyu-text1);
                   cursor: pointer;
+
+                  .i-icon {
+                    position: relative;
+                    left: -2px;
+                  }
 
                   span {
                     margin-left: 2px;

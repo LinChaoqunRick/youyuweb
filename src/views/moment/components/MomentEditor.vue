@@ -163,7 +163,6 @@
       background: var(--youyu-background5);
       border-radius: 2px;
       transition: .3s;
-      border: 1px solid transparent;
 
       .login-mask {
         position: absolute;
@@ -322,7 +321,6 @@
 
   .editor-active {
     .editor-body {
-      border-color: #1890ff !important;
       background: var(--youyu-background1) !important;
 
       .now-mood {

@@ -41,8 +41,15 @@
   const {dispatch} = useStore();
 
   const props = defineProps({
-    userId: {
+    userIds: {
       type: Number
+    },
+    url: {
+      type: String,
+      default: "momentList"
+    },
+    params: {
+      type: Object
     }
   })
 
@@ -58,12 +65,12 @@
   function getListData() {
     failed.value = false;
     loading.value = true;
-    dispatch('momentList', {
+    dispatch(props.url, Object.assign({}, {
       pageNum: pageNum.value,
       pageSize: 10,
       orderBy: 'create_time',
-      userId: props.userId
-    }).then(res => {
+      userIds: props.userIds
+    }, props.params)).then(res => {
       momentList.value.push(...res.data.list);
       pageNum.value === 1 && (totalPageNum.value = res.data.pages);
       pageNum.value++;
@@ -132,7 +139,7 @@
       height: 50px;
       background-color: var(--youyu-background1);
       border-radius: 4px;
-      margin: 8px 0;
+      margin-top: 8px;
       overflow: hidden;
 
       > div {
