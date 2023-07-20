@@ -212,7 +212,7 @@
     border-radius: 2px;
 
     &.editor-active {
-      border: 1px solid #1890ff;
+      border-color: #1890ff!important;
     }
 
     .editor-content {
