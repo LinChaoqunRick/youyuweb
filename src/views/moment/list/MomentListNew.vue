@@ -1,7 +1,7 @@
 <template>
   <div class="moment-list">
     <div class="moment-middle">
-      <UserMomentList :params="{orderBy: 'support_count'}" ref="UserMomentListRef"/>
+      <UserMomentList ref="UserMomentListRef"/>
     </div>
   </div>
 </template>
