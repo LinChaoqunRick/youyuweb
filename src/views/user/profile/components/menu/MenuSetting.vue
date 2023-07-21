@@ -35,7 +35,7 @@
   const menuPermit = ref({});
 
   function handleMenuItems() {
-    const disabledMenus = ["动态", "时刻", "文章", "专栏"];
+    const disabledMenus = ["动态", "时刻", "文章", "笔记", "专栏"];
     menuItems.value = cloneDeep(props.menuItems);
     menuItems.value.map(item => {
       item.disabled = disabledMenus.includes(item.title);

@@ -45,9 +45,9 @@
 </script>
 
 <script setup lang="ts">
-  import {computed, ref, nextTick, inject, watch} from 'vue';
+  import {computed, ref, nextTick, inject, watch, onActivated} from 'vue';
   import {useStore} from "vuex";
-  import {useRouter} from "vue-router";
+  import {useRoute, useRouter, onBeforeRouteLeave } from "vue-router";
   import {message} from "ant-design-vue";
 
   import YTable from "@/components/common/table/YTable.vue";
@@ -55,6 +55,7 @@
 
   const {getters, dispatch} = useStore();
   const user = inject('user');
+  const route = useRoute();
   const router = useRouter();
 
   const yTable = ref(null);
@@ -68,6 +69,7 @@
     pageSize: 20
   }));
   const isOwn = computed(() => userInfo.value.id === user.value.id);
+  let cachePage: number | string = 0;
 
   function handleSort(value: boolean) {
     if (sort.value === value) {
@@ -96,6 +98,19 @@
       }
     })
   }
+
+  onActivated(() => {
+    if (cachePage) {
+      console.log(cachePage);
+      route.params.page = cachePage;
+      router.push(route)
+    }
+  })
+
+  onBeforeRouteLeave(() => {
+    console.log(route, route.params);
+    cachePage = Number(route.params.page ?? 1);
+  })
 </script>
 
 <style lang="scss" scoped>

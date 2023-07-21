@@ -10,7 +10,7 @@
             <template #content>
               <UserCardMoment :user="data.user"/>
             </template>
-            <RouterLink :to="{name:'userHome', params: {userId: data.user.id}}">
+            <RouterLink :to="`/user/${data.user.id}/moment`">
               <img :src="data.user.avatar"/>
             </RouterLink>
           </a-popover>
@@ -23,7 +23,7 @@
             <template #content>
               <UserCardMoment :user="data.user"/>
             </template>
-            <RouterLink :to="{name:'userHome', params: {userId: data.user.id}}">
+            <RouterLink :to="`/user/${data.user.id}/moment`">
               <div class="user-nickname">{{data.user.nickname}}</div>
             </RouterLink>
           </a-popover>

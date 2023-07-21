@@ -1,12 +1,18 @@
 <template>
   <div class="y-table">
     <div class="table-body">
-      <slot :dataList="dataList">
-        <div class="table-no-data" v-if="finished && !dataList.length">
-          暂无数据
-        </div>
-        <a-skeleton active avatar v-for="item in params.pageSize" v-else></a-skeleton>
-      </slot>
+      <a-spin :spinning="loading">
+        <slot :dataList="dataList">
+          <div v-if="failed" @click="initData" class="retry-load">
+            <i-refresh theme="outline" size="15" fill="#1890ff"/>
+            <span class="loading-text">重新加载</span>
+          </div>
+          <div class="table-no-data" v-else-if="!loading && !dataList.length">
+            暂无数据
+          </div>
+          <a-skeleton active avatar v-for="item in params.pageSize" v-else></a-skeleton>
+        </slot>
+      </a-spin>
     </div>
     <div class="table-pagination">
       <a-pagination v-model:current="current"
@@ -60,34 +66,36 @@
   const size = ref(props.params.pageSize);
   const total = ref(0);
   const dataList = ref([]);
-  const finished = ref(false);
+  const loading = ref<boolean>(false);
+  const failed = ref<boolean>(false);
 
   const initData = async () => {
-    finished.value = false;
-    dataList.value = [];
+    loading.value = true;
+    failed.value = false;
     if (props.beforeGetData) {
       const result = await props.beforeGetData();
       if (!result) {
-        finished.value = true;
-        return;
+        return loading.value = false;
       }
     }
     dispatch(props.listUrl, Object.assign({}, {
       pageNum: current.value,
       pageSize: size.value
     }, props.params)).then(res => {
-      // debugger;
+      dataList.value = [];
       document.documentElement.scrollTop = 0;
-      const params = route.params;
-      const query = route.query;
       if (route.params.page != res.data.current) {
-        router.push({params: Object.assign(params, {page: res.data.current}), query})
+        route.params.page = res.data.current;
+        router.push(route);
       }
       total.value = res.data.total;
       dataList.value = res.data.list;
       emit("onLoaded");
+    }).catch(() => {
+      dataList.value = [];
+      failed.value = true;
     }).finally(() => {
-      finished.value = true;
+      loading.value = false;
     })
   }
 
@@ -123,12 +131,21 @@
 <style lang="scss" scoped>
   .y-table {
     .table-body {
-      .table-no-data {
+
+      .retry-load {
+        cursor: pointer;
+      }
+
+      .table-no-data, .retry-load {
         width: 100%;
         min-height: 200px;
         display: flex;
         justify-content: center;
         align-items: center;
+
+        .loading-text {
+          margin-left: 4px;
+        }
       }
 
       .table-skeleton {

@@ -1,11 +1,11 @@
 <template>
   <div class="user-card">
     <div class="user-info">
-      <RouterLink :to="`/user/${user.id}`">
+      <RouterLink :to="`/user/${user.id}/moment`">
         <img :src="user.avatar"/>
       </RouterLink>
       <div class="user-info-basic">
-        <RouterLink :to="`/user/${user.id}`">
+        <RouterLink :to="`/user/${user.id}/moment`">
           <div class="user-nickname">{{user.nickname}}</div>
         </RouterLink>
         <div class="user-signature">{{user.signature}}</div>

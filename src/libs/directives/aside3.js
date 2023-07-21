@@ -46,9 +46,11 @@ export default {
           if (windowScrollBottom >= getElementTop(footer)) { // 超过footer
             aside.style.cssText = `position: absolute;bottom: 0px;`
             cacheTop = getElementTop(aside) - elInitTop; // absolute是可以使用getElementTop计算
+            cacheTop = cacheTop > 0 ? cacheTop : 0;
             // console.log("down 1", cacheTop);
           } else if (windowScrollBottom >= getElementTop(aside) + aside.clientHeight + defaultGap) { // 超过下限
             cacheTop = windowScrollBottom - elInitTop - aside.clientHeight - defaultGap;
+            cacheTop = cacheTop > 0 ? cacheTop : 0;
             // console.log("down 2", cacheTop);
             aside.style.cssText = `position: fixed;bottom: 8px;`;
           } else { // 其他
@@ -64,6 +66,7 @@ export default {
             cacheTop = 0;
           } else if (Math.floor(windowScrollTop + header.clientHeight + defaultGap) <= getElementTop(aside)) { // 超过上限
             cacheTop = windowScrollTop - (elInitTop - header.clientHeight - defaultGap);
+            cacheTop = cacheTop > 0 ? cacheTop : 0;
             // console.log("up 2", cacheTop);
             aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px;`
           } else { // 其他

@@ -24,6 +24,7 @@ const route = [
             name: "userHome",
             meta: {
               title: "Ta的动态",
+              keepAlive: true
             },
             component: () => import("@/views/user/profile/home/UserHome.vue"),
           },
@@ -32,6 +33,7 @@ const route = [
             name: "userMoment",
             meta: {
               title: "Ta的时刻",
+              keepAlive: true
             },
             component: () => import("@/views/user/profile/moment/MomentList.vue"),
           },
@@ -42,6 +44,7 @@ const route = [
             },
             meta: {
               title: "Ta的文章",
+              keepAlive: true
             },
             children: [
               {
@@ -59,8 +62,26 @@ const route = [
             name: "userColumn",
             meta: {
               title: "Ta的专栏",
+              keepAlive: true
             },
             component: () => import("@/views/user/profile/column/SpecialColumn.vue"),
+          },
+          {
+            path: "note",
+            redirect: to => {
+              return {name: 'userNote', params: {userId: to.params.userId, page: 1}}
+            },
+            children: [
+              {
+                path: ':page(\\d+)',
+                name: 'userNote',
+                meta: {
+                  title: "Ta的笔记",
+                  keepAlive: true
+                },
+                component: () => import("@/views/user/profile/note/NoteList.vue"),
+              }
+            ]
           },
           {
             path: "collection",
@@ -73,6 +94,7 @@ const route = [
                 name: 'userCollection',
                 meta: {
                   title: "Ta的收藏",
+                  keepAlive: true
                 },
                 component: () => import("@/views/user/profile/collection/CollectList.vue"),
               }
@@ -89,6 +111,7 @@ const route = [
                 name: "userFollow",
                 meta: {
                   title: "Ta的关注",
+                  keepAlive: true
                 },
                 component: () => import("@/views/user/profile/follow/FollowList.vue"),
               }
@@ -105,6 +128,7 @@ const route = [
                 name: "userFans",
                 meta: {
                   title: "Ta的关注",
+                  keepAlive: true
                 },
                 component: () => import("@/views/user/profile/fans/FansList.vue"),
               }

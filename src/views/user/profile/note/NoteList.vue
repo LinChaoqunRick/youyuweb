@@ -1,12 +1,10 @@
 <template>
-  <div>
-    ColumnEditor
-  </div>
+  UserNoteList
 </template>
 
 <script>
   export default {
-    name: "ColumnEditor"
+    name: "NoteList"
   }
 </script>
 
