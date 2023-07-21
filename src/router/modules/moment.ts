@@ -20,7 +20,8 @@ const route = [
         component: () => import("@/views/moment/list/MomentList.vue"),
         children: [
           {
-            path: "new",
+            path: "",
+            alias: "new",
             name: "MomentListNew",
             meta: {
               title: "时刻列表-最新",
