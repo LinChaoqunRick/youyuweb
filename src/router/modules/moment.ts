@@ -37,7 +37,7 @@ const route = [
               code: "MOMENT_LIST",
               keepAlive: true
             },
-            component: () => import("@/views/moment/list/MomentListNew.vue")
+            component: () => import("@/views/moment/list/MomentListHot.vue")
           },
           {
             path: "following",
