@@ -8,6 +8,8 @@ export interface column {
   content: string,
   cover: string;
   isTop?: string;
+  postNum?: number;
+  subscriberNum?: number;
   createTime?: string;
   updateTime?: string;
 }

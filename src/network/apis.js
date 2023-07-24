@@ -86,7 +86,10 @@ export const SEND_EMAIL_CODE = ApiBase + "/mail/sendRegisterCode"; // 获取邮�
 export const CATEGORY_LIST = ApiBase + "/category/list"; //
 
 // 用户
-export const GET_COLUMN_LIST = ApiBase + "/column/list"; //
+export const GET_COLUMN_LIST = ApiBase + "/column/list"; //专栏列表
+export const ADD_COLUMN = ApiBase + "/column/add"; //专栏列表
+export const UPDATE_COLUMN = ApiBase + "/column/update"; //专栏列表
+export const DELETE_COLUMN = ApiBase + "/column/delete"; //专栏列表
 
 // oss
 export const OSS_POLICY = ApiBase + "/oss/policy"; //

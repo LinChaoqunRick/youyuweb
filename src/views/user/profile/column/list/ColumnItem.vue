@@ -15,9 +15,9 @@
             <a-popover placement="bottom" trigger="click" overlayClassName="column-operation-tooltip">
             <template #content>
               <a-button type="text">管理内容</a-button>
-              <a-button type="text" @click="handleEdit">编辑专栏</a-button>
-              <a-button type="text"><span>{{data.isTop==='1'?'取消置顶':'置顶'}}</span></a-button>
-              <a-button type="text">删除</a-button>
+              <a-button type="text" @click="onEdit">编辑专栏</a-button>
+              <a-button type="text" class="top-btn"><span>{{data.isTop==='1'?'取消置顶':'置顶'}}</span></a-button>
+              <a-button type="text" class="delete-btn" @click="onDelete">删除</a-button>
             </template>
             <i-more theme="outline" size="22" fill="currentColor"/>
           </a-popover>
@@ -45,6 +45,7 @@
   import {useStore} from "vuex";
   import openModal from "@/libs/tools/openModal";
   import ColumnEditor from "./ColumnEditor.vue";
+  import {message, Modal} from "ant-design-vue";
 
   const props = defineProps({
     data: {
@@ -52,7 +53,8 @@
       required: true
     }
   })
-  const {getters, commit} = useStore();
+  const emit = defineEmits(['deleteSuccess']);
+  const {getters, commit, dispatch} = useStore();
   const user = inject('user');
   const userInfo = computed(() => getters['userInfo']);
   const isLogin = computed(() => getters['isLogin']);
@@ -65,10 +67,22 @@
     }
   }
 
-  function handleEdit() {
-    openModal({
-      component: ColumnEditor
-    })
+  const onEdit = () => {
+
+  }
+
+  const onDelete = () => {
+    Modal.confirm({
+      title: '删除时刻',
+      icon: '', // <help theme="outline" size="24" fill="#1890ff"/>
+      content: '确定删除这条时刻吗？',
+      onOk() {
+        return dispatch('deleteColumn', {columnId: props.data.id}).then(res => {
+          message.success('删除成功');
+          emit('deleteSuccess', props.data);
+        })
+      },
+    });
   }
 </script>
 
@@ -85,6 +99,7 @@
       img {
         height: 100%;
         width: 100%;
+        object-fit: cover;
       }
     }
 
@@ -190,6 +205,14 @@
 
     button {
       display: block;
+    }
+
+    .top-btn {
+      color: #1890ff;
+    }
+
+    .delete-btn {
+      color: red;
     }
   }
 </style>

@@ -4,6 +4,9 @@ import {
   GET_POST_USER_DETAIL,
   GET_LIMIT_POST,
   GET_COLUMN_LIST,
+  ADD_COLUMN,
+  UPDATE_COLUMN,
+  DELETE_COLUMN,
   GET_POST_COLLECT_LIST,
   SET_USER_FOLLOW,
   CANCEL_USER_FOLLOW,
@@ -31,6 +34,15 @@ export default {
     },
     getColumnList(state: any, params: object) {
       return http.get(GET_COLUMN_LIST, params);
+    },
+    addColumn(state: any, params: object) {
+      return http.post(ADD_COLUMN, params);
+    },
+    updateColumn(state: any, params: object) {
+      return http.post(UPDATE_COLUMN, params);
+    },
+    deleteColumn(state: any, params: object) {
+      return http.post(DELETE_COLUMN, params);
     },
     getPostCollectList(state: any, params: object) {
       return http.post(GET_POST_COLLECT_LIST, params);

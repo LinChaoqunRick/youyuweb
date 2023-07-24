@@ -3,8 +3,8 @@
     <a-form :model="formValidate" :colon="false" :rules="rulesRef" :label-col="labelCol" :wrapper-col="wrapperCol"
             ref="formRef" class="column-form">
       <div class="column-left">
-        <a-form-item label="标题" name="name">
-          <a-input v-model:value="formValidate.name" show-count :maxlength="20"/>
+        <a-form-item label="标题" name="title">
+          <a-input v-model:value="formValidate.title" show-count :maxlength="20"/>
         </a-form-item>
         <a-form-item label="说明" name="content">
           <a-textarea
@@ -55,7 +55,7 @@
   })
 
   const rulesRef = {
-    name: [
+    title: [
       {
         required: true,
         message: '请输入标题',

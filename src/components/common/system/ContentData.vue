@@ -53,6 +53,10 @@
   }
 
   initData();
+
+  defineExpose({
+    data
+  })
 </script>
 
 <style lang="scss" scoped>
@@ -60,9 +64,7 @@
     position: relative;
 
     ::v-deep(.ant-spin-nested-loading) {
-      position: absolute;
-      height: 100%;
-      width: 100%;
+      min-height: 200px;
     }
 
     .retry-load {

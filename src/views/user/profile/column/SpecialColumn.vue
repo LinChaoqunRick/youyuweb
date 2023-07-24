@@ -2,11 +2,11 @@
   <div class="special-column">
     <div class="column-header" v-if="isOwn">
       <span>最多可创建 {{maxNum}} 个专栏，当前 <span :class="{'active':!!columnList.length}">{{columnList.length}}</span>/{{maxNum}} </span>
-      <a-button class="add-button" :disabled="addBtnDisabled">添加专栏</a-button>
+      <a-button class="add-button" :disabled="addBtnDisabled" @click="onAdd">添加专栏</a-button>
     </div>
-    <ContentData url="getColumnList" :params="{userId: user.id}" v-slot="{data}">
+    <ContentData url="getColumnList" :params="{userId: user.id}" v-slot="{data}" ref="ContentDataRef">
       <div class="column-list">
-        <ColumnItem v-for="item in data" :data="item"/>
+        <ColumnItem @deleteSuccess="deleteSuccess" v-for="item in data" :data="item"/>
       </div>
     </ContentData>
   </div>
@@ -18,16 +18,34 @@
   import openModal from "@/libs/tools/openModal";
   import ColumnItem from "./list/ColumnItem.vue";
   import ContentData from "@/components/common/system/ContentData.vue";
+  import ColumnAdd from "./list/ColumnAdd.vue";
+  import type {column} from "@/views/user/profile/column/type";
 
   const {getters, dispatch} = useStore();
+
+  const ContentDataRef = ref<typeof ContentData>(null);
+
   const user = inject('user');
   const userInfo = computed(() => getters['userInfo']);
   const isOwn = computed(() => userInfo.value.id === user.value.id);
 
   const maxNum = 5;
-  const columnList = ref([]);
+  const columnList = computed(() => ContentDataRef.value?.data ?? []);
   const loading = ref(false);
   const addBtnDisabled = computed(() => columnList.value.length >= maxNum);
+
+  const onAdd = async () => {
+    await openModal({
+      component: ColumnAdd,
+      title: '添加专栏'
+    }).then(res => {
+      ContentDataRef.value.data.push(res);
+    })
+  }
+
+  const deleteSuccess = (data: column[]) => {
+    ContentDataRef.value.data = ContentDataRef.value.data.filter(item => item.id !== data.id);
+  }
 </script>
 
 <style lang="scss" scoped>
