@@ -1,4 +1,5 @@
 export interface postData {
+  id: number | null,
   title: string,
   content: string,
   categoryId: number | null,
@@ -7,5 +8,6 @@ export interface postData {
   summary: string,
   createType: string,
   originalLink: string,
-  userId: number | null
+  userId: number | null,
+  columnId: string | string[] | number[] | null,
 }
