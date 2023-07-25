@@ -56,6 +56,7 @@
 
   /*shadow*/
   --youyu-shadow1: 0 0 10px rgba(0, 0, 0, .36);
+  --youyu-shadow2: 0 0 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
 
   /*antd*/
   --antd-background: #fff;
