@@ -58,19 +58,13 @@ export default {
             aside.style.cssText = `position: relative;top: ${cacheTop}px`;
           }
         } else { // 向上滚动
-          if (windowScrollTop < header.clientHeight - cacheTop) {
-            // console.log("up 1", cacheTop, header.clientHeight);
-            if (cacheTop > 0 && cacheTop < header.clientHeight) {
-              aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px;`
-            }
-            cacheTop = 0;
-          } else if (Math.floor(windowScrollTop + header.clientHeight + defaultGap) <= getElementTop(aside)) { // 超过上限
+          if (Math.floor(windowScrollTop + header.clientHeight + defaultGap) <= getElementTop(aside)) { // 超过上限
             cacheTop = windowScrollTop - (elInitTop - header.clientHeight - defaultGap);
             cacheTop = cacheTop > 0 ? cacheTop : 0;
-            // console.log("up 2", cacheTop);
+            console.log("up 1", cacheTop);
             aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px;`
           } else { // 其他
-            // console.log("up 3")
+            console.log("up 2")
             aside.style.cssText = `position: relative;top: ${cacheTop}px`;
           }
         }
