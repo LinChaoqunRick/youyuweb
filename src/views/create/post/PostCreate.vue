@@ -9,12 +9,14 @@
   import PostEditor from "./PostEditor.vue";
   import type {postData} from "@/types/post";
   import {notification} from "ant-design-vue";
+  import {cloneDeep} from "lodash";
 
   const {getters, dispatch} = useStore();
   const router = useRouter();
 
   const userInfo = computed(() => getters['userInfo']);
   const formValidate = ref<postData>({
+    id: null,
     title: '',
     content: '',
     categoryId: null,
@@ -23,12 +25,13 @@
     summary: '',
     createType: '0',
     originalLink: '',
-    userId: userInfo.value.id
+    userId: userInfo.value.id,
+    columnId: []
   });
   const isSave = ref(false);
 
   const handleSubmit = (callback: Function) => {
-    const form = JSON.parse(JSON.stringify(toRaw(formValidate.value)));
+    const form = cloneDeep(formValidate.value);
     form.tags = form.tags.join(",");
     form.thumbnail = form.thumbnail.join(",");
     if (!form.title || !form.content) {
