@@ -6,6 +6,7 @@
           <i-refresh theme="outline" size="15" fill="#1890ff"/>
           <span class="loading-text">重新加载</span>
         </div>
+        <div v-else-if="!loading && (!data || !data?.length)" class="no-data">暂无数据</div>
       </slot>
     </a-spin>
   </div>
@@ -65,6 +66,10 @@
 
     ::v-deep(.ant-spin-nested-loading) {
       min-height: 200px;
+
+      .ant-spin-container {
+        min-height: 200px;
+      }
     }
 
     .retry-load {
@@ -78,6 +83,15 @@
       .loading-text {
         margin-left: 4px;
       }
+    }
+
+    .no-data {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      width: 100%;
+      min-height: 200px;
     }
   }
 </style>

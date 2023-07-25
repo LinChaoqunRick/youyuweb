@@ -73,6 +73,12 @@ html {
   text-align: center;
 }
 
+.text-limit {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 
 .fade-enter-active,
 .fade-leave-active {

@@ -50,7 +50,8 @@
           <div class="select-from-post">
             <a-button type="link" :disabled="formValidate.thumbnail.length>=3" @click="openModal">从文章中选取</a-button>
           </div>
-          <UploadFile :disabled="formValidate.thumbnail.length>=3" accept=".jpg, .jpeg, .png" @uploadSuccess="uploadSuccess"/>
+          <UploadFile :disabled="formValidate.thumbnail.length>=3" accept=".jpg, .jpeg, .png"
+                      @uploadSuccess="uploadSuccess"/>
           <div class="file-list">
             <div v-for="(file, index) in formValidate.thumbnail" :key="file"
                  :style="{left: 40 * index + 'px',top: 8 * index + 'px'}" class="image-preview">
@@ -76,8 +77,9 @@
             :maxlength="100"
           />
         </a-form-item>
-        <a-form-item label="收录至专栏" name="columnId">
-          <a-select v-model:value="formValidate.columnId">
+        <a-form-item label="收录至专栏" name="columnIds">
+          <a-select v-model:value="formValidate.columnIds" allow-clear mode="multiple" placeholder="最多可选择3个专栏"
+                    @select="onColumnSelect">
             <a-select-option :value="item.id" v-for="item in columnList">{{item.title}}</a-select-option>
           </a-select>
         </a-form-item>
@@ -218,6 +220,7 @@
   function getColumnList() {
     dispatch('getColumnList', {userId: props.formValidate.userId}).then(res => {
       columnList.value = res.data;
+      columnList.value.forEach(item => item.id = item.id + '')
     })
   }
 
@@ -314,6 +317,13 @@
       return;
     }
     item.selected = !item.selected;
+  }
+
+  const onColumnSelect = (value) => {
+    const columnIds = props.formValidate.columnIds;
+    if (columnIds.length > 3) {
+      columnIds.pop();
+    }
   }
 
   watch(() => modalVisible.value, (val) => {

@@ -30,6 +30,8 @@
       dispatch("addColumn", formValidate.value).then(res => {
         done(res.data);
         message.success("保存成功");
+      }).catch(e => {
+        message.error(e.message);
       }).finally(() => {
         modal.confirmLoading = false;
       })

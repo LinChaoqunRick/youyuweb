@@ -29,7 +29,7 @@
     createType: '0',
     originalLink: '',
     userId: null,
-    columnId: null
+    columnIds: null
   });
   const isSave = ref(false);
   const spinning = ref(true);
@@ -39,7 +39,7 @@
       formValidate.value = res.data;
       formValidate.value.tags = formValidate.value.tags ? formValidate.value.tags.split(",") : [];
       formValidate.value.thumbnail = formValidate.value.thumbnail?.split(",") ?? [];
-      formValidate.value.columnId = formValidate.value.columnId?(formValidate.value.columnId+'').split(",") : [];
+      formValidate.value.columnIds = formValidate.value.columnIds?(formValidate.value.columnIds+'').split(",") : [];
     }).finally(() => {
       spinning.value = false;
     })
@@ -50,7 +50,7 @@
     const form = cloneDeep(formValidate.value);
     form.tags = form.tags.join(",");
     form.thumbnail = form.thumbnail.join(",");
-    form.columnId = form.columnId.join(",");
+    form.columnIds = form.columnIds.join(",");
     if (!form.title || !form.content) {
       notification.error({
         message: '发布失败',

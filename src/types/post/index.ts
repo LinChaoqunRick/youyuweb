@@ -9,5 +9,5 @@ export interface postData {
   createType: string,
   originalLink: string,
   userId: number | null,
-  columnId: string | string[] | number[] | null,
+  columnIds: string | string[] | number[] | null,
 }

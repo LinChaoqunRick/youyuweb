@@ -12,11 +12,11 @@
           <div class="post-info-detail">
             <div class="create-type">
               <p v-if="post.createType==='0'" style="color: #67bb55;">
-                {{post.createTypeDesc}}</p>
+                {{ post.createTypeDesc }}</p>
               <p v-if="post.createType==='1'" style="color: #fc5531;">
-                {{post.createTypeDesc}}</p>
+                {{ post.createTypeDesc }}</p>
               <p v-if="post.createType==='2'" style="color: #6a87f1;">
-                {{post.createTypeDesc}}</p>
+                {{ post.createTypeDesc }}</p>
             </div>
             <div class="post-info-data-category">
               <div class="post-info-data">
@@ -24,31 +24,31 @@
                   <i-calendar theme="outline" size="13" fill="currentColor"/>
                   <a-tooltip placement="top">
                     <template #title>
-                      <div>首次发布：{{post.createTime}}</div>
-                      <div>最近更新：{{post.updateTime}}</div>
+                      <div>首次发布：{{ post.createTime }}</div>
+                      <div>最近更新：{{ post.updateTime }}</div>
                     </template>
-                    <span>{{post.createTime}}</span>
+                    <span>{{ post.createTime }}</span>
                   </a-tooltip>
                 </div>
                 <div class="post-info-data-item">
                   <i-preview-open theme="outline" size="14" fill="currentColor"/>
-                  <span>{{post.viewCount}}</span>Views
+                  <span>{{ post.viewCount }}</span>Views
                 </div>
               </div>
               <div class="post-info-category">
                 <span class="category-label">分类专栏：</span>
                 <div class="category-name" v-if="post.categoryName">
-                  {{post.categoryName}}
+                  {{ post.categoryName }}
                 </div>
                 <span class="tag-label" v-if="tags.length">标签：</span>
-                <div class="tag-name" v-for="item in tags">{{item}}</div>
+                <div class="tag-name" v-for="item in tags">{{ item }}</div>
               </div>
             </div>
             <div class="post-operation">
               <span class="operation-item" v-if="userInfo.id && (userInfo.id === post.userId)">隐藏</span>
               <span class="operation-item" v-if="userInfo.id && (userInfo.id === post.userId)"
                     @click="handleEdit">编辑</span>
-              <span class="operation-item" @click="handleFold">{{fold?'展开':'收起'}}</span>
+              <span class="operation-item" @click="handleFold">{{ fold ? '展开' : '收起' }}</span>
             </div>
           </div>
           <div class="post-info-copyright" :class="{'unfold': !fold}">
@@ -62,27 +62,33 @@
                 本文链接：
                 <a
                   :href="'https://www.youyul.com/post/details/'+route.params.postId">
-                  https://www.youyul.com/post/details/{{route.params.postId}}
+                  https://www.youyul.com/post/details/{{ route.params.postId }}
                 </a>
               </div>
             </div>
             <div class="copyright-reprint" v-else>
               <div class="creative-commons">
                 原文链接：
-                <a :href=post.originalLink>{{post.originalLink}}</a>
+                <a :href=post.originalLink>{{ post.originalLink }}</a>
               </div>
             </div>
           </div>
         </div>
-        <Spin v-if="JSON.stringify(post) === '{}'" height="500px"/>
-        <div class="post-summary">
-          <div class="post-summary-title">摘要</div>
-          <div class="post-summary-summary" v-html="post.summary"></div>
-        </div>
-        <div class="post-content">
-          <MdPreview
-            editorId="post-content"
-            :text="post.content"/>
+        <div class="post-main-content">
+          <Spin v-if="!post.id" height="500px"/>
+          <div class="post-summary" v-if="false">
+            <div class="post-summary-title">摘要</div>
+            <div class="post-summary-summary" v-html="post.summary"></div>
+          </div>
+          <div class="post-content">
+            <MdPreview
+              editorId="post-content"
+              :text="post.content"/>
+          </div>
+          <div class="post-column-list" v-if="post.columns?.length">
+            <div class="include-text">本文已收录至：</div>
+            <PostColumn v-for="item in post.columns" :data="item"/>
+          </div>
         </div>
       </div>
       <div class="post-right">
@@ -110,6 +116,7 @@
   import {useRoute, useRouter} from 'vue-router';
   import {useStore} from 'vuex';
   import {scrollToEle} from "@/assets/utils/utils";
+  import type {postData} from "@/types/post";
 
   import PercentCounter from "@/components/common/utils/percentCounter/PercentCounter.vue";
   import MdPreview from "@/components/content/mdEditor/MdPreview.vue";
@@ -118,13 +125,26 @@
   import MdCatalogPanel from "./child/MdCatalogPanel.vue";
   import PostOperation from "./child/PostOperation.vue";
   import PostComment from "./child/PostComment.vue";
+  import PostColumn from "./child/PostColumn.vue";
 
   const reload = inject('reload')
 
   const route = useRoute();
   const router = useRouter();
   const {state, dispatch, getters} = useStore();
-  const post = ref('');
+  const post = ref<postData>({
+    id: null,
+    title: '',
+    content: '',
+    categoryId: null,
+    tags: '',
+    thumbnail: [],
+    summary: '',
+    createType: '',
+    originalLink: '',
+    userId: null,
+    columnIds: []
+  });
   const fold = ref(true);
   const userInfo = computed(() => getters['userInfo']);
   const tags = computed(() => post.value.tags?.length ? post.value.tags.split(",") : [])
@@ -356,21 +376,39 @@
           }
         }
 
-        .post-summary {
-          margin: 12px 24px 0 24px;
-          padding: 8px 12px;
-          background-color: var(--post-summary-background);
-          border-radius: 8px;
+        .post-main-content {
+          padding: 16px 36px 36px 36px;
 
-          .post-summary-title {
-            font-size: 16px;
-            color: #1890ff;
-            /*text-align: center;*/
+          .post-summary {
+            padding: 12px;
+            background-color: var(--post-summary-background);
+            border-radius: 4px;
+
+            .post-summary-title {
+              font-size: 16px;
+              color: #1890ff;
+            }
           }
-        }
 
-        .post-content {
-          padding: 0 24px;
+          .post-content {
+            ::v-deep(.md-editor-preview-wrapper) {
+              padding: 0;
+            }
+          }
+
+          .post-column-list {
+            border-top: 1px solid var(--youyu-border-color);
+
+            .include-text {
+              color: var(--youyu-text1);
+              margin-top: 12px;
+              margin-left: 8px;
+            }
+
+            ::v-deep(.post-column) {
+              margin-top: 12px;
+            }
+          }
         }
       }
 

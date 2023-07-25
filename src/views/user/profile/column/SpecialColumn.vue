@@ -5,7 +5,7 @@
       <a-button class="add-button" :disabled="addBtnDisabled" @click="onAdd">添加专栏</a-button>
     </div>
     <ContentData url="getColumnList" :params="{userId: user.id}" v-slot="{data}" ref="ContentDataRef">
-      <div class="column-list">
+      <div class="column-list" v-if="data && data.length">
         <ColumnItem @deleteSuccess="deleteSuccess" v-for="item in data" :data="item"/>
       </div>
     </ContentData>

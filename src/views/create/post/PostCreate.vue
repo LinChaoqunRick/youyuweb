@@ -26,7 +26,7 @@
     createType: '0',
     originalLink: '',
     userId: userInfo.value.id,
-    columnId: []
+    columnIds: []
   });
   const isSave = ref(false);
 
@@ -34,6 +34,7 @@
     const form = cloneDeep(formValidate.value);
     form.tags = form.tags.join(",");
     form.thumbnail = form.thumbnail.join(",");
+    form.columnIds = form.columnIds.join(",");
     if (!form.title || !form.content) {
       notification.error({
         message: '发布失败',
