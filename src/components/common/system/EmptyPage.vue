@@ -3,12 +3,12 @@
     <keep-alive>
       <component :is="Component"
                  v-if="$route.meta.keepAlive && isRouterAlive"
-                 :key="$route.name"
+                 :key="Component.name"
                  ref="ComponentRef"></component>
     </keep-alive>
     <component :is="Component"
                v-if="!$route.meta.keepAlive && isRouterAlive"
-               :key="$route.name"
+               :key="Component.name"
                ref="ComponentRef"></component>
   </router-view>
 </template>
