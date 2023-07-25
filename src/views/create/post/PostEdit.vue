@@ -11,6 +11,7 @@
   import PostEditor from "./PostEditor.vue";
   import type {postData} from "@/types/post";
   import {notification} from "ant-design-vue";
+  import {cloneDeep} from 'lodash';
 
   const {getters, dispatch} = useStore();
   const route = useRoute();
@@ -18,6 +19,7 @@
 
   const userInfo = computed(() => getters['userInfo']);
   const formValidate = ref<postData>({
+    id: null,
     title: '',
     content: '',
     categoryId: null,
@@ -26,7 +28,8 @@
     summary: '',
     createType: '0',
     originalLink: '',
-    userId: null
+    userId: null,
+    columnId: null
   });
   const isSave = ref(false);
   const spinning = ref(true);
@@ -36,6 +39,7 @@
       formValidate.value = res.data;
       formValidate.value.tags = formValidate.value.tags ? formValidate.value.tags.split(",") : [];
       formValidate.value.thumbnail = formValidate.value.thumbnail?.split(",") ?? [];
+      formValidate.value.columnId = formValidate.value.columnId?(formValidate.value.columnId+'').split(",") : [];
     }).finally(() => {
       spinning.value = false;
     })
@@ -43,9 +47,10 @@
   initData();
 
   const handleSubmit = (callback: Function) => {
-    const form = JSON.parse(JSON.stringify(toRaw(formValidate.value)));
+    const form = cloneDeep(formValidate.value);
     form.tags = form.tags.join(",");
     form.thumbnail = form.thumbnail.join(",");
+    form.columnId = form.columnId.join(",");
     if (!form.title || !form.content) {
       notification.error({
         message: '发布失败',
