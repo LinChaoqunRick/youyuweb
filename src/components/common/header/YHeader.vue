@@ -6,7 +6,7 @@
     </div>
     <div class="right-nav">
       <Search/>
-      <Create/>
+      <CreateCenter/>
       <ThemeSwitch/>
       <Login/>
     </div>
@@ -17,7 +17,7 @@
   import Logo from "@/components/common/header/logo/Logo.vue";
   import Menu from "@/components/common/header/menu/Menu.vue";
   import ThemeSwitch from "@/components/common/theme/ThemeSwitch.vue";
-  import Create from "@/components/common/header/create/Create.vue";
+  import CreateCenter from "@/components/common/header/create/CreateCenter.vue";
   import Login from "@/components/common/header/login/Login.vue";
   import Search from "@/components/common/header/search/Search.vue";
 </script>

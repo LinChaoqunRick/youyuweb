@@ -44,7 +44,7 @@
   import {computed, inject} from "vue";
   import {useStore} from "vuex";
   import openModal from "@/libs/tools/openModal";
-  import ColumnEditor from "./ColumnEditor.vue";
+  import ColumnEdit from "./ColumnEdit.vue";
   import {message, Modal} from "ant-design-vue";
 
   const props = defineProps({
@@ -68,14 +68,19 @@
   }
 
   const onEdit = () => {
-
+    openModal({
+      component: ColumnEdit,
+      componentProps: {columnId: props.data.id}
+    }).then(res => {
+      props.data = res;
+    })
   }
 
   const onDelete = () => {
     Modal.confirm({
       title: '删除时刻',
       icon: '', // <help theme="outline" size="24" fill="#1890ff"/>
-      content: '确定删除这条时刻吗？',
+      content: '确定删除此专栏？',
       onOk() {
         return dispatch('deleteColumn', {columnId: props.data.id}).then(res => {
           message.success('删除成功');

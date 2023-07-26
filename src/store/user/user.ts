@@ -4,6 +4,7 @@ import {
   GET_POST_USER_DETAIL,
   GET_LIMIT_POST,
   GET_COLUMN_LIST,
+  GET_COLUMN_DETAIL,
   ADD_COLUMN,
   UPDATE_COLUMN,
   DELETE_COLUMN,
@@ -34,6 +35,9 @@ export default {
     },
     getColumnList(state: any, params: object) {
       return http.get(GET_COLUMN_LIST, params);
+    },
+    getColumnDetail(state: any, params: object) {
+      return http.get(GET_COLUMN_DETAIL, params);
     },
     addColumn(state: any, params: object) {
       return http.post(ADD_COLUMN, params);

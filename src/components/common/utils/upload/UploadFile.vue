@@ -51,6 +51,10 @@
     },
     query: {
       type: String
+    },
+    accept: {
+      type: String,
+      default: ".jpg, .jpeg, .png"
     }
   })
   const fileList = ref([]);

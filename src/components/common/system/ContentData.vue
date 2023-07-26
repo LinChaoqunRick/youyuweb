@@ -64,12 +64,12 @@
   .content-data {
     position: relative;
 
-    ::v-deep(.ant-spin-nested-loading) {
+    ::v-deep(.ant-spin) {
       min-height: 200px;
-
-      .ant-spin-container {
-        min-height: 200px;
-      }
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .retry-load {
