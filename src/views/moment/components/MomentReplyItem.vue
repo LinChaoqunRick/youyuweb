@@ -91,7 +91,7 @@
             cancel-text="否"
             @confirm="onConfirmDelete"
             :getPopupContainer="triggerNode=>triggerNode.parentNode">
-            <div class="ope-item delete-ope" :class="{'visible': deleteVisible}" v-if="userInfo.id === data.userId"
+            <div class="ope-item delete-ope" :class="{'visible': deleteVisible}" v-if="showDelete"
                  @click="onDelete">
               删除
             </div>
@@ -159,6 +159,7 @@
   const {moment, updateMomentAttribute} = inject('moment');
   const images = computed(() => props.data.images ? props.data.images.split(",") : null);
   const isLogin = computed(() => getters['isLogin']);
+  const showDelete = computed(() => userInfo.value.id === props.data.userId || moment.userId === userInfo.value.id)
 
   function set(value: number) {
     row.value = value;

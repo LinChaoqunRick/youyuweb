@@ -45,7 +45,7 @@
           <i-comment :theme="active?'filled':'outline'" size="16" fill="currentColor"/>
           {{active?'取消回复':'回复'}}<span v-if="data.replyCount">({{data.replyCount}})</span>
         </div>
-        <div class="ope-item delete-ope" v-if="userInfo.id === data.userId" @click="handleDelete">
+        <div class="ope-item delete-ope" v-if="showDelete" @click="onDelete">
           删除
         </div>
       </div>
@@ -95,8 +95,11 @@
       required: true
     },
   });
-  const showLoadReply = computed(() => (props.data.replyCount > 0 && !replyList.value.length) || currentPageNum.value <= pageNum.value);
 
+  const showLoadReply = computed(() => (props.data.replyCount > 0 && !replyList.value.length) || currentPageNum.value <= pageNum.value);
+  const showDelete = computed(() => userInfo.value.id === props.data.userId || post.value.userId === userInfo.value.id)
+  const post = inject('post');
+  const setPostAttribute = inject('setPostAttribute');
   const expand = ref<boolean>(false);
   const row = ref<number>(0);
   const replyList = ref([]);
@@ -105,8 +108,6 @@
   const replyEditor = ref(null);
   const {activeId, updateActiveId} = inject('active');
   const active = computed(() => activeId.value === props.data.id);
-  const post = inject('post');
-  const setPostAttribute = inject('setPostAttribute');
   const replyLoading = ref(false);
   const likeLoading = ref<boolean>(false);
 
@@ -182,7 +183,7 @@
     }).finally(() => submitCallback())
   }
 
-  function handleDelete() {
+  function onDelete() {
     Modal.confirm({
       title: '删除评论',
       icon: '', // <help theme="outline" size="24" fill="#1890ff"/>

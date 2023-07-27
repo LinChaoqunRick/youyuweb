@@ -118,7 +118,10 @@
       reply.images = [];
       loading.value = false;
     }
-    emit("onSubmit", cloneDeep(reply), successCallback)
+    const failedCallback = () => {
+      loading.value = false;
+    }
+    emit("onSubmit", cloneDeep(reply), successCallback, failedCallback)
   }
 
   defineExpose({

@@ -64,7 +64,7 @@
         <i-comment :theme="active?'filled':'outline'" size="16" fill="currentColor"/>
         {{active?'取消回复':'回复'}}<span v-if="data.replyCount">({{data.replyCount}})</span>
       </div>
-      <div class="ope-item delete-ope" v-if="userInfo.id === data.userId" @click="handleDelete">
+      <div class="ope-item delete-ope" v-if="showDelete" @click="handleDelete">
         删除
       </div>
     </div>
@@ -106,6 +106,7 @@
   const active = computed(() => activeId.value === props.data.id);
   const post = inject('post');
   const setPostAttribute = inject('setPostAttribute');
+  const showDelete = computed(() => userInfo.value.id === props.data.userId || post.value.userId === userInfo.value.id)
 
 
   function handleReply() {

@@ -176,7 +176,7 @@
       type: Object as PropType<momentListType>
     }
   });
-  const emit = defineEmits(["deleteSuccess"]);
+  const emit = defineEmits(["deleteSuccess", "onEdit"]);
 
   const preview = ref(false);
   const current = ref(0);
@@ -224,18 +224,19 @@
   const onClose = () => {
     preview.value = false;
   };
-  const onCommentSubmit = (reply: object, callback: Function) => {
+  const onCommentSubmit = (reply: object, successCallback: Function, failedCallback) => {
     reply.images = reply.images.length ? reply.images.join(",") : null;
     reply.momentId = props.data.id;
     reply.userId = userInfo.value.id;
+    reply.userIdTo = props.data.userId;
     reply.content = transformHTMLToTag(reply.content);
     dispatch('createMomentComment', reply).then(res => {
-      if (res.data) {
-        message.success("发布成功");
-        commentList.value.unshift(res.data);
-        props.data.commentCount += 1;
-      }
-      callback();
+      message.success("发布成功");
+      commentList.value.unshift(res.data);
+      props.data.commentCount += 1;
+      successCallback();
+    }).catch(() => {
+      failedCallback();
     })
   }
 
@@ -289,7 +290,7 @@
   }
 
   const onEdit = () => {
-
+    emit("onEdit");
   }
 
   const onLike = () => {

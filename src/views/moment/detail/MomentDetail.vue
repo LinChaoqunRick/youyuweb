@@ -3,7 +3,7 @@
     <div class="moment-detail-middle">
       <div v-if="moment">
         <div class="moment-detail-item">
-          <MomentItem :data="moment" @deleteSuccess="onMomentDeleteSuccess" ref="MomentRef"/>
+          <MomentItem :data="moment" @deleteSuccess="onMomentDeleteSuccess" @onEdit="onEdit" ref="MomentRef"/>
         </div>
         <div class="moment-comment-editor-wrapper mt-8">
           <div class="editor-title">评论</div>
@@ -133,6 +133,10 @@
   }
 
   const onCommentDeleteSuccess = () => {
+
+  }
+
+  const onEdit = () => {
 
   }
 

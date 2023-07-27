@@ -59,7 +59,7 @@
             cancel-text="否"
             @confirm="onConfirmDelete"
             :getPopupContainer="triggerNode=>triggerNode.parentNode">
-            <div class="ope-item delete-ope" :class="{'visible': deleteVisible}" v-if="userInfo.id === data.userId"
+            <div class="ope-item delete-ope" :class="{'visible': deleteVisible}" v-if="showDelete"
                  @click="onDelete">
               删除
             </div>
@@ -138,9 +138,12 @@
 
   const userInfo = computed(() => getters['userInfo']);
   const {moment, updateMomentAttribute} = inject('moment');
+  console.log(moment, moment.value);
+  moment.supportCount = 100;
   const images = computed(() => props.data.images ? props.data.images.split(",") : null);
   const isLogin = computed(() => getters['isLogin']);
   const showLoadReply = computed(() => (props.data.replyCount > 0 && !replyList.value.length) || currentPageNum.value <= pageNum.value);
+  const showDelete = computed(() => userInfo.value.id === props.data.userId || moment.userId === userInfo.value.id)
 
   function set(value: number) {
     row.value = value;
@@ -199,10 +202,11 @@
     }
   }
 
-  const onSubmit = (reply, successCallback) => {
+  const onSubmit = (reply, successCallback, failedCallback) => {
     reply.images = reply.images.length ? reply.images.join(",") : null;
     reply.momentId = moment.id;
     reply.userId = userInfo.value.id;
+    reply.userIdTo = moment.userId;
     reply.rootId = props.data.id;
     reply.content = transformHTMLToTag(reply.content);
     dispatch('createMomentComment', reply).then(res => {
@@ -214,6 +218,8 @@
         active.value = false;
       }
       successCallback();
+    }).catch(() => {
+      failedCallback();
     })
   }
 
