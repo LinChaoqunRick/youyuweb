@@ -4,18 +4,19 @@ const route = [
     name: 'Moment',
     meta: {
       title: "时刻",
-      code: "MOMENT"
+      code: "MOMENT",
     },
     component: () => import('@/views/moment/Moment.vue'),
     children: [
       {
-        path: "",
+        path: "/",
         redirect: "/moment/new",
+        name: "MomentList",
         meta: {
           title: "时刻列表",
           hide: true,
           code: "MOMENT_LIST",
-          keepAlive: true
+          keepAlive: false
         },
         component: () => import("@/views/moment/list/MomentList.vue"),
         children: [
@@ -41,7 +42,7 @@ const route = [
           },
           {
             path: "following",
-            name: "MomentListFollowing",
+            name: "MomentListFollow",
             meta: {
               title: "时刻列表-关注",
               code: "MOMENT_LIST",
@@ -53,14 +54,14 @@ const route = [
       },
       {
         path: 'details/:momentId(\\d*)',
-        name: 'momentDetail',
+        name: 'MomentDetail',
         meta: {
           title: "时刻详情",
           hide: true,
           code: "MOMENT_DETAIL"
         },
         component: () => import('@/views/moment/detail/MomentDetail.vue'),
-      }
+      },
     ]
   }
 ]

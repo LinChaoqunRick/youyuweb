@@ -110,7 +110,7 @@
         <div class="item-text">{{data.supportCount || '点赞'}}</div>
       </div>
     </div>
-    <div class="moment-item-bottom" v-if="replyShow">
+    <div class="moment-item-bottom" v-if="commentListShowVisibleIf" v-show="commentListShowVisibleShow">
       <div class="moment-comment-editor">
         <div class="user-avatar">
           <img v-if="isLogin" :src="userInfo.avatar"/>
@@ -162,7 +162,7 @@
 <script lang="ts" setup>
   import {ref, computed, nextTick, provide} from 'vue';
   import type {PropType} from "vue";
-  import {useRoute, RouterLink} from "vue-router";
+  import {useRoute, useRouter, RouterLink} from "vue-router";
   import {useStore} from "vuex";
   import type {momentListType} from "@/views/moment/types";
   import {message, Modal} from "ant-design-vue";
@@ -177,19 +177,22 @@
   const {getters, dispatch} = useStore();
 
   const route = useRoute();
+  const router = useRouter();
 
   const props = defineProps({
     data: {
       type: Object as PropType<momentListType>
     }
   });
-  const emit = defineEmits(["deleteSuccess", "onEdit"]);
+  const emit = defineEmits(["deleteSuccess", "onEdit", "saveSuccess", "onCommentDeleteSuccess"]);
 
   const preview = ref(false);
   const current = ref(0);
   const row = ref<number>(0);
   const expand = ref<boolean>(false);
   const replyShow = ref<boolean>(false);
+  const commentListShowVisibleIf = ref<boolean>(false);
+  const commentListShowVisibleShow = ref<boolean>(false);
   const visible = ref<boolean>(false);
   const sort = ref<boolean>(true); // true:最新 false:最热
   const loading = ref<boolean>(false);
@@ -233,6 +236,7 @@
   const onClose = () => {
     preview.value = false;
   };
+
   const onCommentSubmit = (reply: object, successCallback: Function, failedCallback) => {
     reply.images = reply.images.length ? reply.images.join(",") : null;
     reply.momentId = props.data.id;
@@ -241,24 +245,31 @@
     reply.content = transformHTMLToTag(reply.content);
     dispatch('createMomentComment', reply).then(res => {
       message.success("发布成功");
-      ContentDataRef.value.data.list.unshift(res.data);
+      ContentDataRef.value?.data.list.unshift(res.data);
       props.data.commentCount += 1;
+      emit("saveSuccess", res.data);
       successCallback();
-    }).catch(() => {
+    }).catch((e) => {
+      console.log(e);
       failedCallback();
     })
   }
 
   const onClickReply = () => {
-    replyShow.value = !replyShow.value;
+    replyShow.value = commentListShowVisibleShow.value = !replyShow.value;
     if (replyShow.value) {
-      // getCommentsPage();
+      commentListShowVisibleIf.value = true;
     }
   }
 
-  const deleteSuccess = (moment: momentListType) => {
-    ContentDataRef.value.data.list = ContentDataRef.value.data.list.filter(item => item.id !== moment.id);
+  const deleteSuccess = (comment) => {
+    console.log(comment);
+    if (ContentDataRef.value) {
+      ContentDataRef.value.data.list = ContentDataRef.value.data.list.filter(item => item.id !== comment.id);
+    }
+    console.log(22333);
     props.data.commentCount -= 1;
+    emit("onCommentDeleteSuccess", comment)
   }
 
   const handleSort = (value: boolean) => {
@@ -268,7 +279,7 @@
   }
 
   const onDetail = () => {
-
+    router.push(`/moment/details/${props.data.id}`)
   }
 
   const onDelete = () => {
@@ -327,7 +338,8 @@
   }
 
   defineExpose({
-    onCommentSubmit
+    onCommentSubmit,
+    deleteSuccess
   })
 </script>
 
@@ -404,7 +416,8 @@
         margin-left: 50px;
 
         a {
-          color: inherit;
+          color: inherit !important;
+          font-weight: inherit !important;
         }
 
         ::v-deep(.content-text) {
@@ -439,8 +452,8 @@
 
           &.col-1 {
             img {
-              height: 200px;
-              width: 200px;
+              height: 160px;
+              width: 160px;
             }
           }
 

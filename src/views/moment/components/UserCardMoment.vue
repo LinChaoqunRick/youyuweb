@@ -28,6 +28,12 @@
   </div>
 </template>
 
+<script lang="ts">
+  export default {
+    name: "UserCardMoment"
+  }
+</script>
+
 <script setup lang="ts">
   import {useStore} from "vuex";
   import {useRouter, RouterLink} from "vue-router";

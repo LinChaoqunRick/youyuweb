@@ -17,11 +17,19 @@
   </div>
 </template>
 
+<script lang="ts">
+  export default {
+    name: "MomentList"
+  }
+</script>
+
 <script setup lang="ts">
-  import {ref} from 'vue';
+  import {ref, onMounted} from 'vue';
   import {useRoute, RouterLink} from "vue-router";
   import EmptyPage from '@/components/common/system/EmptyPage.vue';
   import MomentEditor from "../components/MomentEditor.vue";
+
+  console.log(MomentEditor);
 
   const route = useRoute();
   const menuList = [
@@ -48,6 +56,10 @@
       EmptyPageRef.value.Component.unshiftItem(data);
     }
   }
+
+  onMounted(() => {
+    console.log("MomentList onMounted");
+  })
 </script>
 
 <style lang="scss" scoped>

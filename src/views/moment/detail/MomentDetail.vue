@@ -3,9 +3,17 @@
     <div class="moment-detail-middle">
       <div v-if="moment">
         <div class="moment-detail-item">
-          <MomentItem v-if="!isEdit" :data="moment" @deleteSuccess="onMomentDeleteSuccess" @onEdit="onEdit"
+          <MomentItem v-show="!isEdit" :data="moment"
+                      @deleteSuccess="onMomentDeleteSuccess"
+                      @onCommentDeleteSuccess="onCommentDeleteSuccess"
+                      @saveSuccess="onSaveCommentSuccess"
+                      @onEdit="onEdit"
                       ref="MomentRef"/>
-          <MomentEditor v-else/>
+          <MomentEditor v-if="isEdit" isEdit :form="formData" @saveSuccess="saveSuccess">
+            <template v-slot:bottom>
+              <a-button type="link" class="cancel-btn" @click="onEditCancel">取消</a-button>
+            </template>
+          </MomentEditor>
         </div>
         <div class="moment-comment-editor-wrapper mt-8">
           <div class="editor-title">评论</div>
@@ -28,44 +36,42 @@
             </div>
           </div>
           <div class="comment-list">
-            <MomentCommentItem v-for="item in commentList"
-                               :key="item.id"
-                               class="comment-item"
-                               :data="item"
-                               @deleteSuccess="onCommentDeleteSuccess"/>
+            <ContentList url="listMomentCommentPage"
+                         :params="listParams"
+                         :total="moment.commentCount"
+                         v-slot="{list}"
+                         ref="ContentListRef">
+              <MomentCommentItem v-for="item in list"
+                                 :key="item.id"
+                                 class="comment-item"
+                                 :data="item"
+                                 @deleteSuccess="MomentRef?.deleteSuccess"/>
+            </ContentList>
           </div>
-
-          <div class="failed-box" v-if="failed" @click="onRetry">
-            <i-refresh theme="outline" size="15" fill="#1890ff"/>
-            重新加载
-          </div>
-          <div class="no-data" v-else-if="moment.commentCount===0">暂无数据</div>
-          <div class="comment-load-all"
-               v-else-if="moment.commentCount && pageNum <= totalPageNum"
-               @click="onUnlock" ref="loadMoreRef">
-            <div class="more-btn">
-              查看全部 <span class="comment-count">{{moment.commentCount}}</span> 条评论
-              <i-down v-if="!restLoading" theme="outline" size="14" fill="#1890ff"/>
-              <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
-            </div>
-          </div>
-          <div class="loaded-all" v-else-if="pageNum>totalPageNum">已加载全部评论~</div>
         </div>
       </div>
     </div>
   </div>
 </template>
 
+<script lang="ts">
+  export default {
+    name: "MomentDetail"
+  }
+</script>
+
 <script lang="ts" setup>
-  import {computed, ref, provide} from "vue";
+  import {computed, ref, provide, nextTick} from "vue";
   import type {PropType} from "vue";
   import {useStore} from "vuex";
   import {useRoute, useRouter} from "vue-router";
+  import {cloneDeep} from 'lodash';
   import type {momentListType} from "@/views/moment/types";
   import MomentItem from "../list/MomentItem.vue";
   import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
   import MomentCommentItem from "../components/MomentCommentItem.vue";
   import MomentEditor from "../components/MomentEditor.vue";
+  import ContentList from "@/components/common/system/ContentList.vue";
 
   const route = useRoute();
   const router = useRouter();
@@ -73,15 +79,16 @@
 
   const moment = ref<momentListType>(null);
   const MomentRef = ref<HTMLElement | null>(null);
-  const loadMoreRef = ref<HTMLElement | null>(null);
   const commentList = ref([]);
   const sort = ref<boolean>(true); // true:最新 false:最热
   const order = computed(() => sort.value ? 'create_time' : 'support_count');
-  const pageNum = ref<number>(1);
-  const totalPageNum = ref<number>(1);
-  const restLoading = ref<boolean>(false);
-  const failed = ref<boolean>(false);
   const isEdit = ref<boolean>(false);
+  const formData = ref({});
+  const listParams = computed(() => ({
+    momentId: moment.value.id,
+    orderBy: order.value
+  }));
+  const ContentListRef = ref<InstanceType<typeof ContentList> | null>(null);
 
   provide('moment', {moment: moment, updateMomentAttribute});
 
@@ -94,30 +101,10 @@
   const getMomentDetail = () => {
     dispatch("getMoment", {momentId: route.params.momentId}).then(res => {
       moment.value = res.data;
-      getCommentsPage();
     })
   }
 
   getMomentDetail();
-
-  const getCommentsPage = () => {
-    if (totalPageNum.value !== -1 && pageNum > totalPageNum || failed.value) return;
-    restLoading.value = true;
-    dispatch('listMomentCommentPage', {
-      momentId: moment.value.id,
-      pageSize: 10,
-      pageNum: pageNum.value,
-      orderBy: order.value
-    }).then(res => {
-      commentList.value.push(...res.data.list);
-      totalPageNum.value = res.data.pages;
-      pageNum.value++;
-    }).catch(() => {
-      failed.value = true;
-    }).finally(() => {
-      restLoading.value = false;
-    })
-  }
 
   const onMomentDeleteSuccess = () => {
     router.push("/moment/list");
@@ -126,31 +113,32 @@
   const handleSort = (value: boolean) => {
     if (sort.value === value) return;
     sort.value = value;
-    pageNum.value = 1;
-    totalPageNum.value = 1;
-    getCommentsPage();
+    nextTick(() => {
+      ContentListRef.value.initData();
+    })
   }
 
-  const onRetry = () => {
-    failed.value = false;
-    getCommentsPage();
+  const onCommentDeleteSuccess = (comment) => {
+    ContentListRef.value.list = ContentListRef.value.list.filter(item => item.id !== comment.id);
   }
 
-  const onCommentDeleteSuccess = () => {
-
+  const onSaveCommentSuccess = (data) => {
+    ContentListRef.value.list.unshift(data);
   }
 
   const onEdit = () => {
+    formData.value = cloneDeep(moment.value);
+    formData.value.images = formData.value.images ? formData.value.images.split(",") : [];
     isEdit.value = true;
   }
 
-  const onUnlock = () => {
-    const ob = new IntersectionObserver(entries => {
-      if (!entries[0].isIntersecting) return;
-      getCommentsPage();
-    });
+  const onEditCancel = () => {
+    isEdit.value = false;
+  }
 
-    ob.observe(loadMoreRef.value);
+  const saveSuccess = (data) => {
+    moment.value = data;
+    isEdit.value = false;
   }
 
 </script>
@@ -171,6 +159,11 @@
           .comment-operation {
             display: none;
           }
+        }
+
+        .cancel-btn {
+          position: absolute;
+          right: 70px;
         }
       }
 
@@ -240,45 +233,15 @@
         }
 
         .comment-list {
-          ::v-deep(.comment-item) {
-            border-bottom: 1px solid var(--youyu-border-color);
+          ::v-deep(.content-list) {
+            .comment-item {
+              border-bottom: 1px solid var(--youyu-border-color);
 
-            &:last-child {
-              border-bottom: none;
+              &:last-child {
+                border-bottom: none !important;
+              }
             }
           }
-        }
-
-        .failed-box {
-          padding: 6px 0;
-          text-align: center;
-          cursor: pointer;
-        }
-
-        .no-data {
-          padding: 6px 0;
-          text-align: center;
-          cursor: pointer;
-        }
-
-        .comment-load-all {
-
-          .more-btn {
-            padding: 6px 0;
-            cursor: pointer;
-            text-align: center;
-            color: #1890ff;
-
-            &:hover {
-
-            }
-          }
-        }
-
-        .loaded-all {
-          padding: 6px 0;
-          text-align: center;
-          color: var(--youyu-text2);
         }
       }
     }

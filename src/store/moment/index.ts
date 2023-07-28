@@ -1,6 +1,7 @@
 import http from "@/network/https";
 import {
   MOMENT_CREATE,
+  MOMENT_UPDATE,
   MOMENT_DELETE,
   MOMENT_LIST,
   MOMENT_LIST_FOLLOWING,
@@ -22,6 +23,9 @@ export default {
   actions: {
     createMoment(state: any, params: object) {
       return http.post(MOMENT_CREATE, params);
+    },
+    updateMoment(state: any, params: object) {
+      return http.post(MOMENT_UPDATE, params);
     },
     deleteMoment(state: any, params: object) {
       return http.post(MOMENT_DELETE, params);

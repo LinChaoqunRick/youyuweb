@@ -3,7 +3,7 @@
     <div class="editor-body">
       <div class="login-mask" @click="toLogin" v-if="!isLogin"></div>
       <div class="editor-content-wrapper">
-        <ContentEditableDiv v-model="moment.content"
+        <ContentEditableDiv v-model="form.content"
                             showLimit
                             placeholder="此刻在想什么..."
                             ref="richEditor">
@@ -19,8 +19,8 @@
         </ContentEditableDiv>
       </div>
     </div>
-    <div class="image-wrapper" v-if="moment.images?.length">
-      <div v-for="item in moment.images" class="image-item">
+    <div class="image-wrapper" v-if="form.images?.length">
+      <div v-for="item in form.images" class="image-item">
         <img :src="item"/>
         <div class="image-delete" @click="onImageDelete(index)">
           <i-close theme="outline" size="10" fill="currentColor" :strokeWidth="2"/>
@@ -60,8 +60,11 @@
           <span class="tool-title">话题</span>
         </div>-->
       </div>
-      <a-button type="primary" :disabled="!isLogin || !currentLength || contentLengthExceed" @click="onSubmit">发布
+      <a-button type="primary" :disabled="!isLogin || !currentLength || contentLengthExceed" :loading="submitLoading"
+                @click="onSubmit">
+        发布
       </a-button>
+      <slot name="bottom"></slot>
     </div>
   </div>
 </template>
@@ -79,14 +82,19 @@
   import ContentEditableDiv from "@/components/common/utils/contenteditable/ContentEditableDiv.vue";
 
   const props = defineProps({
-    moment: {
+    form: {
       type: Object,
       default: () => ({
         content: '',
         images: []
       })
+    },
+    isEdit: {
+      type: Boolean,
+      default: false
     }
   });
+
   const emit = defineEmits(['saveSuccess']);
 
   const maxLength = 500;
@@ -95,16 +103,17 @@
   const isLogin = computed(() => getters['isLogin']);
   const currentLength = computed(() => richEditor.value?.totalStrLength);
   const contentLengthExceed = computed(() => richEditor.value?.contentLengthExceed);
-  const uploadDisabled = computed(() => props.moment.images.length >= 9 || !isLogin.value)
+  const uploadDisabled = computed(() => props.form.images.length >= 9 || !isLogin.value)
 
   const richEditor = ref(null);
   const active = computed(() => richEditor.value?.active);
   const emojiVisible = ref(false);
+  const submitLoading = ref(false);
   let position = '';
 
   const uploadSuccess = (fileList: []) => {
     const url = fileList[0].url + '?x-oss-process=style/smallThumb';
-    props.moment.images.push(url);
+    props.form.images.push(url);
   }
 
   const toLogin = () => {
@@ -112,23 +121,27 @@
   }
 
   const onImageDelete = (index: number) => {
-    props.moment.images.splice(index, 1);
+    props.form.images.splice(index, 1);
   }
 
   const onSubmit = () => {
-    const form = cloneDeep(props.moment);
+    submitLoading.value = true;
+    const isEdit = props.isEdit;
+    const form = cloneDeep(props.form);
     form.images = form.images.length ? form.images.join(",") : null;
     form.content = transformHTMLToTag(form.content);
-    dispatch('createMoment', form).then(res => {
-      message.success("发布成功");
+    dispatch(isEdit ? 'updateMoment' : 'createMoment', form).then(res => {
+      message.success(isEdit ? "修改成功" : "发布成功");
       resetEditor();
-      emit('saveSuccess', toRaw(res.data));
+      emit('saveSuccess', res.data);
+    }).finally(() => {
+      submitLoading.value = false;
     })
   }
 
   const resetEditor = () => {
-    props.moment.content = '';
-    props.moment.images = [];
+    props.form.content = '';
+    props.form.images = [];
     richEditor.value.clearContent();
   }
 
@@ -283,6 +296,7 @@
     }
 
     .editor-bottom {
+      position: relative;
       display: flex;
       justify-content: space-between;
       padding: 10px 0;
