@@ -3,7 +3,9 @@
     <div class="moment-detail-middle">
       <div v-if="moment">
         <div class="moment-detail-item">
-          <MomentItem :data="moment" @deleteSuccess="onMomentDeleteSuccess" @onEdit="onEdit" ref="MomentRef"/>
+          <MomentItem v-if="!isEdit" :data="moment" @deleteSuccess="onMomentDeleteSuccess" @onEdit="onEdit"
+                      ref="MomentRef"/>
+          <MomentEditor v-else/>
         </div>
         <div class="moment-comment-editor-wrapper mt-8">
           <div class="editor-title">评论</div>
@@ -63,6 +65,7 @@
   import MomentItem from "../list/MomentItem.vue";
   import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
   import MomentCommentItem from "../components/MomentCommentItem.vue";
+  import MomentEditor from "../components/MomentEditor.vue";
 
   const route = useRoute();
   const router = useRouter();
@@ -78,6 +81,7 @@
   const totalPageNum = ref<number>(1);
   const restLoading = ref<boolean>(false);
   const failed = ref<boolean>(false);
+  const isEdit = ref<boolean>(false);
 
   provide('moment', {moment: moment, updateMomentAttribute});
 
@@ -137,7 +141,7 @@
   }
 
   const onEdit = () => {
-
+    isEdit.value = true;
   }
 
   const onUnlock = () => {

@@ -120,7 +120,7 @@
           <MomentReplyEditor @onSubmit="onCommentSubmit"/>
         </div>
       </div>
-      <div class="moment-comment-list" v-if="commentList.length">
+      <div class="moment-comment-list">
         <div class="comment-list-top">
           <div class="comment-count">
             全部评论（{{data.commentCount || 0}}）
@@ -137,16 +137,22 @@
           </div>
         </div>
         <div class="comment-list">
-          <MomentCommentItem v-for="item in commentList"
-                             :key="item.id"
-                             class="comment-item"
-                             :data="item"
-                             @deleteSuccess="deleteSuccess"/>
-        </div>
-        <div class="comment-load-all" v-if="data.commentCount - commentList.length> 0">
-          <div class="more-btn" @click="onDetail">
-            查看全部 <span class="comment-count">{{data.commentCount}}</span> 条评论
-          </div>
+          <ContentData url="listMomentCommentPage"
+                       :params="listParams"
+                       :minHeight="100"
+                       v-slot="{data}"
+                       ref="ContentDataRef">
+            <MomentCommentItem v-for="item in data?.list"
+                               :key="item.id"
+                               class="comment-item"
+                               :data="item"
+                               @deleteSuccess="deleteSuccess"/>
+            <div class="comment-load-all" v-if="data?.pages > 1">
+              <div class="more-btn" @click="onDetail">
+                查看全部 <span class="comment-count">{{props.data.commentCount}}</span> 条评论
+              </div>
+            </div>
+          </ContentData>
         </div>
       </div>
     </div>
@@ -154,7 +160,7 @@
 </template>
 
 <script lang="ts" setup>
-  import {ref, computed, reactive, provide} from 'vue';
+  import {ref, computed, nextTick, provide} from 'vue';
   import type {PropType} from "vue";
   import {useRoute, RouterLink} from "vue-router";
   import {useStore} from "vuex";
@@ -166,6 +172,7 @@
   import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
   import UserCardMoment from "../components/UserCardMoment.vue";
   import MomentCommentItem from "../components/MomentCommentItem.vue";
+  import ContentData from "@/components/common/system/ContentData.vue";
 
   const {getters, dispatch} = useStore();
 
@@ -185,6 +192,7 @@
   const replyShow = ref<boolean>(false);
   const visible = ref<boolean>(false);
   const sort = ref<boolean>(true); // true:最新 false:最热
+  const loading = ref<boolean>(false);
   const likeLoading = ref<boolean>(false);
   const order = computed(() => sort.value ? 'create_time' : 'support_count');
   const images = computed(() => props.data.images ? props.data.images?.split(",") : null);
@@ -200,10 +208,11 @@
   });
   const userInfo = computed(() => getters['userInfo']);
   const richEditor = ref(null);
-  const commentList = ref([]);
   const isLogin = computed(() => getters['isLogin']);
   const likeActive = computed(() => props.data.momentLike);
-  const isDetailPage = computed(() => route.name === "momentDetail")
+  const isDetailPage = computed(() => route.name === "momentDetail");
+  const listParams = computed(() => ({momentId: props.data.id, pageSize: 5, orderBy: order.value}));
+  const ContentDataRef = ref<InstanceType<typeof ContentData> | null>(null);
 
   provide('moment', {moment: props.data, updateMomentAttribute});
 
@@ -232,7 +241,7 @@
     reply.content = transformHTMLToTag(reply.content);
     dispatch('createMomentComment', reply).then(res => {
       message.success("发布成功");
-      commentList.value.unshift(res.data);
+      ContentDataRef.value.data.list.unshift(res.data);
       props.data.commentCount += 1;
       successCallback();
     }).catch(() => {
@@ -243,29 +252,19 @@
   const onClickReply = () => {
     replyShow.value = !replyShow.value;
     if (replyShow.value) {
-      getCommentsPage();
+      // getCommentsPage();
     }
   }
 
-  const getCommentsPage = () => {
-    dispatch('listMomentCommentPage', {
-      momentId: props.data.id,
-      pageSize: 5,
-      orderBy: order.value
-    }).then(res => {
-      commentList.value = res.data.list;
-    })
-  }
-
   const deleteSuccess = (moment: momentListType) => {
-    commentList.value = commentList.value.filter(item => item.id !== moment.id);
+    ContentDataRef.value.data.list = ContentDataRef.value.data.list.filter(item => item.id !== moment.id);
     props.data.commentCount -= 1;
   }
 
   const handleSort = (value: boolean) => {
     if (sort.value === value) return;
     sort.value = value;
-    getCommentsPage();
+    nextTick(() => ContentDataRef.value.initData());
   }
 
   const onDetail = () => {
@@ -648,6 +647,10 @@
         }
 
         .comment-list {
+          ::v-deep(.ant-spin) {
+            min-height: 100px;
+          }
+
           ::v-deep(.comment-item) {
             border-bottom: 1px solid var(--youyu-border-color);
 

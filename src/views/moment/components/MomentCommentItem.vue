@@ -54,11 +54,10 @@
           </div>
           <a-popconfirm
             v-model:visible="deleteVisible"
-            title="确认删除此条评论?"
+            title="确认删除此评论?"
             ok-text="是"
             cancel-text="否"
-            @confirm="onConfirmDelete"
-            :getPopupContainer="triggerNode=>triggerNode.parentNode">
+            @confirm="onConfirmDelete">
             <div class="ope-item delete-ope" :class="{'visible': deleteVisible}" v-if="showDelete"
                  @click="onDelete">
               删除
@@ -138,8 +137,6 @@
 
   const userInfo = computed(() => getters['userInfo']);
   const {moment, updateMomentAttribute} = inject('moment');
-  console.log(moment, moment.value);
-  moment.supportCount = 100;
   const images = computed(() => props.data.images ? props.data.images.split(",") : null);
   const isLogin = computed(() => getters['isLogin']);
   const showLoadReply = computed(() => (props.data.replyCount > 0 && !replyList.value.length) || currentPageNum.value <= pageNum.value);

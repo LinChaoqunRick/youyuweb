@@ -44,13 +44,13 @@
           <template #content>
             <EmojiPicker @onImagePick="onImagePick" @onEmojiPick="onEmojiPick" v-on-click-outside="onEmojiClose"/>
           </template>
-          <div class="tool-item" @click="onClickEmoji">
+          <div class="tool-item" v-login="onClickEmoji">
             <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
             <span class="tool-title">表情</span>
           </div>
         </a-popover>
         <UploadFile accept=".jpg, .jpeg, .png" @uploadSuccess="uploadSuccess" :disabled="uploadDisabled">
-          <div class="tool-item item-upload-image" @click="onCheckLogin">
+          <div class="tool-item item-upload-image" v-login>
             <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
             <span class="tool-title">图片</span>
           </div>
@@ -78,6 +78,15 @@
   import EmojiPicker from "@/components/common/utils/emoji/EmojiPicker.vue";
   import ContentEditableDiv from "@/components/common/utils/contenteditable/ContentEditableDiv.vue";
 
+  const props = defineProps({
+    moment: {
+      type: Object,
+      default: () => ({
+        content: '',
+        images: []
+      })
+    }
+  });
   const emit = defineEmits(['saveSuccess']);
 
   const maxLength = 500;
@@ -86,21 +95,16 @@
   const isLogin = computed(() => getters['isLogin']);
   const currentLength = computed(() => richEditor.value?.totalStrLength);
   const contentLengthExceed = computed(() => richEditor.value?.contentLengthExceed);
-  const uploadDisabled = computed(() => moment.images.length >= 9 || !isLogin.value)
+  const uploadDisabled = computed(() => props.moment.images.length >= 9 || !isLogin.value)
 
   const richEditor = ref(null);
   const active = computed(() => richEditor.value?.active);
   const emojiVisible = ref(false);
   let position = '';
-  const moment = reactive({
-    userId: '',
-    content: '',
-    images: []
-  });
 
   const uploadSuccess = (fileList: []) => {
     const url = fileList[0].url + '?x-oss-process=style/smallThumb';
-    moment.images.push(url);
+    props.moment.images.push(url);
   }
 
   const toLogin = () => {
@@ -108,12 +112,11 @@
   }
 
   const onImageDelete = (index: number) => {
-    moment.images.splice(index, 1);
+    props.moment.images.splice(index, 1);
   }
 
   const onSubmit = () => {
-    const form = cloneDeep(moment);
-    form.userId = userInfo.value.id;
+    const form = cloneDeep(props.moment);
     form.images = form.images.length ? form.images.join(",") : null;
     form.content = transformHTMLToTag(form.content);
     dispatch('createMoment', form).then(res => {
@@ -124,9 +127,8 @@
   }
 
   const resetEditor = () => {
-    moment.userId = '';
-    moment.content = '';
-    moment.images = [];
+    props.moment.content = '';
+    props.moment.images = [];
     richEditor.value.clearContent();
   }
 

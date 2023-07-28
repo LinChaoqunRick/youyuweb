@@ -2,11 +2,11 @@
   <div class="content-data" :style="{minHeight: minHeight+'px'}">
     <a-spin :spinning="loading">
       <slot :data="data">
-        <div v-if="failed" @click="initData" class="retry-load">
+        <div v-if="failed" @click="initData" :style="{minHeight: minHeight+'px'}" class="retry-load">
           <i-refresh theme="outline" size="15" fill="#1890ff"/>
           <span class="loading-text">重新加载</span>
         </div>
-        <div v-else-if="!loading && (!data || !data?.length)" class="no-data">暂无数据</div>
+        <div v-else-if="!loading && (!data || !data?.length)" class="no-data" :style="{minHeight: minHeight+'px'}">暂无数据</div>
       </slot>
     </a-spin>
   </div>
@@ -56,7 +56,8 @@
   initData();
 
   defineExpose({
-    data
+    data,
+    initData
   })
 </script>
 
@@ -74,7 +75,7 @@
 
     .retry-load {
       width: 100%;
-      min-height: 200px;
+      height: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -91,7 +92,6 @@
       align-items: center;
       height: 100%;
       width: 100%;
-      min-height: 200px;
     }
   }
 </style>
