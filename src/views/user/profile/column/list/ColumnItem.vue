@@ -9,7 +9,7 @@
           <i-to-top theme="outline" size="12" fill="#1890ff"/>
           置顶
         </div>
-        <div class="title-text">{{data.title}}</div>
+        <div class="title-text" :title="data.title">{{data.title}}</div>
         <span class="column-operation">
           <div v-if="isOwn">
             <a-popover placement="bottom" trigger="click" overlayClassName="column-operation-tooltip">
@@ -30,7 +30,7 @@
           </div>
         </span>
       </div>
-      <div class="column-content">{{data.content}}</div>
+      <div class="column-content" :title="data.content">{{data.content}}</div>
       <div class="column-info">
         <span class="info-item">{{data.createTime}}</span>
         <span class="info-item">{{data.postNum}}篇文章</span>
@@ -72,7 +72,9 @@
       component: ColumnEdit,
       componentProps: {columnId: props.data.id}
     }).then(res => {
-      props.data = res;
+      props.data.title = res.title;
+      props.data.content = res.content;
+      props.data.cover = res.cover;
     })
   }
 

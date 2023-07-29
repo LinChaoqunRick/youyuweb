@@ -8,6 +8,7 @@ import {
   ADD_COLUMN,
   UPDATE_COLUMN,
   DELETE_COLUMN,
+  GET_COLUMN_POSTS,
   GET_POST_COLLECT_LIST,
   SET_USER_FOLLOW,
   CANCEL_USER_FOLLOW,
@@ -47,6 +48,9 @@ export default {
     },
     deleteColumn(state: any, params: object) {
       return http.post(DELETE_COLUMN, params);
+    },
+    getColumnPosts(state: any, params: object) {
+      return http.post(GET_COLUMN_POSTS, params);
     },
     getPostCollectList(state: any, params: object) {
       return http.post(GET_POST_COLLECT_LIST, params);
