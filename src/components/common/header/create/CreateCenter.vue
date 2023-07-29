@@ -8,7 +8,8 @@
     <template #overlay>
       <div class="content-wrapper">
         <div class="menu-list">
-          <div class="menu-item" v-for="menu in menuList" v-login="onNavigate(menu)">
+          <div class="menu-item" :class="[`menu-item-${index}`]" v-for="(menu, index) in menuList"
+               v-login="onNavigate(menu)">
             <div class="menu-icon" v-html="menu.icon"></div>
             <div class="menu-title">{{ menu.title }}</div>
           </div>
@@ -168,6 +169,18 @@
             .menu-title {
               font-size: 13px;
               color: var(--youyu-body-text2);
+            }
+
+            &.menu-item-0, &.menu-item-2 {
+              .menu-icon {
+                filter: drop-shadow(0 0 2px #1890ff);
+              }
+            }
+
+            &.menu-item-1, &.menu-item-3, &.menu-item-4 {
+              .menu-icon {
+                filter: drop-shadow(0 0 2px #FCA235);
+              }
             }
           }
         }

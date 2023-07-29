@@ -11,10 +11,12 @@
         <i-comment theme="filled" size="19" fill="currentColor"/>
       </div>
     </a-badge>
-    <div class="ope-item" :class="{'active':post.postCollect}" v-login="onCollect"
-         :title="post.postCollect?'取消收藏':'收藏'">
-      <i-star theme="filled" size="22" fill="currentColor"/>
-    </div>
+    <a-badge :count="post.collectCount" color="#1890ff" :overflow-count="99">
+      <div class="ope-item" :class="{'active':post.postCollect}" v-login="onCollect"
+           :title="post.postCollect?'取消收藏':'收藏'">
+        <i-star theme="filled" size="22" fill="currentColor"/>
+      </div>
+    </a-badge>
     <div class="ope-item" title="分享">
       <i-share-one theme="filled" size="21" fill="currentColor"/>
     </div>
@@ -82,9 +84,11 @@
     }).then(res => {
       if (isCollect) {
         setPostAttribute('postCollect', false);
+        setPostAttribute('collectCount', post.value.collectCount - 1);
         message.success('已从您的收藏夹中移除');
       } else {
         setPostAttribute('postCollect', true);
+        setPostAttribute('collectCount', post.value.collectCount + 1);
         message.success('已添加至您的收藏夹');
       }
     }).finally(() => {
