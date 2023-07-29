@@ -70,6 +70,14 @@
       height: 100%;
       padding: 3% 5% 0 5%;
 
+      ::v-deep(.ant-spin-nested-loading) {
+        .ant-spin-container {
+          display: flex;
+          flex-wrap: wrap;
+          align-content: space-around;
+        }
+      }
+
       .note-body {
         display: flex;
         justify-content: center;
@@ -78,7 +86,7 @@
         min-width: 220px;
 
         &:nth-child(n+6) {
-          margin-bottom: 3%;
+          margin: 2% 0;
         }
       }
 
@@ -87,7 +95,6 @@
         width: 100%;
 
         .table-body {
-          height: 100%;
           width: 100%;
           display: flex;
           flex-wrap: wrap;
@@ -98,14 +105,6 @@
             width: 20%;
           }
         }
-      }
-
-      ::v-deep(.table-pagination) {
-        position: absolute;
-        right: 0;
-        bottom: 10px;
-        left: 0;
-        margin: auto;
       }
     }
   }

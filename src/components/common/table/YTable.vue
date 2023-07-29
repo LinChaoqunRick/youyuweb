@@ -132,6 +132,10 @@
   .y-table {
     .table-body {
 
+      ::v-deep(.ant-spin-nested-loading) {
+        width: 100%;
+      }
+
       .retry-load {
         cursor: pointer;
       }
