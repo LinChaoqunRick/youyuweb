@@ -134,6 +134,11 @@
 
       ::v-deep(.ant-spin-nested-loading) {
         width: 100%;
+        height: 100%;
+
+        .ant-spin-container{
+          height: 100%;
+        }
       }
 
       .retry-load {
