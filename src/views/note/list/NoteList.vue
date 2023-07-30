@@ -72,9 +72,10 @@
 
       ::v-deep(.ant-spin-nested-loading) {
         .ant-spin-container {
+          position: relative;
           display: flex;
           flex-wrap: wrap;
-          align-content: space-around;
+          align-content: flex-start;
         }
       }
 
@@ -83,10 +84,11 @@
         justify-content: center;
         align-items: center;
         width: 20%;
+        height: 50%;
         min-width: 220px;
 
         &:nth-child(n+6) {
-          margin: 2% 0;
+          //margin: 2% 0;
         }
       }
 
@@ -96,9 +98,11 @@
 
         .table-body {
           width: 100%;
+          height: 90%;
           display: flex;
           flex-wrap: wrap;
           align-items: flex-start;
+          margin-bottom: 8px;
 
           .ant-skeleton {
             height: 240px;
