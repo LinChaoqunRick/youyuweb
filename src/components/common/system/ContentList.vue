@@ -119,7 +119,7 @@ defineExpose({
   }
 
   .bottom-operation {
-    height: 48px;
+    height: 40px;
     background-color: var(--youyu-background2);
     margin: 0 16px;
 

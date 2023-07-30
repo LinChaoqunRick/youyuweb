@@ -25,12 +25,12 @@
                 <UserCardMoment :user="data.user"/>
               </template>
               <RouterLink :to="{name:'userHome', params: {userId: data.user.id}}">
-                <span>{{data.user.nickname}}</span>
+                <span>{{ data.user.nickname }}</span>
               </RouterLink>
             </a-popover>
             <div class="author-text" v-if="data.user.id === moment.userId">作者</div>
           </div>
-          <div class="publish-time" :title="data.createTime">{{$dayjs().to(data.createTime)}}</div>
+          <div class="publish-time" :title="data.createTime">{{ $dayjs().to(data.createTime) }}</div>
         </div>
         <div class="comment-content" :class="{'content-expand': expand}"
              v-row="{set: set}"
@@ -46,11 +46,11 @@
         <div class="comment-operation">
           <div class="ope-item" :class="{'ope-active': data.commentLike}" v-login="onLike">
             <i-good-two :theme="data.commentLike?'filled':'outline'" size="14" fill="currentColor"/>
-            点赞<span v-if="data.supportCount">({{data.supportCount}})</span>
+            点赞<span v-if="data.supportCount">({{ data.supportCount }})</span>
           </div>
           <div class="ope-item" :class="{'ope-active': active}" @click="onReply">
             <i-comment :theme="active?'filled':'outline'" size="14" fill="currentColor"/>
-            {{active?'取消回复':'回复'}}<span v-if="data.replyCount">({{data.replyCount}})</span>
+            {{ active ? '取消回复' : '回复' }}<span v-if="data.replyCount && !active">({{ data.replyCount }})</span>
           </div>
           <a-popconfirm
             v-model:visible="deleteVisible"
@@ -75,20 +75,29 @@
         <MomentReplyEditor @onSubmit="onSubmit" ref="MomentReplyEditorRef"/>
       </div>
     </div>
-    <div class="reply-list" v-if="replyList?.length">
+    <div v-if="replyList?.length" class="reply-list" :class="{'fold':fold}"
+         :style="{maxHeight: maxHeight?maxHeight:'-1'+'px'}"
+         ref="ReplyListRef">
       <MomentReplyItem v-for="item in replyList"
                        :data="item"
                        :root="data"
                        @saveSuccess="saveSuccess"
                        @deleteSuccess="deleteSuccess"/>
     </div>
-    <div v-if="showLoadReply"
-         class="more-btn"
-         @click="onLoadReply"
-         ref="replyCountRef">
-      <span>{{(currentPageNum===1)?`共${data.replyCount}条回复`:`查看更多回复`}}</span>
-      <i-down v-if="!replyLoading" theme="outline" size="14" fill="#1890ff"/>
-      <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
+    <div class="bottom-operation">
+      <div v-if="showLoadReply" class="view-more" @click="onLoadReply">
+        <span>
+          {{
+            (currentPageNum === 1) ? `共${data.replyCount}条回复` : `${fold && replyList?.length ? '展开' : '查看'}更多回复`
+          }}
+        </span>
+        <i-down v-if="!replyLoading" theme="outline" size="14" fill="#1890ff"/>
+        <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
+      </div>
+      <div class="fold-btn" v-if="replyList?.length && !fold" @click="onFold">
+        <span>收起</span>
+        <i-up theme="outline" size="14" fill="#1890ff"/>
+      </div>
     </div>
   </div>
 </template>
@@ -100,7 +109,7 @@
 </script>
 
 <script setup lang="ts">
-  import {ref, computed, inject, onMounted} from "vue";
+  import {ref, computed, inject, onMounted, nextTick} from "vue";
   import {useStore} from "vuex";
   import {RouterLink} from "vue-router";
   import {message} from "ant-design-vue";
@@ -110,7 +119,6 @@
   import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
   import MomentReplyItem from "@/views/moment/components/MomentReplyItem.vue";
   import UserCardMoment from "../components/UserCardMoment.vue";
-
 
   const {getters, dispatch} = useStore();
   const props = defineProps({
@@ -128,19 +136,21 @@
   const preview = ref<boolean>(false);
   const replyLoading = ref<boolean>(false);
   const likeLoading = ref<boolean>(false);
+  const fold = ref<boolean>(false);
   const current = ref<number>(0);
-  const MomentReplyEditorRef = ref(null);
-  const replyCountRef = ref<HTMLElement | null>(null);
   const replyList = ref([]);
   const pageNum = ref<number>(0);
   const currentPageNum = ref<number>(1);
+  const maxHeight = ref<number>(0);
+  const MomentReplyEditorRef = ref(null);
+  const ReplyListRef = ref(null);
 
   const userInfo = computed(() => getters['userInfo']);
   const {moment, updateMomentAttribute} = inject('moment');
   const images = computed(() => props.data.images ? props.data.images.split(",") : null);
   const isLogin = computed(() => getters['isLogin']);
-  const showLoadReply = computed(() => (props.data.replyCount > 0 && !replyList.value.length) || currentPageNum.value <= pageNum.value);
-  const showDelete = computed(() => userInfo.value.id === props.data.userId || moment.userId === userInfo.value.id)
+  const showLoadReply = computed(() => (props.data.replyCount > 0 && !replyList.value.length) || currentPageNum.value <= pageNum.value || fold.value);
+  const showDelete = computed(() => userInfo.value.id === props.data.userId || moment.value.userId === userInfo.value.id)
 
   function set(value: number) {
     row.value = value;
@@ -201,9 +211,9 @@
 
   const onSubmit = (reply, successCallback, failedCallback) => {
     reply.images = reply.images.length ? reply.images.join(",") : null;
-    reply.momentId = moment.id;
+    reply.momentId = moment.value.id;
     reply.userId = userInfo.value.id;
-    reply.userIdTo = moment.userId;
+    reply.userIdTo = moment.value.userId;
     reply.rootId = props.data.id;
     reply.content = transformHTMLToTag(reply.content);
     dispatch('createMomentComment', reply).then(res => {
@@ -211,7 +221,7 @@
         message.success("发布成功");
         replyList.value.unshift(res.data);
         props.data.replyCount += 1;
-        updateMomentAttribute("commentCount", moment.commentCount + 1);
+        updateMomentAttribute("commentCount", moment.value.commentCount + 1);
         active.value = false;
       }
       successCallback();
@@ -221,17 +231,31 @@
   }
 
   const onLoadReply = () => {
-    replyLoading.value = true;
-    dispatch('listMomentReplyPage', {
-      id: props.data.id,
-      pageNum: currentPageNum.value
-    }).then(res => {
-      pageNum.value = res.data.pages;
-      currentPageNum.value++;
-      replyList.value.push(...res.data.list);
-    }).finally(() => {
-      replyLoading.value = false;
-    })
+    if (!replyList?.length && !fold.value) {
+      replyLoading.value = true;
+      dispatch('listMomentReplyPage', {
+        id: props.data.id,
+        pageNum: currentPageNum.value
+      }).then(res => {
+        pageNum.value = res.data.pages;
+        currentPageNum.value++;
+        replyList.value.push(...res.data.list);
+        nextTick(() => {
+          maxHeight.value = ReplyListRef.value.scrollHeight;
+          ReplyListRef.value.style.maxHeight = maxHeight.value + 'px';
+        })
+      }).finally(() => {
+        replyLoading.value = false;
+      })
+    } else {
+      fold.value = false;
+    }
+  }
+
+  const onFold = () => {
+    maxHeight.value = ReplyListRef.value.scrollHeight;
+    ReplyListRef.value.style.maxHeight = maxHeight.value + 'px';
+    fold.value = true;
   }
 
   const saveSuccess = (data) => {
@@ -241,7 +265,7 @@
   const deleteSuccess = (data) => {
     replyList.value = replyList.value.filter(item => item.id !== data.id);
     props.data.replyCount -= 1;
-    updateMomentAttribute("commentCount", moment.commentCount - 1);
+    updateMomentAttribute("commentCount", moment.value.commentCount - 1);
   }
 
   const onUserVisibleChange = (visible: boolean) => {
@@ -255,8 +279,6 @@
 
 <style lang="scss" scoped>
   .moment-comment-item {
-    padding: 12px 0;
-
     .moment-comment-detail {
       display: flex;
 
@@ -285,7 +307,7 @@
             font-weight: bold;
 
             a {
-              color: inherit;
+              color: inherit !important;
             }
 
             .author-text {
@@ -440,13 +462,20 @@
       }
     }
 
-    .more-btn {
+    .bottom-operation {
+      display: flex;
       margin-top: 6px;
       margin-left: 44px;
       cursor: pointer;
       font-size: 14px;
       line-height: 22px;
       color: #1890ff;
+
+      > div {
+        &:nth-child(n+2) {
+          margin-left: 16px;
+        }
+      }
     }
 
     .reply-list {
@@ -455,6 +484,14 @@
       background-color: var(--youyu-background4);
       padding: 0 12px;
       border-radius: 6px;
+      height: unset;
+      transition: .3s;
+      overflow: hidden;
+      max-height: 3000px;
+
+      &.fold {
+        max-height: 0 !important;
+      }
 
       ::v-deep(.moment-reply-item) {
         border-top: 1px solid var(--youyu-border-color);

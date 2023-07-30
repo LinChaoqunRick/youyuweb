@@ -2,7 +2,7 @@
   <div class="content-data">
     <a-spin :spinning="loading">
       <slot :data="data">
-        <div class="bottom-operation">
+        <div class="bottom-operation" v-if="!loading">
           <div v-if="failed" @click="initData" class="retry-load">
             <i-refresh theme="outline" size="15" fill="#1890ff"/>
             <span class="loading-text">加载失败，重新加载</span>
@@ -64,15 +64,12 @@ defineExpose({
   position: relative;
 
   ::v-deep(.ant-spin) {
-    min-height: 200px;
+    padding: 30px 0;
     width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
 
   .bottom-operation {
-    height: 48px;
+    height: 40px;
     background-color: var(--youyu-background2);
     margin: 8px 16px;
 

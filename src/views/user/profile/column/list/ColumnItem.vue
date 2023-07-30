@@ -1,5 +1,5 @@
 <template>
-  <div class="column-item">
+  <RouterLink :to="{name: 'ColumnDetail', params: {columnId: data.id}}" class="column-item">
     <div class="column-cover">
       <img :src="data.cover"/>
     </div>
@@ -32,17 +32,18 @@
       </div>
       <div class="column-content" :title="data.content">{{data.content}}</div>
       <div class="column-info">
-        <span class="info-item">{{data.createTime}}</span>
+        <span class="info-item">创建于{{data.createTime}}</span>
         <span class="info-item">{{data.postNum}}篇文章</span>
         <span class="info-item">{{data.subscriberNum}}人订阅</span>
       </div>
     </div>
-  </div>
+  </RouterLink>
 </template>
 
 <script setup lang="ts">
   import {computed, inject} from "vue";
   import {useStore} from "vuex";
+  import {RouterLink} from "vue-router";
   import openModal from "@/libs/tools/openModal";
   import ColumnEdit from "./ColumnEdit.vue";
   import {message, Modal} from "ant-design-vue";
@@ -99,6 +100,10 @@
     display: flex;
     padding: 10px;
 
+    a {
+      color: inherit !important;
+    }
+
     .column-cover {
       height: 92px;
       width: 150px;
@@ -113,7 +118,7 @@
     .column-data {
       position: relative;
       width: calc(100% - 166px);
-      margin-left: 16px;
+      margin-left: 12px;
       box-sizing: border-box;
       border-bottom: 1px solid #e5e6eb;
 
@@ -122,6 +127,7 @@
         display: flex;
         word-break: break-all;
         align-items: center;
+        color: var(--youyu-text);
 
         .column-is-top {
           flex: none;
@@ -158,6 +164,10 @@
               font-size: 13px;
             }
           }
+        }
+
+        .i-icon {
+          color: var(--youyu-text1);
         }
       }
 

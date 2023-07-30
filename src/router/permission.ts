@@ -9,6 +9,7 @@ import lab from "./modules/lab";
 import note from "./modules/note";
 import user from "./modules/user";
 import search from "./modules/search";
+import column from "./modules/column";
 
 const routes = [
   ...home,
@@ -22,6 +23,7 @@ const routes = [
   ...about,
   ...user,
   ...search,
+  ...column,
   {
     path: '/:pathMatch(.*)',
     redirect: '/404',

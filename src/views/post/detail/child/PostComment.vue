@@ -23,18 +23,9 @@
       <template #title>
         <div class="title-container">
           <div class="title-text large-font">
-            全部评论({{post.commentCount}})
+            全部评论({{ post.commentCount }})
           </div>
-          <div class="sort-type">
-            <div class="sort-item" :class="{'active': sort}" @click="handleSort(true)">
-              <i-time theme="filled" size="13" fill="currentColor"/>
-              最新
-            </div>
-            <div class="sort-item" :class="{'active': !sort}" @click="handleSort(false)">
-              <i-fire theme="filled" size="13" fill="currentColor"/>
-              最热
-            </div>
-          </div>
+          <SortSwitch v-model="sort" @onChange="onChange"/>
         </div>
       </template>
       <div class="comment-list">
@@ -49,7 +40,7 @@
           </div>
           <div class="no-data" v-else-if="totalPageNum <= 0">暂无数据</div>
           <div class="more-btn" v-else-if="pageNum <= totalPageNum" @click="onUnlock" ref="loadMoreRef">
-            加载全部 {{post.commentCount}} 条评论
+            加载全部 {{ post.commentCount }} 条评论
             <i-down v-if="!restLoading" theme="outline" size="14" fill="#1890ff"/>
             <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
           </div>
@@ -69,6 +60,7 @@
   import CommentItem from "@/components/content/comment/CommentItem.vue";
   import MdEditorCom from "@/components/content/mdEditor/MdEditorCom.vue";
   import CommentHint from "./CommentHint.vue";
+  import SortSwitch from "@/components/common/utils/sortSwitch/SortSwitch.vue";
 
   const isLogin = computed(() => getters['isLogin']);
 
@@ -77,11 +69,11 @@
   const content = ref<string>('');
   const total = ref<number>(0);
   const activeId = ref<number>(-1);
-  const sort = ref(true); // true:最新 false:最热
+  const sort = ref<string>('new'); // true:最新 false:最热
   const commentList = ref([]);
   const text = ref<string>('');
   const submittable = computed(() => !content.value);
-  const order = computed(() => sort.value ? 'create_time' : 'support_count');
+  const order = computed(() => sort.value === 'new' ? 'create_time' : 'support_count');
   const userInfo = computed(() => getters['userInfo']);
   const toolbars = [
     'bold',
@@ -141,9 +133,7 @@
   }
 
 
-  function handleSort(value: boolean) {
-    if (sort.value === value) return;
-    sort.value = value;
+  function onChange() {
     total.value = 0;
     pageNum.value = 1;
     totalPageNum.value = -1;

@@ -40,6 +40,7 @@ import {
   GoodTwo,
   Comment,
   Down,
+  Up,
   LoadingFour,
   SmilingFace,
   Mark,
@@ -127,6 +128,7 @@ export const IconPark = (app) => {
   app.component('IGoodTwo', GoodTwo);
   app.component('IComment', Comment);
   app.component('IDown', Down);
+  app.component('IUp', Up);
   app.component('ILoadingFour', LoadingFour);
   app.component('ISmilingFace', SmilingFace);
   app.component('IMark', Mark);

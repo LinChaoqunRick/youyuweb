@@ -1,5 +1,5 @@
 <template>
-  <div class="column-item-mini">
+  <RouterLink :to="{name: 'ColumnDetail', params: {columnId: data.id}}" class="column-item-mini">
     <div class="column-left">
       <img :src="data.cover+'?x-oss-process=style/tinyThumb'"/>
     </div>
@@ -10,10 +10,12 @@
         <span class="info-item">{{data.subscriberNum}}人订阅</span>
       </div>
     </div>
-  </div>
+  </RouterLink>
 </template>
 
 <script setup lang="ts">
+  import {RouterLink} from "vue-router";
+
   const props = defineProps({
     data: {
       type: Object
@@ -47,6 +49,7 @@
       width: calc(100% - 90px);
       padding: 4px 0 4px 8px;
       height: 100%;
+      color: var(--youyu-text);
 
       .column-title {
         width: 100%;

@@ -24,10 +24,10 @@
               <UserCardMoment :user="data.user"/>
             </template>
             <RouterLink :to="`/user/${data.user.id}/moment`">
-              <div class="user-nickname">{{data.user.nickname}}</div>
+              <div class="user-nickname">{{ data.user.nickname }}</div>
             </RouterLink>
           </a-popover>
-          <div class="publish-time" :title="data.createTime">{{$dayjs().to(data.createTime)}}</div>
+          <div class="publish-time" :title="data.createTime">{{ $dayjs().to(data.createTime) }}</div>
         </div>
         <a-popover v-model:visible="visible"
                    placement="bottomRight"
@@ -101,13 +101,13 @@
         <div class="item-icon">
           <i-comment :theme="replyShow?'filled':'outline'" size="14" fill="currentColor"/>
         </div>
-        <div class="item-text">{{data.commentCount || '评论'}}</div>
+        <div class="item-text">{{ data.commentCount || '评论' }}</div>
       </div>
       <div class="item-operation" :class="{'like-active': likeActive}" v-login="onLike">
         <div class="item-icon">
-          <i-thumbs-up :theme="likeActive?'filled':'outline'" size="14" fill="currentColor"/>
+          <i-good-two :theme="likeActive?'filled':'outline'" size="14" fill="currentColor"/>
         </div>
-        <div class="item-text">{{data.supportCount || '点赞'}}</div>
+        <div class="item-text">{{ data.supportCount || '点赞' }}</div>
       </div>
     </div>
     <div class="moment-item-bottom" v-if="commentListShowVisibleIf" v-show="commentListShowVisibleShow">
@@ -123,23 +123,13 @@
       <div class="moment-comment-list">
         <div class="comment-list-top">
           <div class="comment-count">
-            全部评论（{{data.commentCount || 0}}）
+            全部评论（{{ data.commentCount || 0 }}）
           </div>
-          <div class="sort-type">
-            <div class="sort-item" :class="{'active': sort}" @click="handleSort(true)">
-              <i-time theme="filled" size="13" fill="currentColor"/>
-              最新
-            </div>
-            <div class="sort-item" :class="{'active': !sort}" @click="handleSort(false)">
-              <i-fire theme="filled" size="13" fill="currentColor"/>
-              最热
-            </div>
-          </div>
+          <SortSwitch v-model="sort" @onChange="onChange"/>
         </div>
         <div class="comment-list">
           <ContentData url="listMomentCommentPage"
                        :params="listParams"
-                       :minHeight="100"
                        v-slot="{data}"
                        ref="ContentDataRef">
             <MomentCommentItem v-for="item in data?.list"
@@ -149,7 +139,7 @@
                                @deleteSuccess="deleteSuccess"/>
             <div class="comment-load-all" v-if="data?.pages > 1">
               <div class="more-btn" @click="onDetail">
-                查看全部 <span class="comment-count">{{props.data.commentCount}}</span> 条评论
+                查看全部 <span class="comment-count">{{ props.data.commentCount }}</span> 条评论
               </div>
             </div>
           </ContentData>
@@ -173,6 +163,7 @@
   import UserCardMoment from "../components/UserCardMoment.vue";
   import MomentCommentItem from "../components/MomentCommentItem.vue";
   import ContentData from "@/components/common/system/ContentData.vue";
+  import SortSwitch from "@/components/common/utils/sortSwitch/SortSwitch.vue";
 
   const {getters, dispatch} = useStore();
 
@@ -194,10 +185,10 @@
   const commentListShowVisibleIf = ref<boolean>(false);
   const commentListShowVisibleShow = ref<boolean>(false);
   const visible = ref<boolean>(false);
-  const sort = ref<boolean>(true); // true:最新 false:最热
+  const sort = ref<string>('new'); // true:最新 false:最热
   const loading = ref<boolean>(false);
   const likeLoading = ref<boolean>(false);
-  const order = computed(() => sort.value ? 'create_time' : 'support_count');
+  const order = computed(() => sort.value === 'new' ? 'create_time' : 'support_count');
   const images = computed(() => props.data.images ? props.data.images?.split(",") : null);
   const imageClass = computed(() => {
     const imageLength = images.value?.length ?? 0;
@@ -263,18 +254,14 @@
   }
 
   const deleteSuccess = (comment) => {
-    console.log(comment);
     if (ContentDataRef.value) {
       ContentDataRef.value.data.list = ContentDataRef.value.data.list.filter(item => item.id !== comment.id);
     }
-    console.log(22333);
     props.data.commentCount -= 1;
     emit("onCommentDeleteSuccess", comment)
   }
 
-  const handleSort = (value: boolean) => {
-    if (sort.value === value) return;
-    sort.value = value;
+  const onChange = (value: boolean) => {
     nextTick(() => ContentDataRef.value.initData());
   }
 
@@ -493,9 +480,10 @@
             margin-right: 10px;
 
             img {
-              width: 30px;
-              height: 30px;
-              border: 2px solid var(--youyu-border-color);
+              width: 24px;
+              height: 24px;
+              background-color: #fff;
+              border: 2px solid #fff;
               border-radius: 50%;
               margin-right: -6px;
               display: inline-block;
@@ -660,15 +648,14 @@
         }
 
         .comment-list {
-          ::v-deep(.ant-spin) {
-            min-height: 100px;
-          }
+          ::v-deep(.content-data) {
+            .comment-item {
+              padding: 8px 0;
+              border-bottom: 1px solid var(--youyu-border-color);
 
-          ::v-deep(.comment-item) {
-            border-bottom: 1px solid var(--youyu-border-color);
-
-            &:last-child {
-              border-bottom: none;
+              &:last-child {
+                border-bottom: none !important;
+              }
             }
           }
         }
