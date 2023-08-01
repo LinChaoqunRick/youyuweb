@@ -23,7 +23,7 @@
           </a-popover>
           </div>
           <div v-else class="subscribe-button">
-            <a-button type="primary" size="small" @click="handleSubscribe">
+            <a-button type="primary" size="small" v-login="handleSubscribe">
               <i-plus theme="outline" size="14" fill="currentColor"/>
               订阅
             </a-button>
@@ -58,14 +58,10 @@
   const {getters, commit, dispatch} = useStore();
   const user = inject('user');
   const userInfo = computed(() => getters['userInfo']);
-  const isLogin = computed(() => getters['isLogin']);
   const isOwn = computed(() => user.value.id === userInfo.value.id);
 
   function handleSubscribe() {
-    if (!isLogin.value) {
-      commit("changeLogin", true);
-      return;
-    }
+
   }
 
   const onEdit = () => {
@@ -160,6 +156,12 @@
           display: inline-block;
 
           .subscribe-button {
+            .i-icon {
+              color: #fff;
+              position: relative;
+              top: 0.7px;
+            }
+
             button {
               font-size: 13px;
             }

@@ -150,7 +150,7 @@
   const images = computed(() => props.data.images ? props.data.images.split(",") : null);
   const isLogin = computed(() => getters['isLogin']);
   const showLoadReply = computed(() => (props.data.replyCount > 0 && !replyList.value.length) || currentPageNum.value <= pageNum.value || fold.value);
-  const showDelete = computed(() => userInfo.value.id === props.data.userId || moment.value.userId === userInfo.value.id)
+  const showDelete = computed(() => userInfo.value.id === props.data.userId ||moment.userId === userInfo.value.id)
 
   function set(value: number) {
     row.value = value;
@@ -211,9 +211,9 @@
 
   const onSubmit = (reply, successCallback, failedCallback) => {
     reply.images = reply.images.length ? reply.images.join(",") : null;
-    reply.momentId = moment.value.id;
+    reply.momentId =moment.id;
     reply.userId = userInfo.value.id;
-    reply.userIdTo = moment.value.userId;
+    reply.userIdTo =moment.userId;
     reply.rootId = props.data.id;
     reply.content = transformHTMLToTag(reply.content);
     dispatch('createMomentComment', reply).then(res => {
@@ -221,7 +221,7 @@
         message.success("发布成功");
         replyList.value.unshift(res.data);
         props.data.replyCount += 1;
-        updateMomentAttribute("commentCount", moment.value.commentCount + 1);
+        updateMomentAttribute("commentCount",moment.commentCount + 1);
         active.value = false;
       }
       successCallback();
@@ -265,7 +265,7 @@
   const deleteSuccess = (data) => {
     replyList.value = replyList.value.filter(item => item.id !== data.id);
     props.data.replyCount -= 1;
-    updateMomentAttribute("commentCount", moment.value.commentCount - 1);
+    updateMomentAttribute("commentCount",moment.commentCount - 1);
   }
 
   const onUserVisibleChange = (visible: boolean) => {
