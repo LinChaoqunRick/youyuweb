@@ -9,7 +9,13 @@ import store from "@/store";
 export default {
   created(el: HTMLElement, binding: DirectiveBinding) {
     const callback = binding.value;
-    el.addEventListener('click', () => {
+    el.addEventListener('click', (e: Event) => {
+      /*const event = e || window.event;
+      if (event.stopPropagation){
+        event.stopPropagation();
+      } else {
+        event.cancelBubble = true;
+      }*/
       if (!store.getters.isLogin) {
         store.commit('changeLogin', true);
       } else {

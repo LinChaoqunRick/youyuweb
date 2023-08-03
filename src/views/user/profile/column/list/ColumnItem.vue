@@ -1,15 +1,17 @@
 <template>
-  <RouterLink :to="{name: 'ColumnDetail', params: {columnId: data.id}}" class="column-item">
-    <div class="column-cover">
+  <div class="column-item">
+    <RouterLink :to="{name: 'ColumnDetail', params: {columnId: data.id}}" class="column-cover">
       <img :src="data.cover"/>
-    </div>
+    </RouterLink>
     <div class="column-data">
       <div class="column-title">
         <div class="column-is-top" v-if="data.isTop==='1'">
           <i-to-top theme="outline" size="12" fill="#1890ff"/>
           置顶
         </div>
-        <div class="title-text" :title="data.title">{{data.title}}</div>
+        <RouterLink :to="{name: 'ColumnDetail', params: {columnId: data.id}}" class="title-text" :title="data.title">
+          {{data.title}}
+        </RouterLink>
         <span class="column-operation">
           <div v-if="isOwn">
             <a-popover placement="bottom" trigger="click" overlayClassName="column-operation-tooltip">
@@ -30,14 +32,18 @@
           </div>
         </span>
       </div>
-      <div class="column-content" :title="data.content">{{data.content}}</div>
+      <RouterLink :to="{name: 'ColumnDetail', params: {columnId: data.id}}"
+                  class="column-content"
+                  :title="data.content">
+        <div>{{data.content}}</div>
+      </RouterLink>
       <div class="column-info">
         <span class="info-item">创建于{{data.createTime}}</span>
         <span class="info-item">{{data.postNum}}篇文章</span>
         <span class="info-item">{{data.subscriberNum}}人订阅</span>
       </div>
     </div>
-  </RouterLink>
+  </div>
 </template>
 
 <script setup lang="ts">

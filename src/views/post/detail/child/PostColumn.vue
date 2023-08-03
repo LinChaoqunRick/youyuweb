@@ -1,14 +1,18 @@
 <template>
   <div class="post-column">
-    <div class="column-left">
+    <RouterLink target="_blank" :to="{name: 'ColumnDetail', params: {columnId: data.id}}" class="column-left">
       <img :src="data.cover"/>
-    </div>
+    </RouterLink>
     <div class="column-right">
       <div class="column-top">
-        <div class="column-title text-limit">{{ data.title }}</div>
+        <RouterLink target="_blank" :to="{name: 'ColumnDetail', params: {columnId: data.id}}" class="column-title text-limit">
+          {{ data.title }}
+        </RouterLink>
         <div class="include-text-inner">已收录</div>
       </div>
-      <div class="column-content text-limit">{{ data.content }}</div>
+      <RouterLink target="_blank" :to="{name: 'ColumnDetail', params: {columnId: data.id}}" class="column-content text-limit">
+        {{ data.content }}
+      </RouterLink>
       <div class="column-info">
         <span class="info-item">{{ data.postNum }}篇文章</span>
         <span class="info-item">{{ data.subscriberNum }}人订阅</span>
@@ -90,6 +94,10 @@
 
       .column-top {
         font-size: 16px;
+
+        a {
+          color: inherit !important;
+        }
 
         .column-title {
           padding-right: 50px;
