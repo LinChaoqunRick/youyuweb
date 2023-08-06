@@ -1,6 +1,6 @@
 <template>
   <div class="content-list">
-    <a-spin :spinning="firstLoading" v-if="totalPageNum!==0">
+    <a-spin :spinning="firstLoading">
       <div class="data-list mb-8">
         <slot :list="dataList"/>
       </div>
@@ -120,7 +120,7 @@ defineExpose({
 
   .bottom-operation {
     height: 40px;
-    background-color: var(--youyu-background2);
+    /*background-color: var(--youyu-background2);*/
     margin: 0 16px;
 
     .failed-box, .no-data, .view-all-data, .loaded-all-data {
