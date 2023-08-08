@@ -1,6 +1,6 @@
 <template>
   <div class="note-list">
-    <a-button class="create-button" type="primary" @click="handleCreate" v-if="isAuthor">创建</a-button>
+    <a-button class="create-button" type="primary" @click="handleCreate">创建</a-button>
     <div class="note-list-items">
       <YTable listUrl="listNote" ref="YTableRef">
         <template #default="{dataList}">

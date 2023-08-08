@@ -13,7 +13,7 @@ export default {
   state: () => ({
     showLogin: false,
     user: JSON.parse(localStorage.getItem("user")) || {},
-    authorId: 10000, //作者id
+    authorId: 10000, // 本站作者id
   }),
   mutations: {
     changeLogin(state, status) {
