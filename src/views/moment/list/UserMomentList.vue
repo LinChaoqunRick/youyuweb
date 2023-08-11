@@ -1,27 +1,27 @@
 <template>
   <div class="user-moment-list">
     <div class="moment-list-body">
-      <MomentItem v-for="item in momentList"
-                  :data="item"
-                  :key="item.id"
-                  @deleteSuccess="deleteSuccess"/>
-    </div>
-    <transition name="momentSpin">
-      <div class="load-more-box" ref="loadMoreBox">
-        <div v-show="loading">
+      <ContentList :url="props.url"
+                   :params="params"
+                   auto-load
+                   v-slot="{list}"
+                   ref="ContentListRef">
+            <MomentItem v-for="item in list"
+                        :data="item"
+                        :key="item.id"
+                        @deleteSuccess="deleteSuccess"/>
+        <!--<template #loadMoreBox>
           <a-spin/>
           <span class="loading-text">加载中...</span>
-        </div>
-        <div v-if="failed" @click="onLoadRetry" class="retry-load">
+        </template>
+        <template class="retry-load" #failedBox>
           <i-refresh theme="outline" size="15" fill="#1890ff"/>
           <span class="loading-text">重新加载</span>
-        </div>
-        <div v-if="totalPageNum === 0" class="no-data">
-          暂无数据
-        </div>
-        <div v-if="finish" class="data-finished">已加载全部数据</div>
-      </div>
-    </transition>
+        </template>
+        <template class="no-data" #noDataBox>暂无数据</template>
+        <template class="data-finished" #loadedAllBox>已加载全部数据</template>-->
+      </ContentList>
+    </div>
   </div>
 </template>
 
@@ -32,11 +32,11 @@
 </script>
 
 <script setup lang="ts">
-  import {ref, provide, onMounted, computed, onUnmounted} from 'vue';
+  import {ref, provide} from 'vue';
   import {useStore} from 'vuex';
   import type {momentType} from "@/views/moment/types";
-  import {keepScrollTop} from "@/assets/utils/utils";
   import MomentItem from "./MomentItem.vue";
+  import ContentList from "@/components/common/system/ContentList.vue";
 
   const {dispatch} = useStore();
 
@@ -53,45 +53,9 @@
     }
   })
 
-  const pageNum = ref<number>(1);
-  const totalPageNum = ref<number>(-1);
   const momentList = ref<Array<momentType>>([]);
   const loading = ref<boolean>(false);
-  const failed = ref<boolean>(false);
-  const finish = computed(() => totalPageNum.value !== -1 && pageNum.value > totalPageNum.value); // 是否完成加载（还能不能加载下一页）
-  const loadMoreBox = ref<HTMLElement>(null);
   const activeId = ref<number>(-1);
-
-  function getListData() {
-    failed.value = false;
-    loading.value = true;
-    dispatch(props.url, Object.assign({}, {
-      pageNum: pageNum.value,
-      pageSize: 10,
-      orderBy: 'create_time',
-      userIds: props.userIds
-    }, props.params)).then(res => {
-      momentList.value.push(...res.data.list);
-      pageNum.value === 1 && (totalPageNum.value = res.data.pages);
-      pageNum.value++;
-      keepScrollTop();
-    }).catch(e => {
-      failed.value = true;
-    }).finally(() => {
-      loading.value = false;
-    })
-  };
-
-  const onLoadMore = () => {
-    if (!loading.value && !finish.value && !failed.value) {
-      getListData();
-    }
-  }
-
-  const onLoadRetry = () => {
-    failed.value = false;
-    onLoadMore();
-  }
 
   const unshiftItem = (data: momentType) => {
     momentList.value.unshift(data);
@@ -107,18 +71,6 @@
 
   provide('active', {activeId, updateActiveId});
 
-  const ob = new IntersectionObserver(entries => {
-    if (!entries[0].isIntersecting) return;
-    onLoadMore();
-  });
-
-  onMounted(() => {
-    ob.observe(loadMoreBox.value);
-  })
-
-  onUnmounted(() => {
-    ob.disconnect();
-  })
 
   defineExpose({
     unshiftItem

@@ -60,6 +60,7 @@ export const SAVE_PASSWORD = ApiBase + "/user/savePassword"; // 修改密码
 export const SAVE_EMAIL = ApiBase + "/user/saveEmail"; // 修改邮箱
 export const GET_PROFILE_MENU = ApiBase + "/user/getProfileMenu"; // 获取主页菜单信息
 export const SET_PROFILE_MENU = ApiBase + "/user/setProfileMenu"; // 设置主页菜单信息
+export const GET_USER_DYNAMICS = ApiBase + "/common/getDynamics"; // 获取用户动态
 
 // 时刻
 export const MOMENT_CREATE = ApiBase + "/moment/create"; // 创建时刻
@@ -86,7 +87,7 @@ export const SEND_EMAIL_CODE = ApiBase + "/mail/sendRegisterCode"; // 获取邮�
 // 分类
 export const CATEGORY_LIST = ApiBase + "/category/list"; //
 
-// 用户
+// 专栏
 export const GET_COLUMN_LIST = ApiBase + "/column/list"; //专栏列表
 export const GET_COLUMN_DETAIL = ApiBase + "/column/get"; //专栏详情
 export const ADD_COLUMN = ApiBase + "/column/add"; //专栏列表

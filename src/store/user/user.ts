@@ -20,7 +20,8 @@ import {
   SAVE_PASSWORD,
   SAVE_EMAIL,
   GET_PROFILE_MENU,
-  SET_PROFILE_MENU
+  SET_PROFILE_MENU,
+  GET_USER_DYNAMICS
 } from "@/network/apis";
 
 export default {
@@ -87,6 +88,9 @@ export default {
     },
     setProfileMenu(state: any, params: object) {
       return http.post(SET_PROFILE_MENU, params);
+    },
+    getUserDynamics(state: any, params: object) {
+      return http.post(GET_USER_DYNAMICS, params);
     },
   },
 }

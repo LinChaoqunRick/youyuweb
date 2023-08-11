@@ -29,8 +29,6 @@
   import EmptyPage from '@/components/common/system/EmptyPage.vue';
   import MomentEditor from "../components/MomentEditor.vue";
 
-  console.log(MomentEditor);
-
   const route = useRoute();
   const menuList = [
     {
