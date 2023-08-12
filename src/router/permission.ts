@@ -18,7 +18,7 @@ const routes = [
   ...note,
   ...magazine,
   ...album,
-  // ...create,
+  ...create,
   ...lab,
   ...about,
   ...user,

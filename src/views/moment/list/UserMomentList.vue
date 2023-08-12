@@ -1,25 +1,35 @@
 <template>
   <div class="user-moment-list">
     <div class="moment-list-body">
-      <ContentList :url="props.url"
-                   :params="params"
-                   auto-load
-                   v-slot="{list}"
-                   ref="ContentListRef">
-            <MomentItem v-for="item in list"
-                        :data="item"
-                        :key="item.id"
-                        @deleteSuccess="deleteSuccess"/>
-        <!--<template #loadMoreBox>
-          <a-spin/>
-          <span class="loading-text">加载中...</span>
+      <ContentList :url="props.url" :params="params" auto-load ref="ContentListRef">
+        <template v-slot="{list}">
+          <MomentItem v-for="item in list"
+                      :data="item"
+                      :key="item.id"
+                      @deleteSuccess="deleteSuccess"/>
+        </template>
+        <template v-slot:loadMoreBox>
+          <div class="load-more-box">
+            <a-spin/>
+            <span class="loading-text">加载中...</span>
+          </div>
         </template>
         <template class="retry-load" #failedBox>
-          <i-refresh theme="outline" size="15" fill="#1890ff"/>
-          <span class="loading-text">重新加载</span>
+          <div class="load-more-box">
+            <i-refresh theme="outline" size="15" fill="#1890ff"/>
+            <span class="loading-text">重新加载</span>
+          </div>
         </template>
-        <template class="no-data" #noDataBox>暂无数据</template>
-        <template class="data-finished" #loadedAllBox>已加载全部数据</template>-->
+        <template class="no-data" #noDataBox>
+          <div class="load-more-box">
+            暂无数据
+          </div>
+        </template>
+        <template class="data-finished" #loadedAllBox>
+          <div class="load-more-box">
+            已加载全部数据
+          </div>
+        </template>
       </ContentList>
     </div>
   </div>

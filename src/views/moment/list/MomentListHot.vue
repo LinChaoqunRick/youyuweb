@@ -9,7 +9,7 @@
 <script lang="ts">
   export default {
     name: "MomentListHot"
-  }Co
+  }
 </script>
 
 <script setup lang="ts">

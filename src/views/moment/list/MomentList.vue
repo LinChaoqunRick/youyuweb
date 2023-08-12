@@ -24,7 +24,7 @@
 </script>
 
 <script setup lang="ts">
-  import {ref, onMounted} from 'vue';
+  import {ref} from 'vue';
   import {useRoute, RouterLink} from "vue-router";
   import EmptyPage from '@/components/common/system/EmptyPage.vue';
   import MomentEditor from "../components/MomentEditor.vue";
@@ -54,10 +54,6 @@
       EmptyPageRef.value.Component.unshiftItem(data);
     }
   }
-
-  onMounted(() => {
-    console.log("MomentList onMounted");
-  })
 </script>
 
 <style lang="scss" scoped>

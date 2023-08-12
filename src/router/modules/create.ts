@@ -6,7 +6,8 @@ const route = [
     redirect: "/create/post",
     meta: {
       title: "创作",
-      code: "CREATE"
+      code: "CREATE",
+      hide: true
     },
     children: [
       {
