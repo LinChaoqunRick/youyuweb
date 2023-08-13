@@ -22,7 +22,7 @@ const showMessageCode = [403, 508, 509, 510, 600, 800];
 // 创建axios的对象
 const instance = axios.create({
   baseURL: "",  //配置固定域名
-  timeout: 20 * 1000,
+  timeout: 200 * 1000,
   headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 })
 

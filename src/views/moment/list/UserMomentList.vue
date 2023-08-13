@@ -8,28 +8,6 @@
                       :key="item.id"
                       @deleteSuccess="deleteSuccess"/>
         </template>
-        <template v-slot:loadMoreBox>
-          <div class="load-more-box">
-            <a-spin/>
-            <span class="loading-text">加载中...</span>
-          </div>
-        </template>
-        <template class="retry-load" #failedBox>
-          <div class="load-more-box">
-            <i-refresh theme="outline" size="15" fill="#1890ff"/>
-            <span class="loading-text">重新加载</span>
-          </div>
-        </template>
-        <template class="no-data" #noDataBox>
-          <div class="load-more-box">
-            暂无数据
-          </div>
-        </template>
-        <template class="data-finished" #loadedAllBox>
-          <div class="load-more-box">
-            已加载全部数据
-          </div>
-        </template>
       </ContentList>
     </div>
   </div>

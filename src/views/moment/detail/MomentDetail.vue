@@ -38,14 +38,19 @@
           <div class="comment-list">
             <ContentList url="listMomentCommentPage"
                          :params="listParams"
-                         :total="moment.commentCount"
-                         v-slot="{list}"
                          ref="ContentListRef">
-              <MomentCommentItem v-for="item in list"
-                                 :key="item.id"
-                                 class="comment-item"
-                                 :data="item"
-                                 @deleteSuccess="MomentRef?.deleteSuccess"/>
+              <template v-slot="{list}">
+                <MomentCommentItem v-for="item in list"
+                                   :key="item.id"
+                                   class="comment-item"
+                                   :data="item"
+                                   @deleteSuccess="MomentRef?.deleteSuccess"/>
+              </template>
+              <template #loadMoreBox="{loading, total}">
+                <span class="mr-8">查看全部 <span class="comment-count">{{ moment.commentCount ?? total }}</span> 条评论</span>
+                <i-down v-if="!loading" theme="outline" size="14" fill="#1890ff"/>
+                <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
+              </template>
             </ContentList>
           </div>
         </div>
@@ -233,6 +238,11 @@
         }
 
         .comment-list {
+
+          span {
+            color: #1890ff;
+          }
+
           ::v-deep(.content-list) {
             .comment-item {
               padding: 8px 0;
@@ -240,6 +250,7 @@
 
               &:last-child {
                 border-bottom: none !important;
+                padding-bottom: 0 !important;
               }
             }
           }

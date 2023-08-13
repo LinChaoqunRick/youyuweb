@@ -1,11 +1,9 @@
 <template>
   <div class="content-list">
-    <a-spin :spinning="firstLoading">
-      <div class="data-list mb-8">
-        <slot :list="dataList"/>
-      </div>
-    </a-spin>
-    <div v-if="!firstLoading" class="bottom-operation">
+    <div class="data-list mb-8">
+      <slot :list="dataList"/>
+    </div>
+    <div class="bottom-operation">
       <div class="failed-box" v-if="failed" @click="onRetry">
         <slot name="failedBox">
           <i-refresh theme="outline" size="15" fill="#1890ff"/>
@@ -17,15 +15,10 @@
           暂无数据
         </slot>
       </div>
-      <div class="view-all-data"
-           v-else-if="dataList.length && pageNum <= totalPageNum"
-           @click="onUnlock" ref="loadMoreRef">
-        <slot name="loadMoreBox">
-          <div class="more-btn">
-            <span class="mr-8">查看全部 <span class="comment-count">{{ total ?? totalNum }}</span> 条评论</span>
-            <i-down v-if="!restLoading" theme="outline" size="14" fill="#1890ff"/>
-            <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
-          </div>
+      <div class="view-all-data" v-else-if="pageNum <= totalPageNum" @click="onUnlock" ref="loadMoreRef">
+        <slot name="loadMoreBox" :loading="restLoading" :total="totalNum">
+          <a-spin :spinning="restLoading"></a-spin>
+          <span class="tip-text">加载中...</span>
         </slot>
       </div>
       <div class="loaded-all-data" v-else-if="pageNum>totalPageNum">
@@ -98,8 +91,8 @@
 
   const initData = () => {
     dataList.value = [];
-    totalPageNum.value = 0;
-    pageNum.value = 0;
+    totalPageNum.value = 1;
+    pageNum.value = 1;
     totalNum.value = 0;
     getListData();
   }
@@ -137,20 +130,20 @@
   .content-list {
     position: relative;
 
-    ::v-deep(.ant-spin) {
-      padding: 30px 0;
-      position: relative;
-    }
-
     .bottom-operation {
-      height: 40px;
-      /*background-color: var(--youyu-background2);*/
-      margin: 0 16px;
+      min-height: 48px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 4px;
+      overflow: hidden;
+      background-color: var(--youyu-background1);
 
       .failed-box, .no-data, .view-all-data, .loaded-all-data {
         display: flex;
         justify-content: center;
         align-items: center;
+        min-height: 48px;
         height: 100%;
         width: 100%;
       }
@@ -159,6 +152,10 @@
         padding: 6px 0;
         text-align: center;
         cursor: pointer;
+
+        span {
+          color: #1890ff;
+        }
       }
 
       .no-data {
@@ -168,16 +165,16 @@
       }
 
       .view-all-data {
+        width: 100%;
+        cursor: pointer;
 
-        .more-btn {
-          padding: 6px 0;
-          cursor: pointer;
-          text-align: center;
+        ::v-deep(.ant-spin ) {
+          line-height: 0;
+        }
+
+        .tip-text {
+          margin-left: 6px;
           color: #1890ff;
-
-          &:hover {
-
-          }
         }
       }
 
