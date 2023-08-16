@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import store from "@/store";
 import router from "@/router";
 import qs from 'qs';
+import createAuthRefreshInterceptor from 'axios-auth-refresh';
 
 // if (process.env.NODE_ENV === 'development') {
 //   // axios.defaults.baseURL = '/api'
@@ -40,15 +41,7 @@ instance.interceptors.response.use((response) => {
   const res = response.data;
   if (res.code === 200) {
     return res;
-  } else if (res.code === 401) { // token过期
-    message.warning('登录凭证已过期，请重新登录！');
-    Cookies.set("token", "");
-    store.commit("changeUser", {});
-    setTimeout(() => {
-      location.reload();
-    }, 1500)
-    return Promise.reject(res)
-  } else if (res.code === 404) {
+  } else if (res.code === 404) { // 注意这里的404不是指接口返回的http状态码，而是请求了一些需要重定向到404的接口
     router.replace({name: 'NotFound'});
     return Promise.reject(res);
   } else if (showMessageCode.includes(res.code)) { // 需要message提示
@@ -56,12 +49,19 @@ instance.interceptors.response.use((response) => {
     message.error(res.message);
     return Promise.reject(res)
   } else {
-    // message.error('系统异常,请联系管理员');
+    message.error('系统异常,请联系管理员');
     return Promise.reject(res)
   }
-}, (err) => {
-  message.error('系统异常,请联系管理员');
-  return Promise.reject(err)
+}, (error) => {
+  const status = error.response.status;
+  if (status === 401) { // token异常：过期、错误等
+    console.log("token时效，自动refresh token");
+  } else if (status === 404) {
+    message.error('请求失败，接口资源不存在');
+  } else {
+    message.error('系统异常,请联系管理员');
+  }
+  return Promise.reject(error)
 })
 
 /**
@@ -92,6 +92,27 @@ function post(url, data = {}, config = null) {
     return instance.post(url, data, config)
   }
 }
+
+
+// Function that will be called to refresh authorization
+const refreshAuthLogic = async (failedRequest) => {
+  const tokenRefreshResponse = await store.dispatch("refreshToken").catch(e => {
+    message.warning('登录凭证已过期，自动Refresh Token失败，请重新登录！');
+    Cookies.set("token", "");
+    store.commit("changeUser", {});
+    setTimeout(() => {
+      location.reload();
+    }, 1500)
+  });
+  const token = tokenRefreshResponse.data;
+  Cookies.set("token", token, {expires: 7});
+  failedRequest.response.config.headers['token'] = token;
+  return await Promise.resolve();
+}
+
+
+// Instantiate the interceptor
+createAuthRefreshInterceptor(instance, refreshAuthLogic);
 
 const http = {
   get,

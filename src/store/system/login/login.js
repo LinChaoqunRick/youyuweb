@@ -6,7 +6,8 @@ import {
   GET_AUTH_ROUTES,
   SEND_EMAIL_CODE,
   ACCOUNT_REGISTER,
-  GET_CURRENT_USER
+  GET_CURRENT_USER,
+  REFRESH_TOKEN
 } from "@/network/apis";
 
 export default {
@@ -59,6 +60,9 @@ export default {
     },
     getCurrentUser(state, params) {
       return http.post(GET_CURRENT_USER, params);
+    },
+    refreshToken(state, params) {
+      return http.post(REFRESH_TOKEN, params);
     },
   },
 }

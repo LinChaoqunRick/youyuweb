@@ -7,6 +7,7 @@ export const ACCOUNT_LOGOUT = ApiBase + "/login/logout"; // 注销
 export const GET_AUTH_ROUTES = ApiBase + "/login/getAuthRoutes"; // 获取权限路由
 export const ACCOUNT_REGISTER = ApiBase + "/login/register"; // 注销
 export const GET_CURRENT_USER = ApiBase + "/login/getCurrentUser"; // 获取当前登录用户信息
+export const REFRESH_TOKEN = ApiBase + "/login/refreshToken"; // 获取当前登录用户信息
 
 // 帖子
 export const GET_POST_USER_DETAIL = ApiBase + "/post/getUserDetailById"; // 根据id获取用户详细信息（包括帖子数、粉丝数等）
