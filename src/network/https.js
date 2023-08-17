@@ -106,6 +106,7 @@ const refreshAuthLogic = async (failedRequest) => {
   });
   const token = tokenRefreshResponse.data;
   Cookies.set("token", token, {expires: 7});
+  console.log("token刷新成功");
   failedRequest.response.config.headers['token'] = token;
   return await Promise.resolve();
 }
