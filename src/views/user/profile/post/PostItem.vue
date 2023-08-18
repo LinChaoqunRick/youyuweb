@@ -59,7 +59,7 @@
     .post-left {
       height: 100%;
       width: 200px;
-      padding: 12px 12px 12px 2px;
+      padding: 12px;
 
       img {
         height: 100%;
