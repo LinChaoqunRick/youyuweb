@@ -95,6 +95,7 @@ export const ADD_COLUMN = ApiBase + "/column/add"; //专栏列表
 export const UPDATE_COLUMN = ApiBase + "/column/update"; //专栏列表
 export const DELETE_COLUMN = ApiBase + "/column/delete"; //删除专栏
 export const GET_COLUMN_POSTS = ApiBase + "/column/getColumnPosts"; //专栏文章列表
+export const SET_COLUMN_IS_TOP = ApiBase + "/column/setColumnIsTop"; //设置专栏置顶状态
 
 // oss
 export const OSS_POLICY = ApiBase + "/oss/policy"; //

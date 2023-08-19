@@ -9,6 +9,7 @@ import {
   UPDATE_COLUMN,
   DELETE_COLUMN,
   GET_COLUMN_POSTS,
+  SET_COLUMN_IS_TOP,
   GET_POST_COLLECT_LIST,
   SET_USER_FOLLOW,
   CANCEL_USER_FOLLOW,
@@ -52,6 +53,9 @@ export default {
     },
     getColumnPosts(state: any, params: object) {
       return http.post(GET_COLUMN_POSTS, params);
+    },
+    setColumnIsTop(state: any, params: object) {
+      return http.post(SET_COLUMN_IS_TOP, params);
     },
     getPostCollectList(state: any, params: object) {
       return http.post(GET_POST_COLLECT_LIST, params);
