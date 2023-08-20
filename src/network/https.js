@@ -55,7 +55,7 @@ instance.interceptors.response.use((response) => {
 }, (error) => {
   const status = error.response.status;
   if (status === 401) { // token异常：过期、错误等
-    console.log("token时效，自动refresh token");
+    console.log("token失效，自动refresh token");
   } else if (status === 404) {
     message.error('请求失败，接口资源不存在');
   } else {
