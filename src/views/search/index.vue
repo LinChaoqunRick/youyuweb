@@ -12,8 +12,8 @@
     </div>
     <div class="search-content">
       <div class="post-list-wrapper">
-        <PostList v-if="type == 1"/>
-        <UserList v-if="type == 2"/>
+        <PostList v-if="type == 0"/>
+        <UserList v-if="type == 1"/>
       </div>
     </div>
   </div>
@@ -36,11 +36,11 @@
   const sortList = [
     {
       title: '文章',
-      type: 1
+      type: 0
     },
     {
       title: '用户',
-      type: 2
+      type: 1
     }
   ];
 

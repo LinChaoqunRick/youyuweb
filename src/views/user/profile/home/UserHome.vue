@@ -14,6 +14,8 @@ import ContentList from "@/components/common/system/ContentList.vue";
 import type {userType} from "@/types/user";
 import PostItem from "../post/PostItem.vue";
 import MomentItem from "@/views/moment/list/MomentItem.vue";
+import NoteItem from "@/views/user/profile/home/component/NoteItem.vue";
+import ChapterItem from "@/views/user/profile/home/component/ChapterItem.vue";
 
 const user = inject<userType>('user');
 
@@ -27,8 +29,10 @@ const isComponent = (item: any) => {
     return PostItem;
   } else if (Reflect.has(item, "momentLike")) {
     return MomentItem;
+  } else if (Reflect.has(item, "chapterCount")) {
+    return NoteItem;
   } else {
-    return PostItem;
+    return ChapterItem;
   }
 }
 </script>

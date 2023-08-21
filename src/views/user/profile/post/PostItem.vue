@@ -40,7 +40,8 @@
 
   const props = defineProps({
     data: {
-      type: Object
+      type: Object,
+      required: true
     },
     index: {}
   })
