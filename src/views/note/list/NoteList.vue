@@ -14,102 +14,63 @@
 </template>
 
 <script setup lang="ts">
-  import {ref, computed} from "vue";
-  import {useStore} from "vuex";
+import {ref, computed} from "vue";
+import {useStore} from "vuex";
 
-  import YTable from "@/components/common/table/YTable.vue";
-  import openModal from "@/libs/tools/openModal";
-  import NoteAdd from "./component/NoteAdd.vue";
-  import NoteEdit from "./component/NoteEdit.vue";
-  import NoteItem from './component/NoteItem.vue';
-  import type {note} from "../type";
+import YTable from "@/components/common/table/YTable.vue";
+import openModal from "@/libs/tools/openModal";
+import NoteAdd from "./component/NoteAdd.vue";
+import NoteEdit from "./component/NoteEdit.vue";
+import NoteItem from './component/NoteItem.vue';
+import type {note} from "../type";
 
-  const {getters, dispatch} = useStore();
-  const isAuthor = computed(() => getters['isAuthor']);
-  const noteList = ref([]);
-  const YTableRef = ref();
+const {getters, dispatch} = useStore();
+const isAuthor = computed(() => getters['isAuthor']);
+const noteList = ref([]);
+const YTableRef = ref();
 
-  async function handleCreate() {
-    const res = await openModal({
-      component: NoteAdd,
-      title: '创建笔记',
-      maskClosable: false,
-      width: '620px'
-    }).catch(console.log);
-    YTableRef.value.refreshData();
-  }
+async function handleCreate() {
+  const res = await openModal({
+    component: NoteAdd,
+    title: '创建笔记',
+    maskClosable: false,
+    width: '620px'
+  }).catch(console.log);
+  YTableRef.value.refreshData();
+}
 
-  async function handleEdit(data: note) {
-    const res = await openModal({
-      component: NoteEdit,
-      componentProps: {
-        noteId: data.id
-      },
-      title: '创建笔记',
-      maskClosable: false,
-      width: '620px'
-    }).catch(console.log);
-    YTableRef.value.refreshData();
-  }
+async function handleEdit(data: note) {
+  const res = await openModal({
+    component: NoteEdit,
+    componentProps: {
+      noteId: data.id
+    },
+    title: '创建笔记',
+    maskClosable: false,
+    width: '620px'
+  }).catch(console.log);
+  YTableRef.value.refreshData();
+}
 </script>
 
 <style lang="scss" scoped>
-  .note-list {
+.note-list {
+  position: relative;
+  padding: 8px 0;
+
+  .create-button {
     position: absolute;
-    height: 100%;
-    width: 100%;
-    overflow: auto;
+    right: 10px;
+    top: 10px;
+  }
 
-    .create-button {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-    }
-
-    .note-list-items {
-      height: 100%;
-      padding: 3% 5% 0 5%;
-
-      ::v-deep(.ant-spin-nested-loading) {
-        .ant-spin-container {
-          position: relative;
-          display: flex;
-          flex-wrap: wrap;
-          align-content: flex-start;
-        }
-      }
-
-      .note-body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 20%;
-        height: 50%;
-        min-width: 220px;
-
-        &:nth-child(n+6) {
-          //margin: 2% 0;
-        }
-      }
-
-      ::v-deep(.y-table) {
-        height: 100%;
-        width: 100%;
-
-        .table-body {
-          width: 100%;
-          height: 90%;
-          display: flex;
-          flex-wrap: wrap;
-          align-items: flex-start;
-          margin-bottom: 8px;
-
-          .ant-skeleton {
-            height: 240px;
-            width: 20%;
-          }
-        }
-      }
+  .note-list-items {
+    ::v-deep(.ant-spin-container) {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      justify-items: flex-start;
     }
   }
+}
 </style>

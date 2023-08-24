@@ -37,7 +37,8 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0', //ip地址
-    port: 3000, //端口号
+    port: 3000, //
+    hmr: true,
     open: false, //启动后是否自动打开浏览器,
     proxy: {
       '/plat': {

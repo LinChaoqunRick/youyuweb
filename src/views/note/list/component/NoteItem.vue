@@ -1,203 +1,155 @@
 <template>
-  <div class="note-item-body">
-    <div class="item-cover">
-      <RouterLink :to="{name: 'NoteDetail', params: {noteId: data.id}}">
-        <img :src="data.cover"/>
-      </RouterLink>
+  <div class="source-item">
+    <div class="item-top">
+      <div class="firstPic">
+        <RouterLink :to="{name: 'NoteDetail', params: {noteId: data.id}}">
+          <img :src="data.cover" :alt="data.name">
+        </RouterLink>
+        >
+      </div>
+      <div class="caption-top">{{ data.name }}</div>
+      <div class="caption">{{ data.name }}</div>
     </div>
     <div class="item-bottom">
-      <RouterLink :to="{name: 'NoteDetail', params: {noteId: data.id}}">
-        <div class="item-title" :title="data.name">{{data.name}}</div>
-      </RouterLink>
-      <RouterLink :to="`/user/${data.user.id}`">
-        <div class="item-author">
-          <div class="author-avatar">
-            <img :src="data.user.avatar"/>
-          </div>
-          <div class="author-nickname">{{data.user.nickname}}</div>
-        </div>
-      </RouterLink>
       <div class="item-info">
-        <div class="info-view" title="阅读">
-          <i-preview-open theme="outline" size="18" fill="currentColor"/>
-          {{data.viewCount}}
+        <div class="item-data">
+          <i-preview-open theme="outline" size="18" fill="currentColor" :strokeWidth="3"/>
+          {{ data.viewCount }}
         </div>
-        <div class="info-chapter" title="章节">
-          <i-list-view theme="outline" size="17" fill="currentColor"/>
-          {{data.chapterCount}}
-        </div>
-        <div class="info-more" v-if="userInfo.id===data.userId">
-          <a-popover v-model:visible="visible" trigger="click" placement="bottom" overlayClassName="note-popover">
-            <template #content>
-              <a-button type="link" @click="handleEdit">编辑</a-button>
-            </template>
-            <i-more theme="outline" size="24" fill="currentColor"/>
-          </a-popover>
+        <div class="item-data">
+          <i-list-view theme="outline" size="15" fill="currentColor" :strokeWidth="3"/>
+          {{ data.chapterCount }}
         </div>
       </div>
+      <div class="pubDate">{{ dayjs(data.createTime).format('YYYY-MM-DD') }}</div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-  import {ref} from 'vue';
-  import type {PropType} from 'vue';
-  import type {note} from "../../type";
-  import {useStore} from "vuex";
-  import {useRouter, RouterLink} from "vue-router";
-  import {computed} from "vue";
+<script>
+import {RouterLink} from "vue-router";
+import dayjs from "dayjs";
 
-  const emit = defineEmits(["handleEdit"])
-  const {getters, dispatch} = useStore();
-  const userInfo = computed(() => getters['userInfo']);
-  const visible = ref(false);
-  const router = useRouter();
-
-  const props = defineProps({
-    data: {
-      type: Object as PropType<note>
+export default {
+  name: "data",
+  computed: {
+    dayjs() {
+      return dayjs
     }
-  })
-
-  function handleEdit() {
-    emit("handleEdit", props.data);
-    visible.value = false;
-  }
+  },
+  components: {RouterLink},
+  props: {
+    data: {
+      type: Object,
+      required: true
+    }
+  },
+}
 </script>
 
-<style lang="scss" scoped>
-  .note-item-body {
-    width: 220px;
-    cursor: pointer;
-    transition: box-shadow .3s, border-color .3s;
+<style scoped>
+.caption-top {
+  position: absolute;
+  top: -60px;
+  height: 50px;
+  width: 100%;
+  background-color: #b1211f6b;
+  transition: .2s;
+}
 
-    &:hover {
-      .item-title {
-        color: #1890ff;
-      }
-    }
+.firstPic img {
+  position: relative;
+  top: 0;
+  height: 160px;
+  width: 100%;
+  cursor: pointer;
+  transition: .2s;
+  object-fit: cover;
+}
 
-    .item-cover {
-      height: 130px;
-      width: 100%;
-      overflow: hidden;
+.source-item:hover .caption-top {
+  top: 0;
+}
 
-      img {
-        object-fit: cover;
-        height: 100%;
-        width: 100%;
-        border-radius: 2px 2px 0 0;
-        transition: .3s;
-        cursor: pointer;
-      }
-    }
-
-    .item-bottom {
-      background-color: var(--youyu-background1);
-      border-width: 0 1px 1px 1px;
-      border-style: solid;
-      border-color: var(--youyu-border-color2);
-
-      a {
-        color: var(--youyu-text) !important;
-      }
-
-      .item-title {
-        width: 100%;
-        font-size: 16px;
-        font-weight: bold;
-        padding: 8px 12px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        border-bottom: var(--youyu-border2);
-        transition: .3s;
-        cursor: pointer;
-      }
-
-      .item-author {
-        display: flex;
-        align-items: center;
-        padding: 6px 12px;
-        border-bottom: var(--youyu-border2);
-
-        img {
-          display: inline-block;
-          height: 30px;
-          width: 30px;
-          border-radius: 50%;
-          cursor: pointer;
-        }
-
-        .author-nickname {
-          display: inline-block;
-          margin-left: 8px;
-          font-weight: bold;
-          cursor: pointer;
-        }
-      }
-
-      .item-info {
-        padding: 4px 0;
-        display: flex;
-        color: var(--youyu-body-text2);
-        text-align: center;
-
-        > div {
-          padding-left: 14px;
-
-          .i-icon {
-            margin-right: 10px;
-          }
-
-          &:nth-child(n+2) {
-            border-left: var(--youyu-border2);
-          }
-        }
-
-        .info-view {
-          flex: 1;
-          display: flex;
-          align-items: center;
-        }
-
-        .info-chapter {
-          flex: 1;
-          display: flex;
-          align-items: center;
-        }
-
-        .info-more {
-          width: 50px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          padding: 0 10px;
-          border-left: var(--youyu-border);
-
-          .i-icon {
-            margin-right: 0;
-          }
-        }
-      }
-    }
-
-    &:hover {
-      box-shadow: 0 1px 2px -2px #00000029, 0 3px 6px #0000001f, 0 5px 12px 4px #00000017;
-
-      .item-cover {
-        img {
-          transform: scale(1.1);
-        }
-      }
-    }
-  }
+.source-item:hover img {
+  position: relative;
+}
 </style>
 
-<style lang="scss">
-  .note-popover {
-    .ant-popover-inner-content {
-      padding: 2px 8px;
+<style lang="scss" scoped>
+.source-item {
+  box-sizing: content-box;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.14);
+  }
+
+  padding: 16px 16px 4px;
+  margin: 0 8px 10px 8px;
+  height: 220px;
+  width: 245px;
+  background-color: #fff;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+
+  .item-top {
+    position: relative;
+    width: 100%;
+    border-bottom: 1px solid #f2f2f2;
+    overflow: hidden;
+
+    .caption-top {
+      padding: 3px 6px;
+      font-size: 13px;
+      color: #fff;
+    }
+
+    .firstPic {
+      overflow: hidden;
+      height: 160px;
+    }
+
+    .caption {
+      overflow: hidden;
+      color: var(--youyu-text2);
+      font-size: 18px;
+      padding: 2px 0;
     }
   }
+
+  .item-bottom {
+    flex: 1;
+    font-size: 13px;
+    color: #999;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .item-info {
+      display: flex;
+
+      .item-data {
+        display: flex;
+        align-items: center;
+
+        .i-icon {
+          margin-right: 4px;
+        }
+
+        &:nth-child(n+2) {
+          margin-left: 12px;
+        }
+      }
+    }
+  }
+}
+</style>
+
+<style lang="scss" scoped>
+@media (max-width: 768px) {
+  .source-item {
+    width: 300px;
+  }
+}
 </style>
