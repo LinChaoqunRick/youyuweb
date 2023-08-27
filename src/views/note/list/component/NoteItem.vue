@@ -1,5 +1,5 @@
 <template>
-  <div class="source-item">
+  <div class="note-item">
     <div class="item-top">
       <div class="firstPic">
         <RouterLink :to="{name: 'NoteDetail', params: {noteId: data.id}}">
@@ -12,6 +12,10 @@
     </div>
     <div class="item-bottom">
       <div class="item-info">
+        <RouterLink :to="{name:'userNote', params: {userId: data.user.id}}" class="item-data">
+          <img :src="data.user.avatar"/>
+          <div class="user-nickname text-limit">{{ data.user.nickname }}</div>
+        </RouterLink>
         <div class="item-data">
           <i-preview-open theme="outline" size="18" fill="currentColor" :strokeWidth="3"/>
           {{ data.viewCount }}
@@ -21,7 +25,10 @@
           {{ data.chapterCount }}
         </div>
       </div>
-      <div class="pubDate">{{ dayjs(data.createTime).format('YYYY-MM-DD') }}</div>
+      <div class="pubDate">
+        <i-calendar theme="outline" size="15" fill="currentColor" :strokeWidth="3"/>
+        {{ dayjs(data.createTime).format('YYYY-MM-DD') }}
+      </div>
     </div>
   </div>
 </template>
@@ -31,7 +38,7 @@ import {RouterLink} from "vue-router";
 import dayjs from "dayjs";
 
 export default {
-  name: "data",
+  name: "NoteItem",
   computed: {
     dayjs() {
       return dayjs
@@ -53,7 +60,7 @@ export default {
   top: -60px;
   height: 50px;
   width: 100%;
-  background-color: #b1211f6b;
+  background-color: #1890ff6b;
   transition: .2s;
 }
 
@@ -67,17 +74,17 @@ export default {
   object-fit: cover;
 }
 
-.source-item:hover .caption-top {
+.note-item:hover .caption-top {
   top: 0;
 }
 
-.source-item:hover img {
+.note-item:hover img {
   position: relative;
 }
 </style>
 
 <style lang="scss" scoped>
-.source-item {
+.note-item {
   box-sizing: content-box;
   display: flex;
   flex-direction: column;
@@ -87,16 +94,14 @@ export default {
   }
 
   padding: 16px 16px 4px;
-  margin: 0 8px 10px 8px;
-  height: 220px;
-  width: 245px;
-  background-color: #fff;
+  width: 270px;
+  background-color: var(--youyu-background1);
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
 
   .item-top {
     position: relative;
     width: 100%;
-    border-bottom: 1px solid #f2f2f2;
+    border-bottom: 1px solid var(--youyu-border-color);
     overflow: hidden;
 
     .caption-top {
@@ -114,7 +119,7 @@ export default {
       overflow: hidden;
       color: var(--youyu-text2);
       font-size: 18px;
-      padding: 2px 0;
+      padding: 4px 0;
     }
   }
 
@@ -125,6 +130,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-top: 4px;
 
     .item-info {
       display: flex;
@@ -132,6 +138,20 @@ export default {
       .item-data {
         display: flex;
         align-items: center;
+
+        img {
+          height: 22px;
+          width: 22px;
+          border-radius: 50%;
+        }
+
+        .user-nickname {
+          font-size: 12px;
+          margin-left: 4px;
+          color: #1890ff;
+          max-width: 120px;
+          overflow: hidden;
+        }
 
         .i-icon {
           margin-right: 4px;
@@ -142,13 +162,22 @@ export default {
         }
       }
     }
+
+    .pubDate {
+      display: flex;
+      align-items: center;
+
+      .i-icon {
+        margin-right: 2px;
+      }
+    }
   }
 }
 </style>
 
 <style lang="scss" scoped>
 @media (max-width: 768px) {
-  .source-item {
+  .note-item {
     width: 300px;
   }
 }

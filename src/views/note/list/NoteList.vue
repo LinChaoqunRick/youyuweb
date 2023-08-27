@@ -4,7 +4,7 @@
     <div class="note-list-items">
       <YTable listUrl="listNote" ref="YTableRef">
         <template #default="{dataList}">
-          <div v-for="(item, index) in dataList" class="note-body" :key="item.postId" ref="postItem">
+          <div v-for="(item, index) in dataList" class="note-body" :key="item.id" ref="postItem">
             <NoteItem :data="item" @handleEdit="handleEdit"/>
           </div>
         </template>
@@ -56,7 +56,7 @@ async function handleEdit(data: note) {
 <style lang="scss" scoped>
 .note-list {
   position: relative;
-  padding: 8px 0;
+  padding: 6px 80px 8px 80px;
 
   .create-button {
     position: absolute;
@@ -70,6 +70,10 @@ async function handleEdit(data: note) {
       flex-wrap: wrap;
       justify-content: center;
       justify-items: flex-start;
+
+      .note-item {
+        margin: 6px;
+      }
     }
   }
 }
