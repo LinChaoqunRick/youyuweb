@@ -45,21 +45,22 @@ instance.interceptors.response.use((response) => {
     router.replace({name: 'NotFound'});
     return Promise.reject(res);
   } else if (showMessageCode.includes(res.code)) { // 需要message提示
-    console.log(res.code);
     message.error(res.message);
     return Promise.reject(res)
   } else {
-    message.error('系统异常,请联系管理员');
     return Promise.reject(res)
   }
 }, (error) => {
   const status = error.response.status;
+  const data = error.response.data;
   if (status === 401) { // token异常：过期、错误等
     console.log("token失效，自动refresh token");
   } else if (status === 404) {
     message.error('请求失败，接口资源不存在');
+  }  else if (showMessageCode.includes(data.code)) {
+    message.error(data.message);
   } else {
-    message.error('系统异常,请联系管理员');
+    // message.error('系统异常,请联系管理员');
   }
   return Promise.reject(error)
 })

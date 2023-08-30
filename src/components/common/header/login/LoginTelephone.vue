@@ -125,7 +125,10 @@
   }
 
   function onSendCode() {
-    dispatch('messageSend', {telephone: formState.telephone}).then(res => {
+    dispatch('messageSend', {
+      telephone: formState.telephone,
+      type: 3
+    }).then(res => {
       tryCount.value = 0;
       message.success("发送成功");
       disableTimer(btnProps);

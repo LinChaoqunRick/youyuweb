@@ -79,7 +79,10 @@
   })
 
   function onSendCode() {
-    dispatch('messageSend', {telephone: props.user.username}).then(res => {
+    dispatch('messageSend', {
+      telephone: props.user.username,
+      type: 2
+    }).then(res => {
       message.success("发送成功");
       disableTimer(sendBtnProps);
     })

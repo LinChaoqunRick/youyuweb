@@ -185,7 +185,11 @@
     } else { // 如果是手机登录
       formRef.value.validateFields('username').then(res=>{
         codeBtnProp.loading = true;
-        dispatch("messageSend", {telephone: formState.username, repeat: true}).then(res => {
+        dispatch("messageSend", {
+          telephone: formState.username,
+          repeat: true,
+          type: 1
+        }).then(res => {
           disableTimer();
           message.success("已发送");
         }).catch((e) => {

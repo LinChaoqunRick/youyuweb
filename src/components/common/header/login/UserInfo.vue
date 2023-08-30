@@ -345,6 +345,7 @@
 
       .i-icon {
         fill: #637792;
+        margin-right: 4px;
       }
 
       &:hover {
