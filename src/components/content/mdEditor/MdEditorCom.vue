@@ -106,7 +106,7 @@
     editorId: props.editorId,
     toolbars: props.toolbars,
     footers: props.footers,
-    previewTheme: 'cyanosis',
+    previewTheme: 'github',
     codeTheme: 'github',
     showCodeRowNumber: true
   })

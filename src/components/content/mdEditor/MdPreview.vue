@@ -21,7 +21,7 @@
   })
   const editorProps = reactive({
     theme: toRef(store.state.theme, "theme"),
-    previewTheme: 'cyanosis',
+    previewTheme: 'github',
     previewOnly: true,
     codeTheme: 'github',
     showCodeRowNumber: true
