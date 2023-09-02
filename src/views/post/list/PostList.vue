@@ -6,7 +6,7 @@
           <div v-for="(item, index) in dataList"
                v-slide-in
                class="article-body"
-               :key="item.postId"
+               :key="item.id"
                ref="postItem">
             <PostItem :data="item" :index="index"/>
           </div>
