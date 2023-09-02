@@ -57,7 +57,7 @@
   const userInfo = computed(() => getters['userInfo']);
 
   function initData() {
-    dispatch("getPostUserById", {userId: userInfo.value.id}).then(res => {
+    dispatch("getUserDetail", {userId: userInfo.value.id}).then(res => {
       user.value = res.data;
     });
   }

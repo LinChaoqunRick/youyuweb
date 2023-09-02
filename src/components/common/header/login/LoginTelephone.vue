@@ -49,6 +49,7 @@
   import Cookies from "js-cookie";
   import {generateAuthRoutes} from "@/router/config/useGenerateRoutes";
   import {checkTelephone} from "@/libs/validate/validate";
+  import smsCode from "@/enums/sms/smsCode";
 
   const {commit, dispatch} = useStore();
   import {Form} from 'ant-design-vue';
@@ -127,7 +128,7 @@
   function onSendCode() {
     dispatch('messageSend', {
       telephone: formState.telephone,
-      type: 3
+      type: smsCode.LOGIN
     }).then(res => {
       tryCount.value = 0;
       message.success("发送成功");

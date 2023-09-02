@@ -36,6 +36,7 @@
   import {message} from "ant-design-vue";
   import type {userType} from "@/types/user";
   import {cleanCookieLocalStorage} from "@/assets/utils/utils";
+  import smsCode from "@/enums/sms/smsCode";
 
   const props = defineProps({
     user: {
@@ -81,7 +82,7 @@
   function onSendCode() {
     dispatch('messageSend', {
       telephone: props.user.username,
-      type: 2
+      type: smsCode.CHANGE_PASSWORD
     }).then(res => {
       message.success("发送成功");
       disableTimer(sendBtnProps);
@@ -113,6 +114,7 @@
     if (form) {
       sendBtnProps.correct = true;
       modal.confirmLoading = true;
+      formValidate.type = smsCode.CHANGE_PASSWORD
       dispatch('messageVerify', formValidate).then(async res => {
         if (!res.data) {
           tryCount.value++;

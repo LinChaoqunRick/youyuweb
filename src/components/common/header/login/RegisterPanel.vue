@@ -106,6 +106,7 @@
   import {useStore} from 'vuex';
   import {message} from 'ant-design-vue';
   import {checkPassword, checkTelephone} from "@/libs/validate/validate";
+  import smsCode from "@/enums/sms/smsCode";
 
   const {commit, dispatch} = useStore();
 
@@ -188,7 +189,7 @@
         dispatch("messageSend", {
           telephone: formState.username,
           repeat: true,
-          type: 1
+          type: smsCode.REGISTER
         }).then(res => {
           disableTimer();
           message.success("已发送");
