@@ -287,7 +287,7 @@
   }
 
   const onEdit = () => {
-    emit("onEdit");
+    emit("onEdit", props.data);
   }
 
   const onLike = () => {

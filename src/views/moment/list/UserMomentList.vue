@@ -6,7 +6,8 @@
           <MomentItem v-for="item in list"
                       :data="item"
                       :key="item.id"
-                      @deleteSuccess="deleteSuccess"/>
+                      @deleteSuccess="deleteSuccess"
+                      @onEdit="onEdit"/>
         </template>
       </ContentList>
     </div>
@@ -22,11 +23,15 @@ export default {
 <script setup lang="ts">
 import {ref, computed, provide} from 'vue';
 import {useStore} from 'vuex';
+import {useRouter} from "vue-router";
 import type {momentType} from "@/views/moment/types";
 import MomentItem from "./MomentItem.vue";
 import ContentList from "@/components/common/system/ContentList.vue";
+import type {momentListType} from "@/views/moment/types";
 
 const {dispatch} = useStore();
+
+const router = useRouter();
 
 const props = defineProps({
   userIds: {
@@ -54,9 +59,13 @@ const updateActiveId = (value: number) => {
   activeId.value = value;
 }
 
-const deleteSuccess = (moment) => {
-  const index = momentList.value.findIndex(item => item.id === moment.id);
+const deleteSuccess = (moment: momentListType) => {
+  const index = momentList.value.findIndex((item: momentListType) => item.id === moment.id);
   momentList.value.splice(index, 1);
+}
+
+const onEdit = (data: momentListType) => {
+  router.push({name: "MomentDetail", params: {momentId: data.id}, query: {type: 'edit'}})
 }
 
 provide('active', {activeId, updateActiveId});

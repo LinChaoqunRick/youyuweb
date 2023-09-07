@@ -22,7 +22,7 @@
         <div class="moment-comment-list mt-8 mb-8">
           <div class="comment-list-top">
             <div class="comment-count">
-              全部评论（{{moment.commentCount || 0}}）
+              全部评论（{{ moment.commentCount || 0 }}）
             </div>
             <div class="sort-type">
               <div class="sort-item" :class="{'active': sort}" @click="handleSort(true)">
@@ -60,202 +60,206 @@
 </template>
 
 <script lang="ts">
-  export default {
-    name: "MomentDetail"
-  }
+export default {
+  name: "MomentDetail",
+}
 </script>
 
 <script lang="ts" setup>
-  import {computed, ref, provide, nextTick} from "vue";
-  import type {PropType} from "vue";
-  import {useStore} from "vuex";
-  import {useRoute, useRouter} from "vue-router";
-  import {cloneDeep} from 'lodash';
-  import type {momentListType} from "@/views/moment/types";
-  import MomentItem from "../list/MomentItem.vue";
-  import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
-  import MomentCommentItem from "../components/MomentCommentItem.vue";
-  import MomentEditor from "../components/MomentEditor.vue";
-  import ContentList from "@/components/common/system/ContentList.vue";
+import {computed, ref, provide, nextTick} from "vue";
+import type {PropType} from "vue";
+import {useStore} from "vuex";
+import {useRoute, useRouter, onBeforeRouteUpdate} from "vue-router";
+import {cloneDeep} from 'lodash';
+import type {momentListType} from "@/views/moment/types";
+import MomentItem from "../list/MomentItem.vue";
+import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
+import MomentCommentItem from "../components/MomentCommentItem.vue";
+import MomentEditor from "../components/MomentEditor.vue";
+import ContentList from "@/components/common/system/ContentList.vue";
 
-  const route = useRoute();
-  const router = useRouter();
-  const {dispatch} = useStore();
+const route = useRoute();
+const router = useRouter();
+const {dispatch} = useStore();
 
-  const moment = ref<momentListType>(null);
-  const MomentRef = ref<HTMLElement | null>(null);
-  const commentList = ref([]);
-  const sort = ref<boolean>(true); // true:最新 false:最热
-  const order = computed(() => sort.value ? 'create_time' : 'support_count');
-  const isEdit = ref<boolean>(false);
-  const formData = ref({});
-  const listParams = computed(() => ({
-    momentId: moment.value.id,
-    orderBy: order.value
-  }));
-  const ContentListRef = ref<InstanceType<typeof ContentList> | null>(null);
+onBeforeRouteUpdate(()=>{
+  console.log("onBeforeRouteUpdate");
+})
 
-  provide('moment', {moment: moment, updateMomentAttribute});
+const moment = ref<momentListType>(null);
+const MomentRef = ref<HTMLElement | null>(null);
+const commentList = ref([]);
+const sort = ref<boolean>(true); // true:最新 false:最热
+const order = computed(() => sort.value ? 'create_time' : 'support_count');
+const isEdit = ref<boolean>(false);
+const formData = ref({});
+const listParams = computed(() => ({
+  momentId: moment.value.id,
+  orderBy: order.value
+}));
+const ContentListRef = ref<InstanceType<typeof ContentList> | null>(null);
 
-  function updateMomentAttribute(name: string, value: any) {
-    if (Reflect.has(moment, name)) {
-      moment[name] = value;
-    }
+provide('moment', {moment: moment, updateMomentAttribute});
+
+function updateMomentAttribute(name: string, value: any) {
+  if (Reflect.has(moment, name)) {
+    moment[name] = value;
   }
+}
 
-  const getMomentDetail = () => {
-    dispatch("getMoment", {momentId: route.params.momentId}).then(res => {
-      moment.value = res.data;
-    })
-  }
+const getMomentDetail = () => {
+  dispatch("getMoment", {momentId: route.params.momentId}).then(res => {
+    moment.value = res.data;
+  })
+}
 
-  getMomentDetail();
+getMomentDetail();
 
-  const onMomentDeleteSuccess = () => {
-    router.push("/moment/list");
-  }
+const onMomentDeleteSuccess = () => {
+  router.push("/moment/list");
+}
 
-  const handleSort = (value: boolean) => {
-    if (sort.value === value) return;
-    sort.value = value;
-    nextTick(() => {
-      ContentListRef.value.initData();
-    })
-  }
+const handleSort = (value: boolean) => {
+  if (sort.value === value) return;
+  sort.value = value;
+  nextTick(() => {
+    ContentListRef.value.initData();
+  })
+}
 
-  const onCommentDeleteSuccess = (comment) => {
-    ContentListRef.value.list = ContentListRef.value.list.filter(item => item.id !== comment.id);
-  }
+const onCommentDeleteSuccess = (comment) => {
+  ContentListRef.value.list = ContentListRef.value.list.filter(item => item.id !== comment.id);
+}
 
-  const onSaveCommentSuccess = (data) => {
-    ContentListRef.value.list.unshift(data);
-  }
+const onSaveCommentSuccess = (data: momentListType) => {
+  ContentListRef.value.list.unshift(data);
+}
 
-  const onEdit = () => {
-    formData.value = cloneDeep(moment.value);
-    formData.value.images = formData.value.images ? formData.value.images.split(",") : [];
-    isEdit.value = true;
-  }
+const onEdit = () => {
+  formData.value = cloneDeep(moment.value);
+  formData.value.images = formData.value.images ? formData.value.images.split(",") : [];
+  isEdit.value = true;
+}
 
-  const onEditCancel = () => {
-    isEdit.value = false;
-  }
+const onEditCancel = () => {
+  isEdit.value = false;
+}
 
-  const saveSuccess = (data) => {
-    moment.value = data;
-    isEdit.value = false;
-  }
+const saveSuccess = (data: momentListType) => {
+  moment.value = data;
+  isEdit.value = false;
+}
 
 </script>
 
 <style lang="scss" scoped>
-  .moment-detail {
-    display: flex;
-    justify-content: center;
+.moment-detail {
+  display: flex;
+  justify-content: center;
 
 
-    .moment-detail-middle {
-      width: 750px;
+  .moment-detail-middle {
+    width: 750px;
 
-      .moment-detail-item {
-        ::v-deep(.moment-item) {
-          border-radius: 4px;
+    .moment-detail-item {
+      ::v-deep(.moment-item) {
+        border-radius: 4px;
 
-          .comment-operation {
-            display: none;
-          }
-        }
-
-        .cancel-btn {
-          position: absolute;
-          right: 70px;
+        .comment-operation {
+          display: none;
         }
       }
 
-      .moment-comment-editor-wrapper {
-        border-radius: 4px;
-        padding: 16px 20px;
-        background-color: var(--youyu-background1);
+      .cancel-btn {
+        position: absolute;
+        right: 70px;
+      }
+    }
 
-        .editor-title {
+    .moment-comment-editor-wrapper {
+      border-radius: 4px;
+      padding: 16px 20px;
+      background-color: var(--youyu-background1);
+
+      .editor-title {
+        font-size: 16px;
+        font-weight: bold;
+        padding-bottom: 12px;
+      }
+    }
+
+    .moment-comment-list {
+      background-color: var(--youyu-background1);
+      border-top: 1px solid var(--youyu-border-color);
+      padding: 8px 20px;
+      border-radius: 4px;
+
+      .comment-list-top {
+        margin-top: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .comment-count {
           font-size: 16px;
           font-weight: bold;
-          padding-bottom: 12px;
+        }
+
+        .sort-type {
+          display: inline-flex;
+          align-items: center;
+          font-size: 14px;
+          color: #4e5969;
+          font-weight: 400;
+          cursor: pointer;
+          background: var(--youyu-body-background-ligth);
+          border-radius: 2px;
+          padding: 3px;
+
+          .sort-item {
+            display: flex;
+            align-items: center;
+            padding: 2px 12px;
+            line-height: 22px;
+            font-size: 1.167rem;
+            color: #8a919f;
+
+            ::v-deep(svg) {
+              margin-right: 4px;
+            }
+          }
+
+          .active {
+            color: #1890ff;
+            border-radius: 2px;
+            background: var(--youyu-body-background2);
+
+            ::v-deep(svg) {
+              margin-right: 4px;
+            }
+          }
         }
       }
 
-      .moment-comment-list {
-        background-color: var(--youyu-background1);
-        border-top: 1px solid var(--youyu-border-color);
-        padding: 8px 20px;
-        border-radius: 4px;
+      .comment-list {
 
-        .comment-list-top {
-          margin-top: 8px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-
-          .comment-count {
-            font-size: 16px;
-            font-weight: bold;
-          }
-
-          .sort-type {
-            display: inline-flex;
-            align-items: center;
-            font-size: 14px;
-            color: #4e5969;
-            font-weight: 400;
-            cursor: pointer;
-            background: var(--youyu-body-background-ligth);
-            border-radius: 2px;
-            padding: 3px;
-
-            .sort-item {
-              display: flex;
-              align-items: center;
-              padding: 2px 12px;
-              line-height: 22px;
-              font-size: 1.167rem;
-              color: #8a919f;
-
-              ::v-deep(svg) {
-                margin-right: 4px;
-              }
-            }
-
-            .active {
-              color: #1890ff;
-              border-radius: 2px;
-              background: var(--youyu-body-background2);
-
-              ::v-deep(svg) {
-                margin-right: 4px;
-              }
-            }
-          }
+        span {
+          color: #1890ff;
         }
 
-        .comment-list {
+        ::v-deep(.content-list) {
+          .comment-item {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--youyu-border-color);
 
-          span {
-            color: #1890ff;
-          }
-
-          ::v-deep(.content-list) {
-            .comment-item {
-              padding: 8px 0;
-              border-bottom: 1px solid var(--youyu-border-color);
-
-              &:last-child {
-                border-bottom: none !important;
-                padding-bottom: 0 !important;
-              }
+            &:last-child {
+              border-bottom: none !important;
+              padding-bottom: 0 !important;
             }
           }
         }
       }
     }
   }
+}
 </style>
