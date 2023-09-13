@@ -9,9 +9,19 @@
           </div>
         </template>
       </YTable>
+      <RouterLink :to="{name: 'NoteDetail', params: {noteId: 1}}">
+        123123123123
+      </RouterLink>
+      <input/>
     </div>
   </div>
 </template>
+
+<script lang="ts">
+export default {
+  name: "NoteList"
+}
+</script>
 
 <script setup lang="ts">
 import {ref, computed} from "vue";

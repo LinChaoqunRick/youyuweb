@@ -5,14 +5,13 @@
         <RouterLink :to="{name: 'NoteDetail', params: {noteId: data.id}}">
           <img :src="data.cover" :alt="data.name">
         </RouterLink>
-        >
       </div>
       <div class="caption-top">{{ data.name }}</div>
       <div class="caption">{{ data.name }}</div>
     </div>
     <div class="item-bottom">
       <div class="item-info">
-        <RouterLink :to="{name:'userNote', params: {userId: data.user.id}}" class="item-data">
+        <RouterLink :to="{name:'userNote', params: {userId: data.user.id, page: 1}}" class="item-data">
           <img :src="data.user.avatar"/>
           <div class="user-nickname text-limit">{{ data.user.nickname }}</div>
         </RouterLink>
@@ -33,25 +32,16 @@
   </div>
 </template>
 
-<script>
+<script lang="ts" setup>
 import {RouterLink} from "vue-router";
 import dayjs from "dayjs";
 
-export default {
-  name: "NoteItem",
-  computed: {
-    dayjs() {
-      return dayjs
-    }
-  },
-  components: {RouterLink},
-  props: {
-    data: {
-      type: Object,
-      required: true
-    }
-  },
-}
+const props = defineProps({
+  data: {
+    type: Object,
+    required: true
+  }
+})
 </script>
 
 <style scoped>

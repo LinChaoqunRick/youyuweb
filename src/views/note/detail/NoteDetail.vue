@@ -20,6 +20,12 @@
   </div>
 </template>
 
+<script lang="ts">
+export default {
+  name: "NoteDetail"
+}
+</script>
+
 <script setup lang="ts">
   import {ref, provide, nextTick} from "vue";
   import {useStore} from "vuex";

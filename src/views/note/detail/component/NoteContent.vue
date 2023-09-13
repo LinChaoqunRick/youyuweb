@@ -6,9 +6,9 @@
         <div class="chapter-info">
           <span>本文由用户</span>
           <span class="user-info">
-            <RouterLink :to="`/user/${chapter.user.id}`">
-              <img :src="chapter.user.avatar"/>
-              <span class="info-nickname">{{chapter.user.nickname}}</span>
+            <RouterLink :to="`/user/${chapter.users[0].id}`">
+              <img :src="chapter.users[0].avatar"/>
+              <span class="info-nickname">{{chapter.users[0].nickname}}</span>
             </RouterLink>
         </span>
           <span>提供</span>，
@@ -69,7 +69,7 @@
   const chapterCopy = ref<chapter>(); // 复制一份编辑用
   const loading = ref(false);
   const userInfo = computed(() => getters['userInfo']);
-  const isOwn = computed(() => userInfo.value.id === chapter.value.user.id);
+  const isOwn = computed(() => userInfo.value.id === chapter.value.users[0].id);
   const isEdit = ref<boolean>(false);
   const route = useRoute();
   const router = useRouter();

@@ -23,7 +23,7 @@ const route = [
         component: () => import("@/views/note/list/NoteList.vue")
       },
       {
-        path: 'details/:noteId(\\d+)?',
+        path: 'details/:noteId(\\d+)',
         name: 'NoteDetail',
         meta: {
           title: "笔记详情",
