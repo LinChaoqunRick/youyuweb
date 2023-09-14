@@ -9,10 +9,6 @@
           </div>
         </template>
       </YTable>
-      <RouterLink :to="{name: 'NoteDetail', params: {noteId: 1}}">
-        123123123123
-      </RouterLink>
-      <input/>
     </div>
   </div>
 </template>
