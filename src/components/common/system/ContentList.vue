@@ -23,7 +23,7 @@
       </div>
       <div class="loaded-all-data" v-else-if="pageNum>totalPageNum">
         <slot name="loadedAllBox">
-          已加载全部评论~
+          已加载全部~
         </slot>
       </div>
     </div>
@@ -31,158 +31,159 @@
 </template>
 
 <script lang="ts" setup>
-  import {ref, computed, nextTick, watch} from 'vue'
-  import {useStore} from "vuex";
-  import {keepScrollTop} from '@/assets/utils/utils';
+import {ref, computed, nextTick, watch} from 'vue'
+import {useStore} from "vuex";
+import {keepScrollTop} from '@/assets/utils/utils';
 
-  const props = defineProps({
-    url: {
-      type: String,
-      required: true
-    },
-    params: {
-      type: Object,
-    },
-    showSpin: {
-      type: Boolean,
-      default: true
-    },
-    total: {
-      type: Number
-    },
-    autoLoad: {
-      type: Boolean,
-      default: false
-    }
+const props = defineProps({
+  url: {
+    type: String,
+    required: true
+  },
+  params: {
+    type: Object,
+  },
+  showSpin: {
+    type: Boolean,
+    default: true
+  },
+  total: {
+    type: Number
+  },
+  autoLoad: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const {dispatch} = useStore();
+
+const firstLoading = computed(() => !dataList.value.length && restLoading.value);
+const pageNum = ref<number>(1);
+const totalPageNum = ref<number>(1);
+const totalNum = ref<number>(0);
+const restLoading = ref<boolean>(false);
+const failed = ref<boolean>(false);
+const loadMoreRef = ref<HTMLElement | null>(null);
+const dataList = ref([]);
+
+const getListData = () => {
+  if ((totalPageNum.value !== -1 && pageNum > totalPageNum) || failed.value) return;
+  const params = {
+    pageSize: 10,
+    pageNum: pageNum.value,
+  }
+  restLoading.value = true;
+  dispatch(props.url, Object.assign({}, params, props.params)).then(res => {
+    dataList.value.push(...res.data.list);
+    totalPageNum.value = res.data.pages;
+    pageNum.value++;
+    totalNum.value = res.data.total;
+    keepScrollTop()
+  }).catch(() => {
+    failed.value = true;
+  }).finally(() => {
+    restLoading.value = false;
   })
+}
 
-  const {dispatch} = useStore();
+getListData();
 
-  const firstLoading = computed(() => !dataList.value.length && restLoading.value);
-  const pageNum = ref<number>(1);
-  const totalPageNum = ref<number>(1);
-  const totalNum = ref<number>(0);
-  const restLoading = ref<boolean>(false);
-  const failed = ref<boolean>(false);
-  const loadMoreRef = ref<HTMLElement | null>(null);
-  const dataList = ref([]);
+const initData = () => {
+  dataList.value = [];
+  totalPageNum.value = 1;
+  pageNum.value = 1;
+  totalNum.value = 0;
+  getListData();
+}
 
-  const getListData = () => {
-    if ((totalPageNum.value !== -1 && pageNum > totalPageNum) || failed.value) return;
-    const params = {
-      pageSize: 10,
-      pageNum: pageNum.value,
-    }
-    restLoading.value = true;
-    dispatch(props.url, Object.assign({}, params, props.params)).then(res => {
-      dataList.value.push(...res.data.list);
-      totalPageNum.value = res.data.pages;
-      pageNum.value++;
-      totalNum.value = res.data.total;
-      keepScrollTop();
-    }).catch(() => {
-      failed.value = true;
-    }).finally(() => {
-      restLoading.value = false;
+const onUnlock = () => {
+  if (!loadMoreRef.value) return;
+  const ob = new IntersectionObserver(entries => {
+    if (!entries[0].isIntersecting) return;
+    getListData();
+  });
+
+  ob.observe(loadMoreRef.value);
+}
+
+const onRetry = () => {
+  failed.value = false;
+  getListData();
+}
+
+watch(() => firstLoading.value, () => {
+  if (!firstLoading.value && props.autoLoad) {
+    nextTick(() => {
+      onUnlock();
     })
   }
+})
 
-  getListData();
-
-  const initData = () => {
-    dataList.value = [];
-    totalPageNum.value = 1;
-    pageNum.value = 1;
-    totalNum.value = 0;
-    getListData();
-  }
-
-  const onUnlock = () => {
-    const ob = new IntersectionObserver(entries => {
-      if (!entries[0].isIntersecting) return;
-      getListData();
-    });
-
-    ob.observe(loadMoreRef.value);
-  }
-
-  const onRetry = () => {
-    failed.value = false;
-    getListData();
-  }
-
-  watch(() => firstLoading.value, () => {
-    if (!firstLoading.value && props.autoLoad) {
-      nextTick(() => {
-        onUnlock();
-      })
-    }
-  })
-
-  defineExpose({
-    list: dataList,
-    getListData,
-    initData
-  })
+defineExpose({
+  list: dataList,
+  getListData,
+  initData
+})
 </script>
 
 <style lang="scss" scoped>
-  .content-list {
-    position: relative;
+.content-list {
+  position: relative;
 
-    .bottom-operation {
-      min-height: 48px;
+  .bottom-operation {
+    min-height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: var(--youyu-background1);
+
+    .failed-box, .no-data, .view-all-data, .loaded-all-data {
       display: flex;
       justify-content: center;
       align-items: center;
-      border-radius: 4px;
-      overflow: hidden;
-      background-color: var(--youyu-background1);
+      min-height: 48px;
+      height: 100%;
+      width: 100%;
+    }
 
-      .failed-box, .no-data, .view-all-data, .loaded-all-data {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 48px;
-        height: 100%;
-        width: 100%;
-      }
+    .failed-box {
+      padding: 6px 0;
+      text-align: center;
+      cursor: pointer;
 
-      .failed-box {
-        padding: 6px 0;
-        text-align: center;
-        cursor: pointer;
-
-        span {
-          color: #1890ff;
-        }
-      }
-
-      .no-data {
-        padding: 6px 0;
-        text-align: center;
-        cursor: pointer;
-      }
-
-      .view-all-data {
-        width: 100%;
-        cursor: pointer;
-
-        ::v-deep(.ant-spin ) {
-          line-height: 0;
-        }
-
-        .tip-text {
-          margin-left: 6px;
-          color: #1890ff;
-        }
-      }
-
-      .loaded-all-data {
-        padding: 6px 0;
-        text-align: center;
-        color: var(--youyu-text2);
+      span {
+        color: #1890ff;
       }
     }
+
+    .no-data {
+      padding: 6px 0;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .view-all-data {
+      width: 100%;
+      cursor: pointer;
+
+      ::v-deep(.ant-spin ) {
+        line-height: 0;
+      }
+
+      .tip-text {
+        margin-left: 6px;
+        color: #1890ff;
+      }
+    }
+
+    .loaded-all-data {
+      padding: 6px 0;
+      text-align: center;
+      color: var(--youyu-text2);
+    }
   }
+}
 </style>

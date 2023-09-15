@@ -40,7 +40,6 @@
 <style lang="scss" scoped>
   .category-panel {
     width: 300px;
-    height: 380px;
     background-color: var(--article-background);
     border-radius: 8px;
     padding: 10px 16px;
