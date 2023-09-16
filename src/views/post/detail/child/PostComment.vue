@@ -30,7 +30,7 @@
       </template>
       <div class="comment-list">
         <ContentList url="getCommentsPage"
-                     :params="params" auto-load
+                     :params="params" :total="post.commentCount"
                      v-if="post.id" ref="ContentListRef">
           <template v-slot="{list}">
             <CommentItem v-for="item in list"

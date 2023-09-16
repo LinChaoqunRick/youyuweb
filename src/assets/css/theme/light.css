@@ -52,7 +52,7 @@
   --pagination-text: #000;
 
   /*comment*/
-  --subcomment-background: rgba(247, 248, 250, .7);
+  --subcomment-background: rgba(154, 154, 154, 0.08);
 
   /*shadow*/
   --youyu-shadow1: 0 0 10px rgba(0, 0, 0, .36);
