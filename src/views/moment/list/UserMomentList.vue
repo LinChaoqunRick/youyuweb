@@ -1,13 +1,17 @@
 <template>
   <div class="user-moment-list">
     <div class="moment-list-body">
-      <ContentList :url="props.url" :params="params" auto-load ref="ContentListRef">
+      <ContentList :url="props.url" :params="params" auto-load data-text="时刻" ref="ContentListRef">
         <template v-slot="{list}">
           <MomentItem v-for="item in list"
                       :data="item"
                       :key="item.id"
                       @deleteSuccess="deleteSuccess"
                       @onEdit="onEdit"/>
+        </template>
+        <template v-slot:loadMoreBox="{restLoading}">
+          <a-spin :spinning="restLoading"></a-spin>
+          <span class="tip-text">加载中...</span>
         </template>
       </ContentList>
     </div>
@@ -79,49 +83,32 @@ defineExpose({
 <style lang="scss" scoped>
 .user-moment-list {
   .moment-list-body {
-    ::v-deep(.moment-item) {
-      margin-top: 8px;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-  }
+    ::v-deep(.content-list) {
 
-  .load-more-box {
-    height: 50px;
-    background-color: var(--youyu-background1);
-    border-radius: 4px;
-    margin-top: 8px;
-    overflow: hidden;
+      .moment-item {
+        margin-top: 8px;
+        border-radius: 4px;
+        overflow: hidden;
 
-    > div {
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+        .bottom-operation {
+          min-height: 0;
+        }
+      }
 
-    ::v-deep(.ant-spin) {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      .bottom-operation {
+        min-height: 48px;
+        border-radius: 4px;
+        overflow: hidden;
+        background-color: var(--youyu-background1);
+
+        .ant-spin {
+          font-size: 0;
+        }
+      }
     }
 
-    .loading-text {
-      font-size: 14px;
-      color: #1890ff;
+    .tip-text {
       margin-left: 6px;
-    }
-
-    .retry-load {
-      cursor: pointer;
-    }
-
-    .data-finished {
-      color: var(--youyu-text1);
-    }
-
-    .no-data {
-      color: var(--youyu-text1);
     }
   }
 }

@@ -37,7 +37,7 @@
           </div>
           <div class="comment-list">
             <ContentList url="listMomentCommentPage"
-                         :params="listParams"
+                         :params="listParams" auto-load load-trigger
                          ref="ContentListRef">
               <template v-slot="{list}">
                 <MomentCommentItem v-for="item in list"
@@ -82,7 +82,7 @@ const route = useRoute();
 const router = useRouter();
 const {dispatch} = useStore();
 
-onBeforeRouteUpdate(()=>{
+onBeforeRouteUpdate(() => {
   console.log("onBeforeRouteUpdate");
 })
 

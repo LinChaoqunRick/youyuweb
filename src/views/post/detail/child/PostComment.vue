@@ -29,14 +29,22 @@
         </div>
       </template>
       <div class="comment-list">
-        <ContentList url="getCommentsPage"
-                     :params="params" :total="post.commentCount"
+        <ContentList url="getCommentsPage" auto-load data-text="评论"
+                     :params="params" :total="post.commentCount" load-trigger
                      v-if="post.id" ref="ContentListRef">
           <template v-slot="{list}">
             <CommentItem v-for="item in list"
                          :data="item"
                          :key="item.id"
                          @deleteSuccess="deleteSuccess"/>
+          </template>
+          <template v-slot:loadMoreBox="{loading}">
+            查看全部 {{post.commentCount}} 条评论
+            <i-down v-show="!loading" theme="outline" size="14" fill="#1890ff"/>
+            <i-loading-four v-show="loading" theme="outline" size="14" fill="#1890ff"/>
+          </template>
+          <template v-slot:loadedAllBox>
+            <div>已加载全部评论 ~</div>
           </template>
         </ContentList>
       </div>
@@ -81,7 +89,7 @@ const toolbars = [
   'preview',
 ];
 const footers = ['markdownTotal', '=', 'scrollSwitch'];
-const post:postData = inject('post');
+const post: postData = inject('post');
 const setPostAttribute = inject('setPostAttribute');
 const submitLoading = ref<boolean>(false);
 const commentEditor = ref(null);

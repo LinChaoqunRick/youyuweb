@@ -1,50 +1,52 @@
 <template>
   <div class="content-list">
-    <div class="data-list mb-8" v-if="!!dataList?.length">
+    <div class="data-list" v-if="!!dataList?.length">
       <slot :list="dataList"/>
     </div>
-    <div class="bottom-operation" v-if="!flex">
-      <div class="failed-box" v-if="failed" @click="onRetry">
+    <div class="bottom-operation mt-8">
+      <div class="failed-box" v-if="showFailed && failed" @click="onRetry">
         <slot name="failedBox">
           <i-refresh theme="outline" size="15" fill="#1890ff"/>
           <span class="ml-8">加载失败，重新加载</span>
         </slot>
       </div>
-      <div class="no-data" v-else-if="totalPageNum===0">
+      <div class="no-data" v-else-if="showNoData && totalPageNum===0">
         <slot name="noDataBox">
           暂无数据
         </slot>
       </div>
-      <div class="view-all-data" v-else-if="pageNum <= totalPageNum" @click="onUnlock" ref="loadMoreRef">
-        <slot name="loadMoreBox" :total="totalNum" v-if="!restLoading">
-          <span class="mr-8">查看全部 <span>{{ total }}</span> 条{{ dataText }}</span>
-          <i-down v-if="!restLoading" theme="outline" size="14" fill="#1890ff"/>
-          <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
-        </slot>
-        <slot name="loadingBox" v-else>
-          <a-spin :spinning="restLoading"></a-spin>
-          <span class="tip-text">加载中...</span>
+      <div class="view-all-data" v-else-if="showViewAll && pageNum <= totalPageNum" @click="onLoadData"
+           ref="loadMoreRef">
+        <slot name="loadMoreBox" :loading="restLoading" :total="totalNum">
+          <div class="load-more-item">
+            <div>
+              {{
+                (pageNum === 1) ?
+                  `${total}&nbsp;条${dataText}` :
+                  `${fold && dataList?.length ? '展开' : '查看'}更多${dataText}`
+              }}
+            </div>
+            <i-down v-if="!restLoading" theme="outline" size="14" fill="#1890ff"/>
+            <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
+          </div>
         </slot>
       </div>
-      <div class="loaded-all-data" v-else-if="pageNum>totalPageNum">
+      <div class="loaded-all-data" v-else-if="showLoadedAll && pageNum>totalPageNum">
         <slot name="loadedAllBox">
-          已加载全部~
+          已加载全部{{ dataText }} ~
         </slot>
       </div>
-    </div>
-    <div class="flex-operation" v-else>
-      <div v-if="showLoadReply && total" class="view-more" @click="getListData">
-        <span>
-          {{
-            (pageNum === 1) ? `共${total}条${dataText}` : `${fold && dataList?.length ? '展开' : '查看'}更多${dataText}`
-          }}
-        </span>
-        <i-down v-if="!restLoading" theme="outline" size="14" fill="#1890ff"/>
-        <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
-      </div>
-      <div class="fold-btn" v-if="dataList?.length && !fold" @click="onFold">
-        <span>收起</span>
-        <i-up theme="outline" size="14" fill="#1890ff"/>
+      <div class="loaded-fold" v-if="foldable && !!dataList?.length">
+        <slot name="loadedAllFold">
+          <div class="fold" v-show="!fold" @click="onFold(true)">
+            <span>收起</span>
+            <i-up theme="outline" size="14" fill="#1890ff"/>
+          </div>
+          <div class="unfold" v-show="fold" @click="onFold(false)">
+            <span>展开更多{{ dataText }}</span>
+            <i-down theme="outline" size="14" fill="#1890ff"/>
+          </div>
+        </slot>
       </div>
     </div>
   </div>
@@ -55,15 +57,20 @@ import {ref, computed, nextTick, watch} from 'vue'
 import {useStore} from "vuex";
 import {keepScrollTop} from '@/assets/utils/utils';
 
+
 const props = defineProps({
   url: {type: String, required: true},
   params: {type: Object,},
-  showSpin: {type: Boolean, default: true},
+  showFailed: {type: Boolean, default: true},
+  showNoData: {type: Boolean, default: true},
+  showViewAll: {type: Boolean, default: true},
+  showLoadedAll: {type: Boolean, default: true},
+  foldable: {type: Boolean, default: false},
   total: {type: Number},
-  autoLoad: {type: Boolean, default: false},
   immediate: {type: Boolean, default: true},
-  flex: {type: Boolean, default: false},
-  dataText: {type: String, default: "数据"}
+  dataText: {type: String, default: '数据'},
+  autoLoad: {type: Boolean, default: false}, // 滚动到底后自动加载
+  loadTrigger: {type: Boolean, default: false} // 配合autoLoad使用，如果是true，则需要点击后触发autoLoad
 })
 
 const {dispatch} = useStore();
@@ -76,13 +83,12 @@ const restLoading = ref<boolean>(false);
 const failed = ref<boolean>(false);
 const loadMoreRef = ref<HTMLElement | null>(null);
 const dataList = ref([]);
-const fold = ref<boolean>(false);
-const showLoadReply = computed(() => (props.total > 0 && !dataList.value.length) || pageNum.value <= pageNum.value || fold.value);
+const fold = ref<boolean>(true);
 
 const getListData = () => {
   if ((totalPageNum.value !== -1 && pageNum > totalPageNum) || failed.value) return;
   const params = {
-    pageSize: 10,
+    pageSize: 5,
     pageNum: pageNum.value,
   }
   restLoading.value = true;
@@ -91,7 +97,8 @@ const getListData = () => {
     totalPageNum.value = res.data.pages;
     pageNum.value++;
     totalNum.value = res.data.total;
-    keepScrollTop()
+    fold.value = false;
+    keepScrollTop();
   }).catch(() => {
     failed.value = true;
   }).finally(() => {
@@ -111,13 +118,20 @@ const initData = () => {
   getListData();
 }
 
+const onLoadData = () => {
+  if (props.loadTrigger) {
+    onUnlock();
+  } else {
+    getListData();
+  }
+}
+
 const onUnlock = () => {
   if (!loadMoreRef.value) return;
   const ob = new IntersectionObserver(entries => {
     if (!entries[0].isIntersecting) return;
     getListData();
   });
-
   ob.observe(loadMoreRef.value);
 }
 
@@ -126,14 +140,16 @@ const onRetry = () => {
   getListData();
 }
 
-const onFold = () => {
-  fold.value = !fold.value;
+const onFold = (value: boolean) => {
+  fold.value = value;
 }
 
 watch(() => firstLoading.value, () => {
   if (!firstLoading.value && props.autoLoad) {
     nextTick(() => {
-      onUnlock();
+      if (!props.loadTrigger) {
+        onUnlock();
+      }
     })
   }
 })
@@ -150,26 +166,19 @@ defineExpose({
   position: relative;
 
   .bottom-operation {
-    min-height: 48px;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 4px;
     overflow: hidden;
-    background-color: var(--youyu-background1);
+    color: #1890ff;
 
-    .failed-box, .no-data, .view-all-data, .loaded-all-data {
+    > div {
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 48px;
+      color: #1890ff;
       height: 100%;
-      width: 100%;
-    }
-
-    .failed-box {
-      padding: 6px 0;
-      text-align: center;
       cursor: pointer;
 
       span {
@@ -177,41 +186,10 @@ defineExpose({
       }
     }
 
-    .no-data {
-      padding: 6px 0;
-      text-align: center;
-      cursor: pointer;
-    }
-
     .view-all-data {
-      width: 100%;
-      cursor: pointer;
-
-      ::v-deep(.ant-spin ) {
-        line-height: 0;
-      }
-
-      .tip-text {
-        margin-left: 6px;
-        color: #1890ff;
-      }
-    }
-
-    .loaded-all-data {
-      padding: 6px 0;
-      text-align: center;
-      color: var(--youyu-text2);
-    }
-  }
-
-  .flex-operation {
-    display: flex;
-    cursor: pointer;
-    color: #1890ff;
-
-    > div {
-      &:nth-child(n+2) {
-        margin-left: 16px;
+      .load-more-item {
+        display: flex;
+        align-items: center;
       }
     }
   }

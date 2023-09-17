@@ -57,8 +57,9 @@
         <div class="limit-btn" @click="expand = false" v-show="row>7 && expand">收起</div>
       </div>
       <div class="sub-comment-wrapper" v-if="!!data.replyCount">
-        <ContentList url="getSubCommentsPage" flex :params="params" :immediate="false"
-                     :total="data.replyCount" data-text="回复">
+        <ContentList url="getSubCommentsPage" :params="params" :immediate="false" foldable
+                     :auto-load="false" :show-loaded-all="false" :total="data.replyCount"
+                     data-text="回复">
           <template v-slot="{list}">
             <ReplyItem class="reply-item"
                        :activeId="activeId"
@@ -361,6 +362,14 @@ const deleteSuccess = (data) => {
           border-radius: 4px;
           padding: 12px;
           background-color: var(--subcomment-background);
+        }
+
+        .bottom-operation {
+          justify-content: flex-start;
+
+          > div {
+            margin-right: 12px;
+          }
         }
       }
 
