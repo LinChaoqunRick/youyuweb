@@ -39,7 +39,7 @@
                          @deleteSuccess="deleteSuccess"/>
           </template>
           <template v-slot:loadMoreBox="{loading}">
-            查看全部 {{post.commentCount}} 条评论
+            查看全部 {{ post.commentCount }} 条评论
             <i-down v-show="!loading" theme="outline" size="14" fill="#1890ff"/>
             <i-loading-four v-show="loading" theme="outline" size="14" fill="#1890ff"/>
           </template>
@@ -67,14 +67,6 @@ const isLogin = computed(() => getters['isLogin']);
 
 const {getters, dispatch} = useStore();
 
-const content = ref<string>('');
-const activeId = ref<number>(-1);
-const sort = ref<string>('new'); // true:最新 false:最热
-const commentList = ref([]);
-const text = ref<string>('');
-const submittable = computed(() => !content.value);
-const order = computed(() => sort.value === 'new' ? 'create_time' : 'support_count');
-const userInfo = computed(() => getters['userInfo']);
 const toolbars = [
   'bold',
   'underline',
@@ -89,15 +81,26 @@ const toolbars = [
   'preview',
 ];
 const footers = ['markdownTotal', '=', 'scrollSwitch'];
-const post: postData = inject('post');
+
+const post = inject<postData>('post');
 const setPostAttribute = inject('setPostAttribute');
+
+const content = ref<string>('');
+const activeId = ref<number>(-1);
+const sort = ref<string>('new'); // true:最新 false:最热
+const text = ref<string>('');
 const submitLoading = ref<boolean>(false);
 const commentEditor = ref(null);
-const pageSize = ref<number>(10);
+
+const submittable = computed(() => !content.value);
+const order = computed(() => sort.value === 'new' ? 'create_time' : 'support_count');
+const userInfo = computed(() => getters['userInfo']);
 const params = computed(() => ({
   postId: post.value.id,
   orderBy: order.value
-}))
+}));
+
+const ContentListRef = ref<InstanceType<typeof ContentList>>();
 
 const updateActiveId = (value: number) => {
   activeId.value = value;
@@ -105,13 +108,8 @@ const updateActiveId = (value: number) => {
 
 provide('active', {activeId, updateActiveId});
 
-watch(() => post.value, () => {
-
-})
-
-
 function onChange() {
-
+  ContentListRef.value.initData();
 }
 
 function handleSubmit() {
@@ -124,10 +122,9 @@ function handleSubmit() {
   }).then(res => {
     message.success('评论成功');
     content.value = '';
-    commentList.value.unshift(res.data);
+    ContentListRef.value.list.unshift(res.data);
     setPostAttribute('commentCount', post.value.commentCount + 1);
   }).catch(e => {
-    console.log(e);
     message.error("评论失败")
   }).finally(() => {
     submitLoading.value = false;
@@ -138,8 +135,8 @@ function handleFocus() {
   commentEditor.value?.handleFocus();
 }
 
-const deleteSuccess = (data) => {
-  commentList.value = commentList.value.filter(item => item.id !== data.id);
+const deleteSuccess = (data: postData) => {
+  ContentListRef.value.list = ContentListRef.value.list.filter(item => item.id !== data.id);
   setPostAttribute('commentCount', post.value.commentCount - 1);
 }
 
