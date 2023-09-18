@@ -78,3 +78,9 @@ html {
     background: transparent;
   }
 }
+
+.dark-theme {
+  .ant-card {
+    background-color: var(--youyu-background1);
+  }
+}
