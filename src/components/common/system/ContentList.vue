@@ -1,9 +1,11 @@
 <template>
   <div class="content-list">
-    <div class="data-list" v-if="!!dataList?.length">
-      <slot :list="dataList"/>
+    <div class="data-list-wrapper" v-if="!!dataList?.length" ref="dataListWrapperRef">
+      <div class="data-list">
+        <slot :list="dataList"/>
+      </div>
     </div>
-    <div class="bottom-operation mt-8">
+    <div class="bottom-operation mt-8" ref="bottomOperation">
       <div class="failed-box" v-if="showFailed && failed" @click="onRetry">
         <slot name="failedBox">
           <i-refresh theme="outline" size="15" fill="#1890ff"/>
@@ -15,17 +17,10 @@
           暂无数据
         </slot>
       </div>
-      <div class="view-all-data" v-else-if="showViewAll && pageNum <= totalPageNum" @click="onLoadData"
-           ref="loadMoreRef">
+      <div class="view-all-data" v-else-if="showViewAll && !fold && pageNum <= totalPageNum" @click="onLoadData">
         <slot name="loadMoreBox" :loading="restLoading" :total="totalNum">
           <div class="load-more-item">
-            <div>
-              {{
-                (pageNum === 1) ?
-                  `${total}&nbsp;条${dataText}` :
-                  `${fold && dataList?.length ? '展开' : '查看'}更多${dataText}`
-              }}
-            </div>
+            <div>{{ (pageNum === 1) ? `${total}&nbsp;条${dataText}` : `查看更多${dataText}` }}</div>
             <i-down v-if="!restLoading" theme="outline" size="14" fill="#1890ff"/>
             <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
           </div>
@@ -57,7 +52,6 @@ import {ref, computed, nextTick, watch} from 'vue'
 import {useStore} from "vuex";
 import {keepScrollTop} from '@/assets/utils/utils';
 
-
 const props = defineProps({
   url: {type: String, required: true},
   params: {type: Object,},
@@ -75,29 +69,35 @@ const props = defineProps({
 
 const {dispatch} = useStore();
 
+let dataListHeight: number = 0;
+
 const firstLoading = computed(() => !dataList.value.length && restLoading.value);
 const pageNum = ref<number>(1);
 const totalPageNum = ref<number>(1);
 const totalNum = ref<number>(0);
 const restLoading = ref<boolean>(false);
 const failed = ref<boolean>(false);
-const loadMoreRef = ref<HTMLElement | null>(null);
-const dataList = ref([]);
-const fold = ref<boolean>(true);
+const dataList = ref<Array<any>>([]);
+const fold = ref<boolean>(false);
+
+const bottomOperation = ref<HTMLElement | null>(null);
+const dataListWrapperRef = ref<HTMLElement | null>(null);
 
 const getListData = () => {
   if ((totalPageNum.value !== -1 && pageNum > totalPageNum) || failed.value) return;
   const params = {
     pageSize: 5,
     pageNum: pageNum.value,
-  }
+  };
   restLoading.value = true;
   dispatch(props.url, Object.assign({}, params, props.params)).then(res => {
     dataList.value.push(...res.data.list);
     totalPageNum.value = res.data.pages;
     pageNum.value++;
     totalNum.value = res.data.total;
-    fold.value = false;
+    if (props.foldable) {
+      foldAnimation();
+    }
     keepScrollTop();
   }).catch(() => {
     failed.value = true;
@@ -127,12 +127,12 @@ const onLoadData = () => {
 }
 
 const onUnlock = () => {
-  if (!loadMoreRef.value) return;
+  if (!bottomOperation.value) return;
   const ob = new IntersectionObserver(entries => {
     if (!entries[0].isIntersecting) return;
     getListData();
   });
-  ob.observe(loadMoreRef.value);
+  ob.observe(bottomOperation.value);
 }
 
 const onRetry = () => {
@@ -142,6 +142,24 @@ const onRetry = () => {
 
 const onFold = (value: boolean) => {
   fold.value = value;
+  if (dataListWrapperRef.value) {
+    if (fold.value) {
+      dataListWrapperRef.value.style.height = `0`;
+    } else {
+      dataListWrapperRef.value.style.height = `${dataListHeight}px`;
+    }
+  }
+}
+
+const foldAnimation = () => {
+  nextTick(() => {
+    if (dataListWrapperRef.value) {
+      ({height: dataListHeight} = dataListWrapperRef.value.getBoundingClientRect());
+      dataListWrapperRef.value.style.height = '0';
+      dataListWrapperRef.value.offsetHeight;
+      dataListWrapperRef.value.style.height = `${dataListHeight}px`;
+    }
+  })
 }
 
 watch(() => firstLoading.value, () => {
@@ -164,6 +182,12 @@ defineExpose({
 <style lang="scss" scoped>
 .content-list {
   position: relative;
+
+  .data-list-wrapper {
+    height: auto;
+    transition: .3s;
+    overflow: hidden;
+  }
 
   .bottom-operation {
     display: flex;
