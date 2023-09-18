@@ -88,7 +88,6 @@ onBeforeRouteUpdate(() => {
 
 const moment = ref<momentListType>(null);
 const MomentRef = ref<HTMLElement | null>(null);
-const commentList = ref([]);
 const sort = ref<boolean>(true); // true:最新 false:最热
 const order = computed(() => sort.value ? 'create_time' : 'support_count');
 const isEdit = ref<boolean>(false);

@@ -89,8 +89,7 @@
             title="确认删除此条评论?"
             ok-text="是"
             cancel-text="否"
-            @confirm="onConfirmDelete"
-            :getPopupContainer="triggerNode=>triggerNode.parentNode">
+            @confirm="onConfirmDelete">
             <div class="ope-item delete-ope" :class="{'visible': deleteVisible}" v-if="showDelete"
                  @click="onDelete">
               删除
@@ -112,381 +111,364 @@
 </template>
 
 <script lang="ts">
-  export default {
-    name: "MomentCommentItem"
-  }
+export default {
+  name: "MomentCommentItem"
+}
 </script>
 
 <script setup lang="ts">
-  import {ref, computed, inject} from "vue";
-  import {useStore} from "vuex";
-  import {RouterLink} from "vue-router";
-  import {message} from "ant-design-vue";
-  import {vOnClickOutside} from '@vueuse/components'
-  import {transformHTMLToTag, transformTagToHTML} from "@/components/common/utils/emoji/youyu_emoji";
-  import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
-  import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
-  import UserCardMoment from "../components/UserCardMoment.vue";
+import {ref, computed, inject} from "vue";
+import {useStore} from "vuex";
+import {RouterLink} from "vue-router";
+import {message} from "ant-design-vue";
+import {vOnClickOutside} from '@vueuse/components'
+import {transformHTMLToTag, transformTagToHTML} from "@/components/common/utils/emoji/youyu_emoji";
+import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
+import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
+import UserCardMoment from "../components/UserCardMoment.vue";
 
 
-  const {getters, dispatch} = useStore();
-  const props = defineProps({
-    data: {
-      type: Object,
-      required: true
-    },
-    root: {
-      type: Object,
-      required: true
+const {getters, dispatch} = useStore();
+const props = defineProps({
+  data: {
+    type: Object,
+    required: true
+  },
+  root: {
+    type: Object,
+    required: true
+  }
+})
+const emit = defineEmits(['saveSuccess', 'deleteSuccess']);
+
+const row = ref<number>(0);
+const expand = ref<boolean>(false);
+const active = ref<boolean>(false);
+const deleteVisible = ref<boolean>(false);
+const preview = ref<boolean>(false);
+const likeLoading = ref<boolean>(false);
+const current = ref(0);
+const MomentReplyEditorRef = ref(null);
+
+const userInfo = computed(() => getters['userInfo']);
+const {moment, updateMomentAttribute} = inject('moment');
+const images = computed(() => props.data.images ? props.data.images.split(",") : null);
+const isLogin = computed(() => getters['isLogin']);
+const showDelete = computed(() => userInfo.value.id === props.data.userId || moment.userId === userInfo.value.id)
+
+function set(value: number) {
+  row.value = value;
+}
+
+const onDelete = () => {
+  deleteVisible.value = true;
+}
+
+const onConfirmDelete = () => {
+  dispatch('deleteMomentComment', {commentId: props.data.id}).then(res => {
+    if (res) {
+      message.success('删除成功');
+      emit('deleteSuccess', props.data);
     }
   })
-  const emit = defineEmits(['saveSuccess', 'deleteSuccess']);
+}
 
-  const row = ref<number>(0);
-  const expand = ref<boolean>(false);
-  const active = ref<boolean>(false);
-  const deleteVisible = ref<boolean>(false);
-  const preview = ref<boolean>(false);
-  const replyLoading = ref<boolean>(false);
-  const likeLoading = ref<boolean>(false);
-  const current = ref(0);
-  const MomentReplyEditorRef = ref(null);
-  const replyList = ref([]);
-  const pageNum = ref<number>(1);
-  const currentPageNum = ref<number>(1);
+const onLike = () => {
+  if (likeLoading.value) return;
+  likeLoading.value = true;
+  const isLike = !!props.data.commentLike;
+  dispatch(isLike ? "cancelMomentCommentLike" : "setMomentCommentLike", {
+    commentId: props.data.id
+  }).then(res => {
+    if (isLike) {
+      props.data.supportCount -= 1;
+      props.data.commentLike = null;
+    } else {
+      props.data.supportCount += 1;
+      props.data.commentLike = res.data;
+    }
+  }).finally(() => {
+    likeLoading.value = false;
+  })
+}
 
-  const userInfo = computed(() => getters['userInfo']);
-  const {moment, updateMomentAttribute} = inject('moment');
-  const images = computed(() => props.data.images ? props.data.images.split(",") : null);
-  const isLogin = computed(() => getters['isLogin']);
-  const showDelete = computed(() => userInfo.value.id === props.data.userId || moment.userId === userInfo.value.id)
+const onReply = () => {
+  active.value = !active.value;
+}
 
-  function set(value: number) {
-    row.value = value;
+const onPreview = (index: number) => {
+  preview.value = true;
+  current.value = index;
+};
+
+const onClose = () => {
+  preview.value = false;
+};
+
+const onClickOutside = () => {
+  if (!active.value) return;
+  const reply = MomentReplyEditorRef.value.reply;
+  if (!reply.content && !reply.images?.length) {
+    active.value = false;
   }
+}
 
-  const onDelete = () => {
-    deleteVisible.value = true;
-  }
-
-  const onConfirmDelete = () => {
-    dispatch('deleteMomentComment', {commentId: props.data.id}).then(res => {
-      if (res) {
-        message.success('删除成功');
-        emit('deleteSuccess', props.data);
-      }
-    })
-  }
-
-  const onLike = () => {
-    if (likeLoading.value) return;
-    likeLoading.value = true;
-    const isLike = !!props.data.commentLike;
-    dispatch(isLike ? "cancelMomentCommentLike" : "setMomentCommentLike", {
-      commentId: props.data.id
-    }).then(res => {
-      if (isLike) {
-        props.data.supportCount -= 1;
-        props.data.commentLike = null;
-      } else {
-        props.data.supportCount += 1;
-        props.data.commentLike = res.data;
-      }
-    }).finally(() => {
-      likeLoading.value = false;
-    })
-  }
-
-  const onReply = () => {
-    active.value = !active.value;
-  }
-
-  const onPreview = (index: number) => {
-    preview.value = true;
-    current.value = index;
-  };
-
-  const onClose = () => {
-    preview.value = false;
-  };
-
-  const onClickOutside = () => {
-    if (!active.value) return;
-    const reply = MomentReplyEditorRef.value.reply;
-    if (!reply.content && !reply.images?.length) {
+const onSubmit = (reply, successCallback) => {
+  reply.images = reply.images.length ? reply.images.join(",") : null;
+  reply.momentId = moment.id;
+  reply.userId = userInfo.value.id;
+  reply.userIdTo = props.data.userId;
+  reply.rootId = props.root.id;
+  reply.content = transformHTMLToTag(reply.content);
+  dispatch('createMomentComment', reply).then(res => {
+    if (res.data) {
+      message.success("发布成功");
+      updateMomentAttribute("commentCount", moment.commentCount + 1);
+      props.root.replyCount += 1;
+      emit("saveSuccess", res.data);
       active.value = false;
     }
-  }
+    successCallback();
+  })
+}
 
-  const onSubmit = (reply, successCallback) => {
-    reply.images = reply.images.length ? reply.images.join(",") : null;
-    reply.momentId = moment.id;
-    reply.userId = userInfo.value.id;
-    reply.userIdTo = props.data.userId;
-    reply.rootId = props.root.id;
-    reply.content = transformHTMLToTag(reply.content);
-    dispatch('createMomentComment', reply).then(res => {
-      if (res.data) {
-        message.success("发布成功");
-        updateMomentAttribute("commentCount", moment.commentCount + 1);
-        props.root.replyCount += 1;
-        emit("saveSuccess", res.data);
-        active.value = false;
-      }
-      successCallback();
+const onUserVisibleChange = (visible: boolean) => {
+  if (visible) {
+    dispatch('getMomentUserDetail', {userId: props.data.user.id}).then(res => {
+      props.data.user = res.data;
     })
   }
+}
 
-  const onLoadReply = () => {
-    replyLoading.value = true;
-    dispatch('listMomentReplyPage', {
-      id: props.data.id,
-      pageNum: currentPageNum.value
-    }).then(res => {
-      pageNum.value = res.data.pages;
-      currentPageNum.value++;
-    }).finally(() => {
-      replyLoading.value = false;
+const onUserToVisibleChange = (visible: boolean) => {
+  if (visible) {
+    dispatch('getMomentUserDetail', {userId: props.data.userTo.id}).then(res => {
+      props.data.userTo = res.data;
     })
   }
-
-  const onUserVisibleChange = (visible: boolean) => {
-    if (visible) {
-      dispatch('getMomentUserDetail', {userId: props.data.user.id}).then(res => {
-        props.data.user = res.data;
-      })
-    }
-  }
-
-  const onUserToVisibleChange = (visible: boolean) => {
-    if (visible) {
-      dispatch('getMomentUserDetail', {userId: props.data.userTo.id}).then(res => {
-        props.data.userTo = res.data;
-      })
-    }
-  }
+}
 </script>
 
 <style lang="scss" scoped>
-  .moment-reply-item {
+.moment-reply-item {
 
-    .moment-reply-detail {
-      display: flex;
+  .moment-reply-detail {
+    display: flex;
 
-      .reply-right {
-        flex: 1;
-        margin-top: 2px;
+    .reply-right {
+      flex: 1;
+      margin-top: 2px;
 
-        .reply-right-top {
+      .reply-right-top {
+        display: flex;
+        align-items: center;
+
+        .user-info {
+          display: flex;
+          align-items: center;
+        }
+
+        .user-to-info {
           display: flex;
           align-items: center;
 
-          .user-info {
-            display: flex;
-            align-items: center;
-          }
-
-          .user-to-info {
-            display: flex;
-            align-items: center;
-
-            .reply-text {
-              margin: 0 6px;
-              font-size: 13px;
-            }
-          }
-
-          .user-avatar {
-            height: 30px;
-            width: 30px;
-            border-radius: 100%;
-            overflow: hidden;
-
-            img {
-              height: 100%;
-              width: 100%;
-            }
-          }
-
-          .user-nickname {
-            font-size: 14px;
-            font-weight: bold;
-            margin-left: 6px;
-
-            a {
-              color: inherit;
-            }
-
-            .author-text {
-              display: inline-block;
-              font-size: 12px;
-              font-weight: normal;
-              color: #fff;
-              margin-left: 5px;
-              background: linear-gradient(270deg, #30b6ec, #0692ef 95%);
-              border-radius: 12px;
-              padding: 0 6px;
-            }
-          }
-
-          .publish-time {
-            position: relative;
-            font-size: 14px;
-            color: #909090;
-            padding-left: 8px;
-            margin-left: 8px;
-
-            &:before {
-              position: absolute;
-              top: 4.5px;
-              left: 0;
-              content: "";
-              height: 14px;
-              width: 2px;
-              background-color: var(--youyu-border-color);
-            }
+          .reply-text {
+            margin: 0 6px;
+            font-size: 13px;
           }
         }
 
-        ::v-deep(.reply-content) {
-          margin: 8px 0;
-          white-space: pre-wrap;
-          line-height: 2rem;
-          max-height: 12rem;
+        .user-avatar {
+          height: 30px;
+          width: 30px;
+          border-radius: 100%;
           overflow: hidden;
 
-          &.content-expand {
-            max-height: none !important;
-          }
-
           img {
-            vertical-align: sub;
-            width: auto;
-            height: 20px;
-            margin: 0 2px;
+            height: 100%;
+            width: 100%;
           }
         }
 
-        .limit-btn {
-          cursor: pointer;
+        .user-nickname {
           font-size: 14px;
-          line-height: 22px;
-          color: #1e80ff;
-          margin-right: 20px;
-        }
+          font-weight: bold;
+          margin-left: 6px;
 
-        .content-images {
-          margin-bottom: 8px;
+          a {
+            color: inherit;
+          }
 
-          img {
-            height: 90px;
-            width: 90px;
-            margin: 0 4px 4px 0;
-            object-fit: cover;
-            cursor: zoom-in;
-            filter: brightness(.94);
+          .author-text {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: normal;
+            color: #fff;
+            margin-left: 5px;
+            background: linear-gradient(270deg, #30b6ec, #0692ef 95%);
+            border-radius: 12px;
+            padding: 0 6px;
           }
         }
 
-        .reply-operation {
-          display: flex;
-          align-items: center;
+        .publish-time {
+          position: relative;
+          font-size: 14px;
+          color: #909090;
+          padding-left: 8px;
+          margin-left: 8px;
 
-          .ope-item {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #8a919f;
-            margin-right: 10px;
-            cursor: pointer;
-            font-size: 13px;
-
-            &:hover {
-              color: #1890ff;
-            }
-
-            &.ope-active {
-              color: #1890ff;
-            }
-
-            &.delete-ope {
-              color: #ff4d4f;
-              margin-left: auto;
-              display: none;
-
-              &.visible {
-                display: inherit !important;
-              }
-            }
-
-            ::v-deep(.i-icon) {
-              margin-right: 3px;
-
-              &.i-icon-comment {
-                position: relative;
-                top: 1px;
-              }
-            }
+          &:before {
+            position: absolute;
+            top: 4.5px;
+            left: 0;
+            content: "";
+            height: 14px;
+            width: 2px;
+            background-color: var(--youyu-border-color);
           }
         }
       }
-    }
 
-    .moment-reply {
-      margin-top: 12px;
-      display: flex;
-      align-items: flex-start;
-
-      .user-avatar {
-        height: 36px;
-        width: 36px;
-        border-radius: 100%;
+      ::v-deep(.reply-content) {
+        margin: 8px 0;
+        white-space: pre-wrap;
+        line-height: 2rem;
+        max-height: 12rem;
         overflow: hidden;
-        margin-right: 8px;
+
+        &.content-expand {
+          max-height: none !important;
+        }
 
         img {
-          height: 100%;
-          width: 100%;
+          vertical-align: sub;
+          width: auto;
+          height: 20px;
+          margin: 0 2px;
         }
       }
 
-      .reply-box-wrapper {
-        flex: 1;
+      .limit-btn {
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 22px;
+        color: #1e80ff;
+        margin-right: 20px;
       }
 
-      ::v-deep(.editable-div) {
-        border-radius: 2px;
-        border: 1px solid transparent;
-        transition: .3s;
+      .content-images {
+        margin-bottom: 8px;
 
-        &.editor-active {
-          border: 1px solid #1890ff;
-        }
-
-        #box {
-          padding: 6px 12px;
+        img {
+          height: 90px;
+          width: 90px;
+          margin: 0 4px 4px 0;
+          object-fit: cover;
+          cursor: zoom-in;
+          filter: brightness(.94);
         }
       }
-    }
 
-    .more-btn {
-      margin-top: 6px;
-      margin-left: 44px;
-      cursor: pointer;
-      font-size: 14px;
-      line-height: 22px;
-      color: #1890ff;
-    }
+      .reply-operation {
+        display: flex;
+        align-items: center;
 
-    .reply-list {
-      margin-top: 6px;
-      margin-left: 44px;
-    }
+        .ope-item {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: #8a919f;
+          margin-right: 10px;
+          cursor: pointer;
+          font-size: 13px;
 
-    &:hover {
-      .delete-ope {
-        display: inline-block !important;
+          &:hover {
+            color: #1890ff;
+          }
+
+          &.ope-active {
+            color: #1890ff;
+          }
+
+          &.delete-ope {
+            color: #ff4d4f;
+            margin-left: auto;
+            display: none;
+
+            &.visible {
+              display: inherit !important;
+            }
+          }
+
+          ::v-deep(.i-icon) {
+            margin-right: 3px;
+
+            &.i-icon-comment {
+              position: relative;
+              top: 1px;
+            }
+          }
+        }
       }
     }
   }
+
+  .moment-reply {
+    margin-top: 12px;
+    display: flex;
+    align-items: flex-start;
+
+    .user-avatar {
+      height: 36px;
+      width: 36px;
+      border-radius: 100%;
+      overflow: hidden;
+      margin-right: 8px;
+
+      img {
+        height: 100%;
+        width: 100%;
+      }
+    }
+
+    .reply-box-wrapper {
+      flex: 1;
+    }
+
+    ::v-deep(.editable-div) {
+      border-radius: 2px;
+      border: 1px solid transparent;
+      transition: .3s;
+
+      &.editor-active {
+        border: 1px solid #1890ff;
+      }
+
+      #box {
+        padding: 6px 12px;
+      }
+    }
+  }
+
+  .more-btn {
+    margin-top: 6px;
+    margin-left: 44px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 22px;
+    color: #1890ff;
+  }
+
+  .reply-list {
+    margin-top: 6px;
+    margin-left: 44px;
+  }
+
+  &:hover {
+    .delete-ope {
+      display: inline-block !important;
+    }
+  }
+}
 </style>

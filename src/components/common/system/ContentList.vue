@@ -162,8 +162,11 @@ const foldAnimation = () => {
   })
 }
 
-watch(() => firstLoading.value, () => {
-  if (!firstLoading.value && props.autoLoad) {
+watch(() => firstLoading.value, (value) => {
+  if (value) {
+    dataList.value = [];
+  }
+  if (!value && props.autoLoad) {
     nextTick(() => {
       if (!props.loadTrigger) {
         onUnlock();

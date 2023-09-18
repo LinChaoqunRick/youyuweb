@@ -133,9 +133,9 @@ const ReplyListRef = ref(null);
 
 const userInfo = computed(() => getters['userInfo']);
 const {moment, updateMomentAttribute} = inject('moment');
+console.log(moment);
 const images = computed(() => props.data.images ? props.data.images.split(",") : null);
 const isLogin = computed(() => getters['isLogin']);
-const showLoadReply = computed(() => (props.data.replyCount > 0 && !replyList.value.length) || currentPageNum.value <= pageNum.value || fold.value);
 const showDelete = computed(() => userInfo.value.id === props.data.userId || moment.userId === userInfo.value.id);
 const params = computed(() => ({
   id: props.data.id,
@@ -199,6 +199,7 @@ const onClickOutside = () => {
 }
 
 const onSubmit = (reply, successCallback, failedCallback) => {
+  console.log(moment);
   reply.images = reply.images.length ? reply.images.join(",") : null;
   reply.momentId = moment.id;
   reply.userId = userInfo.value.id;
