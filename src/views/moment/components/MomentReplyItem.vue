@@ -26,7 +26,7 @@
                   <UserCardMoment :user="data.user"/>
                 </template>
                 <RouterLink :to="{name:'userHome', params: {userId: data.user.id}}">
-                  <span>{{data.user.nickname}}</span>
+                  <span>{{ data.user.nickname }}</span>
                 </RouterLink>
               </a-popover>
               <div class="author-text" v-if="data.user.id === moment.userId">作者</div>
@@ -56,13 +56,13 @@
                   <UserCardMoment :user="data.userTo"/>
                 </template>
                 <RouterLink :to="{name:'userHome', params: {userId: data.userTo.id}}">
-                  <span>{{data.userTo.nickname}}</span>
+                  <span>{{ data.userTo.nickname }}</span>
                 </RouterLink>
               </a-popover>
               <div class="author-text" v-if="data.userTo.id === moment.userId">作者</div>
             </div>
           </div>
-          <div class="publish-time" :title="data.createTime">{{$dayjs().to(data.createTime)}}</div>
+          <div class="publish-time" :title="data.createTime">{{ $dayjs().to(data.createTime) }}</div>
         </div>
         <div class="reply-content" :class="{'content-expand': expand}"
              v-row="{set: set}"
@@ -78,11 +78,11 @@
         <div class="reply-operation">
           <div class="ope-item" :class="{'ope-active': data.commentLike}" @click="onLike">
             <i-good-two :theme="data.commentLike?'filled':'outline'" size="14" fill="currentColor"/>
-            点赞<span v-if="data.supportCount">({{data.supportCount}})</span>
+            点赞<span v-if="data.supportCount">({{ data.supportCount }})</span>
           </div>
           <div class="ope-item" :class="{'ope-active': active}" @click="onReply">
             <i-comment :theme="active?'filled':'outline'" size="14" fill="currentColor"/>
-            <span>{{active?'取消回复':'回复'}}</span>
+            <span>{{ active ? '取消回复' : '回复' }}</span>
           </div>
           <a-popconfirm
             v-model:visible="deleteVisible"
@@ -137,6 +137,10 @@ const props = defineProps({
   root: {
     type: Object,
     required: true
+  },
+  moment: {
+    type: Object,
+    required: true
   }
 })
 const emit = defineEmits(['saveSuccess', 'deleteSuccess']);
@@ -151,10 +155,9 @@ const current = ref(0);
 const MomentReplyEditorRef = ref(null);
 
 const userInfo = computed(() => getters['userInfo']);
-const {moment, updateMomentAttribute} = inject('moment');
 const images = computed(() => props.data.images ? props.data.images.split(",") : null);
 const isLogin = computed(() => getters['isLogin']);
-const showDelete = computed(() => userInfo.value.id === props.data.userId || moment.userId === userInfo.value.id)
+const showDelete = computed(() => userInfo.value.id === props.data.userId || props.moment.userId === userInfo.value.id)
 
 function set(value: number) {
   row.value = value;
@@ -215,7 +218,7 @@ const onClickOutside = () => {
 
 const onSubmit = (reply, successCallback) => {
   reply.images = reply.images.length ? reply.images.join(",") : null;
-  reply.momentId = moment.id;
+  reply.momentId = props.moment.id;
   reply.userId = userInfo.value.id;
   reply.userIdTo = props.data.userId;
   reply.rootId = props.root.id;
@@ -223,7 +226,7 @@ const onSubmit = (reply, successCallback) => {
   dispatch('createMomentComment', reply).then(res => {
     if (res.data) {
       message.success("发布成功");
-      updateMomentAttribute("commentCount", moment.commentCount + 1);
+      props.moment.commentCount += 1;
       props.root.replyCount += 1;
       emit("saveSuccess", res.data);
       active.value = false;

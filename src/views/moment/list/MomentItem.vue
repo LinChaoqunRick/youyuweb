@@ -136,6 +136,7 @@
                                :key="item.id"
                                class="comment-item"
                                :data="item"
+                               :moment="props.data"
                                @deleteSuccess="deleteSuccess"/>
             <div class="comment-load-all" v-if="data?.pages > 1">
               <div class="more-btn" @click="onDetail">
@@ -150,561 +151,552 @@
 </template>
 
 <script lang="ts" setup>
-  import {ref, computed, nextTick, provide} from 'vue';
-  import type {PropType} from "vue";
-  import {useRoute, useRouter, RouterLink} from "vue-router";
-  import {useStore} from "vuex";
-  import type {momentListType} from "@/views/moment/types";
-  import {message, Modal} from "ant-design-vue";
-  import {transformHTMLToTag} from "@/components/common/utils/emoji/youyu_emoji";
-  import {transformTagToHTML} from "@/components/common/utils/emoji/youyu_emoji";
-  import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
-  import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
-  import UserCardMoment from "../components/UserCardMoment.vue";
-  import MomentCommentItem from "../components/MomentCommentItem.vue";
-  import ContentData from "@/components/common/system/ContentData.vue";
-  import SortSwitch from "@/components/common/utils/sortSwitch/SortSwitch.vue";
+import {ref, computed, nextTick, provide} from 'vue';
+import type {PropType} from "vue";
+import {useRoute, useRouter, RouterLink} from "vue-router";
+import {useStore} from "vuex";
+import type {momentListType} from "@/views/moment/types";
+import {message, Modal} from "ant-design-vue";
+import {transformHTMLToTag} from "@/components/common/utils/emoji/youyu_emoji";
+import {transformTagToHTML} from "@/components/common/utils/emoji/youyu_emoji";
+import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
+import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
+import UserCardMoment from "../components/UserCardMoment.vue";
+import MomentCommentItem from "../components/MomentCommentItem.vue";
+import ContentData from "@/components/common/system/ContentData.vue";
+import SortSwitch from "@/components/common/utils/sortSwitch/SortSwitch.vue";
 
-  const {getters, dispatch} = useStore();
+const {getters, dispatch} = useStore();
 
-  const route = useRoute();
-  const router = useRouter();
+const route = useRoute();
+const router = useRouter();
 
-  const props = defineProps({
-    data: {
-      type: Object as PropType<momentListType>
-    }
-  });
-  const emit = defineEmits(["deleteSuccess", "onEdit", "saveSuccess", "onCommentDeleteSuccess"]);
-
-  const preview = ref(false);
-  const current = ref(0);
-  const row = ref<number>(0);
-  const expand = ref<boolean>(false);
-  const replyShow = ref<boolean>(false);
-  const commentListShowVisibleIf = ref<boolean>(false);
-  const commentListShowVisibleShow = ref<boolean>(false);
-  const visible = ref<boolean>(false);
-  const sort = ref<string>('new'); // true:最新 false:最热
-  const loading = ref<boolean>(false);
-  const likeLoading = ref<boolean>(false);
-  const order = computed(() => sort.value === 'new' ? 'create_time' : 'support_count');
-  const images = computed(() => props.data.images ? props.data.images?.split(",") : null);
-  const imageClass = computed(() => {
-    const imageLength = images.value?.length ?? 0;
-    if (imageLength >= 5 || imageLength === 3) {
-      return 'col-3';
-    } else if (imageLength >= 2) {
-      return 'col-2';
-    } else {
-      return 'col-1';
-    }
-  });
-  const userInfo = computed(() => getters['userInfo']);
-  const richEditor = ref(null);
-  const isLogin = computed(() => getters['isLogin']);
-  const likeActive = computed(() => props.data.momentLike);
-  const isDetailPage = computed(() => route.name === "momentDetail");
-  const listParams = computed(() => ({momentId: props.data.id, pageSize: 5, orderBy: order.value}));
-  const ContentDataRef = ref<InstanceType<typeof ContentData> | null>(null);
-
-  provide('moment', {moment: props.data, updateMomentAttribute});
-
-  function updateMomentAttribute(name: string, value: any) {
-    if (Reflect.has(props.data, name)) {
-      props.data[name] = value;
-    }
+const props = defineProps({
+  data: {
+    type: Object as PropType<momentListType>
   }
+});
+const emit = defineEmits(["deleteSuccess", "onEdit", "saveSuccess", "onCommentDeleteSuccess"]);
 
-  function set(value: number) {
-    row.value = value;
+const preview = ref(false);
+const current = ref(0);
+const row = ref<number>(0);
+const expand = ref<boolean>(false);
+const replyShow = ref<boolean>(false);
+const commentListShowVisibleIf = ref<boolean>(false);
+const commentListShowVisibleShow = ref<boolean>(false);
+const visible = ref<boolean>(false);
+const sort = ref<string>('new'); // true:最新 false:最热
+const loading = ref<boolean>(false);
+const likeLoading = ref<boolean>(false);
+const order = computed(() => sort.value === 'new' ? 'create_time' : 'support_count');
+const images = computed(() => props.data.images ? props.data.images?.split(",") : null);
+const imageClass = computed(() => {
+  const imageLength = images.value?.length ?? 0;
+  if (imageLength >= 5 || imageLength === 3) {
+    return 'col-3';
+  } else if (imageLength >= 2) {
+    return 'col-2';
+  } else {
+    return 'col-1';
   }
+});
+const userInfo = computed(() => getters['userInfo']);
+const isLogin = computed(() => getters['isLogin']);
+const likeActive = computed(() => props.data.momentLike);
+const isDetailPage = computed(() => route.name === "momentDetail");
+const listParams = computed(() => ({momentId: props.data.id, pageSize: 5, orderBy: order.value}));
+const ContentDataRef = ref<InstanceType<typeof ContentData> | null>(null);
 
-  const onPreview = (index: number) => {
-    preview.value = true;
-    current.value = index;
-  };
-  const onClose = () => {
-    preview.value = false;
-  };
+function set(value: number) {
+  row.value = value;
+}
 
-  const onCommentSubmit = (reply: object, successCallback: Function, failedCallback) => {
-    reply.images = reply.images.length ? reply.images.join(",") : null;
-    reply.momentId = props.data.id;
-    reply.userId = userInfo.value.id;
-    reply.userIdTo = props.data.userId;
-    reply.content = transformHTMLToTag(reply.content);
-    dispatch('createMomentComment', reply).then(res => {
-      message.success("发布成功");
-      ContentDataRef.value?.data.list.unshift(res.data);
-      props.data.commentCount += 1;
-      emit("saveSuccess", res.data);
-      successCallback();
-    }).catch((e) => {
-      console.log(e);
-      failedCallback();
-    })
-  }
+const onPreview = (index: number) => {
+  preview.value = true;
+  current.value = index;
+};
+const onClose = () => {
+  preview.value = false;
+};
 
-  const onClickReply = () => {
-    replyShow.value = commentListShowVisibleShow.value = !replyShow.value;
-    if (replyShow.value) {
-      commentListShowVisibleIf.value = true;
-    }
-  }
-
-  const deleteSuccess = (comment) => {
-    if (ContentDataRef.value) {
-      ContentDataRef.value.data.list = ContentDataRef.value.data.list.filter(item => item.id !== comment.id);
-    }
-    props.data.commentCount -= 1;
-    emit("onCommentDeleteSuccess", comment)
-  }
-
-  const onChange = (value: boolean) => {
-    nextTick(() => ContentDataRef.value.initData());
-  }
-
-  const onDetail = () => {
-    router.push(`/moment/details/${props.data.id}`)
-  }
-
-  const onDelete = () => {
-    visible.value = false;
-    Modal.confirm({
-      title: '删除时刻',
-      icon: '', // <help theme="outline" size="24" fill="#1890ff"/>
-      content: '确定删除这条时刻吗？',
-      onOk() {
-        return dispatch("deleteMoment", {
-          momentId: props.data.id
-        }).then(res => {
-          message.success('删除成功');
-          emit("deleteSuccess", props.data);
-        }).catch(console.log)
-      },
-    });
-  }
-
-  const onEdit = () => {
-    emit("onEdit", props.data);
-  }
-
-  const onLike = () => {
-    if (likeLoading.value) return;
-    likeLoading.value = true;
-    const isLike = !!props.data.momentLike;
-    dispatch(isLike ? "cancelMomentLike" : "setMomentLike", {
-      momentId: props.data.id,
-      userId: userInfo.value.id,
-      userIdTo: props.data.userId
-    }).then(res => {
-      if (isLike) {
-        props.data.momentLike = null;
-        props.data.supportCount -= 1;
-        props.data.likeUsers = props.data.likeUsers.filter(item => item.id !== userInfo.value.id);
-      } else {
-        props.data.momentLike = res.data;
-        props.data.supportCount += 1;
-        if (!props.data.likeUsers) {
-          props.data.likeUsers = [];
-        }
-        props.data.likeUsers.unshift(userInfo.value);
-      }
-    }).finally(() => {
-      likeLoading.value = false;
-    })
-  }
-
-  const onUserVisibleChange = (visible: boolean) => {
-    if (visible) {
-      dispatch("getMomentUserDetail", {userId: props.data.userId}).then(res => {
-        props.data.user = res.data;
-      })
-    }
-  }
-
-  defineExpose({
-    onCommentSubmit,
-    deleteSuccess
+const onCommentSubmit = (reply: object, successCallback: Function, failedCallback) => {
+  reply.images = reply.images.length ? reply.images.join(",") : null;
+  reply.momentId = props.data.id;
+  reply.userId = userInfo.value.id;
+  reply.userIdTo = props.data.userId;
+  reply.content = transformHTMLToTag(reply.content);
+  dispatch('createMomentComment', reply).then(res => {
+    message.success("发布成功");
+    ContentDataRef.value.data.list.unshift(res.data);
+    props.data.commentCount += 1;
+    emit("saveSuccess", res.data);
+    successCallback();
+  }).catch((e) => {
+    console.log(e);
+    failedCallback();
   })
+}
+
+const onClickReply = () => {
+  replyShow.value = commentListShowVisibleShow.value = !replyShow.value;
+  if (replyShow.value) {
+    commentListShowVisibleIf.value = true;
+  }
+}
+
+const deleteSuccess = (comment) => {
+  if (ContentDataRef.value) {
+    ContentDataRef.value.data.list = ContentDataRef.value.data.list.filter(item => item.id !== comment.id);
+  }
+  props.data.commentCount -= 1;
+  emit("onCommentDeleteSuccess", comment)
+}
+
+const onChange = (value: boolean) => {
+  nextTick(() => ContentDataRef.value.initData());
+}
+
+const onDetail = () => {
+  router.push(`/moment/details/${props.data.id}`)
+}
+
+const onDelete = () => {
+  visible.value = false;
+  Modal.confirm({
+    title: '删除时刻',
+    icon: '', // <help theme="outline" size="24" fill="#1890ff"/>
+    content: '确定删除这条时刻吗？',
+    onOk() {
+      return dispatch("deleteMoment", {
+        momentId: props.data.id
+      }).then(res => {
+        message.success('删除成功');
+        emit("deleteSuccess", props.data);
+      }).catch(console.log)
+    },
+  });
+}
+
+const onEdit = () => {
+  emit("onEdit", props.data);
+}
+
+const onLike = () => {
+  if (likeLoading.value) return;
+  likeLoading.value = true;
+  const isLike = !!props.data.momentLike;
+  dispatch(isLike ? "cancelMomentLike" : "setMomentLike", {
+    momentId: props.data.id,
+    userId: userInfo.value.id,
+    userIdTo: props.data.userId
+  }).then(res => {
+    if (isLike) {
+      props.data.momentLike = null;
+      props.data.supportCount -= 1;
+      props.data.likeUsers = props.data.likeUsers.filter(item => item.id !== userInfo.value.id);
+    } else {
+      props.data.momentLike = res.data;
+      props.data.supportCount += 1;
+      if (!props.data.likeUsers) {
+        props.data.likeUsers = [];
+      }
+      props.data.likeUsers.unshift(userInfo.value);
+    }
+  }).finally(() => {
+    likeLoading.value = false;
+  })
+}
+
+const onUserVisibleChange = (visible: boolean) => {
+  if (visible) {
+    dispatch("getMomentUserDetail", {userId: props.data.userId}).then(res => {
+      props.data.user = res.data;
+    })
+  }
+}
+
+defineExpose({
+  onCommentSubmit,
+  deleteSuccess
+})
 </script>
 
 <style lang="scss" scoped>
-  .moment-item {
-    background-color: var(--youyu-background1);
+.moment-item {
+  background-color: var(--youyu-background1);
 
-    .moment-item-content {
-      padding: 12px 16px;
+  .moment-item-content {
+    padding: 12px 16px;
 
-      .content-top {
-        display: flex;
-        align-items: center;
+    .content-top {
+      display: flex;
+      align-items: center;
 
-        .user-avatar {
-          height: 42px;
-          width: 42px;
-          border-radius: 50%;
-          cursor: pointer;
-          overflow: hidden;
+      .user-avatar {
+        height: 42px;
+        width: 42px;
+        border-radius: 50%;
+        cursor: pointer;
+        overflow: hidden;
 
-          img {
-            height: 100%;
-            width: 100%;
-            object-fit: cover;
-          }
-        }
-
-        .user-nickname-time {
-          margin-left: 8px;
-
-          a {
-            color: inherit !important;
-          }
-
-          .user-nickname {
-            font-weight: bold;
-            cursor: pointer;
-          }
-
-          .publish-time {
-            font-size: 13px;
-            color: #909090;
-            margin-top: 1px;
-          }
-        }
-
-        .content-top-operation {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 24px;
-          margin-left: auto;
-          cursor: pointer;
-          border-radius: 3px;
-          transition: .3s;
-
-          &:hover {
-            background-color: var(--youyu-background2);
-
-            ::v-deep(.i-icon) {
-              color: #1890ff;
-              transition: .3s;
-            }
-          }
-
-          ::v-deep(.i-icon) {
-            color: var(--youyu-text1);
-          }
+        img {
+          height: 100%;
+          width: 100%;
+          object-fit: cover;
         }
       }
 
-      .content-body {
-        margin-left: 50px;
+      .user-nickname-time {
+        margin-left: 8px;
 
         a {
           color: inherit !important;
-          font-weight: inherit !important;
         }
 
-        ::v-deep(.content-text) {
-          margin: 4px 0;
-          white-space: pre-wrap;
-          line-height: 2rem;
-          max-height: 12rem;
-          overflow: hidden;
-
-          &.content-expand {
-            max-height: none !important;
-          }
-
-          img {
-            vertical-align: sub;
-            width: auto;
-            height: 20px;
-            margin: 0 2px;
-          }
-        }
-
-        .content-images {
-          display: grid;
-
-          &.col-3 {
-            grid-template-columns: repeat(3, 114px);
-          }
-
-          &.col-2 {
-            grid-template-columns: repeat(2, 114px);
-          }
-
-          &.col-1 {
-            img {
-              height: 160px;
-              width: 160px;
-            }
-          }
-
-          img {
-            height: 110px;
-            width: 110px;
-            margin: 0 4px 4px 0;
-            object-fit: cover;
-            cursor: zoom-in;
-            filter: brightness(.94);
-          }
-        }
-
-        .limit-btn {
+        .user-nickname {
+          font-weight: bold;
           cursor: pointer;
-          font-size: 14px;
-          line-height: 22px;
-          color: #1e80ff;
-          margin-right: 20px;
+        }
+
+        .publish-time {
+          font-size: 13px;
+          color: #909090;
+          margin-top: 1px;
         }
       }
 
-      .content-bottom {
-        display: flex;
-        flex-direction: row-reverse;
-
-        .like-users {
-          display: flex;
-          align-items: center;
-          padding-top: 8px;
-          margin-left: auto;
-          cursor: pointer;
-
-          .user-avatars {
-            display: flex;
-            flex-direction: row-reverse;
-            margin-right: 10px;
-
-            img {
-              width: 24px;
-              height: 24px;
-              background-color: #fff;
-              border: 2px solid #fff;
-              border-radius: 50%;
-              margin-right: -6px;
-              display: inline-block;
-              position: relative;
-              background-position: 50%;
-              background-size: cover;
-              background-repeat: no-repeat;
-            }
-          }
-
-          .like-text {
-            color: var(--youyu-text1);
-          }
-        }
-      }
-    }
-
-    .moment-item-actions {
-      display: flex;
-      border-top: 1px solid var(--youyu-border-color3);
-
-      .item-operation {
-        position: relative;
-        flex: 1;
+      .content-top-operation {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 36px;
-        font-size: 13px;
-        color: var(--youyu-text1);
+        height: 24px;
+        margin-left: auto;
         cursor: pointer;
-        user-select: none;
-
-        &.action-active {
-          background-color: var(--youyu-background4);
-          color: #1890ff;
-        }
-
-        &.like-active {
-          color: #1890ff;
-        }
+        border-radius: 3px;
+        transition: .3s;
 
         &:hover {
-          background-color: var(--youyu-background4);
+          background-color: var(--youyu-background2);
+
+          ::v-deep(.i-icon) {
+            color: #1890ff;
+            transition: .3s;
+          }
         }
 
-        &:nth-child(n+2) {
-          border-left: 1px solid var(--youyu-border-color3);
-        }
-
-        .item-text {
-          margin-left: 6px;
-        }
-
-        .i-icon {
-          position: relative;
-          top: 1px;
-        }
-
-        .pointer-arrow {
-          position: absolute;
-          bottom: -6px;
-          left: 50%;
-          margin: -6px 0 0 -6px;
-          pointer-events: none;
-          width: 12px;
-          height: 12px;
-          border-top: 1px solid var(--youyu-border-color3);
-          border-left: 1px solid var(--youyu-border-color3);
-          transform: rotate(45deg);
-          display: inline-block;
-          background-color: var(--youyu-background1);
+        ::v-deep(.i-icon) {
+          color: var(--youyu-text1);
         }
       }
     }
 
-    .moment-item-bottom {
-      .moment-comment-editor {
-        margin: 0 24px;
-        padding: 16px 0;
-        border-top: 1px solid var(--youyu-border-color3);
-        display: flex;
-        align-items: flex-start;
+    .content-body {
+      margin-left: 50px;
 
-        .user-avatar {
-          height: 36px;
-          width: 36px;
-          border-radius: 100%;
-          overflow: hidden;
-          margin: 0 12px 0 4px;
+      a {
+        color: inherit !important;
+        font-weight: inherit !important;
+      }
 
+      ::v-deep(.content-text) {
+        margin: 4px 0;
+        white-space: pre-wrap;
+        line-height: 2rem;
+        max-height: 12rem;
+        overflow: hidden;
+
+        &.content-expand {
+          max-height: none !important;
+        }
+
+        img {
+          vertical-align: sub;
+          width: auto;
+          height: 20px;
+          margin: 0 2px;
+        }
+      }
+
+      .content-images {
+        display: grid;
+
+        &.col-3 {
+          grid-template-columns: repeat(3, 114px);
+        }
+
+        &.col-2 {
+          grid-template-columns: repeat(2, 114px);
+        }
+
+        &.col-1 {
           img {
-            height: 100%;
-            width: 100%;
+            height: 160px;
+            width: 160px;
           }
         }
 
-        .reply-box-wrapper {
-          flex: 1;
+        img {
+          height: 110px;
+          width: 110px;
+          margin: 0 4px 4px 0;
+          object-fit: cover;
+          cursor: zoom-in;
+          filter: brightness(.94);
+        }
+      }
+
+      .limit-btn {
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 22px;
+        color: #1e80ff;
+        margin-right: 20px;
+      }
+    }
+
+    .content-bottom {
+      display: flex;
+      flex-direction: row-reverse;
+
+      .like-users {
+        display: flex;
+        align-items: center;
+        padding-top: 8px;
+        margin-left: auto;
+        cursor: pointer;
+
+        .user-avatars {
+          display: flex;
+          flex-direction: row-reverse;
+          margin-right: 10px;
+
+          img {
+            width: 24px;
+            height: 24px;
+            background-color: #fff;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            margin-right: -6px;
+            display: inline-block;
+            position: relative;
+            background-position: 50%;
+            background-size: cover;
+            background-repeat: no-repeat;
+          }
         }
 
-        ::v-deep(.editable-div) {
-          border-radius: 2px;
-          border: 1px solid transparent;
-          transition: .3s;
+        .like-text {
+          color: var(--youyu-text1);
+        }
+      }
+    }
+  }
 
-          #box {
-            padding: 6px 12px;
+  .moment-item-actions {
+    display: flex;
+    border-top: 1px solid var(--youyu-border-color3);
+
+    .item-operation {
+      position: relative;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 36px;
+      font-size: 13px;
+      color: var(--youyu-text1);
+      cursor: pointer;
+      user-select: none;
+
+      &.action-active {
+        background-color: var(--youyu-background4);
+        color: #1890ff;
+      }
+
+      &.like-active {
+        color: #1890ff;
+      }
+
+      &:hover {
+        background-color: var(--youyu-background4);
+      }
+
+      &:nth-child(n+2) {
+        border-left: 1px solid var(--youyu-border-color3);
+      }
+
+      .item-text {
+        margin-left: 6px;
+      }
+
+      .i-icon {
+        position: relative;
+        top: 1px;
+      }
+
+      .pointer-arrow {
+        position: absolute;
+        bottom: -6px;
+        left: 50%;
+        margin: -6px 0 0 -6px;
+        pointer-events: none;
+        width: 12px;
+        height: 12px;
+        border-top: 1px solid var(--youyu-border-color3);
+        border-left: 1px solid var(--youyu-border-color3);
+        transform: rotate(45deg);
+        display: inline-block;
+        background-color: var(--youyu-background1);
+      }
+    }
+  }
+
+  .moment-item-bottom {
+    .moment-comment-editor {
+      margin: 0 24px;
+      padding: 16px 0;
+      border-top: 1px solid var(--youyu-border-color3);
+      display: flex;
+      align-items: flex-start;
+
+      .user-avatar {
+        height: 36px;
+        width: 36px;
+        border-radius: 100%;
+        overflow: hidden;
+        margin: 0 12px 0 4px;
+
+        img {
+          height: 100%;
+          width: 100%;
+        }
+      }
+
+      .reply-box-wrapper {
+        flex: 1;
+      }
+
+      ::v-deep(.editable-div) {
+        border-radius: 2px;
+        border: 1px solid transparent;
+        transition: .3s;
+
+        #box {
+          padding: 6px 12px;
+        }
+      }
+    }
+
+    .moment-comment-list {
+      border-top: 1px solid var(--youyu-border-color);
+      padding: 8px 24px;
+
+      .comment-list-top {
+        margin-top: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .comment-count {
+          font-size: 16px;
+          font-weight: bold;
+        }
+
+        .sort-type {
+          display: inline-flex;
+          align-items: center;
+          font-size: 14px;
+          color: #4e5969;
+          font-weight: 400;
+          cursor: pointer;
+          background: var(--youyu-body-background-ligth);
+          border-radius: 2px;
+          padding: 3px;
+
+          .sort-item {
+            display: flex;
+            align-items: center;
+            padding: 2px 12px;
+            line-height: 22px;
+            font-size: 1.167rem;
+            color: #8a919f;
+
+            ::v-deep(svg) {
+              margin-right: 4px;
+            }
+          }
+
+          .active {
+            color: #1890ff;
+            border-radius: 2px;
+            background: var(--youyu-body-background2);
+
+            ::v-deep(svg) {
+              margin-right: 4px;
+            }
           }
         }
       }
 
-      .moment-comment-list {
-        border-top: 1px solid var(--youyu-border-color);
-        padding: 8px 24px;
+      .comment-list {
+        ::v-deep(.content-data) {
+          .comment-item {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--youyu-border-color);
 
-        .comment-list-top {
-          margin-top: 8px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
+            &:last-child {
+              border-bottom: none !important;
+            }
+          }
+        }
+      }
+
+      .comment-load-all {
+
+        .more-btn {
+          padding: 10px 0 4px 0;
+          cursor: pointer;
+          text-align: center;
 
           .comment-count {
-            font-size: 16px;
-            font-weight: bold;
-          }
-
-          .sort-type {
-            display: inline-flex;
-            align-items: center;
-            font-size: 14px;
-            color: #4e5969;
-            font-weight: 400;
-            cursor: pointer;
-            background: var(--youyu-body-background-ligth);
-            border-radius: 2px;
-            padding: 3px;
-
-            .sort-item {
-              display: flex;
-              align-items: center;
-              padding: 2px 12px;
-              line-height: 22px;
-              font-size: 1.167rem;
-              color: #8a919f;
-
-              ::v-deep(svg) {
-                margin-right: 4px;
-              }
-            }
-
-            .active {
-              color: #1890ff;
-              border-radius: 2px;
-              background: var(--youyu-body-background2);
-
-              ::v-deep(svg) {
-                margin-right: 4px;
-              }
-            }
-          }
-        }
-
-        .comment-list {
-          ::v-deep(.content-data) {
-            .comment-item {
-              padding: 8px 0;
-              border-bottom: 1px solid var(--youyu-border-color);
-
-              &:last-child {
-                border-bottom: none !important;
-              }
-            }
-          }
-        }
-
-        .comment-load-all {
-
-          .more-btn {
-            padding: 10px 0 4px 0;
-            cursor: pointer;
-            text-align: center;
-
-            .comment-count {
-              color: #1890ff;
-            }
+            color: #1890ff;
           }
         }
       }
     }
   }
+}
 </style>
 
 <style lang="scss">
-  .moment-item-top-popover {
+.moment-item-top-popover {
 
-    .ant-popover-inner-content {
-      padding: 8px !important;
+  .ant-popover-inner-content {
+    padding: 8px !important;
 
-      .operation-items {
-        .operation-item {
-          cursor: pointer;
-          padding: 3px 8px;
+    .operation-items {
+      .operation-item {
+        cursor: pointer;
+        padding: 3px 8px;
 
-          &:hover {
-            background-color: var(--youyu-background2);
-          }
-
-          &:last-child {
-            margin-bottom: 0;
-          }
+        &:hover {
+          background-color: var(--youyu-background2);
         }
 
-        .delete-moment {
-          color: #fc2a2a;
+        &:last-child {
+          margin-bottom: 0;
         }
+      }
 
-        .edit-moment {
-          color: #1890ff;
-        }
+      .delete-moment {
+        color: #fc2a2a;
+      }
+
+      .edit-moment {
+        color: #1890ff;
       }
     }
   }
+}
 </style>

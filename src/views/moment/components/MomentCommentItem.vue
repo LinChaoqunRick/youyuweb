@@ -75,12 +75,13 @@
         <MomentReplyEditor @onSubmit="onSubmit" ref="MomentReplyEditorRef"/>
       </div>
     </div>
-    <ContentList v-if="!!data.replyCount" url="listMomentReplyPage" class="reply-list" v-slot="{list}"
+    <ContentList url="listMomentReplyPage" class="reply-list" v-slot="{list}"
                  :total="data.replyCount" :show-loaded-all="false"
-                 :params="params" :immediate="false" foldable data-text="回复" ref="ReplyListRef">
+                 :params="params" :immediate="false" foldable data-text="回复" ref="ContentListRef">
       <MomentReplyItem v-for="item in list"
                        :data="item"
                        :root="data"
+                       :moment="moment"
                        @saveSuccess="saveSuccess"
                        @deleteSuccess="deleteSuccess"/>
     </ContentList>
@@ -94,7 +95,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import {ref, computed, inject, onMounted, nextTick} from "vue";
+import {ref, computed, inject} from "vue";
 import {useStore} from "vuex";
 import {RouterLink} from "vue-router";
 import {message} from "ant-design-vue";
@@ -111,8 +112,13 @@ const props = defineProps({
   data: {
     type: Object,
     required: true
+  },
+  moment: {
+    type: Object,
+    required: true
   }
 })
+
 const emit = defineEmits(['deleteSuccess']);
 
 const row = ref<number>(0);
@@ -120,26 +126,19 @@ const expand = ref<boolean>(false);
 const active = ref<boolean>(false);
 const deleteVisible = ref<boolean>(false);
 const preview = ref<boolean>(false);
-const replyLoading = ref<boolean>(false);
 const likeLoading = ref<boolean>(false);
-const fold = ref<boolean>(false);
 const current = ref<number>(0);
-const replyList = ref([]);
-const pageNum = ref<number>(0);
-const currentPageNum = ref<number>(1);
-const maxHeight = ref<number>(0);
-const MomentReplyEditorRef = ref(null);
-const ReplyListRef = ref(null);
 
 const userInfo = computed(() => getters['userInfo']);
-const {moment, updateMomentAttribute} = inject('moment');
-console.log(moment);
 const images = computed(() => props.data.images ? props.data.images.split(",") : null);
 const isLogin = computed(() => getters['isLogin']);
-const showDelete = computed(() => userInfo.value.id === props.data.userId || moment.userId === userInfo.value.id);
+const showDelete = computed(() => userInfo.value.id === props.data.userId || props.moment.userId === userInfo.value.id);
 const params = computed(() => ({
   id: props.data.id,
-}))
+}));
+
+const MomentReplyEditorRef = ref<InstanceType<typeof MomentReplyEditor>>();
+const ContentListRef = ref<InstanceType<typeof ContentList>>();
 
 function set(value: number) {
   row.value = value;
@@ -199,19 +198,18 @@ const onClickOutside = () => {
 }
 
 const onSubmit = (reply, successCallback, failedCallback) => {
-  console.log(moment);
   reply.images = reply.images.length ? reply.images.join(",") : null;
-  reply.momentId = moment.id;
+  reply.momentId = props.moment.id;
   reply.userId = userInfo.value.id;
-  reply.userIdTo = moment.userId;
+  reply.userIdTo = props.moment.userId;
   reply.rootId = props.data.id;
   reply.content = transformHTMLToTag(reply.content);
   dispatch('createMomentComment', reply).then(res => {
     if (res.data) {
       message.success("发布成功");
-      replyList.value.unshift(res.data);
+      ContentListRef.value.list.unshift(res.data);
       props.data.replyCount += 1;
-      updateMomentAttribute("commentCount", moment.commentCount + 1);
+      props.moment.commentCount += 1;
       active.value = false;
     }
     successCallback();
@@ -220,20 +218,14 @@ const onSubmit = (reply, successCallback, failedCallback) => {
   })
 }
 
-const onFold = () => {
-  maxHeight.value = ReplyListRef.value.scrollHeight;
-  ReplyListRef.value.style.maxHeight = maxHeight.value + 'px';
-  fold.value = true;
-}
-
 const saveSuccess = (data) => {
-  replyList.value.unshift(data);
+  ContentListRef.value.list.unshift(data);
 }
 
 const deleteSuccess = (data) => {
-  replyList.value = replyList.value.filter(item => item.id !== data.id);
+  ContentListRef.value.list = ContentListRef.value.list.filter(item => item.id !== data.id);
   props.data.replyCount -= 1;
-  updateMomentAttribute("commentCount", moment.commentCount - 1);
+  props.moment.commentCount -= 1;
 }
 
 const onUserVisibleChange = (visible: boolean) => {

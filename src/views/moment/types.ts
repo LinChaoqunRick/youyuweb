@@ -11,3 +11,7 @@ export interface momentType {
   updateTime: string,
   userInfo: userType
 }
+
+export interface momentListType {
+
+}

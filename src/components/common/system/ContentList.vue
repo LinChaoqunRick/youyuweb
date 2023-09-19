@@ -146,7 +146,8 @@ const onFold = (value: boolean) => {
     if (fold.value) {
       dataListWrapperRef.value.style.height = `0`;
     } else {
-      dataListWrapperRef.value.style.height = `${dataListHeight}px`;
+      // dataListWrapperRef.value.style.height = `${dataListHeight}px`;
+      dataListWrapperRef.value.style.height = 'auto';
     }
   }
 }
@@ -155,9 +156,9 @@ const foldAnimation = () => {
   nextTick(() => {
     if (dataListWrapperRef.value) {
       ({height: dataListHeight} = dataListWrapperRef.value.getBoundingClientRect());
-      dataListWrapperRef.value.style.height = '0';
-      dataListWrapperRef.value.offsetHeight;
-      dataListWrapperRef.value.style.height = `${dataListHeight}px`;
+      // dataListWrapperRef.value.style.height = '0';
+      // dataListWrapperRef.value.offsetHeight;
+      // dataListWrapperRef.value.style.height = `${dataListHeight}px`;
     }
   })
 }

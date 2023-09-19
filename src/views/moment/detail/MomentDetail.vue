@@ -44,6 +44,7 @@
                                    :key="item.id"
                                    class="comment-item"
                                    :data="item"
+                                   :moment="moment"
                                    @deleteSuccess="MomentRef?.deleteSuccess"/>
               </template>
               <template #loadMoreBox="{loading, total}">
@@ -66,7 +67,7 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import {computed, ref, provide, nextTick} from "vue";
+import {computed, ref, nextTick} from "vue";
 import type {PropType} from "vue";
 import {useStore} from "vuex";
 import {useRoute, useRouter, onBeforeRouteUpdate} from "vue-router";
@@ -82,11 +83,7 @@ const route = useRoute();
 const router = useRouter();
 const {dispatch} = useStore();
 
-onBeforeRouteUpdate(() => {
-  console.log("onBeforeRouteUpdate");
-})
-
-const moment = ref<momentListType>(null);
+const moment = ref<momentListType | null>(null);
 const MomentRef = ref<HTMLElement | null>(null);
 const sort = ref<boolean>(true); // true:最新 false:最热
 const order = computed(() => sort.value ? 'create_time' : 'support_count');
@@ -97,14 +94,6 @@ const listParams = computed(() => ({
   orderBy: order.value
 }));
 const ContentListRef = ref<InstanceType<typeof ContentList> | null>(null);
-
-provide('moment', {moment: moment, updateMomentAttribute});
-
-function updateMomentAttribute(name: string, value: any) {
-  if (Reflect.has(moment, name)) {
-    moment[name] = value;
-  }
-}
 
 const getMomentDetail = () => {
   dispatch("getMoment", {momentId: route.params.momentId}).then(res => {
