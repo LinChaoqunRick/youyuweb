@@ -1,5 +1,6 @@
 import {createApp} from "vue";
 import {Image} from "ant-design-vue";
+import Antd from 'ant-design-vue';
 import {IconPark} from "@/libs/plugins/iconpark";
 import ImagePreview from "@/components/common/utils/image/ImagePreview.vue";
 
@@ -53,7 +54,7 @@ export default function openImage(config = {}) {
       mounted() {
         this.visible = true;
       }
-    }, config);
+    }, config).use(Antd);
     IconPark(Comp);
     const preview = document.createElement("div");
     const instance = Comp.mount(preview);

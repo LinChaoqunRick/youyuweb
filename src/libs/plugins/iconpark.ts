@@ -83,7 +83,8 @@ import {
   Refresh,
   MoreOne,
   PeopleUnknown,
-  Concern
+  Concern,
+  OneToOne
 } from '@icon-park/vue-next'
 
 export const IconPark = (app) => {
@@ -172,4 +173,5 @@ export const IconPark = (app) => {
   app.component('IPeopleUnknown', PeopleUnknown);
   app.component('IRefresh', Refresh);
   app.component('IConcern', Concern);
+  app.component('IOneToOne', OneToOne);
 }
