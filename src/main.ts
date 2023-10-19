@@ -4,9 +4,14 @@ import router from './router';
 import store from "@/store";
 import Antd from 'ant-design-vue';
 import {IconPark} from "@/libs/plugins/iconpark";
-import animated from 'animate.css';
+import MarkExtension from 'markdown-it-mark';
+import {config} from 'md-editor-v3';
+import {lineNumbers} from '@codemirror/view';
+import ImageFiguresPlugin from 'markdown-it-image-figures';
+import anchor from 'markdown-it-anchor';
 
-// directives
+console.log(ImageFiguresPlugin);
+
 import aside from "@/libs/directives/aside.js";
 import aside2 from "@/libs/directives/aside2.js";
 import aside3 from "@/libs/directives/aside3.js";
@@ -17,14 +22,9 @@ import scrollToEl from "@/libs/directives/scrollToEl.js";
 import row from "@/libs/directives/row";
 import focus from "@/libs/directives/focus";
 
-
 import RelativeTime from "dayjs/plugin/relativeTime";
-
-// js
 import dayjs from "dayjs";
-import zhcn from 'dayjs/locale/zh-cn';
 
-// css
 import './assets/main.scss';
 import './assets/css/theme/dark.css';
 import './assets/css/theme/light.css';
@@ -33,9 +33,7 @@ import 'md-editor-v3/lib/style.css';
 
 const app = createApp(App);
 
-app.use(router);
-app.use(Antd);
-app.use(store);
+app.use(router).use(Antd).use(store);
 IconPark(app);
 
 app.directive("aside", aside);
@@ -52,5 +50,27 @@ dayjs.extend(RelativeTime)
 app.config.globalProperties.$dayjs = dayjs;
 
 dayjs.locale('zh-cn') // use loaded locale globally
+
+config({
+  markdownItConfig(md) {
+    md.use(MarkExtension);
+    md.use(ImageFiguresPlugin, {dataType: true, figcaption: "alt", lazy: true, async: true})
+    md.use(anchor, {permalink: true})
+  },
+  codeMirrorExtensions(theme, extensions) {
+    return [...extensions, lineNumbers()];
+  },
+  editorExtensions: {
+    highlight: {
+      css: {
+        atom: {
+          light:
+            'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css',
+          dark: 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css'
+        }
+      }
+    }
+  }
+});
 
 app.mount('#app');
