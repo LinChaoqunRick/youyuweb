@@ -10,8 +10,6 @@ import {lineNumbers} from '@codemirror/view';
 import ImageFiguresPlugin from 'markdown-it-image-figures';
 import anchor from 'markdown-it-anchor';
 
-console.log(ImageFiguresPlugin);
-
 import aside from "@/libs/directives/aside.js";
 import aside2 from "@/libs/directives/aside2.js";
 import aside3 from "@/libs/directives/aside3.js";
@@ -21,6 +19,7 @@ import slideIn from "@/libs/directives/vSlideIn";
 import scrollToEl from "@/libs/directives/scrollToEl.js";
 import row from "@/libs/directives/row";
 import focus from "@/libs/directives/focus";
+import zhcn from 'dayjs/locale/zh-cn';
 
 import RelativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
@@ -48,6 +47,7 @@ app.directive("slideIn", slideIn);
 
 dayjs.extend(RelativeTime)
 app.config.globalProperties.$dayjs = dayjs;
+
 
 dayjs.locale('zh-cn') // use loaded locale globally
 

@@ -24,7 +24,7 @@
 
 <style lang="scss" scoped>
   header {
-    background-color: var(--youyu-navigation);
+    background-color: var(--youyu-header-background);
     border-bottom: var(--youyu-navigation-border);
     color: #909090;
     height: 60px;
@@ -33,6 +33,9 @@
     align-items: center;
     justify-content: space-between;
     padding-left: 16px;
+    background-image: radial-gradient(transparent 1px,var(--youyu-background1) 1px);
+    background-size: 4px 4px;
+    backdrop-filter: saturate(50%) blur(4px);
 
     .menu-nav {
       display: flex;

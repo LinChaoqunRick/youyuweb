@@ -1,5 +1,5 @@
 /**
- * 获取图片缩放尺寸
+ * 获取图片适应屏幕的缩放尺寸
  * @param {number} naturalWidth
  * @param {number} naturalHeight
  * @param {number} maxWidth
