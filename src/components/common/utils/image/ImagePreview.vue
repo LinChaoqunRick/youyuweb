@@ -13,39 +13,40 @@
       <img :src="currentOriginUrl" @load="onLoad" id="preview-image" v-show="!loading"/>
     </div>
     <spin size="large" class="a-spin" v-show="loading"/>
+    <div class="image-preview-operations">
+      <div class="operation-item">
+        <i-left :class="{'disabled': current===0}" theme="outline" size="22" fill="currentColor"
+                @click="handleChange('last')"/>
+        <div class="image-preview-progress">{{ current + 1 }} / {{ props.list.length }}</div>
+        <i-right :class="{'disabled': current===props.list?.length-1}" class="separator" theme="outline" size="22"
+                 fill="currentColor" @click="handleChange('next')"/>
+      </div>
+      <div class="operation-item">
+        <i-zoom-in :class="{'disabled': scale >= maxScale}" theme="outline" size="19" fill="currentColor"
+                   @click="handleScale('large')"/>
+        <div class="image-preview-scale">{{ (scale * 100).toFixed(0) }}%</div>
+        <i-zoom-out :class="{'disabled': scale <= minScale}" theme="outline" size="19" fill="currentColor"
+                    @click="handleScale('small')"/>
+        <i-one-to-one theme="outline" size="19" fill="currentColor" @click="handleScale('reset')"/>
+      </div>
+      <div class="operation-item" v-if="false">
+        <i-sort-two theme="outline" size="17" fill="currentColor" @click="handleFlip('x')"/>
+        <i-switch theme="outline" size="17" fill="currentColor" @click="handleFlip('y')"/>
+      </div>
+      <div class="operation-item">
+        <i-rotate class="icon-rotate-left" theme="outline" size="18" fill="currentColor" @click="handleRotate('c')"/>
+        <i-rotate class="icon-rotate-right" theme="outline" size="18" fill="currentColor" @click="handleRotate('ac')"
+                  style="transform: scale3d(-1,1,1)"/>
+        <!--        <i-more theme="outline" size="19"/>-->
+      </div>
+    </div>
     <div class="image-preview-footer">
-      <div class="image-thumbnails">
-        <div v-for="(item, index) in props.list" class="image-item-thumbnail" :class="{'active': index === current}">
-          <img :src="item"/>
-        </div>
-      </div>
-      <div class="image-preview-operations">
-        <div class="operation-item">
-          <i-left :class="{'disabled': current===0}" theme="outline" size="22" fill="currentColor"
-                  @click="handleChange('last')"/>
-          <div class="image-preview-progress">{{ current + 1 }} / {{ props.list.length }}</div>
-          <i-right :class="{'disabled': current===props.list?.length-1}" class="separator" theme="outline" size="22"
-                   fill="currentColor" @click="handleChange('next')"/>
-        </div>
-        <div class="operation-item">
-          <i-zoom-in :class="{'disabled': scale >= maxScale}" theme="outline" size="19" fill="currentColor"
-                     @click="handleScale('large')"/>
-          <div class="image-preview-scale">{{ (scale * 100).toFixed(0) }}%</div>
-          <i-zoom-out :class="{'disabled': scale <= minScale}" theme="outline" size="19" fill="currentColor"
-                      @click="handleScale('small')"/>
-          <i-one-to-one theme="outline" size="19" fill="currentColor" @click="handleScale('reset')"/>
-        </div>
-        <div class="operation-item" v-if="false">
-          <i-sort-two theme="outline" size="17" fill="currentColor" @click="handleFlip('x')"/>
-          <i-switch theme="outline" size="17" fill="currentColor" @click="handleFlip('y')"/>
-        </div>
-        <div class="operation-item">
-          <i-rotate class="icon-rotate-left" theme="outline" size="18" fill="currentColor" @click="handleRotate('c')"/>
-          <i-rotate class="icon-rotate-right" theme="outline" size="18" fill="currentColor" @click="handleRotate('ac')"
-                    style="transform: scale3d(-1,1,1)"/>
-          <!--        <i-more theme="outline" size="19"/>-->
-        </div>
-      </div>
+      <!--<div class="image-thumbnails">
+            <div v-for="(item, index) in props.list" class="image-item-thumbnail" :class="{'active': index === current}">
+              <img :src="item"/>
+            </div>
+      </div>-->
+
     </div>
   </div>
 </template>
@@ -370,74 +371,74 @@ $icon-hover-background: rgba(89, 82, 82, 0.8);
     top: calc(50% - 16px);
   }
 
+  .image-preview-operations {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    position: absolute;
+    bottom: 30px;
+    height: 46px;
+    background: rgba(0, 0, 0, .7);
+    z-index: 1;
+    color: #fff;
+    border-radius: 6px;
+    transform: translateX(-50%);
+    left: 50%;
+    user-select: none;
+
+    .operation-item {
+      display: flex;
+      align-items: center;
+
+      &:nth-child(n+2) {
+        &:before {
+          content: "";
+          border-left: 1px solid hsla(0, 0%, 100%, 0.3);;
+          cursor: default;
+          height: 20px;
+        }
+      }
+    }
+
+    .i-icon {
+      cursor: pointer;
+      transition: .3s;
+      margin: 0 12px;
+      border-radius: 4px;
+      padding: 3px;
+
+      &:hover {
+        background: $icon-hover-background;
+      }
+
+      &.disabled {
+        color: #9E9E9E;
+        cursor: not-allowed;
+        background-color: transparent;
+      }
+
+      &.i-icon-one-to-one, &.i-icon-more, &.icon-rotate-right {
+        margin-left: 0;
+      }
+    }
+
+    .image-preview-progress {
+
+    }
+
+    .image-preview-scale {
+      width: 35px;
+      text-align: center;
+    }
+  }
+
   .image-preview-footer {
     position: absolute;
     left: 0;
     right: 0;
     bottom: 0;
-    height: 80px;
+    //height: 80px;
     background-color: rgba(0, 0, 0, .6);
-
-    .image-preview-operations {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      position: absolute;
-      top: -50px;
-      height: 46px;
-      background: rgba(0, 0, 0, .7);
-      z-index: 1;
-      color: #fff;
-      border-radius: 6px;
-      transform: translateX(-50%);
-      left: 50%;
-      user-select: none;
-
-      .operation-item {
-        display: flex;
-        align-items: center;
-
-        &:nth-child(n+2) {
-          &:before {
-            content: "";
-            border-left: 1px solid hsla(0, 0%, 100%, 0.3);;
-            cursor: default;
-            height: 20px;
-          }
-        }
-      }
-
-      .i-icon {
-        cursor: pointer;
-        transition: .3s;
-        margin: 0 12px;
-        border-radius: 4px;
-        padding: 3px;
-
-        &:hover {
-          background: $icon-hover-background;
-        }
-
-        &.disabled {
-          color: #9E9E9E;
-          cursor: not-allowed;
-          background-color: transparent;
-        }
-
-        &.i-icon-one-to-one, &.i-icon-more, &.icon-rotate-right {
-          margin-left: 0;
-        }
-      }
-
-      .image-preview-progress {
-
-      }
-
-      .image-preview-scale {
-        width: 35px;
-        text-align: center;
-      }
-    }
 
     .image-thumbnails {
       display: flex;
