@@ -432,7 +432,7 @@ $icon-hover-background: rgba(89, 82, 82, 0.8);
     }
   }
 
-  .image-preview-footer {
+  /*.image-preview-footer {
     position: absolute;
     left: 0;
     right: 0;
@@ -464,6 +464,6 @@ $icon-hover-background: rgba(89, 82, 82, 0.8);
         }
       }
     }
-  }
+  }*/
 }
 </style>
