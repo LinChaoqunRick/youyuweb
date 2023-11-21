@@ -1,7 +1,7 @@
 <template>
   <div class="map-wrapper">
     <div id="mapContainer"></div>
-    <div class="search-box">
+    <div class="search-box" v-if="search">
       <a-auto-complete
         v-model="keyword"
         allowClear
@@ -35,6 +35,24 @@ const props = defineProps({
       return {};
     },
   },
+  search: {
+    type: Boolean,
+    default() {
+      return true
+    }
+  },
+  clickable: {
+    type: Boolean,
+    default() {
+      return true;
+    }
+  },
+  geolocation: {
+    type: Boolean,
+    default() {
+      return true;
+    }
+  }
 });
 const emit = defineEmits(['update:modelValue']);
 let map = null;
@@ -65,7 +83,6 @@ const initMap = () => {
       center = [longitude, latitude];
     }
   }
-  console.log(center);
 
   AMapLoader.load({
     key: '32a8defe4c4bf9a137addba80cc34e47', // 申请好的Web端Key，首次调用 load 时必填
@@ -78,7 +95,8 @@ const initMap = () => {
       center  //初始化地图中心点
     });
     // 添加点击事件
-    map.on('click', onMapClick);
+    props.clickable && map.on('click', onMapClick);
+
     AMap.plugin(['AMap.ToolBar', 'AMap.Scale', 'AMap.Geolocation', 'AMap.PlaceSearch', 'AMap.Geocoder', 'AMap.ControlBar', 'AMap.AutoComplete'],
       () => {
         // 缩放条
@@ -88,6 +106,8 @@ const initMap = () => {
             right: '10px',
           }
         });
+        map.addControl(toolbar);
+
         // 比例尺
         const scale = new AMap.Scale({
           position: {
@@ -95,17 +115,23 @@ const initMap = () => {
             left: '10px',
           }
         });
+        map.addControl(scale);
+
         // 定位
-        const geolocation = new AMap.Geolocation({
-          enableHighAccuracy: true, //是否使用高精度定位，默认:true
-          timeout: 10000, //超过10秒后停止定位，默认：5s
-          position: {
-            bottom: '80px',
-            right: '10px',
-          },
-          buttonOffset: new AMap.Pixel(10, 20), //定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-          zoomToAccuracy: true, //定位成功后是否自动调整地图视野到定位点
-        });
+        if (props.geolocation) {
+          const geolocation = new AMap.Geolocation({
+            enableHighAccuracy: true, //是否使用高精度定位，默认:true
+            timeout: 10000, //超过10秒后停止定位，默认：5s
+            position: {
+              bottom: '80px',
+              right: '10px',
+            },
+            buttonOffset: new AMap.Pixel(10, 20), //定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+            zoomToAccuracy: true, //定位成功后是否自动调整地图视野到定位点
+          });
+          map.addControl(geolocation);
+        }
+
         // 3D地图插件
         const controlBar = new AMap.ControlBar({
           position: {
@@ -113,20 +139,17 @@ const initMap = () => {
             right: '10px',
           },
         });
+        map.addControl(controlBar);
 
         // 地理编码与逆地理编码
         geocoder = new AMap.Geocoder({
           city: '全国',
         });
+
         // 输入提示与POI搜索
         auto = new AMap.AutoComplete({
           datatype: "all"
         });
-
-        map.addControl(geolocation);
-        map.addControl(toolbar);
-        map.addControl(scale);
-        map.addControl(controlBar);
 
         placeSearch = new AMap.PlaceSearch({
           map: map,
@@ -266,6 +289,10 @@ onUnmounted(() => {
 
   ::v-deep(.amap-luopan) {
     zoom: 0.8;
+  }
+
+  ::v-deep(.search-box) {
+    background-color: var(--youyu-body-background3);
   }
 }
 </style>

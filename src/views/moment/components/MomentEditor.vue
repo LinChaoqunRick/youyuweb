@@ -11,7 +11,7 @@
             <div class="topic-wrapper">
               <div class="add-position" @click="onAddPosition">
                 <div class="icon-wrapper">
-                  <i-local-two theme="outline" size="14" fill="#ffffff"/>
+                  <i-local-two theme="multi-color" size="12" :fill="['#ffffff' ,'#ffffff' ,'#3b8fff' ,'#3b8fff']"/>
                 </div>
                 <span class="position-text">{{ location?.name || '添加位置' }}</span>
                 <div class="icon-wrapper-close" v-if="location?.name" @click.stop="onClearLocation">
@@ -86,7 +86,7 @@ import {transformHTMLToTag} from "@/components/common/utils/emoji/youyu_emoji";
 import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
 import EmojiPicker from "@/components/common/utils/emoji/EmojiPicker.vue";
 import ContentEditableDiv from "@/components/common/utils/contenteditable/ContentEditableDiv.vue";
-import PositionSelector from "@/views/moment/components/PositionSelector.vue";
+import LocationSelector from "@/components/common/utils/aMap/LocationSelector.vue";
 
 const props = defineProps({
   form: {
@@ -179,7 +179,7 @@ const onEmojiClose = () => {
 
 const onAddPosition = () => {
   openModal({
-    component: PositionSelector,
+    component: LocationSelector,
     componentProps: {
       data: location.value,
     },
@@ -257,7 +257,8 @@ const onClearLocation = () => {
           background-color: #3b8fff;
           line-height: 0;
           border-radius: 50%;
-          padding: 1.2px;
+          padding: 1.6px;
+          display: flex;
         }
 
         .icon-wrapper-close {

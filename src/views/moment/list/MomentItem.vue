@@ -81,6 +81,12 @@
         </div>
       </div>
       <div class="content-bottom">
+        <div class="location-data" v-if="data?.location" @click="onLocationPreview">
+          <div class="icon-wrapper">
+            <i-local-two theme="multi-color" size="12" :fill="['#ffffff' ,'#ffffff' ,'#3b8fff' ,'#3b8fff']"/>
+          </div>
+          <span class="position-text">{{ data?.location }}</span>
+        </div>
         <div class="like-users" v-if="data.likeUsers?.length">
           <div class="user-avatars">
             <img v-for="(item, index) in data.likeUsers" :src="item.avatar" :style="{'z-index': index}"/>
@@ -157,6 +163,7 @@ import {useRoute, useRouter, RouterLink} from "vue-router";
 import {useStore} from "vuex";
 import type {momentListType} from "@/views/moment/types";
 import {message, Modal} from "ant-design-vue";
+import openModal from "@/libs/tools/openModal";
 import {transformHTMLToTag} from "@/components/common/utils/emoji/youyu_emoji";
 import {transformTagToHTML} from "@/components/common/utils/emoji/youyu_emoji";
 import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
@@ -165,6 +172,7 @@ import UserCardMoment from "../components/UserCardMoment.vue";
 import MomentCommentItem from "../components/MomentCommentItem.vue";
 import ContentData from "@/components/common/system/ContentData.vue";
 import SortSwitch from "@/components/common/utils/sortSwitch/SortSwitch.vue";
+import LocationPreview from "@/components/common/utils/aMap/LocationPreview.vue";
 
 const {getters, dispatch} = useStore();
 
@@ -176,6 +184,13 @@ const props = defineProps({
     type: Object as PropType<momentListType>
   }
 });
+
+if ([94, 95].includes(props.data.id)) {
+  props.data.location = "科华数据股份有限公司";
+  props.data.longitude = "118.126317";
+  props.data.latitude = "24.519079";
+}
+
 const emit = defineEmits(["deleteSuccess", "onEdit", "saveSuccess", "onCommentDeleteSuccess"]);
 
 const preview = ref(false);
@@ -314,6 +329,27 @@ const onUserVisibleChange = (visible: boolean) => {
       props.data.user = res.data;
     })
   }
+}
+
+const onLocationPreview = () => {
+  const location = {
+    longitude: props.data.longitude,
+    latitude: props.data.latitude,
+    name: props.data.location,
+  }
+  openModal({
+    component: LocationPreview,
+    componentProps: {
+      data: location,
+    },
+    title: `位置详情（${location.name}）`,
+    width: '1200px',
+    maskClosable: false,
+    keyboard: false,
+    wrapClassName: 'select-position-modal-wrapper'
+  }).then(res => {
+    location.value = res;
+  }).catch(console.log)
 }
 
 defineExpose({
@@ -457,14 +493,41 @@ defineExpose({
 
     .content-bottom {
       display: flex;
-      flex-direction: row-reverse;
+      justify-content: space-between;
+      align-items: center;
+      margin-left: 45px;
+      padding-top: 4px;
+
+      .location-data {
+        display: flex;
+        align-items: center;
+        padding: 1px 5px;
+        border: 1.8px solid var(--youyu-border-color2);
+        border-radius: 30px;
+        cursor: pointer;
+        height: 26px;
+
+        .icon-wrapper {
+          background-color: #3b8fff;
+          line-height: 0;
+          border-radius: 50%;
+          padding: 2px;
+          display: flex;
+        }
+
+        .position-text {
+          padding: 0 2px 0 4px;
+          color: var(--youyu-text3);
+          font-size: 12px;
+        }
+      }
 
       .like-users {
         display: flex;
         align-items: center;
-        padding-top: 8px;
         margin-left: auto;
         cursor: pointer;
+        height: 26px;
 
         .user-avatars {
           display: flex;
