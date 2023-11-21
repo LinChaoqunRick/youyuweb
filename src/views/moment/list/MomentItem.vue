@@ -63,12 +63,7 @@
         </a-popover>
       </div>
       <div class="content-body">
-        <RouterLink :to="`/moment/details/${data.id}`" v-if="!isDetailPage">
-          <div class="content-text" :class="{'content-expand': expand}"
-               v-html="transformTagToHTML(data.content)"
-               v-row="{set: set}"></div>
-        </RouterLink>
-        <div v-else class="content-text" :class="{'content-expand': expand}"
+        <div class="content-text" :class="{'content-expand': expand}"
              v-html="transformTagToHTML(data.content)"
              v-row="{set: set}"></div>
         <div class="limit-btn" @click="expand = true" v-show="row>7 && !expand">展开</div>
@@ -145,7 +140,7 @@
                                :moment="props.data"
                                @deleteSuccess="deleteSuccess"/>
             <div class="comment-load-all" v-if="data?.pages > 1">
-              <div class="more-btn" @click="onDetail">
+                <div class="more-btn" @click="onDetail">
                 查看全部 <span class="comment-count">{{ props.data.commentCount }}</span> 条评论
               </div>
             </div>
@@ -186,9 +181,15 @@ const props = defineProps({
 });
 
 if ([94, 95].includes(props.data.id)) {
-  props.data.location = "科华数据股份有限公司";
-  props.data.longitude = "118.126317";
-  props.data.latitude = "24.519079";
+  props.data.location = "杭州西湖风景名胜区";
+  props.data.longitude = "120.122802";
+  props.data.latitude = "30.217454";
+}
+
+if ([92, 93].includes(props.data.id)) {
+  props.data.location = "东方明珠广播电视塔";
+  props.data.longitude = "121.499867";
+  props.data.latitude = "31.240087";
 }
 
 const emit = defineEmits(["deleteSuccess", "onEdit", "saveSuccess", "onCommentDeleteSuccess"]);
@@ -219,7 +220,6 @@ const imageClass = computed(() => {
 const userInfo = computed(() => getters['userInfo']);
 const isLogin = computed(() => getters['isLogin']);
 const likeActive = computed(() => props.data.momentLike);
-const isDetailPage = computed(() => route.name === "momentDetail");
 const listParams = computed(() => ({momentId: props.data.id, pageSize: 5, orderBy: order.value}));
 const ContentDataRef = ref<InstanceType<typeof ContentData> | null>(null);
 
