@@ -6,6 +6,7 @@ import {
   User,
   Lock,
   Close,
+  CloseSmall,
   Phone,
   Mail,
   Key,
@@ -96,6 +97,7 @@ export const IconPark = (app) => {
   app.component('IUser', User);
   app.component('ILock', Lock);
   app.component('IClose', Close);
+  app.component('ICloseSmall', CloseSmall);
   app.component('IPhone', Phone);
   app.component('IMail', Mail);
   app.component('IKey', Key);

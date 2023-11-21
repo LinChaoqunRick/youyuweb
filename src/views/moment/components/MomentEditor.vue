@@ -10,9 +10,14 @@
           <template #bottom>
             <div class="topic-wrapper">
               <div class="add-position" @click="onAddPosition">
-                <i-local-two theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
-                <span class="position-text">{{ location.name || '添加位置' }}</span>
-                <i-right theme="outline" size="13" fill="currentColor"/>
+                <div class="icon-wrapper">
+                  <i-local-two theme="outline" size="14" fill="#ffffff"/>
+                </div>
+                <span class="position-text">{{ location?.name || '添加位置' }}</span>
+                <div class="icon-wrapper-close" v-if="location?.name" @click.stop="onClearLocation">
+                  <i-close-small theme="outline" size="13" fill="#fff" :strokeWidth="3"/>
+                </div>
+                <i-right v-else theme="outline" size="13" fill="currentColor"/>
               </div>
             </div>
           </template>
@@ -113,13 +118,7 @@ const richEditor = ref(null);
 const active = computed(() => richEditor.value?.active);
 const emojiVisible = ref(false);
 const submitLoading = ref(false);
-const location = ref({
-  longitude: '',
-  latitude: '',
-  address: '',
-  zone: '',
-  name: ''
-});
+const location = ref();
 
 const uploadSuccess = (fileList: []) => {
   const url = fileList[0].url + '?x-oss-process=style/smallThumb';
@@ -140,6 +139,9 @@ const onSubmit = () => {
   const form = cloneDeep(props.form);
   form.images = form.images.length ? form.images.join(",") : null;
   form.content = transformHTMLToTag(form.content);
+  form.location = location.value.name;
+  form.longitude = location.value.longitude;
+  form.latitude = location.value.latitude;
   dispatch(isEdit ? 'updateMoment' : 'createMoment', form).then(res => {
     message.success(isEdit ? "修改成功" : "发布成功");
     resetEditor();
@@ -178,13 +180,21 @@ const onEmojiClose = () => {
 const onAddPosition = () => {
   openModal({
     component: PositionSelector,
+    componentProps: {
+      data: location.value,
+    },
     title: '添加位置',
     width: '1200px',
+    maskClosable: false,
+    keyboard: false,
     wrapClassName: 'select-position-modal-wrapper'
   }).then(res => {
     location.value = res;
-    console.log(location.value);
   }).catch(console.log)
+}
+
+const onClearLocation = () => {
+  location.value = null;
 }
 </script>
 
@@ -233,23 +243,41 @@ const onAddPosition = () => {
       font-size: 12px;
 
       .add-position {
-        padding: 0 6px;
-        line-height: 24px;
+        padding: 0 6px 0 8px;
         border-radius: 50px;
         border-bottom-left-radius: 0;
         background: #fff;
-        color: #1e80ff;
+        color: #3b8fff;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
+
+        .icon-wrapper {
+          background-color: #3b8fff;
+          line-height: 0;
+          border-radius: 50%;
+          padding: 1.2px;
+        }
+
+        .icon-wrapper-close {
+          background-color: rgba(0, 0, 0, 0.5);
+          line-height: 0;
+          border-radius: 50%;
+          margin-left: 2px;
+
+          &:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+          }
+        }
 
         .i-icon {
           position: relative;
         }
 
         .position-text {
-          padding: 0 2px 0 3px;
+          padding: 0 1px 0 3px;
+          font-weight: bold;
         }
       }
 
