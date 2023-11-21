@@ -89,7 +89,7 @@
             border-radius: 4px;
 
             &.router-link-active {
-              background-color: #eaf2ff;
+              background-color: var(--youyu-body-background-5);
               color: #1890ff !important;
 
               .i-icon {

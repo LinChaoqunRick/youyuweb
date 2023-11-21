@@ -10,12 +10,13 @@
   --youyu-text2: #ffffff;
   --youyu-text3: #e3e3e3;
   /*globe*/
-  --youyu-body-background: rgba(26, 26, 26, 0.6);
+  --youyu-body-background: rgba(26, 26, 26, 0.8);
   --youyu-body-background1: rgba(58, 58, 58, 0.58);
   --youyu-body-background2: rgba(0, 0, 0, 1);
   --youyu-body-background3: rgba(0, 0, 0, 0.85);
   --youyu-body-background-ligth: rgb(45, 45, 45);
   --youyu-body-background-4: #ffffff14;
+  --youyu-body-background-5: #202323;
   --youyu-body-background5: rgba(47, 47, 47, 0.8);
 
   --youyu-body-text: #fff;

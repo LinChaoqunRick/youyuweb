@@ -246,7 +246,7 @@ const onClearLocation = () => {
         padding: 0 6px 0 8px;
         border-radius: 50px;
         border-bottom-left-radius: 0;
-        background: #fff;
+        background: var(--youyu-body-background2);
         color: #3b8fff;
         display: flex;
         align-items: center;
