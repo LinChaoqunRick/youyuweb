@@ -45,7 +45,7 @@ export default function openModal(config = {}) {
           <component ref="modalBody" is="${config.component.name}" v-bind="componentProps"/>
         </div>
         <template v-slot:closeIcon>
-          <i-close theme="outline" size="18" fill="#00000073"/>
+          <i-close theme="outline" size="18" fill="currentColor"/>
         </template>
         <template v-slot:footer>
           <Button v-if="cancelText" type="text" @click="handleCancel" :size="buttonSize">
