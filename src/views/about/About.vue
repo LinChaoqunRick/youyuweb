@@ -9,13 +9,12 @@
 </template>
 
 <script setup>
-  console.log(123123123);
 </script>
 
 <style lang="scss" scoped>
   .about-container {
     display: flex;
     justify-content: center;
-    margin-top: 100px;
+    height: 100%;
   }
 </style>

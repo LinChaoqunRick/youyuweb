@@ -1,19 +1,19 @@
 <template>
-  <div class="moment-editor" :class="{'editor-active': active}">
+  <div class="moment-editor" :class="{'active': active}">
     <div class="editor-body">
       <div class="login-mask" @click="toLogin" v-if="!isLogin"></div>
       <div class="editor-content-wrapper">
         <ContentEditableDiv v-model="form.content"
                             showLimit
-                            placeholder="此刻在想什么..."
+                            placeholder="此刻在想什么？快来分享一些新鲜事或发表一些看法吧！"
                             ref="richEditor">
           <template #bottom>
             <div class="topic-wrapper">
-              <!--<div class="now-mood">
-                <i-ulikecam theme="multi-color" size="13" :fill="['#1890ff' ,'#fff' ,'#1890ff' ,'#1890ff']"/>
-                <span class="mood-text">现在的心情</span>
+              <div class="add-position" @click="onAddPosition">
+                <i-local-two theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
+                <span class="position-text">{{ location.name || '添加位置' }}</span>
                 <i-right theme="outline" size="13" fill="currentColor"/>
-              </div>-->
+              </div>
             </div>
           </template>
         </ContentEditableDiv>
@@ -49,7 +49,7 @@
             <span class="tool-title">表情</span>
           </div>
         </a-popover>
-        <UploadFile accept=".jpg, .jpeg, .png" @uploadSuccess="uploadSuccess" :disabled="uploadDisabled">
+        <UploadFile accept=".jpg, .jpeg, .png" :maxSize="10" @uploadSuccess="uploadSuccess" :disabled="uploadDisabled">
           <div class="tool-item item-upload-image" v-login>
             <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
             <span class="tool-title">图片</span>
@@ -70,16 +70,18 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, computed, toRaw} from 'vue';
+import {ref, reactive, computed} from 'vue';
 import {useStore} from "vuex";
 import {message} from 'ant-design-vue';
 import {cloneDeep} from 'lodash';
 import {vOnClickOutside} from '@vueuse/components'
 import {onCheckLogin} from "@/assets/utils/utils";
+import openModal from "@/libs/tools/openModal";
 import {transformHTMLToTag} from "@/components/common/utils/emoji/youyu_emoji";
 import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
 import EmojiPicker from "@/components/common/utils/emoji/EmojiPicker.vue";
 import ContentEditableDiv from "@/components/common/utils/contenteditable/ContentEditableDiv.vue";
+import PositionSelector from "@/views/moment/components/PositionSelector.vue";
 
 const props = defineProps({
   form: {
@@ -111,7 +113,13 @@ const richEditor = ref(null);
 const active = computed(() => richEditor.value?.active);
 const emojiVisible = ref(false);
 const submitLoading = ref(false);
-let position = '';
+const location = ref({
+  longitude: '',
+  latitude: '',
+  address: '',
+  zone: '',
+  name: ''
+});
 
 const uploadSuccess = (fileList: []) => {
   const url = fileList[0].url + '?x-oss-process=style/smallThumb';
@@ -166,6 +174,18 @@ const onClickEmoji = () => {
 const onEmojiClose = () => {
   emojiVisible.value = false;
 }
+
+const onAddPosition = () => {
+  openModal({
+    component: PositionSelector,
+    title: '添加位置',
+    width: '1200px',
+    wrapClassName: 'select-position-modal-wrapper'
+  }).then(res => {
+    location.value = res;
+    console.log(location.value);
+  }).catch(console.log)
+}
 </script>
 
 <style lang="scss" scoped>
@@ -178,8 +198,10 @@ const onEmojiClose = () => {
   .editor-body {
     position: relative;
     background: var(--youyu-background5);
-    border-radius: 2px;
-    transition: .3s;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid transparent;
+    transition: 0s;
 
     .login-mask {
       position: absolute;
@@ -199,7 +221,7 @@ const onEmojiClose = () => {
 
       ::v-deep(.editable-div) {
         .editor-bottom {
-          padding: 4px 12px;
+          padding: 4px 8px;
         }
       }
     }
@@ -210,7 +232,7 @@ const onEmojiClose = () => {
       justify-content: space-between;
       font-size: 12px;
 
-      .now-mood {
+      .add-position {
         padding: 0 6px;
         line-height: 24px;
         border-radius: 50px;
@@ -221,15 +243,13 @@ const onEmojiClose = () => {
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: .3s;
 
         .i-icon {
           position: relative;
-          top: 1px;
         }
 
-        .mood-text {
-          padding-left: 4px;
+        .position-text {
+          padding: 0 2px 0 3px;
         }
       }
 
@@ -337,13 +357,19 @@ const onEmojiClose = () => {
   }
 }
 
-.editor-active {
+.active {
   .editor-body {
     background: var(--youyu-background1) !important;
+    transition: 0s;
+    border-color: #1890ff;
 
-    .now-mood {
+    .add-position {
       background: #eaf2ff !important;
     }
+  }
+
+  ::v-deep(.editor-active) {
+    border-color: transparent !important;
   }
 }
 
@@ -362,6 +388,16 @@ const onEmojiClose = () => {
 
   .ant-popover-inner-content {
     padding: 0;
+  }
+}
+
+.select-position-modal-wrapper {
+  .ant-modal-body {
+    padding: 0;
+
+    .modal-content {
+      height: 660px;
+    }
   }
 }
 </style>

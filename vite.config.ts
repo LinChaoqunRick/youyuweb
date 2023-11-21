@@ -29,6 +29,10 @@ export default defineConfig({
       ],
     })
   ],
+  build: {
+    // 开启sourcemap
+    sourcemap: true,
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -37,15 +41,14 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0', //ip地址
-    port: 3000, //
-    hmr: true,
+    port: 3000, //端口号
     open: false, //启动后是否自动打开浏览器,
     proxy: {
       '/plat': {
-        // target: "http://localhost:8080",
-        target: "http://124.222.79.236:8080",
+        // target: "http://localhost:8090",
+        target: "https://v2.youyul.com",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/plat/, '')
+        // rewrite: (path) => path.replace(/^\/plat/, '')
       },
       /*'/api': {
         target: "https://116.62.114.102:8081",

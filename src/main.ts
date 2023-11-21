@@ -73,4 +73,8 @@ config({
   }
 });
 
+window._AMapSecurityConfig = {
+  securityJsCode: '77d3241f7557a36fc3a1f64f967277b3',
+};
+
 app.mount('#app');

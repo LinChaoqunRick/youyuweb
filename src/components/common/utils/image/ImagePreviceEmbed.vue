@@ -172,6 +172,7 @@
 <style lang="scss" scoped>
   .image-preview-embed {
     position: relative;
+    user-select: none;
 
     .preview-top {
       display: flex;
