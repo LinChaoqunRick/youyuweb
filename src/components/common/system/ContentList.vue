@@ -17,7 +17,8 @@
           暂无数据
         </slot>
       </div>
-      <div class="view-all-data" v-else-if="showViewAll && !fold && pageNum <= totalPageNum" @click="onLoadData">
+      <div class="view-all-data" v-else-if="total > 0 && showViewAll && !fold && pageNum <= totalPageNum"
+           @click="onLoadData">
         <slot name="loadMoreBox" :loading="restLoading" :total="totalNum">
           <div class="load-more-item">
             <div>{{ (pageNum === 1) ? `${total}&nbsp;条${dataText}` : `查看更多${dataText}` }}</div>
