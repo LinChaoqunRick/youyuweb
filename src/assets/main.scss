@@ -1,4 +1,4 @@
-@import "./base.css";
+@import "base";
 @import "./css/aside/aside.scss";
 
 $headerHeight: 60px;
@@ -79,8 +79,3 @@ html {
   }
 }
 
-.dark-theme {
-  .ant-card {
-    background-color: var(--youyu-background1);
-  }
-}

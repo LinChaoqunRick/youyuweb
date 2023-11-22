@@ -25,8 +25,8 @@ import RelativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
 
 import './assets/main.scss';
-import './assets/css/theme/dark.css';
-import './assets/css/theme/light.css';
+import './assets/css/theme/dark.scss';
+import './assets/css/theme/light.scss';
 import '@icon-park/vue-next/styles/index.css'; //icon-park
 import 'md-editor-v3/lib/style.css';
 

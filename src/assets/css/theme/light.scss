@@ -67,3 +67,14 @@
   /*md-editor*/
   --editor-icon-color: #3F4A54
 }
+
+@mixin darkGlassFilter {
+  background-color: hsla(0, 0%, 100%, 0.7) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.light-theme {
+  .gf {
+    @include darkGlassFilter;
+  }
+}

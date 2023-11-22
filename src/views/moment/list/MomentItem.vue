@@ -152,7 +152,7 @@
 </template>
 
 <script lang="ts" setup>
-import {ref, computed, nextTick, provide} from 'vue';
+import {ref, computed, nextTick} from 'vue';
 import type {PropType} from "vue";
 import {useRoute, useRouter, RouterLink} from "vue-router";
 import {useStore} from "vuex";
@@ -343,9 +343,10 @@ const onLocationPreview = () => {
       data: location,
     },
     title: `位置详情（${location.name}）`,
-    width: '1200px',
+    width: '80vw',
     maskClosable: false,
     keyboard: false,
+    centered: true,
     wrapClassName: 'select-position-modal-wrapper'
   }).then(res => {
     location.value = res;
@@ -496,7 +497,6 @@ defineExpose({
       justify-content: space-between;
       align-items: center;
       margin-left: 45px;
-      padding-top: 4px;
 
       .location-data {
         display: flex;
@@ -506,6 +506,7 @@ defineExpose({
         border-radius: 30px;
         cursor: pointer;
         height: 26px;
+        margin-top: 4px;
 
         .icon-wrapper {
           background-color: #3b8fff;
@@ -528,6 +529,7 @@ defineExpose({
         margin-left: auto;
         cursor: pointer;
         height: 26px;
+        margin-top: 4px;
 
         .user-avatars {
           display: flex;

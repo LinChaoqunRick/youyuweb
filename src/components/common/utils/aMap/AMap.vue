@@ -168,7 +168,7 @@ const initMap = () => {
 // 搜索地图
 const handleSearch = debounce((queryString) => {
   // 使用 输入提示，提供了根据关键字获得提示信息的功能
-  auto.search(queryString, (info, result) => {
+  /*auto.search(queryString, (info, result) => {
     if (result && typeof result === 'object' && result.tips) {
       result.tips.forEach(item => {
         item.fullAddress = item.district + item.name;
@@ -177,10 +177,10 @@ const handleSearch = debounce((queryString) => {
     } else {
       options.value = [];
     }
-  })
+  })*/
 
   // 使用 地点搜索服务，提供了关键字搜索、周边搜索、范围内搜索等功能
-  /*placeSearch.search(queryString, (status, result) => {
+  placeSearch.search(queryString, (status, result) => {
     if (result && typeof result === 'object' && result.poiList) {
       const list = result.poiList.pois;
       list.forEach(item => {
@@ -191,7 +191,7 @@ const handleSearch = debounce((queryString) => {
     } else {
       options.value = [];
     }
-  });*/
+  });
 }, 500)
 
 // 点击地图
@@ -322,6 +322,10 @@ onUnmounted(() => {
       color: #999999;
       margin-left: 12px;
     }
+  }
+
+  .rc-virtual-list-holder {
+    max-height: 320px !important;
   }
 }
 </style>

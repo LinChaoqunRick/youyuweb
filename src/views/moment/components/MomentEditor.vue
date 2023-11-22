@@ -184,10 +184,11 @@ const onAddPosition = () => {
       data: location.value,
     },
     title: '添加位置',
-    width: '1200px',
+    width: '80vw',
     maskClosable: false,
     keyboard: false,
-    wrapClassName: 'select-position-modal-wrapper'
+    centered: true,
+    wrapClassName: 'select-position-modal-wrapper',
   }).then(res => {
     location.value = res;
   }).catch(console.log)
@@ -425,7 +426,7 @@ const onClearLocation = () => {
     padding: 0;
 
     .modal-content {
-      height: 660px;
+      height: 80vh;
     }
   }
 }
