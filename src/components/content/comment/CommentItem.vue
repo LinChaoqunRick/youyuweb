@@ -59,7 +59,7 @@
       <div class="sub-comment-wrapper" v-if="!!data.replyCount">
         <ContentList url="getSubCommentsPage" :params="params" :immediate="false" foldable
                      :auto-load="false" :show-loaded-all="false" :total="data.replyCount"
-                     data-text="回复">
+                     data-text="回复" ref="ContentListRef">
           <template v-slot="{list}">
             <ReplyItem class="reply-item"
                        :activeId="activeId"
@@ -104,13 +104,11 @@ const post = inject('post');
 const setPostAttribute = inject('setPostAttribute');
 const expand = ref<boolean>(false);
 const row = ref<number>(0);
-const pageNum = ref<number>(0);
-const currentPageNum = ref<number>(1);
 const replyEditor = ref(null);
 const {activeId, updateActiveId} = inject('active');
 const active = computed(() => activeId.value === props.data.id);
-const replyLoading = ref(false);
 const likeLoading = ref<boolean>(false);
+const ContentListRef = ref(null);
 
 const params = computed(() => ({
   commentId: props.data.id
@@ -155,7 +153,7 @@ function onLike() {
   })
 }
 
-function handleSubmit(content: string, submitCallback: Function) {
+const handleSubmit = (content: string, submitCallback: Function) => {
   dispatch("createComment", {
     postId: props.data.postId,
     userId: userInfo.value.id,
@@ -163,7 +161,7 @@ function handleSubmit(content: string, submitCallback: Function) {
     rootId: props.data.id,
     content: content
   }).then(res => {
-    // replyList.value.unshift(res.data);
+    ContentListRef.value.list.unshift(res.data);
     message.success('评论成功');
     updateActiveId(-1);
     setPostAttribute('commentCount', post.value.commentCount + 1);
@@ -191,10 +189,6 @@ function onDelete() {
   });
 }
 
-function handleProfile(user: userType) {
-  router.push({path: `/user/${user.id}`})
-}
-
 const onVisibleChange = (visible: boolean) => {
   if (visible) {
     dispatch('getPostUserById', {userId: props.data.user.id}).then(res => {
@@ -204,13 +198,13 @@ const onVisibleChange = (visible: boolean) => {
 }
 
 const saveSuccess = (data) => {
-  // replyList.value.unshift(data);
+  ContentListRef.value.list.unshift(data);
   setPostAttribute('commentCount', post.value.commentCount + 1);
   props.data.replyCount = props.data.replyCount + 1;
 }
 
 const deleteSuccess = (data) => {
-  // replyList.value = replyList.value.filter(item => item.id !== data.id);
+  ContentListRef.value.list = ContentListRef.value.list.filter(item => item.id !== data.id);
   setPostAttribute('commentCount', post.value.commentCount - 1);
   props.data.replyCount = props.data.replyCount - 1;
 }
@@ -355,9 +349,13 @@ const deleteSuccess = (data) => {
     }
 
     .sub-comment-wrapper {
-      margin-top: 10px;
 
       ::v-deep(.content-list) {
+
+        .data-list-wrapper {
+
+        }
+
         .data-list {
           border-radius: 4px;
           padding: 12px;

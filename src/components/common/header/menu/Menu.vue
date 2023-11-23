@@ -95,11 +95,3 @@
     }
   }
 </style>
-
-<style lang="scss">
-  .youyu-menu-dropdown {
-    .ant-dropdown-menu-item {
-      padding: 5px 30px !important;
-    }
-  }
-</style>

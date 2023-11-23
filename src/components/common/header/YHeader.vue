@@ -51,9 +51,6 @@
 </style>
 
 <style lang="scss" scoped>
-  ::v-deep(.ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title) {
-    padding: 5px 30px !important;;
-  }
 
   .menu-nav {
     .main-logo {

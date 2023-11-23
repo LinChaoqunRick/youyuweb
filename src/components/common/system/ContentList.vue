@@ -13,11 +13,10 @@
         </slot>
       </div>
       <div class="no-data" v-else-if="showNoData && totalPageNum===0">
-        <slot name="noDataBox">
-          暂无数据
-        </slot>
+        <slot name="noDataBox">暂无数据</slot>
       </div>
-      <div class="view-all-data" v-else-if="total > 0 && showViewAll && !fold && pageNum <= totalPageNum"
+      <div class="view-all-data"
+           v-else-if="showViewAll && (total!=null ? !!total: true) && !fold && pageNum <= totalPageNum"
            @click="onLoadData">
         <slot name="loadMoreBox" :loading="restLoading" :total="totalNum">
           <div class="load-more-item">
@@ -28,9 +27,7 @@
         </slot>
       </div>
       <div class="loaded-all-data" v-else-if="showLoadedAll && pageNum>totalPageNum">
-        <slot name="loadedAllBox">
-          已加载全部{{ dataText }} ~
-        </slot>
+        <slot name="loadedAllBox">已加载全部{{ dataText }} ~</slot>
       </div>
       <div class="loaded-fold" v-if="foldable && !!dataList?.length">
         <slot name="loadedAllFold">
@@ -87,7 +84,7 @@ const dataListWrapperRef = ref<HTMLElement | null>(null);
 const getListData = () => {
   if ((totalPageNum.value !== -1 && pageNum > totalPageNum) || failed.value) return;
   const params = {
-    pageSize: 5,
+    pageSize: 10,
     pageNum: pageNum.value,
   };
   restLoading.value = true;
@@ -189,6 +186,7 @@ defineExpose({
   position: relative;
 
   .data-list-wrapper {
+    margin-top: 8px;
     height: auto;
     transition: .3s;
     overflow: hidden;

@@ -2,7 +2,7 @@
   <div class="reply-editor">
     <div class="editor-box">
       <div class="login-mask" @click="toLogin" v-if="!isLogin"></div>
-      <ContentEditableDiv v-model="reply.content" :row="1" ref="richEditor" :maxLength="300"/>
+      <ContentEditableDiv v-model="reply.content" :row="1" :maxLength="300" auto-focus ref="richEditor"/>
     </div>
     <div class="image-wrapper" v-if="reply.images?.length">
       <div v-for="item in reply.images" class="image-item">

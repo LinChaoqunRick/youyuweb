@@ -53,6 +53,10 @@ const props = defineProps({
   showLimit: {
     type: Boolean,
     default: false
+  },
+  autoFocus: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -71,6 +75,9 @@ const contentLengthExceed = computed(() => totalStrLength.value > props.maxLengt
 onMounted(() => {
   box.value.innerHTML = props.modelValue;
   calcTextAreaLength();
+  if (props.autoFocus) {
+    box.value.focus();
+  }
 })
 
 const onFocus = () => {

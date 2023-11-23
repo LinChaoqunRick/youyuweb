@@ -220,7 +220,7 @@ const imageClass = computed(() => {
 const userInfo = computed(() => getters['userInfo']);
 const isLogin = computed(() => getters['isLogin']);
 const likeActive = computed(() => props.data.momentLike);
-const listParams = computed(() => ({momentId: props.data.id, pageSize: 5, orderBy: order.value}));
+const listParams = computed(() => ({momentId: props.data.id, pageSize: 10, orderBy: order.value}));
 const ContentDataRef = ref<InstanceType<typeof ContentData> | null>(null);
 
 function set(value: number) {

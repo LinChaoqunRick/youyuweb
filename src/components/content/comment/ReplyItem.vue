@@ -130,11 +130,11 @@
       userIdTo: props.data.userId,
       content: content
     }).then(res => {
-      message.success('评论成功');
       // loadReply();
       updateActiveId(-1);
       setPostAttribute('commentCount', post.value.commentCount + 1);
       emit("saveSuccess");
+      message.success('评论成功');
     }).catch(e => {
       message.error("评论失败")
     }).finally(() => submitCallback())
@@ -169,8 +169,8 @@
       onOk() {
         return dispatch("deleteComment", {commentId: props.data.id}).then(res => {
           if (res.data) {
-            message.success('删除成功');
             emit("deleteSuccess", props.data);
+            message.success('删除成功');
           } else {
             message.error("删除失败");
           }

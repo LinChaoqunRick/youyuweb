@@ -1,10 +1,10 @@
 <template>
   <div class="nav-link" v-if="route?.children.length">
-    <a-dropdown placement="bottom" overlayClassName="route-dropdown">
-      <div class="route-dropdown-item">
+    <a-dropdown :getPopupContainer="triggerNode=>triggerNode.parentNode"
+                placement="bottom" overlayClassName="route-dropdown">
+      <div class="route-dropdown-trigger">
         <RouterLink :to="route.path" custom v-slot="{isActive, isExactActive, navigate}">
-          <span
-            :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}">{{ route.title }}</span>
+          <a :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}">{{ route.title }}</a>
         </RouterLink>
       </div>
       <template #overlay>
@@ -38,20 +38,9 @@ const prop = defineProps({
   display: flex;
   justify-content: center;
   align-items: center;
-  color: var(--youyu-text2);
-  transition: 0s !important;
 
-  .dropdown-arrow {
-    color: #324053;
-  }
-
-  a {
-    color: inherit;
-    font-size: 14px;
-
-    &:hover {
-      color: #1890ff;
-    }
+  a{
+    color: var(--youyu-text2);
   }
 
   &:hover {
@@ -59,25 +48,9 @@ const prop = defineProps({
       display: block;
     }
 
-    .dropdown-arrow {
-      transform: translateY(-3px);
-
-      &:before {
-        transform: rotate(45deg) translateX(3.5px);
-      }
-
-      &:after {
-        transform: rotate(-45deg) translateX(-3.5px);
-      }
+    .route-dropdown-trigger {
+      color: #1890ff !important;
     }
-  }
-}
-
-.nav-link-single {
-  transition: .3s;
-
-  &:hover {
-    color: #1890ff;
   }
 }
 </style>
@@ -92,26 +65,9 @@ const prop = defineProps({
   text-align: center;
   border-radius: 2px;
   box-shadow: 0 0 6px rgba(0, 0, 0, .12);
-  transition: 0s !important;
 
   .ant-dropdown-menu {
     padding: 0;
-  }
-
-  .route-dropdown-item {
-    &:hover {
-      color: #1890ff !important;
-    }
-  }
-
-  .dropdown-arrow {
-    position: absolute;
-    top: -12px;
-    left: calc(50% - 6px);
-    height: 0;
-    width: 0;
-    border: 6px solid transparent;
-    border-bottom-color: var(--youyu-navigation);;
   }
 }
 </style>
