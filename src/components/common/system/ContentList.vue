@@ -1,43 +1,68 @@
 <template>
   <div class="content-list">
-    <div class="data-list-wrapper" v-if="!!dataList?.length" ref="dataListWrapperRef">
+    <div
+      class="data-list-wrapper"
+      v-if="!!dataList?.length"
+      ref="dataListWrapperRef"
+    >
       <div class="data-list">
-        <slot :list="dataList"/>
+        <slot :list="dataList" />
       </div>
     </div>
     <div class="bottom-operation mt-8" ref="bottomOperation">
       <div class="failed-box" v-if="showFailed && failed" @click="onRetry">
         <slot name="failedBox">
-          <i-refresh theme="outline" size="15" fill="#1890ff"/>
+          <i-refresh theme="outline" size="15" fill="#1890ff" />
           <span class="ml-8">加载失败，重新加载</span>
         </slot>
       </div>
-      <div class="no-data" v-else-if="showNoData && totalPageNum===0">
+      <div class="no-data" v-else-if="showNoData && totalPageNum === 0">
         <slot name="noDataBox">暂无数据</slot>
       </div>
-      <div class="view-all-data"
-           v-else-if="showViewAll && (total!=null ? !!total: true) && !fold && pageNum <= totalPageNum"
-           @click="onLoadData">
+      <div
+        class="view-all-data"
+        v-else-if="
+          showViewAll &&
+          (total != null ? !!total : true) &&
+          !fold &&
+          pageNum <= totalPageNum
+        "
+        @click="onLoadData"
+      >
         <slot name="loadMoreBox" :loading="restLoading" :total="totalNum">
           <div class="load-more-item">
-            <div>{{ (pageNum === 1) ? `${total}&nbsp;条${dataText}` : `查看更多${dataText}` }}</div>
-            <i-down v-if="!restLoading" theme="outline" size="14" fill="#1890ff"/>
-            <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
+            <div>
+              {{
+                pageNum === 1
+                  ? `${total}&nbsp;条${dataText}`
+                  : `查看更多${dataText}`
+              }}
+            </div>
+            <i-down
+              v-if="!restLoading"
+              theme="outline"
+              size="14"
+              fill="#1890ff"
+            />
+            <i-loading-four v-else theme="outline" size="14" fill="#1890ff" />
           </div>
         </slot>
       </div>
-      <div class="loaded-all-data" v-else-if="showLoadedAll && pageNum>totalPageNum">
+      <div
+        class="loaded-all-data"
+        v-else-if="showLoadedAll && pageNum > totalPageNum"
+      >
         <slot name="loadedAllBox">已加载全部{{ dataText }} ~</slot>
       </div>
       <div class="loaded-fold" v-if="foldable && !!dataList?.length">
         <slot name="loadedAllFold">
           <div class="fold" v-show="!fold" @click="onFold(true)">
             <span>收起</span>
-            <i-up theme="outline" size="14" fill="#1890ff"/>
+            <i-up theme="outline" size="14" fill="#1890ff" />
           </div>
           <div class="unfold" v-show="fold" @click="onFold(false)">
             <span>展开更多{{ dataText }}</span>
-            <i-down theme="outline" size="14" fill="#1890ff"/>
+            <i-down theme="outline" size="14" fill="#1890ff" />
           </div>
         </slot>
       </div>
@@ -46,30 +71,32 @@
 </template>
 
 <script lang="ts" setup>
-import {ref, computed, nextTick, watch} from 'vue'
-import {useStore} from "vuex";
-import {keepScrollTop} from '@/assets/utils/utils';
+import { ref, computed, nextTick, watch } from "vue";
+import { useStore } from "vuex";
+import { keepScrollTop } from "@/assets/utils/utils";
 
 const props = defineProps({
-  url: {type: String, required: true},
-  params: {type: Object,},
-  showFailed: {type: Boolean, default: true},
-  showNoData: {type: Boolean, default: true},
-  showViewAll: {type: Boolean, default: true},
-  showLoadedAll: {type: Boolean, default: true},
-  foldable: {type: Boolean, default: false},
-  total: {type: Number},
-  immediate: {type: Boolean, default: true},
-  dataText: {type: String, default: '数据'},
-  autoLoad: {type: Boolean, default: false}, // 滚动到底后自动加载
-  loadTrigger: {type: Boolean, default: false} // 配合autoLoad使用，如果是true，则需要点击后触发autoLoad
-})
+  url: { type: String, required: true },
+  params: { type: Object },
+  showFailed: { type: Boolean, default: true },
+  showNoData: { type: Boolean, default: true },
+  showViewAll: { type: Boolean, default: true },
+  showLoadedAll: { type: Boolean, default: true },
+  foldable: { type: Boolean, default: false },
+  total: { type: Number },
+  immediate: { type: Boolean, default: true },
+  dataText: { type: String, default: "数据" },
+  autoLoad: { type: Boolean, default: false }, // 滚动到底后自动加载
+  loadTrigger: { type: Boolean, default: false }, // 配合autoLoad使用，如果是true，则需要点击后触发autoLoad
+});
 
-const {dispatch} = useStore();
+const { dispatch } = useStore();
 
 let dataListHeight: number = 0;
 
-const firstLoading = computed(() => !dataList.value.length && restLoading.value);
+const firstLoading = computed(
+  () => !dataList.value.length && restLoading.value
+);
 const pageNum = ref<number>(1);
 const totalPageNum = ref<number>(1);
 const totalNum = ref<number>(0);
@@ -82,27 +109,31 @@ const bottomOperation = ref<HTMLElement | null>(null);
 const dataListWrapperRef = ref<HTMLElement | null>(null);
 
 const getListData = () => {
-  if ((totalPageNum.value !== -1 && pageNum > totalPageNum) || failed.value) return;
+  if ((totalPageNum.value !== -1 && pageNum > totalPageNum) || failed.value)
+    return;
   const params = {
     pageSize: 10,
     pageNum: pageNum.value,
   };
   restLoading.value = true;
-  dispatch(props.url, Object.assign({}, params, props.params)).then(res => {
-    dataList.value.push(...res.data.list);
-    totalPageNum.value = res.data.pages;
-    pageNum.value++;
-    totalNum.value = res.data.total;
-    if (props.foldable) {
-      foldAnimation();
-    }
-    keepScrollTop();
-  }).catch(() => {
-    failed.value = true;
-  }).finally(() => {
-    restLoading.value = false;
-  })
-}
+  dispatch(props.url, Object.assign({}, params, props.params))
+    .then((res) => {
+      dataList.value.push(...res.data.list);
+      totalPageNum.value = res.data.pages;
+      pageNum.value++;
+      totalNum.value = res.data.total;
+      if (props.foldable) {
+        foldAnimation();
+      }
+      keepScrollTop();
+    })
+    .catch(() => {
+      failed.value = true;
+    })
+    .finally(() => {
+      restLoading.value = false;
+    });
+};
 
 if (props.immediate) {
   getListData();
@@ -114,7 +145,7 @@ const initData = () => {
   pageNum.value = 1;
   totalNum.value = 0;
   getListData();
-}
+};
 
 const onLoadData = () => {
   if (props.loadTrigger) {
@@ -122,21 +153,21 @@ const onLoadData = () => {
   } else {
     getListData();
   }
-}
+};
 
 const onUnlock = () => {
   if (!bottomOperation.value) return;
-  const ob = new IntersectionObserver(entries => {
+  const ob = new IntersectionObserver((entries) => {
     if (!entries[0].isIntersecting) return;
     getListData();
   });
   ob.observe(bottomOperation.value);
-}
+};
 
 const onRetry = () => {
   failed.value = false;
   getListData();
-}
+};
 
 const onFold = (value: boolean) => {
   fold.value = value;
@@ -145,40 +176,44 @@ const onFold = (value: boolean) => {
       dataListWrapperRef.value.style.height = `0`;
     } else {
       // dataListWrapperRef.value.style.height = `${dataListHeight}px`;
-      dataListWrapperRef.value.style.height = 'auto';
+      dataListWrapperRef.value.style.height = "auto";
     }
   }
-}
+};
 
 const foldAnimation = () => {
   nextTick(() => {
     if (dataListWrapperRef.value) {
-      ({height: dataListHeight} = dataListWrapperRef.value.getBoundingClientRect());
+      ({ height: dataListHeight } =
+        dataListWrapperRef.value.getBoundingClientRect());
       // dataListWrapperRef.value.style.height = '0';
       // dataListWrapperRef.value.offsetHeight;
       // dataListWrapperRef.value.style.height = `${dataListHeight}px`;
     }
-  })
-}
+  });
+};
 
-watch(() => firstLoading.value, (value) => {
-  if (value) {
-    dataList.value = [];
+watch(
+  () => firstLoading.value,
+  (value) => {
+    if (value) {
+      dataList.value = [];
+    }
+    if (!value && props.autoLoad) {
+      nextTick(() => {
+        if (!props.loadTrigger) {
+          onUnlock();
+        }
+      });
+    }
   }
-  if (!value && props.autoLoad) {
-    nextTick(() => {
-      if (!props.loadTrigger) {
-        onUnlock();
-      }
-    })
-  }
-})
+);
 
 defineExpose({
   list: dataList,
   getListData,
-  initData
-})
+  initData,
+});
 </script>
 
 <style lang="scss" scoped>
@@ -186,9 +221,8 @@ defineExpose({
   position: relative;
 
   .data-list-wrapper {
-    margin-top: 8px;
     height: auto;
-    transition: .3s;
+    transition: 0.3s;
     overflow: hidden;
   }
 
