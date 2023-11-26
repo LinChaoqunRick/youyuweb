@@ -149,10 +149,11 @@ const initMap = () => {
             buttonOffset: new AMap.Pixel(10, 20), //定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
             zoomToAccuracy: true, //定位成功后是否自动调整地图视野到定位点
             getCityWhenFail: true,
+            needAddress: true,
+            extensions: "all"
           });
           map.addControl(geolocation);
           geolocation.getCurrentPosition((status, result) => {
-            console.log(result);
             onMapClick({
               lnglat: {
                 lng: result.position[0],
