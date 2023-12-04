@@ -8,7 +8,7 @@
         :model="formState"
         class="login-form">
         <a-form-item label="" v-bind="validateInfos.telephone">
-          <a-input v-model:value="formState.telephone"
+          <a-input v-model:value="formState.username"
                    size="large"
                    :maxlength="30"
                    placeholder="手机号">
@@ -17,8 +17,8 @@
             </template>
           </a-input>
         </a-form-item>
-        <a-form-item label="" v-bind="validateInfos.code">
-          <a-input v-model:value="formState.code" size="large" :maxlength="6" placeholder="验证码">
+        <a-form-item label="" v-bind="validateInfos.smsCode">
+          <a-input v-model:value="formState.smsCode" size="large" :maxlength="6" placeholder="验证码">
             <template v-slot:suffix>
               <a-button type="link" class="send-code-btn" :disabled="btnProps.disabled" @click="onSendCode">
                 {{btnProps.text}}
@@ -63,8 +63,12 @@
   }
 
   const formState = reactive({
-    telephone: '',
-    code: '',
+    username: '',
+    smsCode: '',
+    client_id: 'web', // oauth客户端id
+    client_secret: '654321', // oauth客户端密码
+    grant_type: 'password', // oauth认证方式
+    authType: 'sms' // 校验方式设置成密码模式
   });
 
   const tip = reactive({
@@ -76,8 +80,8 @@
   const tryCount = ref<number>(0);
 
   const rulesRef = reactive({
-    telephone: [{required: true, validator: checkTelephone, trigger: 'change'}],
-    code: [{required: true, message: '请输入6位验证码', min: 6, max: 6, trigger: 'change'}],
+    username: [{required: true, validator: checkTelephone, trigger: 'change'}],
+    smsCode: [{required: true, message: '请输入6位验证码', min: 6, max: 6, trigger: 'change'}],
   });
 
   const btnProps = reactive<btnProp>({
@@ -102,12 +106,13 @@
   };
 
   function handleLogin(form) {
-    dispatch('telephoneLogin', formState).then(res => {
-      const {userInfo, token} = res.data;
+    dispatch('token', formState).then(res => {
+      const {userInfo, access_token, refresh_token} = res.data;
       message.success(`欢迎回来，${userInfo.nickname}`);
       commit("changeLogin", false);
       commit("changeUser", userInfo);
-      Cookies.set("token", token, {expires: 7});
+      Cookies.set("access_token", access_token, {expires: 7});
+      Cookies.set("refresh_token", refresh_token, {expires: 30});
       // 生成权限路由
       generateAuthRoutes();
     }).catch(e => {
@@ -127,7 +132,7 @@
 
   function onSendCode() {
     dispatch('messageSend', {
-      telephone: formState.telephone,
+      telephone: formState.username,
       type: smsCode.LOGIN
     }).then(res => {
       tryCount.value = 0;

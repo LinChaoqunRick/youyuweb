@@ -17,8 +17,8 @@ const isLogin = computed(() => store.getters['isLogin']);
  *   2.2 如果用户数据不存在，用户信息设置为初始值
  */
 const checkTokenValid = async () => {
-  const token = Cookies.get("token");
-  if (token) {
+  const access_token = Cookies.get("access_token");
+  if (access_token) {
     store.dispatch('getCurrentUser').then(res => {
       store.commit("changeUser", res.data);
     })

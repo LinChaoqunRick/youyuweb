@@ -48,95 +48,100 @@
 </template>
 
 <script setup lang="ts">
-  import {ref, reactive, toRaw, inject} from 'vue';
-  import {useStore} from 'vuex';
-  import {message} from 'ant-design-vue';
-  import Cookies from "js-cookie";
-  import {generateAuthRoutes} from "@/router/config/useGenerateRoutes";
+import {ref, reactive, toRaw, inject} from 'vue';
+import {useStore} from 'vuex';
+import {message} from 'ant-design-vue';
+import Cookies from "js-cookie";
+import {generateAuthRoutes} from "@/router/config/useGenerateRoutes";
 
-  const {commit, dispatch} = useStore();
-  import {Form} from 'ant-design-vue';
+const {commit, dispatch} = useStore();
+import {Form} from 'ant-design-vue';
 
-  const useForm = Form.useForm;
-  const handleSwitch = inject('handleSwitch')
+const useForm = Form.useForm;
+const handleSwitch = inject('handleSwitch')
 
-  const formState = reactive({
-    username: '',
-    password: '',
+const formState = reactive({
+  username: '',
+  password: '',
+  client_id: 'web', // oauth客户端id
+  client_secret: '654321', // oauth客户端密码
+  grant_type: 'password', // oauth认证方式
+  authType: 'password' // 校验方式设置成密码模式
+});
+
+const tip = reactive({
+  showTip: false,
+  message: "账号或密码错误"
+})
+
+const loading = ref(false);
+
+const rulesRef = reactive({
+  username: [{required: true, message: '请输入账号'}],
+  password: [{required: true, message: '请输入密码'}],
+});
+
+const {resetFields, validate, validateInfos} = useForm(formState, rulesRef);
+
+const onSubmit = () => {
+  validate().then(() => {
+    tip.showTip = false;
+    loading.value = true;
+    handleLogin(toRaw(formState));
+  }).catch(err => {
+    console.log('error', err);
   });
+};
 
-  const tip = reactive({
-    showTip: false,
-    message: "账号或密码错误"
+function handleLogin(form) {
+  dispatch('token', form).then(res => {
+    const {userInfo, access_token, refresh_token} = res.data;
+    message.success(`欢迎回来，${userInfo.nickname}`);
+    commit("changeLogin", false);
+    commit("changeUser", userInfo);
+    Cookies.set("access_token", access_token, {expires: 7});
+    Cookies.set("refresh_token", refresh_token, {expires: 30});
+    // 生成权限路由
+    generateAuthRoutes();
+  }).catch(e => {
+    tip.showTip = true;
+    tip.message = e.message;
+  }).finally(_ => {
+    loading.value = false;
   })
-
-  const loading = ref(false);
-
-  const rulesRef = reactive({
-    username: [{required: true, message: '请输入账号'}],
-    password: [{required: true, message: '请输入密码'}],
-  });
-
-  const {resetFields, validate, validateInfos} = useForm(formState, rulesRef);
-
-  const onSubmit = () => {
-    validate().then(() => {
-      tip.showTip = false;
-      loading.value = true;
-      handleLogin(toRaw(formState));
-    }).catch(err => {
-      console.log('error', err);
-    });
-  };
-
-  function handleLogin(form) {
-    dispatch('accountLogin', form).then(res => {
-      const {userInfo, token} = res.data;
-      message.success(`欢迎回来，${userInfo.nickname}`);
-      commit("changeLogin", false);
-      commit("changeUser", userInfo);
-      Cookies.set("token", token, {expires: 7});
-      // 生成权限路由
-      generateAuthRoutes();
-    }).catch(e => {
-      tip.showTip = true;
-      tip.message = e.message;
-    }).finally(_ => {
-      loading.value = false;
-    })
-  }
+}
 </script>
 
 <style lang="scss" scoped>
-  .login-account {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
+.login-account {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
 
-    .login-form-container {
-      width: 320px;
-      /*background-color: skyblue;*/
-    }
-
-    .tip-box {
-      position: absolute;
-      width: 320px;
-      top: 70px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .other-tips {
-      margin-top: 10px;
-
-      .forget-password {
-
-      }
-    }
-
+  .login-form-container {
+    width: 320px;
+    /*background-color: skyblue;*/
   }
+
+  .tip-box {
+    position: absolute;
+    width: 320px;
+    top: 70px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .other-tips {
+    margin-top: 10px;
+
+    .forget-password {
+
+    }
+  }
+
+}
 </style>

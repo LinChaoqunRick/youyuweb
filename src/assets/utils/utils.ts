@@ -235,7 +235,8 @@ export const colorReverse = (color: string) => {
 }
 
 export const cleanCookieLocalStorage = () => {
-  Cookies.remove("token");
+  Cookies.remove("access_token");
+  Cookies.remove("refresh_token");
   localStorage.clear();
 }
 

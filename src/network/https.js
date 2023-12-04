@@ -29,9 +29,10 @@ const instance = axios.create({
 
 
 instance.interceptors.request.use((config) => {
-  const token = Cookies.get("token") || '';
-  // config.headers.Authorization = token //  如果要求携带在请求头中
-  config.headers.token = token;   //如果要求携带在请求头中
+  const access_token = Cookies.get("access_token") || '';
+  if (!!access_token) {
+    config.headers.Authorization = "Bearer " + access_token; //  如果要求携带在请求头中
+  }
   return config
 }, (err) => {
   console.log(err);
@@ -57,7 +58,7 @@ instance.interceptors.response.use((response) => {
     console.log("token失效，自动refresh token");
   } else if (status === 404) {
     message.error('请求失败，接口资源不存在');
-  }  else if (showMessageCode.includes(data.code)) {
+  } else if (showMessageCode.includes(data.code)) {
     message.error(data.message);
   } else {
     // message.error('系统异常,请联系管理员');
@@ -90,25 +91,34 @@ function post(url, data = {}, config = null) {
     }
     return instance.post(url, qs.stringify(data), config)
   } else {
-    return instance.post(url, data, config)
+    return instance.post(url, qs.stringify(data), config)
   }
 }
 
 
 // Function that will be called to refresh authorization
 const refreshAuthLogic = async (failedRequest) => {
-  const tokenRefreshResponse = await store.dispatch("refreshToken").catch(e => {
-    message.warning('登录凭证已过期，自动Refresh Token失败，请重新登录！');
-    Cookies.set("token", "");
+  const refresh_token = Cookies.get("refresh_token") || '';
+  const tokenRefreshResponse = await store.dispatch("token", {
+    client_id: 'web', // oauth客户端id
+    client_secret: '654321', // oauth客户端密码
+    grant_type: 'refresh_token',
+    refresh_token: refresh_token
+  }).catch(e => {
+    message.warning('持久凭证已过期，刷新失败，请重新登录！');
+    Cookies.set("access_token", "");
+    Cookies.set("refresh_token", "");
     store.commit("changeUser", {});
     setTimeout(() => {
-      location.reload();
+      // location.reload();
     }, 1500)
   });
-  const token = tokenRefreshResponse.data;
-  Cookies.set("token", token, {expires: 7});
+  const res_access_token = tokenRefreshResponse.data.access_token;
+  const res_refresh_token = tokenRefreshResponse.data.refresh_token;
+  Cookies.set("access_token", res_access_token, {expires: 7});
+  Cookies.set("refresh_token", res_refresh_token, {expires: 30});
   console.log("token刷新成功");
-  failedRequest.response.config.headers['token'] = token;
+  failedRequest.response.config.headers['Authorization'] = "Bearer " + res_access_token;
   return await Promise.resolve();
 }
 

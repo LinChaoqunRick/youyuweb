@@ -1,13 +1,11 @@
 import http from "@/network/https";
 import {
   ACCOUNT_LOGIN,
-  TELEPHONE_LOGIN,
   ACCOUNT_LOGOUT,
   GET_AUTH_ROUTES,
   SEND_EMAIL_CODE,
   ACCOUNT_REGISTER,
   GET_CURRENT_USER,
-  REFRESH_TOKEN
 } from "@/network/apis";
 
 export default {
@@ -40,11 +38,12 @@ export default {
     }
   },
   actions: {
-    accountLogin(state, params) {
-      return http.post(ACCOUNT_LOGIN, params);
-    },
-    telephoneLogin(state, params) {
-      return http.post(TELEPHONE_LOGIN, params);
+    token(state, params) {
+      return http.post(ACCOUNT_LOGIN, params, {
+        headers: {
+          Authorization: 'Basic ' + btoa("web" + ":" + "654321")
+        }
+      });
     },
     logout(state, params) {
       return http.post(ACCOUNT_LOGOUT, params);
@@ -60,9 +59,6 @@ export default {
     },
     getCurrentUser(state, params) {
       return http.post(GET_CURRENT_USER, params);
-    },
-    refreshToken(state, params) {
-      return http.post(REFRESH_TOKEN, params);
     },
   },
 }
