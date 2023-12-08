@@ -45,11 +45,15 @@ export default defineConfig({
     open: false, //启动后是否自动打开浏览器,
     proxy: {
       '/plat': {
-        // target: "http://localhost:8090",
+        target: "http://192.168.69.159:8080",
+        // target: "http://192.168.67.130:8080",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/plat/, '')
+      },
+      /*'/plat': {
         target: "https://v2.youyul.com",
         changeOrigin: true,
-        // rewrite: (path) => path.replace(/^\/plat/, '')
-      },
+      },*/
       /*'/api': {
         target: "https://116.62.114.102:8081",
         changeOrigin: true,

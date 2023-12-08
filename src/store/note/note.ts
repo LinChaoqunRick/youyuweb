@@ -13,32 +13,32 @@ import {
 
 export default {
   actions: {
-    createNote(state: any, params: object) {
+    createNote(context: any, params: object) {
       return http.post(CREATE_NOTE, params);
     },
-    listNote(state: any, params: object) {
+    listNote(context: any, params: object) {
       return http.post(LIST_NOTE, params);
     },
-    getNote(state: any, params: object) {
+    getNote(context: any, params: object) {
       return http.post(GET_NOTE, params);
     },
-    updateNote(state: any, params: object) {
+    updateNote(context: any, params: object) {
       return http.post(UPDATE_NOTE, params);
     },
-    createNoteChapter(state: any, params: object) {
+    createNoteChapter(context: any, params: object) {
       return http.post(CREATE_NOTE_CHAPTER, params);
     },
-    listNoteChapter(state: any, params: object) {
+    listNoteChapter(context: any, params: object) {
       return http.post(LIST_NOTE_CHAPTER, params);
     },
-    getNoteChapter(state: any, params: object) {
+    getNoteChapter(context: any, params: object) {
       return http.post(GET_NOTE_CHAPTER, params);
     },
-    updateNoteChapter(state: any, params: object) {
+    updateNoteChapter(context: any, params: object) {
       return http.post(UPDATE_NOTE_CHAPTER, params);
     },
-    deleteNoteChapter(state: any, params: object) {
+    deleteNoteChapter(context: any, params: object) {
       return http.post(DELETE_NOTE_CHAPTER, params);
     },
-  }
-}
+  },
+};

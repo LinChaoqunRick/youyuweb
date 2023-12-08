@@ -23,82 +23,82 @@ import {
   SAVE_EMAIL,
   GET_PROFILE_MENU,
   SET_PROFILE_MENU,
-  GET_USER_DYNAMICS
+  GET_USER_DYNAMICS,
 } from "@/network/apis";
 
 export default {
   actions: {
-    getUserList(state: any, params: object) {
+    getUserList(context: any, params: object) {
       return http.get(GET_USER_LIST, params);
     },
-    getUserDetail(state: any, params: object) {
+    getUserDetail(context: any, params: object) {
       return http.get(GET_USER_DETAIL, params);
     },
-    getPostUserById(state: any, params: object) {
+    getPostUserById(context: any, params: object) {
       return http.get(GET_POST_USER_DETAIL, params);
     },
-    getLimitPost(state: any, params: object) {
+    getLimitPost(context: any, params: object) {
       return http.get(GET_LIMIT_POST, params);
     },
-    getColumnList(state: any, params: object) {
+    getColumnList(context: any, params: object) {
       return http.get(GET_COLUMN_LIST, params);
     },
-    getColumnDetail(state: any, params: object) {
+    getColumnDetail(context: any, params: object) {
       return http.get(GET_COLUMN_DETAIL, params);
     },
-    addColumn(state: any, params: object) {
+    addColumn(context: any, params: object) {
       return http.post(ADD_COLUMN, params);
     },
-    updateColumn(state: any, params: object) {
+    updateColumn(context: any, params: object) {
       return http.post(UPDATE_COLUMN, params);
     },
-    deleteColumn(state: any, params: object) {
+    deleteColumn(context: any, params: object) {
       return http.post(DELETE_COLUMN, params);
     },
-    getColumnPosts(state: any, params: object) {
+    getColumnPosts(context: any, params: object) {
       return http.post(GET_COLUMN_POSTS, params);
     },
-    setColumnIsTop(state: any, params: object) {
+    setColumnIsTop(context: any, params: object) {
       return http.post(SET_COLUMN_IS_TOP, params);
     },
-    getPostCollectList(state: any, params: object) {
+    getPostCollectList(context: any, params: object) {
       return http.post(GET_POST_COLLECT_LIST, params);
     },
-    setUserFollow(state: any, params: object) {
+    setUserFollow(context: any, params: object) {
       return http.post(SET_USER_FOLLOW, params);
     },
-    cancelUserFollow(state: any, params: object) {
+    cancelUserFollow(context: any, params: object) {
       return http.post(CANCEL_USER_FOLLOW, params);
     },
-    getFollowList(state: any, params: object) {
+    getFollowList(context: any, params: object) {
       return http.post(GET_FOLLOW_LIST, params);
     },
-    getFansList(state: any, params: object) {
+    getFansList(context: any, params: object) {
       return http.post(GET_FANS_LIST, params);
     },
-    saveBasicInfo(state: any, params: object) {
+    saveBasicInfo(context: any, params: object) {
       return http.post(SAVE_BASIC_INFO, params);
     },
-    saveHomepage(state: any, params: object) {
+    saveHomepage(context: any, params: object) {
       return http.post(SAVE_HOMEPAGE, params);
     },
-    saveTelephone(state: any, params: object) {
+    saveTelephone(context: any, params: object) {
       return http.post(SAVE_TELEPHONE, params);
     },
-    savePassword(state: any, params: object) {
+    savePassword(context: any, params: object) {
       return http.post(SAVE_PASSWORD, params);
     },
-    saveEmail(state: any, params: object) {
+    saveEmail(context: any, params: object) {
       return http.post(SAVE_EMAIL, params);
     },
-    getProfileMenu(state: any, params: object) {
+    getProfileMenu(context: any, params: object) {
       return http.post(GET_PROFILE_MENU, params);
     },
-    setProfileMenu(state: any, params: object) {
+    setProfileMenu(context: any, params: object) {
       return http.post(SET_PROFILE_MENU, params);
     },
-    getUserDynamics(state: any, params: object) {
+    getUserDynamics(context: any, params: object) {
       return http.post(GET_USER_DYNAMICS, params);
     },
   },
-}
+};

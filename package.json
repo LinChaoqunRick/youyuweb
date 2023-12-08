@@ -39,6 +39,7 @@
     "@rushstack/eslint-patch": "^1.1.4",
     "@types/dat.gui": "^0.7.7",
     "@types/node": "^16.11.56",
+    "@types/qs": "^6.9.10",
     "@types/stats.js": "^0.17.0",
     "@types/three": "^0.149.0",
     "@vitejs/plugin-vue": "^3.0.3",

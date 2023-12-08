@@ -11,54 +11,54 @@ import {
 export default {
   state: () => ({
     showLogin: false,
-    user: JSON.parse(localStorage.getItem("user")) || {},
+    user: JSON.parse(localStorage.getItem("user") || "{}"),
     authorId: 10000, // 本站作者id
   }),
   mutations: {
-    changeLogin(state, status) {
+    changeLogin(state: any, status: any) {
       state.showLogin = status;
     },
-    changeUser(state, user) {
+    changeUser(state: any, user: any) {
       localStorage.setItem("user", JSON.stringify(user));
       state.user = user;
-    }
+    },
   },
   getters: {
-    loginPanelStatus(state) {
+    loginPanelStatus(state: any) {
       return state.showLogin;
     },
-    isLogin(state) {
-      return JSON.stringify(state.user) !== '{}'
+    isLogin(state: any) {
+      return JSON.stringify(state.user) !== "{}";
     },
-    userInfo(state) {
+    userInfo(state: any) {
       return state.user;
     },
-    isAuthor(state) {
+    isAuthor(state: any) {
       return state.user.id === state.authorId;
-    }
+    },
   },
   actions: {
-    token(state, params) {
+    token(context: any, params: object) {
       return http.post(ACCOUNT_LOGIN, params, {
         headers: {
-          Authorization: 'Basic ' + btoa("web" + ":" + "654321")
-        }
+          Authorization: "Basic " + btoa("web" + ":" + "654321"),
+        },
       });
     },
-    logout(state, params) {
+    logout(context: any, params: object) {
       return http.post(ACCOUNT_LOGOUT, params);
     },
-    getAuthRoutes(state, params) {
+    getAuthRoutes(context: any, params: object) {
       return http.get(GET_AUTH_ROUTES, params);
     },
-    sendEmailCode(state, params) {
+    sendEmailCode(context: any, params: object) {
       return http.post(SEND_EMAIL_CODE, params);
     },
-    register(state, params) {
+    register(context: any, params: object) {
       return http.post(ACCOUNT_REGISTER, params);
     },
-    getCurrentUser(state, params) {
+    getCurrentUser(context: any, params: object) {
       return http.post(GET_CURRENT_USER, params);
     },
   },
-}
+};

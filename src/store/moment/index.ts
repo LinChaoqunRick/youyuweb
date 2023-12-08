@@ -21,56 +21,56 @@ import {
 
 export default {
   actions: {
-    createMoment(state: any, params: object) {
+    createMoment(context: any, params: object) {
       return http.post(MOMENT_CREATE, params);
     },
-    updateMoment(state: any, params: object) {
+    updateMoment(context: any, params: object) {
       return http.post(MOMENT_UPDATE, params);
     },
-    deleteMoment(state: any, params: object) {
+    deleteMoment(context: any, params: object) {
       return http.post(MOMENT_DELETE, params);
     },
-    momentList(state: any, params: object) {
+    momentList(context: any, params: object) {
       return http.post(MOMENT_LIST, params);
     },
-    momentListFollowing(state: any, params: object) {
+    momentListFollowing(context: any, params: object) {
       return http.post(MOMENT_LIST_FOLLOWING, params);
     },
-    getMoment(state: any, params: object) {
+    getMoment(context: any, params: object) {
       return http.post(GET_MOMENT, params);
     },
-    getMomentUserDetail(state: any, params: object) {
+    getMomentUserDetail(context: any, params: object) {
       return http.post(GET_MOMENT_USER_DETAIL, params);
     },
-    createMomentComment(state: any, params: object) {
+    createMomentComment(context: any, params: object) {
       return http.post(CREATE_MOMENT_COMMENT, params);
     },
-    listMomentCommentPage(state: any, params: object) {
+    listMomentCommentPage(context: any, params: object) {
       return http.post(LIST_MOMENT_COMMENT_PAGE, params);
     },
-    listMomentCommentAll(state: any, params: object) {
+    listMomentCommentAll(context: any, params: object) {
       return http.post(LIST_MOMENT_COMMENT_ALL, params);
     },
-    listMomentReplyPage(state: any, params: object) {
+    listMomentReplyPage(context: any, params: object) {
       return http.post(LIST_MOMENT_REPLY_PAGE, params);
     },
-    deleteMomentComment(state: any, params: object) {
+    deleteMomentComment(context: any, params: object) {
       return http.post(DELETE_MOMENT_COMMENT, params);
     },
-    setMomentLike(state: any, params: object) {
+    setMomentLike(context: any, params: object) {
       return http.post(SET_MOMENT_LIKE, params);
     },
-    isMomentLike(state: any, params: object) {
+    isMomentLike(context: any, params: object) {
       return http.post(IS_MOMENT_LIKE, params);
     },
-    cancelMomentLike(state: any, params: object) {
+    cancelMomentLike(context: any, params: object) {
       return http.post(CANCEL_MOMENT_LIKE, params);
     },
-    setMomentCommentLike(state: any, params: object) {
+    setMomentCommentLike(context: any, params: object) {
       return http.post(SET_MOMENT_COMMENT_LIKE, params);
     },
-    cancelMomentCommentLike(state: any, params: object) {
+    cancelMomentCommentLike(context: any, params: object) {
       return http.post(CANCEL_MOMENT_COMMENT_LIKE, params);
     },
-  }
-}
+  },
+};
