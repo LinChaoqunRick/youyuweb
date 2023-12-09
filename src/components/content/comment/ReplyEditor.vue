@@ -11,7 +11,7 @@
           <template #content>
             <Emoji @emojiHandler="emojiHandler"/>
           </template>
-          <i-smiling-face theme="outline" size="17" fill="#333" style="padding: 0 3.5px;cursor: pointer;"/>
+          <i-smiling-face theme="outline" size="17" fill="currentColor" style="padding: 0 3.5px;cursor: pointer;"/>
         </a-popover>
       </div>
       <div class="right-box">

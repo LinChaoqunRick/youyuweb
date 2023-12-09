@@ -206,6 +206,12 @@ defineExpose({
         }
       }
     }
+
+    .comment-list {
+      ::v-deep(.comment-item) {
+        padding: 8px 0;
+      }
+    }
   }
 
   ::v-deep(.ant-card) {

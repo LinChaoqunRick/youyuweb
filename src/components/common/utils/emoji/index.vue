@@ -76,7 +76,7 @@
           height: 32px;
           width: 32px;
           cursor: pointer;
-          font-size: 20px;
+          font-size: 24px;
           border-radius: 6px;
           display: flex;
           justify-content: center;

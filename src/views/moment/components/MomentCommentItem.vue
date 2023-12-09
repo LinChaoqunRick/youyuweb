@@ -75,7 +75,7 @@
         <MomentReplyEditor @onSubmit="onSubmit" ref="MomentReplyEditorRef"/>
       </div>
     </div>
-    <ContentList url="listMomentReplyPage" class="reply-list" v-slot="{list}"
+    <ContentList v-if="!!data.replyCount" url="listMomentReplyPage" class="reply-list" v-slot="{list}"
                  :total="data.replyCount" :show-loaded-all="false"
                  :params="params" :immediate="false" foldable data-text="回复" ref="ContentListRef">
       <MomentReplyItem v-for="item in list"

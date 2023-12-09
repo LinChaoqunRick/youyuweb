@@ -333,7 +333,7 @@
 
       .user-content {
         display: flex;
-        max-width: 1300px;
+        max-width: 850px;
         width: 50%;
         margin-left: 8px;
         padding-top: 90px;

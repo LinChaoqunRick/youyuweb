@@ -56,20 +56,7 @@ provide('reload', reload);
   display: flex;
   flex-direction: column;
   padding-top: 60px;
-  background: radial-gradient(ellipse, rgba(var(--bg-gradient), 1) 0%, rgba(var(--bg-gradient), 0) 700%);
-
-  &:before {
-    content: "";
-    right: 0;
-    bottom: 0;
-    left: 0;
-    position: fixed;
-    top: 0;
-    z-index: -1;
-    background-image: url("/static/images/bg/bg.JWPZM3dD.png");
-    background-repeat: repeat;
-    min-height: 100%;
-  }
+  background-color: var(--youyu-body-background);
 
   .header {
     height: 60px;

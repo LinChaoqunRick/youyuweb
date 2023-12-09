@@ -1,7 +1,7 @@
 <template>
   <div class="user-info-panel">
     <slot name="basic" :user="user" :dataItems="dataItems">
-      <div class="basic-info">
+      <div class="basic-info ant-card-bordered">
         <div class="user-avatar-nickname">
           <div class="user-avatar">
             <RouterLink :to="`/user/${user.id}`">

@@ -212,18 +212,12 @@ const deleteSuccess = (data) => {
 
 <style lang="scss" scoped>
 .comment-item {
-  /*border-bottom: 1px solid #f0f0f0;*/
   display: flex;
-  padding-top: 16px;
-
-  &:first-child {
-    padding-top: 0;
-  }
 
   .user-avatar {
     img {
-      height: 40px;
-      width: 40px;
+      height: 32px;
+      width: 32px;
       border-radius: 50%;
       cursor: pointer;
     }

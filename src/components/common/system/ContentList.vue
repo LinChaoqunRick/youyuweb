@@ -1,23 +1,20 @@
 <template>
-  <div class="content-list">
+  <div class="content-list" :class="{'content-list-expand': !fold}">
     <div
       class="data-list-wrapper"
       v-if="!!dataList?.length"
       ref="dataListWrapperRef"
     >
       <div class="data-list">
-        <slot :list="dataList" />
+        <slot :list="dataList"/>
       </div>
     </div>
     <div class="bottom-operation mt-8" ref="bottomOperation">
       <div class="failed-box" v-if="showFailed && failed" @click="onRetry">
         <slot name="failedBox">
-          <i-refresh theme="outline" size="15" fill="#1890ff" />
+          <i-refresh theme="outline" size="15" fill="currentColor"/>
           <span class="ml-8">加载失败，重新加载</span>
         </slot>
-      </div>
-      <div class="no-data" v-else-if="showNoData && totalPageNum === 0">
-        <slot name="noDataBox">暂无数据</slot>
       </div>
       <div
         class="view-all-data"
@@ -42,11 +39,14 @@
               v-if="!restLoading"
               theme="outline"
               size="14"
-              fill="#1890ff"
+              fill="currentColor"
             />
-            <i-loading-four v-else theme="outline" size="14" fill="#1890ff" />
+            <i-loading-four v-else theme="outline" size="14" fill="currentColor"/>
           </div>
         </slot>
+      </div>
+      <div class="no-data" v-else-if="showNoData && totalNum === 0">
+        <slot name="noDataBox">暂无数据</slot>
       </div>
       <div
         class="loaded-all-data"
@@ -58,11 +58,11 @@
         <slot name="loadedAllFold">
           <div class="fold" v-show="!fold" @click="onFold(true)">
             <span>收起</span>
-            <i-up theme="outline" size="14" fill="#1890ff" />
+            <i-up theme="outline" size="14" fill="currentColor"/>
           </div>
           <div class="unfold" v-show="fold" @click="onFold(false)">
             <span>展开更多{{ dataText }}</span>
-            <i-down theme="outline" size="14" fill="#1890ff" />
+            <i-down theme="outline" size="14" fill="currentColor"/>
           </div>
         </slot>
       </div>
@@ -71,26 +71,26 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, nextTick, watch } from "vue";
-import { useStore } from "vuex";
-import { keepScrollTop } from "@/assets/utils/utils";
+import {ref, computed, nextTick, watch} from "vue";
+import {useStore} from "vuex";
+import {keepScrollTop} from "@/assets/utils/utils";
 
 const props = defineProps({
-  url: { type: String, required: true },
-  params: { type: Object },
-  showFailed: { type: Boolean, default: true },
-  showNoData: { type: Boolean, default: true },
-  showViewAll: { type: Boolean, default: true },
-  showLoadedAll: { type: Boolean, default: true },
-  foldable: { type: Boolean, default: false },
-  total: { type: Number },
-  immediate: { type: Boolean, default: true },
-  dataText: { type: String, default: "数据" },
-  autoLoad: { type: Boolean, default: false }, // 滚动到底后自动加载
-  loadTrigger: { type: Boolean, default: false }, // 配合autoLoad使用，如果是true，则需要点击后触发autoLoad
+  url: {type: String, required: true},
+  params: {type: Object},
+  showFailed: {type: Boolean, default: true},
+  showNoData: {type: Boolean, default: true},
+  showViewAll: {type: Boolean, default: true},
+  showLoadedAll: {type: Boolean, default: true},
+  foldable: {type: Boolean, default: false},
+  total: {type: Number},
+  immediate: {type: Boolean, default: true},
+  dataText: {type: String, default: "数据"},
+  autoLoad: {type: Boolean, default: false}, // 滚动到底后自动加载
+  loadTrigger: {type: Boolean, default: false}, // 配合autoLoad使用，如果是true，则需要点击后触发autoLoad
 });
 
-const { dispatch } = useStore();
+const {dispatch} = useStore();
 
 let dataListHeight: number = 0;
 
@@ -184,7 +184,7 @@ const onFold = (value: boolean) => {
 const foldAnimation = () => {
   nextTick(() => {
     if (dataListWrapperRef.value) {
-      ({ height: dataListHeight } =
+      ({height: dataListHeight} =
         dataListWrapperRef.value.getBoundingClientRect());
       // dataListWrapperRef.value.style.height = '0';
       // dataListWrapperRef.value.offsetHeight;
@@ -222,7 +222,6 @@ defineExpose({
 
   .data-list-wrapper {
     height: auto;
-    transition: 0.3s;
     overflow: hidden;
   }
 
@@ -232,7 +231,10 @@ defineExpose({
     align-items: center;
     border-radius: 4px;
     overflow: hidden;
-    color: #1890ff;
+
+    .i-icon {
+      margin-left: 2px;
+    }
 
     > div {
       display: flex;
@@ -253,6 +255,16 @@ defineExpose({
         align-items: center;
       }
     }
+
+    .no-data {
+      cursor: default;
+    }
+  }
+}
+
+.content-list-expand {
+  > .data-list-wrapper {
+    margin-top: 8px;
   }
 }
 </style>
