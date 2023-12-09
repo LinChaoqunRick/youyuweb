@@ -155,7 +155,9 @@
       cleanCookieLocalStorage();
       message.success('注销成功!');
       // 刷新页面
-      location.reload();
+      setTimeout(()=>{
+        location.reload();
+      }, 800)
     })
   }
 </script>
