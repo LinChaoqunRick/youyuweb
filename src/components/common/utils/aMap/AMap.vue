@@ -30,9 +30,10 @@
 </template>
 
 <script setup>
-import { computed, watch, ref, onMounted, onUnmounted } from "vue";
+import {computed, watch, ref, onMounted, onUnmounted} from "vue";
 import AMapLoader from "@amap/amap-jsapi-loader";
 import debounce from "lodash/debounce";
+import {useStore} from "vuex";
 
 const props = defineProps({
   modelValue: {
@@ -61,6 +62,7 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(["update:modelValue"]);
+const {getters} = useStore();
 let map = null;
 const options = ref([]);
 
@@ -74,6 +76,10 @@ const location = computed({
   },
 });
 
+const theme = computed(() => {
+  return getters.currentTheme;
+})
+
 watch(location, (val) => {
   if (val.longitude && val.latitude) drawMarker();
 });
@@ -84,13 +90,8 @@ let placeSearch, AMapObj, marker, geocoder, auto;
 const initMap = () => {
   let center = [116.397428, 39.90923];
   if (!!location.value) {
-    const { longitude, latitude } = location.value;
-    if (
-      longitude !== "" &&
-      longitude != null &&
-      latitude !== "" &&
-      latitude != null
-    ) {
+    const {longitude, latitude} = location.value;
+    if (longitude !== "" && longitude != null && latitude !== "" && latitude != null) {
       center = [longitude, latitude];
     }
   }
@@ -104,6 +105,7 @@ const initMap = () => {
       viewMode: "3D", // 默认使用 2D 模式
       zoom: 11, //初始化地图层级
       center, //初始化地图中心点
+      mapStyle: theme.value === "light" ? "amap://styles/normal" : "amap://styles/dark", //设置地图的显示样式
     });
     // 添加点击事件
     props.clickable && map.on("click", onMapClick);
@@ -153,14 +155,16 @@ const initMap = () => {
             extensions: "all"
           });
           map.addControl(geolocation);
-          geolocation.getCurrentPosition((status, result) => {
-            onMapClick({
-              lnglat: {
-                lng: result.position[0],
-                lat: result.position[1]
-              },
+          if (!getCoordinates(location.value)) {
+            geolocation.getCurrentPosition((status, result) => {
+              onMapClick({
+                lnglat: {
+                  lng: result.position[0],
+                  lat: result.position[1]
+                },
+              });
             });
-          });
+          }
         }
 
         // 3D地图插件
@@ -198,7 +202,7 @@ const initMap = () => {
 
 // 搜索地图
 const handleSearch = debounce((queryString) => {
-  // 使用 输入提示，提供了根据关键字获得提示信息的功能
+  // 1.使用:入提示，提供了根据关键字获得提示信息的功能
   /*auto.search(queryString, (info, result) => {
     if (result && typeof result === 'object' && result.tips) {
       result.tips.forEach(item => {
@@ -210,7 +214,7 @@ const handleSearch = debounce((queryString) => {
     }
   })*/
 
-  // 使用 地点搜索服务，提供了关键字搜索、周边搜索、范围内搜索等功能
+  // 2.使用:地点搜索服务，提供了关键字搜索、周边搜索、范围内搜索等功能
   placeSearch.search(queryString, (status, result) => {
     if (result && typeof result === "object" && result.poiList) {
       const list = result.poiList.pois;
@@ -227,13 +231,12 @@ const handleSearch = debounce((queryString) => {
 
 // 点击地图
 const onMapClick = (e) => {
-  const { lng, lat } = e.lnglat;
+  const {lng, lat} = e.lnglat;
   // 逆地理编码
   geocoder.getAddress([lng, lat], (status, result) => {
-    console.log(status, result);
     if (status === "complete" && result.info === "OK") {
-      const { addressComponent, formattedAddress } = result.regeocode;
-      let { city, province, district, township } = addressComponent;
+      const {addressComponent, formattedAddress} = result.regeocode;
+      let {city, province, district, township} = addressComponent;
       const prefix = province + city + district + township;
       location.value = {
         longitude: lng,
@@ -252,8 +255,8 @@ const onMapClick = (e) => {
 
 // 点击搜索项
 const handleSelect = (value, option) => {
-  const { pname, cityname, adname, fullAddress, name } = option;
-  const { lng, lat } = option.location;
+  const {pname, cityname, adname, fullAddress, name} = option;
+  const {lng, lat} = option.location;
   location.value = {
     longitude: lng,
     latitude: lat,
@@ -267,30 +270,36 @@ const handleSelect = (value, option) => {
 // 绘制地点marker
 const drawMarker = (val) => {
   if (!location.value) return;
-  const { longitude, latitude } = location.value || val;
-  if (
-    longitude === "" ||
-    longitude == null ||
-    latitude === "" ||
-    latitude == null
-  ) {
-    // 无效坐标不绘制
-    return;
+  const coordinate = getCoordinates(location.value || val);
+  if (!coordinate) {
+    return;  // 无效坐标不绘制
   }
   if (marker) {
     marker.setMap(null);
   }
   marker = new AMapObj.Marker({
-    position: new AMapObj.LngLat(longitude, latitude),
+    position: new AMapObj.LngLat(coordinate.longitude, coordinate.latitude),
     anchor: "bottom-center",
   });
   map.add(marker);
-  if (map.getZoom() < 12) {
-    map.setZoomAndCenter(12, [longitude, latitude]);
+  if (map.getZoom() < 17) {
+    map.setZoomAndCenter(17, [coordinate.longitude, coordinate.latitude]);
   } else {
     map.setZoom(map.getZoom());
   }
 };
+
+const getCoordinates = (val) => {
+  if (!val) {
+    return null;
+  }
+  const {longitude, latitude} = val;
+  if (longitude === "" || longitude == null || latitude === "" || latitude == null) {
+    return null;
+  } else {
+    return {longitude, latitude};
+  }
+}
 
 onMounted(() => {
   initMap();
