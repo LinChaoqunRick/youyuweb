@@ -1,12 +1,12 @@
 import axios from "axios";
-import type { AxiosRequestConfig } from "axios";
-import { message } from "ant-design-vue";
+import type {AxiosRequestConfig} from "axios";
+import {message} from "ant-design-vue";
 import Cookies from "js-cookie";
 import store from "@/store";
 import router from "@/router";
 import qs from "qs";
 import createAuthRefreshInterceptor from "axios-auth-refresh";
-import { cleanCookieLocalStorage } from "@/assets/utils/utils";
+import {cleanCookieLocalStorage} from "@/assets/utils/utils";
 
 // if (process.env.NODE_ENV === 'development') {
 //   // axios.defaults.baseURL = '/api'
@@ -26,7 +26,7 @@ const showMessageCode = [403, 508, 509, 510, 600, 800];
 const instance = axios.create({
   baseURL: "", //配置固定域名
   timeout: 200 * 1000,
-  headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  headers: {"Content-Type": "application/x-www-form-urlencoded"},
 });
 
 instance.interceptors.request.use(
@@ -49,7 +49,7 @@ instance.interceptors.response.use(
       return res;
     } else if (res.code === 404) {
       // 注意这里的404不是指接口返回的http状态码，而是请求了一些需要重定向到404的接口
-      router.replace({ name: "NotFound" });
+      router.replace({name: "NotFound"});
       return Promise.reject(res);
     } else if (showMessageCode.includes(res.code)) {
       // 需要message提示
@@ -101,10 +101,7 @@ function post(url: string, data = {}, config: any = null) {
       },
     };
     return instance.post(url, qs.stringify(data), config);
-  } else if (
-    !!config &&
-    config.headers["Content-Type"] !== "application/json"
-  ) {
+  } else if (!!config && config.headers["Content-Type"] !== "application/json") {
     return instance.post(url, qs.stringify(data), config);
   } else {
     return instance.post(url, data, config);
@@ -113,16 +110,15 @@ function post(url: string, data = {}, config: any = null) {
 
 // Function that will be called to refresh authorization
 const refreshAuthLogic = async (failedRequest: any) => {
-  const refresh_token = Cookies.get("refresh_token") || "";
+  const refresh_token = Cookies.get("refresh_token");
   const tokenRefreshResponse = await store
     .dispatch("token", {
       client_id: "web", // oauth客户端id
       client_secret: "654321", // oauth客户端密码
       grant_type: "refresh_token",
       refresh_token: refresh_token,
-    })
-    .catch((e) => {
-      message.warning("持久凭证已过期，刷新失败，请重新登录！");
+    }).catch((e) => {
+      message.warning("持久凭证已过期，刷新令牌失败，请重新登录！");
       cleanCookieLocalStorage();
       store.commit("changeUser", {});
       setTimeout(() => {
@@ -131,11 +127,9 @@ const refreshAuthLogic = async (failedRequest: any) => {
     });
   const res_access_token = tokenRefreshResponse.data.access_token;
   const res_refresh_token = tokenRefreshResponse.data.refresh_token;
-  Cookies.set("access_token", res_access_token, { expires: 7 });
-  Cookies.set("refresh_token", res_refresh_token, { expires: 30 });
-  console.log("token刷新成功");
-  failedRequest.response.config.headers["Authorization"] =
-    "Bearer " + res_access_token;
+  Cookies.set("access_token", res_access_token, {expires: 7});
+  Cookies.set("refresh_token", res_refresh_token, {expires: 30});
+  failedRequest.response.config.headers["Authorization"] = "Bearer " + res_access_token;
   return await Promise.resolve();
 };
 
