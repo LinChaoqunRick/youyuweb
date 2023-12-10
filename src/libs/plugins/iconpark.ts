@@ -86,7 +86,8 @@ import {
   PeopleUnknown,
   Concern,
   OneToOne,
-  LocalTwo
+  LocalTwo,
+  Triangle
 } from '@icon-park/vue-next'
 
 export const IconPark = (app) => {
@@ -178,4 +179,5 @@ export const IconPark = (app) => {
   app.component('IConcern', Concern);
   app.component('IOneToOne', OneToOne);
   app.component('ILocalTwo', LocalTwo);
+  app.component('ITriangle', Triangle);
 }

@@ -3,21 +3,32 @@
     <div class="moment-detail-middle">
       <div v-if="moment">
         <div class="moment-detail-item">
-          <MomentItem v-show="!isEdit" :data="moment"
-                      @deleteSuccess="onMomentDeleteSuccess"
-                      @onCommentDeleteSuccess="onCommentDeleteSuccess"
-                      @saveSuccess="onSaveCommentSuccess"
-                      @onEdit="onEdit"
-                      ref="MomentRef"/>
-          <MomentEditor v-if="isEdit" isEdit :form="formData" @saveSuccess="saveSuccess">
+          <MomentItem
+            v-if="!isEdit"
+            :data="moment"
+            @deleteSuccess="onMomentDeleteSuccess"
+            @onCommentDeleteSuccess="onCommentDeleteSuccess"
+            @saveSuccess="onSaveCommentSuccess"
+            @onEdit="onEdit"
+            ref="MomentRef"
+          />
+          <MomentEditor
+            v-else
+            isEdit
+            :form="formData"
+            @saveSuccess="saveSuccess"
+            ref="MomentEditor"
+          >
             <template v-slot:bottom>
-              <a-button type="link" class="cancel-btn" @click="onEditCancel">取消</a-button>
+              <a-button type="link" class="cancel-btn" @click="onEditCancel"
+                >取消
+              </a-button>
             </template>
           </MomentEditor>
         </div>
         <div class="moment-comment-editor-wrapper mt-8">
           <div class="editor-title">评论</div>
-          <MomentReplyEditor @onSubmit="MomentRef?.onCommentSubmit"/>
+          <MomentReplyEditor @onSubmit="MomentRef?.onCommentSubmit" />
         </div>
         <div class="moment-comment-list mt-8 mb-8">
           <div class="comment-list-top">
@@ -25,32 +36,62 @@
               全部评论（{{ moment.commentCount || 0 }}）
             </div>
             <div class="sort-type">
-              <div class="sort-item" :class="{'active': sort}" @click="handleSort(true)">
-                <i-time theme="filled" size="13" fill="currentColor"/>
+              <div
+                class="sort-item"
+                :class="{ active: sort }"
+                @click="handleSort(true)"
+              >
+                <i-time theme="filled" size="13" fill="currentColor" />
                 最新
               </div>
-              <div class="sort-item" :class="{'active': !sort}" @click="handleSort(false)">
-                <i-fire theme="filled" size="13" fill="currentColor"/>
+              <div
+                class="sort-item"
+                :class="{ active: !sort }"
+                @click="handleSort(false)"
+              >
+                <i-fire theme="filled" size="13" fill="currentColor" />
                 最热
               </div>
             </div>
           </div>
           <div class="comment-list">
-            <ContentList url="listMomentCommentPage"
-                         :params="listParams" auto-load load-trigger
-                         ref="ContentListRef">
-              <template v-slot="{list}">
-                <MomentCommentItem v-for="item in list"
-                                   :key="item.id"
-                                   class="comment-item"
-                                   :data="item"
-                                   :moment="moment"
-                                   @deleteSuccess="MomentRef?.deleteSuccess"/>
+            <ContentList
+              url="listMomentCommentPage"
+              :params="listParams"
+              auto-load
+              load-trigger
+              ref="ContentListRef"
+            >
+              <template v-slot="{ list }">
+                <MomentCommentItem
+                  v-for="item in list"
+                  :key="item.id"
+                  class="comment-item"
+                  :data="item"
+                  :moment="moment"
+                  @deleteSuccess="MomentRef?.deleteSuccess"
+                />
               </template>
-              <template #loadMoreBox="{loading, total}">
-                <span class="mr-8">查看全部 <span class="comment-count">{{ moment.commentCount ?? total }}</span> 条评论</span>
-                <i-down v-if="!loading" theme="outline" size="14" fill="#1890ff"/>
-                <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
+              <template #loadMoreBox="{ loading, total }">
+                <span class="mr-8"
+                  >查看全部
+                  <span class="comment-count">{{
+                    moment.commentCount ?? total
+                  }}</span>
+                  条评论</span
+                >
+                <i-down
+                  v-if="!loading"
+                  theme="outline"
+                  size="14"
+                  fill="#1890ff"
+                />
+                <i-loading-four
+                  v-else
+                  theme="outline"
+                  size="14"
+                  fill="#1890ff"
+                />
               </template>
             </ContentList>
           </div>
@@ -63,16 +104,16 @@
 <script lang="ts">
 export default {
   name: "MomentDetail",
-}
+};
 </script>
 
 <script lang="ts" setup>
-import {computed, ref, nextTick} from "vue";
-import type {PropType} from "vue";
-import {useStore} from "vuex";
-import {useRoute, useRouter, onBeforeRouteUpdate} from "vue-router";
-import {cloneDeep} from 'lodash';
-import type {momentListType} from "@/views/moment/types";
+import { computed, ref, nextTick } from "vue";
+import type { PropType } from "vue";
+import { useStore } from "vuex";
+import { useRoute, useRouter, onBeforeRouteUpdate } from "vue-router";
+import { cloneDeep } from "lodash";
+import type { momentListType } from "@/views/moment/types";
 import MomentItem from "../list/MomentItem.vue";
 import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
 import MomentCommentItem from "../components/MomentCommentItem.vue";
@@ -81,70 +122,75 @@ import ContentList from "@/components/common/system/ContentList.vue";
 
 const route = useRoute();
 const router = useRouter();
-const {dispatch} = useStore();
+const { dispatch } = useStore();
 
 const moment = ref<momentListType | null>(null);
 const MomentRef = ref<HTMLElement | null>(null);
 const sort = ref<boolean>(true); // true:最新 false:最热
-const order = computed(() => sort.value ? 'create_time' : 'support_count');
-const isEdit = ref<boolean>(false);
+const order = computed(() => (sort.value ? "create_time" : "support_count"));
+const isEdit = ref<boolean>(route.query.type === "edit");
 const formData = ref({});
 const listParams = computed(() => ({
   momentId: moment.value.id,
-  orderBy: order.value
+  orderBy: order.value,
 }));
 const ContentListRef = ref<InstanceType<typeof ContentList> | null>(null);
 
 const getMomentDetail = () => {
-  dispatch("getMoment", {momentId: route.params.momentId}).then(res => {
+  dispatch("getMoment", { momentId: route.params.momentId }).then((res) => {
     moment.value = res.data;
-  })
-}
+    if (isEdit.value) {
+      onEdit();
+    }
+  });
+};
 
 getMomentDetail();
 
 const onMomentDeleteSuccess = () => {
   router.push("/moment/list");
-}
+};
 
 const handleSort = (value: boolean) => {
   if (sort.value === value) return;
   sort.value = value;
   nextTick(() => {
     ContentListRef.value.initData();
-  })
-}
+  });
+};
 
 const onCommentDeleteSuccess = (comment) => {
-  ContentListRef.value.list = ContentListRef.value.list.filter(item => item.id !== comment.id);
-}
+  ContentListRef.value.list = ContentListRef.value.list.filter(
+    (item) => item.id !== comment.id
+  );
+};
 
 const onSaveCommentSuccess = (data: momentListType) => {
   ContentListRef.value.list.unshift(data);
-}
+};
 
 const onEdit = () => {
   formData.value = cloneDeep(moment.value);
-  formData.value.images = formData.value.images ? formData.value.images.split(",") : [];
+  formData.value.images = formData.value.images
+    ? formData.value.images.split(",")
+    : [];
   isEdit.value = true;
-}
+};
 
 const onEditCancel = () => {
   isEdit.value = false;
-}
+};
 
 const saveSuccess = (data: momentListType) => {
   moment.value = data;
   isEdit.value = false;
-}
-
+};
 </script>
 
 <style lang="scss" scoped>
 .moment-detail {
   display: flex;
   justify-content: center;
-
 
   .moment-detail-middle {
     width: 750px;
@@ -230,7 +276,6 @@ const saveSuccess = (data: momentListType) => {
       }
 
       .comment-list {
-
         span {
           color: #1890ff;
         }

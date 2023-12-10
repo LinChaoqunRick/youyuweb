@@ -1,23 +1,40 @@
 <template>
-  <div class="moment-editor" :class="{'active': active}">
+  <div class="moment-editor" :class="{ active: active }">
     <div class="editor-body">
       <div class="login-mask" @click="toLogin" v-if="!isLogin"></div>
       <div class="editor-content-wrapper">
-        <ContentEditableDiv v-model="form.content"
-                            showLimit
-                            placeholder="此刻在想什么？快来分享一些新鲜事或发表一些看法吧！"
-                            ref="richEditor">
+        <ContentEditableDiv
+          v-model="form.content"
+          showLimit
+          placeholder="此刻在想什么？快来分享一些新鲜事或发表一些看法吧！"
+          ref="richEditor"
+        >
           <template #bottom>
             <div class="topic-wrapper">
               <div class="add-position" @click="onAddPosition">
                 <div class="icon-wrapper">
-                  <i-local-two theme="multi-color" size="12" :fill="['#ffffff' ,'#ffffff' ,'#3b8fff' ,'#3b8fff']"/>
+                  <i-local-two
+                    theme="multi-color"
+                    size="12"
+                    :fill="['#ffffff', '#ffffff', '#3b8fff', '#3b8fff']"
+                  />
                 </div>
-                <span class="position-text">{{ location?.name || '添加位置' }}</span>
-                <div class="icon-wrapper-close" v-if="location?.name" @click.stop="onClearLocation">
-                  <i-close-small theme="outline" size="13" fill="#fff" :strokeWidth="3"/>
+                <span class="position-text">{{
+                  form.location || "添加位置"
+                }}</span>
+                <div
+                  class="icon-wrapper-close"
+                  v-if="form.location"
+                  @click.stop="onClearLocation"
+                >
+                  <i-close-small
+                    theme="outline"
+                    size="13"
+                    fill="#fff"
+                    :strokeWidth="3"
+                  />
                 </div>
-                <i-right v-else theme="outline" size="13" fill="currentColor"/>
+                <i-right v-else theme="outline" size="13" fill="currentColor" />
               </div>
             </div>
           </template>
@@ -26,37 +43,70 @@
     </div>
     <div class="image-wrapper" v-if="form.images?.length">
       <div v-for="item in form.images" class="image-item">
-        <img :src="item"/>
+        <img :src="item" />
         <div class="image-delete" @click="onImageDelete(index)">
-          <i-close theme="outline" size="10" fill="currentColor" :strokeWidth="2"/>
+          <i-close
+            theme="outline"
+            size="10"
+            fill="currentColor"
+            :strokeWidth="2"
+          />
         </div>
       </div>
-      <UploadFile accept=".jpg, .jpeg, .png"
-                  @uploadSuccess="uploadSuccess"
-                  :disabled="uploadDisabled"
-                  v-if="!uploadDisabled">
+      <UploadFile
+        accept=".jpg, .jpeg, .png"
+        @uploadSuccess="uploadSuccess"
+        :disabled="uploadDisabled"
+        v-if="!uploadDisabled"
+      >
         <div class="upload-image">
-          <i-plus theme="outline" size="40" fill="currentColor" :strokeWidth="1"/>
+          <i-plus
+            theme="outline"
+            size="40"
+            fill="currentColor"
+            :strokeWidth="1"
+          />
         </div>
       </UploadFile>
     </div>
     <div class="editor-bottom">
       <div class="tool-items">
-        <a-popover placement="bottomLeft"
-                   overlayClassName="emoji-picker-popover"
-                   :getPopupContainer="triggerNode=>triggerNode.parentNode"
-                   :visible="emojiVisible">
+        <a-popover
+          placement="bottomLeft"
+          overlayClassName="emoji-picker-popover"
+          :getPopupContainer="(triggerNode) => triggerNode.parentNode"
+          :visible="emojiVisible"
+        >
           <template #content>
-            <EmojiPicker @onImagePick="onImagePick" @onEmojiPick="onEmojiPick" v-on-click-outside="onEmojiClose"/>
+            <EmojiPicker
+              @onImagePick="onImagePick"
+              @onEmojiPick="onEmojiPick"
+              v-on-click-outside="onEmojiClose"
+            />
           </template>
           <div class="tool-item" v-login="onClickEmoji">
-            <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
+            <i-emotion-happy
+              theme="outline"
+              size="16"
+              fill="currentColor"
+              :strokeWidth="3"
+            />
             <span class="tool-title">表情</span>
           </div>
         </a-popover>
-        <UploadFile accept=".jpg, .jpeg, .png" :maxSize="10" @uploadSuccess="uploadSuccess" :disabled="uploadDisabled">
+        <UploadFile
+          accept=".jpg, .jpeg, .png"
+          :maxSize="10"
+          @uploadSuccess="uploadSuccess"
+          :disabled="uploadDisabled"
+        >
           <div class="tool-item item-upload-image" v-login>
-            <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
+            <i-add-picture
+              theme="outline"
+              size="16"
+              fill="currentColor"
+              :strokeWidth="3"
+            />
             <span class="tool-title">图片</span>
           </div>
         </UploadFile>
@@ -65,8 +115,12 @@
           <span class="tool-title">话题</span>
         </div>-->
       </div>
-      <a-button type="primary" :disabled="!isLogin || !currentLength || contentLengthExceed" :loading="submitLoading"
-                @click="onSubmit">
+      <a-button
+        type="primary"
+        :disabled="!isLogin || !currentLength || contentLengthExceed"
+        :loading="submitLoading"
+        @click="onSubmit"
+      >
         发布
       </a-button>
       <slot name="bottom"></slot>
@@ -75,15 +129,15 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, computed} from 'vue';
-import {useStore} from "vuex";
-import {message} from 'ant-design-vue';
-import {cloneDeep} from 'lodash';
-import {vOnClickOutside} from '@vueuse/components'
-import {onCheckLogin} from "@/assets/utils/utils";
+import { ref, reactive, computed } from "vue";
+import { useStore } from "vuex";
+import { message } from "ant-design-vue";
+import { cloneDeep } from "lodash";
+import { vOnClickOutside } from "@vueuse/components";
+import { onCheckLogin } from "@/assets/utils/utils";
 import openModal from "@/libs/tools/openModal";
-import {transformHTMLToTag} from "@/components/common/utils/emoji/youyu_emoji";
-import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
+import { transformHTMLToTag } from "@/components/common/utils/emoji/youyu_emoji";
+import UploadFile from "@/components/common/utils/upload/UploadFile.vue";
 import EmojiPicker from "@/components/common/utils/emoji/EmojiPicker.vue";
 import ContentEditableDiv from "@/components/common/utils/contenteditable/ContentEditableDiv.vue";
 import LocationSelector from "@/components/common/utils/aMap/LocationSelector.vue";
@@ -93,45 +147,48 @@ const props = defineProps({
     type: Object,
     default() {
       return reactive({
-        content: '',
-        images: []
-      })
-    }
+        content: "",
+        images: [],
+      });
+    },
   },
   isEdit: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
-const emit = defineEmits(['saveSuccess']);
+const emit = defineEmits(["saveSuccess"]);
 
 const maxLength = 500;
-const {getters, commit, dispatch} = useStore();
-const userInfo = computed(() => getters['userInfo']);
-const isLogin = computed(() => getters['isLogin']);
+const { getters, commit, dispatch } = useStore();
+const userInfo = computed(() => getters["userInfo"]);
+const isLogin = computed(() => getters["isLogin"]);
 const currentLength = computed(() => richEditor.value?.totalStrLength);
-const contentLengthExceed = computed(() => richEditor.value?.contentLengthExceed);
-const uploadDisabled = computed(() => props.form.images.length >= 9 || !isLogin.value)
+const contentLengthExceed = computed(
+  () => richEditor.value?.contentLengthExceed
+);
+const uploadDisabled = computed(
+  () => props.form.images?.length >= 9 || !isLogin.value
+);
 
 const richEditor = ref(null);
 const active = computed(() => richEditor.value?.active);
 const emojiVisible = ref(false);
 const submitLoading = ref(false);
-const location = ref();
 
 const uploadSuccess = (fileList: []) => {
-  const url = fileList[0].url + '?x-oss-process=style/smallThumb';
+  const url = fileList[0].url + "?x-oss-process=style/smallThumb";
   props.form.images.push(url);
-}
+};
 
 const toLogin = () => {
   commit("changeLogin", true);
-}
+};
 
 const onImageDelete = (index: number) => {
   props.form.images.splice(index, 1);
-}
+};
 
 const onSubmit = () => {
   submitLoading.value = true;
@@ -139,31 +196,31 @@ const onSubmit = () => {
   const form = cloneDeep(props.form);
   form.images = form.images.length ? form.images.join(",") : null;
   form.content = transformHTMLToTag(form.content);
-  form.location = location.value.name;
-  form.longitude = location.value.longitude;
-  form.latitude = location.value.latitude;
-  dispatch(isEdit ? 'updateMoment' : 'createMoment', form).then(res => {
-    message.success(isEdit ? "修改成功" : "发布成功");
-    resetEditor();
-    emit('saveSuccess', res.data);
-  }).finally(() => {
-    submitLoading.value = false;
-  })
-}
+  dispatch(isEdit ? "updateMoment" : "createMoment", form)
+    .then((res) => {
+      message.success(isEdit ? "修改成功" : "发布成功");
+      resetEditor();
+      emit("saveSuccess", res.data);
+    })
+    .finally(() => {
+      submitLoading.value = false;
+    });
+};
 
 const resetEditor = () => {
-  props.form.content = '';
+  props.form.content = "";
   props.form.images = [];
   richEditor.value.clearContent();
-}
+  onClearLocation();
+};
 
 const onImagePick = (value: HTMLElement | string) => {
-  richEditor.value.insertHtml(value)
-}
+  richEditor.value.insertHtml(value);
+};
 
 const onEmojiPick = (value: string) => {
-  richEditor.value.insertText(value)
-}
+  richEditor.value.insertText(value);
+};
 
 const onClickEmoji = () => {
   if (!isLogin.value) {
@@ -171,32 +228,38 @@ const onClickEmoji = () => {
     return;
   }
   emojiVisible.value = true;
-}
+};
 
 const onEmojiClose = () => {
   emojiVisible.value = false;
-}
+};
 
 const onAddPosition = () => {
   openModal({
     component: LocationSelector,
     componentProps: {
-      data: location.value,
+      data: props.form,
     },
-    title: '添加位置',
-    width: '80vw',
+    title: "添加位置",
+    width: "80vw",
     maskClosable: false,
     keyboard: false,
     centered: true,
-    wrapClassName: 'select-position-modal-wrapper',
-  }).then(res => {
-    location.value = res;
-  }).catch(console.log)
-}
+    wrapClassName: "select-position-modal-wrapper",
+  })
+    .then((res) => {
+      props.form.location = res.name;
+      props.form.longitude = res.longitude;
+      props.form.latitude = res.latitude;
+    })
+    .catch(console.log);
+};
 
 const onClearLocation = () => {
-  location.value = null;
-}
+  props.form.location = "";
+  props.form.longitude = "";
+  props.form.latitude = "";
+};
 </script>
 
 <style lang="scss" scoped>
@@ -317,10 +380,10 @@ const onClearLocation = () => {
         right: 4px;
         border-radius: 50%;
         border: 1px solid #c5c5c5;
-        background: rgba(0, 0, 0, .4);
+        background: rgba(0, 0, 0, 0.4);
 
         &:hover {
-          background: rgba(0, 0, 0, .3);
+          background: rgba(0, 0, 0, 0.3);
         }
 
         .i-icon {
@@ -339,7 +402,7 @@ const onClearLocation = () => {
       border: 1px dashed #c5c5c5;
       margin: 8px 8px 8px 0;
       background: rgba(248, 248, 249, 0.2);
-      transition: .3s;
+      transition: 0.3s;
 
       &:hover {
         background: rgba(248, 248, 249, 0.3);
@@ -363,11 +426,11 @@ const onClearLocation = () => {
         align-items: center;
         cursor: pointer;
         margin-right: 16px;
-        transition: .3s;
+        transition: 0.3s;
 
         .i-icon {
           position: relative;
-          top: .5px;
+          top: 0.5px;
         }
 
         .tool-title {
