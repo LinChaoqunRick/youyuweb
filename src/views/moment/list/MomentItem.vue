@@ -132,7 +132,6 @@
             />
           </div>
           <span class="position-text">{{ data?.location }}</span>
-          <i-triangle theme="filled" size="10" fill="currentColor" />
         </div>
         <div class="like-users" v-if="data.likeUsers?.length">
           <div class="user-avatars">
