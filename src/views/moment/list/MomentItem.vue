@@ -606,11 +606,11 @@ defineExpose({
       .location-data {
         display: flex;
         align-items: center;
-        padding: 1px 5px;
+        padding: 1px 4px;
         border: 1.8px solid var(--youyu-border-color2);
         border-radius: 30px;
         cursor: pointer;
-        height: 26px;
+        height: 24px;
         margin-top: 4px;
 
         .icon-wrapper {
