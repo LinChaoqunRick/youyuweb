@@ -70,7 +70,7 @@ instance.interceptors.response.use(
     } else if (showMessageCode.includes(data.code)) {
       message.error(data.message);
     } else {
-      // message.error('系统异常,请联系管理员');
+      message.error('系统异常,请联系管理员');
     }
     return Promise.reject(error);
   }
@@ -104,6 +104,7 @@ function post(url: string, data = {}, config: any = null) {
   } else if (!!config && config.headers["Content-Type"] !== "application/json") {
     return instance.post(url, qs.stringify(data), config);
   } else {
+    // application/json 请求头是单独的，它不需要qs.stringify()来转化参数
     return instance.post(url, data, config);
   }
 }
@@ -122,11 +123,10 @@ const refreshAuthLogic = async (failedRequest: any) => {
       cleanCookieLocalStorage();
       store.commit("changeUser", {});
       setTimeout(() => {
-        // location.reload();
+        location.reload();
       }, 1500);
     });
-  const res_access_token = tokenRefreshResponse.data.access_token;
-  const res_refresh_token = tokenRefreshResponse.data.refresh_token;
+  const {access_token: res_access_token, refresh_token: res_refresh_token} = tokenRefreshResponse.data.access_token;
   Cookies.set("access_token", res_access_token, {expires: 7});
   Cookies.set("refresh_token", res_refresh_token, {expires: 30});
   failedRequest.response.config.headers["Authorization"] = "Bearer " + res_access_token;
