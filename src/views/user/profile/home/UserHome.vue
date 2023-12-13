@@ -4,6 +4,10 @@
       <template v-slot="{list}">
         <Component v-for="item in list" :is="isComponent(item)" :data="item"/>
       </template>
+      <template v-slot:loadMoreBox="{ restLoading }">
+        <a-spin :spinning="restLoading"></a-spin>
+        <span class="tip-text">加载中...</span>
+      </template>
     </ContentList>
   </div>
 </template>
@@ -43,7 +47,28 @@ const isComponent = (item: any) => {
     > div {
       margin-top: 8px;
       border-radius: 4px;
+
+      &:first-child {
+        margin-top: 0;
+      }
     }
+  }
+
+  ::v-deep(.content-list) {
+    .bottom-operation {
+      min-height: 48px;
+      border-radius: 4px;
+      overflow: hidden;
+      background-color: var(--youyu-background1);
+
+      .ant-spin {
+        font-size: 0;
+      }
+    }
+  }
+
+  .tip-text {
+    margin-left: 6px;
   }
 }
 </style>
