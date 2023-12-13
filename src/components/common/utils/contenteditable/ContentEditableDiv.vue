@@ -234,7 +234,7 @@ defineExpose({
     overflow-y: auto;
     word-wrap: break-word;
 
-    ::v-deep(#box) {
+    #box {
       position: relative;
       font-size: 14px;
       line-height: 24px;
@@ -243,6 +243,7 @@ defineExpose({
       padding: 5px 12px;
       box-sizing: content-box;
       white-space: pre-wrap;
+      transition: .2s;
 
       &[contenteditable]:empty:before {
         content: attr(placeholder);

@@ -104,7 +104,7 @@
         <img v-else src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png"/>
       </div>
       <div class="reply-box-wrapper">
-        <MomentReplyEditor @onSubmit="onSubmit" ref="MomentReplyEditorRef"/>
+        <MomentReplyEditor @onSubmit="onSubmit" :placeholder="replyEditorPlaceholder" ref="MomentReplyEditorRef"/>
       </div>
     </div>
   </div>
@@ -157,7 +157,8 @@ const MomentReplyEditorRef = ref(null);
 const userInfo = computed(() => getters['userInfo']);
 const images = computed(() => props.data.images ? props.data.images.split(",") : null);
 const isLogin = computed(() => getters['isLogin']);
-const showDelete = computed(() => userInfo.value.id === props.data.userId || props.moment.userId === userInfo.value.id)
+const showDelete = computed(() => userInfo.value.id === props.data.userId || props.moment.userId === userInfo.value.id);
+const replyEditorPlaceholder = computed(()=>props.data?"回复@"+props.data?.user?.nickname:null);
 
 function set(value: number) {
   row.value = value;
@@ -398,6 +399,7 @@ const onUserToVisibleChange = (visible: boolean) => {
             color: #ff4d4f;
             margin-left: auto;
             display: none;
+            margin-right: 0;
 
             &.visible {
               display: inherit !important;
