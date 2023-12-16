@@ -2,64 +2,126 @@
   <div class="moment-comment-item" v-on-click-outside="onClickOutside">
     <div class="moment-comment-detail">
       <div class="user-avatar">
-        <a-popover placement="top"
-                   :mouseEnterDelay="0.6"
-                   :mouseLeaveDelay="0.3"
-                   @visibleChange="onUserVisibleChange">
+        <a-popover
+          placement="top"
+          :mouseEnterDelay="0.6"
+          :mouseLeaveDelay="0.3"
+          @visibleChange="onUserVisibleChange"
+        >
           <template #content>
-            <UserCardMoment :user="data.user"/>
+            <UserCardMoment :user="data.user" />
           </template>
-          <RouterLink :to="{name:'userHome', params: {userId: data.user.id}}">
-            <img :src="data.user.avatar"/>
+          <RouterLink
+            :to="{ name: 'userHome', params: { userId: data.user.id } }"
+          >
+            <img :src="data.user.avatar" />
           </RouterLink>
         </a-popover>
       </div>
       <div class="comment-right">
         <div class="comment-right-top">
           <div class="user-nickname">
-            <a-popover placement="top"
-                       :mouseEnterDelay="0.6"
-                       :mouseLeaveDelay="0.3"
-                       @visibleChange="onUserVisibleChange">
+            <a-popover
+              placement="top"
+              :mouseEnterDelay="0.6"
+              :mouseLeaveDelay="0.3"
+              @visibleChange="onUserVisibleChange"
+            >
               <template #content>
-                <UserCardMoment :user="data.user"/>
+                <UserCardMoment :user="data.user" />
               </template>
-              <RouterLink :to="{name:'userHome', params: {userId: data.user.id}}">
+              <RouterLink
+                :to="{ name: 'userHome', params: { userId: data.user.id } }"
+              >
                 <span>{{ data.user.nickname }}</span>
               </RouterLink>
             </a-popover>
-            <div class="author-text" v-if="data.user.id === moment.userId">作者</div>
+            <div class="author-text" v-if="data.user.id === moment.userId">
+              作者
+            </div>
           </div>
-          <div class="publish-time" :title="data.createTime">{{ $dayjs().to(data.createTime) }}</div>
+          <div class="info-data">
+            <div class="publish-time" :title="data.createTime">
+              {{ $dayjs().to(data.createTime) }}
+            </div>
+            <div class="adname" v-if="data.adname">・{{ data.adname }}</div>
+          </div>
         </div>
-        <div class="comment-content" :class="{'content-expand': expand}"
-             v-row="{set: set}"
-             v-html="transformTagToHTML(data.content)"></div>
-        <div class="limit-btn" @click="expand = true" v-show="row>7 && !expand">展开</div>
-        <div class="limit-btn" @click="expand = false" v-show="row>7 && expand">收起</div>
+        <div
+          class="comment-content"
+          :class="{ 'content-expand': expand }"
+          v-row="{ set: set }"
+          v-html="transformTagToHTML(data.content)"
+        ></div>
+        <div
+          class="limit-btn"
+          @click="expand = true"
+          v-show="row > 7 && !expand"
+        >
+          展开
+        </div>
+        <div
+          class="limit-btn"
+          @click="expand = false"
+          v-show="row > 7 && expand"
+        >
+          收起
+        </div>
         <div class="content-images" v-if="images?.length && !preview">
-          <img :src="item" v-for="(item, index) in images" @click="onPreview(index)"/>
+          <img
+            :src="item"
+            v-for="(item, index) in images"
+            @click="onPreview(index)"
+          />
         </div>
         <div class="content-image-preview" v-if="images?.length && preview">
-          <ImagePreviewEmbed :list="images" :current="current" @onClose="onClose"/>
+          <ImagePreviewEmbed
+            :list="images"
+            :current="current"
+            @onClose="onClose"
+          />
         </div>
         <div class="comment-operation">
-          <div class="ope-item" :class="{'ope-active': data.commentLike}" v-login="onLike">
-            <i-good-two :theme="data.commentLike?'filled':'outline'" size="14" fill="currentColor"/>
+          <div
+            class="ope-item"
+            :class="{ 'ope-active': data.commentLike }"
+            v-login="onLike"
+          >
+            <i-good-two
+              :theme="data.commentLike ? 'filled' : 'outline'"
+              size="14"
+              fill="currentColor"
+            />
             点赞<span v-if="data.supportCount">({{ data.supportCount }})</span>
           </div>
-          <div class="ope-item" :class="{'ope-active': active}" @click="onReply">
-            <i-comment :theme="active?'filled':'outline'" size="14" fill="currentColor"/>
-            {{ active ? '取消回复' : '回复' }}<span v-if="data.replyCount && !active">({{ data.replyCount }})</span>
+          <div
+            class="ope-item"
+            :class="{ 'ope-active': active }"
+            @click="onReply"
+          >
+            <i-comment
+              :theme="active ? 'filled' : 'outline'"
+              size="14"
+              fill="currentColor"
+            />
+            {{ active ? "取消回复" : "回复"
+            }}<span v-if="data.replyCount && !active"
+              >({{ data.replyCount }})</span
+            >
           </div>
           <a-popconfirm
             v-model:visible="deleteVisible"
             title="确认删除此评论?"
             ok-text="是"
             cancel-text="否"
-            @confirm="onConfirmDelete">
-            <div class="ope-item delete-ope" :class="{'visible': deleteVisible}" v-if="showDelete"
-                 @click="onDelete">
+            @confirm="onConfirmDelete"
+          >
+            <div
+              class="ope-item delete-ope"
+              :class="{ visible: deleteVisible }"
+              v-if="showDelete"
+              @click="onDelete"
+            >
               删除
             </div>
           </a-popconfirm>
@@ -68,58 +130,76 @@
     </div>
     <div v-if="active" class="moment-reply">
       <div class="user-avatar">
-        <img v-if="isLogin" :src="userInfo.avatar"/>
-        <img v-else src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png"/>
+        <img v-if="isLogin" :src="userInfo.avatar" />
+        <img
+          v-else
+          src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png"
+        />
       </div>
       <div class="reply-box-wrapper">
-        <MomentReplyEditor @onSubmit="onSubmit" ref="MomentReplyEditorRef"/>
+        <MomentReplyEditor @onSubmit="onSubmit" ref="MomentReplyEditorRef" />
       </div>
     </div>
-    <ContentList v-if="!!data.replyCount" url="listMomentReplyPage" class="reply-list" v-slot="{list}"
-                 :total="data.replyCount" :show-loaded-all="false"
-                 :params="params" :immediate="false" foldable data-text="回复" ref="ContentListRef">
-      <MomentReplyItem v-for="item in list"
-                       :data="item"
-                       :root="data"
-                       :moment="moment"
-                       @saveSuccess="saveSuccess"
-                       @deleteSuccess="deleteSuccess"/>
+    <ContentList
+      v-if="!!data.replyCount"
+      url="listMomentReplyPage"
+      class="reply-list"
+      v-slot="{ list }"
+      :total="data.replyCount"
+      :show-loaded-all="false"
+      :params="params"
+      :immediate="false"
+      foldable
+      data-text="回复"
+      ref="ContentListRef"
+    >
+      <MomentReplyItem
+        v-for="item in list"
+        :data="item"
+        :root="data"
+        :moment="moment"
+        @saveSuccess="saveSuccess"
+        @deleteSuccess="deleteSuccess"
+      />
     </ContentList>
   </div>
 </template>
 
 <script lang="ts">
 export default {
-  name: "MomentCommentItem"
-}
+  name: "MomentCommentItem",
+};
 </script>
 
 <script setup lang="ts">
-import {ref, computed, inject} from "vue";
-import {useStore} from "vuex";
-import {RouterLink} from "vue-router";
-import {message} from "ant-design-vue";
-import {vOnClickOutside} from '@vueuse/components';
-import {transformHTMLToTag, transformTagToHTML} from "@/components/common/utils/emoji/youyu_emoji";
+import { ref, computed, inject, nextTick } from "vue";
+import { useStore } from "vuex";
+import { RouterLink } from "vue-router";
+import { message } from "ant-design-vue";
+import { vOnClickOutside } from "@vueuse/components";
+import {
+  transformHTMLToTag,
+  transformTagToHTML,
+} from "@/components/common/utils/emoji/youyu_emoji";
 import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
 import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
 import MomentReplyItem from "@/views/moment/components/MomentReplyItem.vue";
 import UserCardMoment from "../components/UserCardMoment.vue";
 import ContentList from "@/components/common/system/ContentList.vue";
 
-const {getters, dispatch} = useStore();
+const { getters, dispatch } = useStore();
 const props = defineProps({
   data: {
     type: Object,
-    required: true
+    required: true,
   },
   moment: {
     type: Object,
-    required: true
-  }
-})
+    required: true,
+  },
+});
 
-const emit = defineEmits(['deleteSuccess']);
+const emit = defineEmits(["deleteSuccess"]);
 
 const row = ref<number>(0);
 const expand = ref<boolean>(false);
@@ -129,10 +209,16 @@ const preview = ref<boolean>(false);
 const likeLoading = ref<boolean>(false);
 const current = ref<number>(0);
 
-const userInfo = computed(() => getters['userInfo']);
-const images = computed(() => props.data.images ? props.data.images.split(",") : null);
-const isLogin = computed(() => getters['isLogin']);
-const showDelete = computed(() => userInfo.value.id === props.data.userId || props.moment.userId === userInfo.value.id);
+const userInfo = computed(() => getters["userInfo"]);
+const images = computed(() =>
+  props.data.images ? props.data.images.split(",") : null
+);
+const isLogin = computed(() => getters["isLogin"]);
+const showDelete = computed(
+  () =>
+    userInfo.value.id === props.data.userId ||
+    props.moment.userId === userInfo.value.id
+);
 const params = computed(() => ({
   id: props.data.id,
 }));
@@ -146,39 +232,41 @@ function set(value: number) {
 
 const onDelete = () => {
   deleteVisible.value = true;
-}
+};
 
 const onConfirmDelete = () => {
-  dispatch('deleteMomentComment', {commentId: props.data.id}).then(res => {
+  dispatch("deleteMomentComment", { commentId: props.data.id }).then((res) => {
     if (res) {
-      message.success('删除成功');
-      emit('deleteSuccess', props.data);
+      message.success("删除成功");
+      emit("deleteSuccess", props.data);
     }
-  })
-}
+  });
+};
 
 const onLike = () => {
   if (likeLoading.value) return;
   likeLoading.value = true;
   const isLike = !!props.data.commentLike;
   dispatch(isLike ? "cancelMomentCommentLike" : "setMomentCommentLike", {
-    commentId: props.data.id
-  }).then(res => {
-    if (isLike) {
-      props.data.supportCount -= 1;
-      props.data.commentLike = null;
-    } else {
-      props.data.supportCount += 1;
-      props.data.commentLike = res.data;
-    }
-  }).finally(() => {
-    likeLoading.value = false;
+    commentId: props.data.id,
   })
-}
+    .then((res) => {
+      if (isLike) {
+        props.data.supportCount -= 1;
+        props.data.commentLike = null;
+      } else {
+        props.data.supportCount += 1;
+        props.data.commentLike = res.data;
+      }
+    })
+    .finally(() => {
+      likeLoading.value = false;
+    });
+};
 
 const onReply = () => {
   active.value = !active.value;
-}
+};
 
 const onPreview = (index: number) => {
   preview.value = true;
@@ -195,7 +283,7 @@ const onClickOutside = () => {
   if (!reply.content && !reply.images?.length) {
     active.value = false;
   }
-}
+};
 
 const onSubmit = (reply, successCallback, failedCallback) => {
   reply.images = reply.images.length ? reply.images.join(",") : null;
@@ -204,37 +292,45 @@ const onSubmit = (reply, successCallback, failedCallback) => {
   reply.userIdTo = props.moment.userId;
   reply.rootId = props.data.id;
   reply.content = transformHTMLToTag(reply.content);
-  dispatch('createMomentComment', reply).then(res => {
-    if (res.data) {
-      message.success("发布成功");
-      ContentListRef.value.list.unshift(res.data);
-      props.data.replyCount += 1;
-      props.moment.commentCount += 1;
-      active.value = false;
-    }
-    successCallback();
-  }).catch(() => {
-    failedCallback();
-  })
-}
+  dispatch("createMomentComment", reply)
+    .then((res) => {
+      if (res.data) {
+        props.data.replyCount += 1;
+        props.moment.commentCount += 1;
+        nextTick(() => {
+          message.success("发布成功");
+          ContentListRef.value.list.unshift(res.data);
+          active.value = false;
+        });
+      }
+      successCallback();
+    })
+    .catch(() => {
+      failedCallback();
+    });
+};
 
 const saveSuccess = (data) => {
   ContentListRef.value.list.unshift(data);
-}
+};
 
 const deleteSuccess = (data) => {
-  ContentListRef.value.list = ContentListRef.value.list.filter(item => item.id !== data.id);
+  ContentListRef.value.list = ContentListRef.value.list.filter(
+    (item) => item.id !== data.id
+  );
   props.data.replyCount -= 1;
   props.moment.commentCount -= 1;
-}
+};
 
 const onUserVisibleChange = (visible: boolean) => {
   if (visible) {
-    dispatch("getMomentUserDetail", {userId: props.data.userId}).then(res => {
-      props.data.user = res.data;
-    })
+    dispatch("getMomentUserDetail", { userId: props.data.userId }).then(
+      (res) => {
+        props.data.user = res.data;
+      }
+    );
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -261,6 +357,7 @@ const onUserVisibleChange = (visible: boolean) => {
 
       .comment-right-top {
         display: flex;
+        align-items: center;
 
         .user-nickname {
           font-size: 14px;
@@ -279,15 +376,18 @@ const onUserVisibleChange = (visible: boolean) => {
             background: linear-gradient(270deg, #30b6ec, #0692ef 95%);
             border-radius: 12px;
             padding: 0 6px;
+            line-height: 18px;
           }
         }
 
-        .publish-time {
+        .info-data {
           position: relative;
-          font-size: 14px;
+          display: flex;
+          align-items: center;
+          font-size: 13px;
           color: #909090;
-          padding-left: 8px;
-          margin-left: 8px;
+          padding-left: 6px;
+          margin-left: 6px;
 
           &:before {
             position: absolute;
@@ -337,7 +437,7 @@ const onUserVisibleChange = (visible: boolean) => {
           margin: 0 4px 4px 0;
           object-fit: cover;
           cursor: zoom-in;
-          filter: brightness(.94);
+          filter: brightness(0.94);
         }
       }
 
@@ -438,7 +538,7 @@ const onUserVisibleChange = (visible: boolean) => {
     ::v-deep(.editable-div) {
       border-radius: 2px;
       border: 1px solid transparent;
-      transition: .3s;
+      transition: 0.3s;
 
       &.editor-active {
         border: 1px solid #1890ff;

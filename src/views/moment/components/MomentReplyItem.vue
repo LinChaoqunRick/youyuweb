@@ -62,8 +62,12 @@
               <div class="author-text" v-if="data.userTo.id === moment.userId">作者</div>
             </div>
           </div>
-          <div class="publish-time" :title="data.createTime">{{ $dayjs().to(data.createTime) }}</div>
-        </div>
+          <div class="info-data">
+            <div class="publish-time" :title="data.createTime">
+              {{ $dayjs().to(data.createTime) }}
+            </div>
+            <div class="adname" v-if="data.adname">・{{ data.adname }}</div>
+          </div>        </div>
         <div class="reply-content" :class="{'content-expand': expand}"
              v-row="{set: set}"
              v-html="transformTagToHTML(data.content)"></div>
@@ -112,7 +116,7 @@
 
 <script lang="ts">
 export default {
-  name: "MomentCommentItem"
+  name: "MomentReplyItem"
 }
 </script>
 
@@ -314,12 +318,14 @@ const onUserToVisibleChange = (visible: boolean) => {
           }
         }
 
-        .publish-time {
+        .info-data {
           position: relative;
-          font-size: 14px;
+          display: flex;
+          align-items: center;
+          font-size: 13px;
           color: #909090;
-          padding-left: 8px;
-          margin-left: 8px;
+          padding-left: 6px;
+          margin-left: 6px;
 
           &:before {
             position: absolute;

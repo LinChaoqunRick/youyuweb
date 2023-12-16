@@ -31,8 +31,13 @@
               <div class="user-nickname">{{ data.user.nickname }}</div>
             </RouterLink>
           </a-popover>
-          <div class="publish-time" :title="data.createTime">
-            {{ $dayjs().to(data.createTime) }}
+          <div class="info-data">
+            <div class="publish-time" :title="data.createTime">
+              {{ $dayjs().to(data.createTime) }}
+            </div>
+            <div class="adname" v-if="data.adname">
+              ・{{ data.adname }}
+            </div>
           </div>
         </div>
         <a-popover
@@ -132,7 +137,6 @@
             />
           </div>
           <span class="position-text">{{ data?.location }}</span>
-          <i-triangle theme="filled" size="10" fill="currentColor" />
         </div>
         <div class="like-users" v-if="data.likeUsers?.length">
           <div class="user-avatars">
@@ -502,7 +506,9 @@ defineExpose({
           cursor: pointer;
         }
 
-        .publish-time {
+        .info-data {
+          display: flex;
+          align-items: center;
           font-size: 13px;
           color: #909090;
           margin-top: 1px;
@@ -611,7 +617,7 @@ defineExpose({
         border: 1.8px solid var(--youyu-border-color2);
         border-radius: 30px;
         cursor: pointer;
-        height: 26px;
+        height: 24px;
         margin-top: 4px;
 
         .icon-wrapper {
