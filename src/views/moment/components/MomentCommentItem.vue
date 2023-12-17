@@ -137,7 +137,7 @@
         />
       </div>
       <div class="reply-box-wrapper">
-        <MomentReplyEditor @onSubmit="onSubmit" ref="MomentReplyEditorRef" />
+        <MomentReplyEditor @onSubmit="onSubmit" :placeholder="replyEditorPlaceholder" ref="MomentReplyEditorRef"/>
       </div>
     </div>
     <ContentList
@@ -222,6 +222,7 @@ const showDelete = computed(
 const params = computed(() => ({
   id: props.data.id,
 }));
+const replyEditorPlaceholder = computed(()=>props.data?"回复@"+props.data?.user?.nickname:null);
 
 const MomentReplyEditorRef = ref<InstanceType<typeof MomentReplyEditor>>();
 const ContentListRef = ref<InstanceType<typeof ContentList>>();
@@ -466,6 +467,7 @@ const onUserVisibleChange = (visible: boolean) => {
             color: #ff4d4f;
             margin-left: auto;
             display: none;
+            margin-right: 0;
 
             &.visible {
               display: inherit !important;

@@ -203,7 +203,7 @@
           />
         </div>
         <div class="reply-box-wrapper">
-          <MomentReplyEditor @onSubmit="onCommentSubmit" />
+          <MomentReplyEditor :placeholder="replyEditorPlaceholder" @onSubmit="onCommentSubmit" />
         </div>
       </div>
       <div class="moment-comment-list">
@@ -313,6 +313,7 @@ const listParams = computed(() => ({
   pageSize: 5,
   orderBy: order.value,
 }));
+const replyEditorPlaceholder = computed(()=>props.data?"回复@"+props.data?.user?.nickname:null);
 const ContentDataRef = ref<InstanceType<typeof ContentData> | null>(null);
 
 function set(value: number) {
@@ -481,8 +482,8 @@ defineExpose({
       align-items: center;
 
       .user-avatar {
-        height: 42px;
-        width: 42px;
+        height: 40px;
+        width: 40px;
         border-radius: 50%;
         cursor: pointer;
         overflow: hidden;
@@ -613,7 +614,7 @@ defineExpose({
       .location-data {
         display: flex;
         align-items: center;
-        padding: 1px 5px;
+        padding: 1px 4px;
         border: 1.8px solid var(--youyu-border-color2);
         border-radius: 30px;
         cursor: pointer;

@@ -2,7 +2,7 @@
   <div class="reply-editor">
     <div class="editor-box">
       <div class="login-mask" @click="toLogin" v-if="!isLogin"></div>
-      <ContentEditableDiv v-model="reply.content" :row="1" :maxLength="300" auto-focus ref="richEditor"/>
+      <ContentEditableDiv v-model="reply.content" :row="1" :maxLength="300" :placeholder="placeholder" auto-focus ref="richEditor"/>
     </div>
     <div class="image-wrapper" v-if="reply.images?.length">
       <div v-for="item in reply.images" class="image-item">
@@ -47,7 +47,7 @@
 
 <script lang="ts">
   export default {
-    name: "ReplyEditor"
+    name: "MomentReplyEditor"
   }
 </script>
 
@@ -61,9 +61,12 @@
   import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
   import EmojiPicker from "@/components/common/utils/emoji/EmojiPicker.vue";
 
-
   const {getters, commit} = useStore();
-
+  const prop = defineProps({
+    placeholder: {
+      type: String,
+    }
+  });
   const emit = defineEmits(['onSubmit']);
 
   const userInfo = computed(() => getters['userInfo']);
@@ -142,6 +145,12 @@
         top: 0;
         bottom: 0;
         z-index: 1;
+      }
+
+      ::v-deep(.editor-active) {
+        #box {
+          min-height: 4rem !important;
+        }
       }
     }
 

@@ -391,8 +391,12 @@
           }
 
           .post-content {
-            ::v-deep(.md-editor-preview-wrapper) {
-              padding: 0;
+            ::v-deep(.md-editor) {
+              background-color: transparent !important;
+
+              .md-editor-preview-wrapper {
+                padding: 0;
+              }
             }
           }
 
