@@ -126,7 +126,7 @@ const refreshAuthLogic = async (failedRequest: any) => {
         location.reload();
       }, 1500);
     });
-  const {access_token: res_access_token, refresh_token: res_refresh_token} = tokenRefreshResponse.data.access_token;
+  const {access_token: res_access_token, refresh_token: res_refresh_token} = tokenRefreshResponse.data;
   Cookies.set("access_token", res_access_token, {expires: 7});
   Cookies.set("refresh_token", res_refresh_token, {expires: 30});
   failedRequest.response.config.headers["Authorization"] = "Bearer " + res_access_token;
