@@ -96,7 +96,6 @@
         </a-popover>
         <UploadFile
           accept=".jpg, .jpeg, .png"
-          :maxSize="10"
           @uploadSuccess="uploadSuccess"
           :disabled="uploadDisabled"
         >
