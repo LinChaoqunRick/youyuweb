@@ -240,7 +240,7 @@ const onAddPosition = () => {
       data: props.form,
     },
     title: "添加位置",
-    width: "80vw",
+    width: "88vw",
     maskClosable: false,
     keyboard: false,
     centered: true,

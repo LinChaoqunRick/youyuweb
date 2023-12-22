@@ -88,7 +88,7 @@ const keyword = ref("");
 let placeSearch, AMapObj, marker, geocoder, auto;
 
 const initMap = () => {
-  let center = [116.397428, 39.90923];
+  let center = null;
   if (!!location.value) {
     const {longitude, latitude} = location.value;
     if (longitude !== "" && longitude != null && latitude !== "" && latitude != null) {
@@ -142,29 +142,56 @@ const initMap = () => {
         // 定位
         if (props.geolocation) {
           const geolocation = new AMap.Geolocation({
-            enableHighAccuracy: true, //是否使用高精度定位，默认:true
-            timeout: 10000, //超过10秒后停止定位，默认：5s
             position: {
               bottom: "80px",
               right: "10px",
             },
-            buttonOffset: new AMap.Pixel(10, 20), //定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+            enableHighAccuracy: true, //是否使用高精度定位，默认:true
+            timeout: 10000, //超过10秒后停止定位，默认：5s
+            // maximumAge: 0, //浏览器原生定位的缓存时间，毫秒
+            markerOptions: {
+              visible: false,
+              icon: '/static/images/marker/marker_lightblue.png',
+              anchor: 'bottom-center',
+              label: {
+                content: "您在此处",
+              }
+            },
+            // circleOptions: {},
+            panToLocation: true, //定位成功后是否自动移动到响应位置
             zoomToAccuracy: true, //定位成功后是否自动调整地图视野到定位点
             getCityWhenFail: true,
             needAddress: true,
             extensions: "all"
           });
           map.addControl(geolocation);
-          if (!getCoordinates(location.value)) {
-            geolocation.getCurrentPosition((status, result) => {
-              onMapClick({
-                lnglat: {
-                  lng: result.position[0],
-                  lat: result.position[1]
-                },
-              });
+
+          const locateSuccessCallback = (result) => {
+            onMapClick({
+              lnglat: {
+                lng: result.position[0],
+                lat: result.position[1]
+              },
             });
           }
+
+          if (!getCoordinates(location.value)) {
+            // 自动定位一次
+            geolocation.getCurrentPosition();
+          }
+
+          // 执行回调函数
+          AMapObj.Event.addListener(geolocation, 'complete', function (data) {
+            // 定位成功时的回调函数，data包含定位结果信息
+            console.log('定位成功', data);
+            // 在这里执行你的回调函数
+            locateSuccessCallback(data);
+          });
+
+          // 监听定位失败事件
+          AMapObj.Event.addListener(geolocation, 'error', function (err) {
+            console.log('定位失败', err);
+          });
         }
 
         // 3D地图插件
@@ -276,6 +303,7 @@ const drawMarker = (val) => {
   }
   if (marker) {
     marker.setMap(null);
+    marker = null;
   }
   marker = new AMapObj.Marker({
     position: new AMapObj.LngLat(coordinate.longitude, coordinate.latitude),
