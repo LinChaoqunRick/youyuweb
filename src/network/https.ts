@@ -72,7 +72,8 @@ instance.interceptors.response.use(
     } else {
       message.error('系统异常,请联系管理员');
     }
-    return Promise.reject(data);
+    // 此处必须返回error才能正确被createAuthRefreshInterceptor拦截
+    return Promise.reject(error);
   }
 );
 
