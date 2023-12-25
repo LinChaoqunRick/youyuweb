@@ -397,7 +397,11 @@ const onDelete = () => {
 };
 
 const onEdit = () => {
-  emit("onEdit", props.data);
+  router.push({
+    name: "MomentDetail",
+    params: { momentId: props.data.id },
+    query: { type: "edit" },
+  });
 };
 
 const onLike = () => {

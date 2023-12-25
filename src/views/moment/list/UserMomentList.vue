@@ -14,7 +14,6 @@
             :data="item"
             :key="item.id"
             @deleteSuccess="deleteSuccess"
-            @onEdit="onEdit"
           />
         </template>
         <template v-slot:loadMoreBox="{ restLoading }">
@@ -76,14 +75,6 @@ const deleteSuccess = (moment: momentListType) => {
     (item: momentListType) => item.id === moment.id
   );
   momentList.value.splice(index, 1);
-};
-
-const onEdit = (data: momentListType) => {
-  router.push({
-    name: "MomentDetail",
-    params: { momentId: data.id },
-    query: { type: "edit" },
-  });
 };
 
 provide("active", { activeId, updateActiveId });

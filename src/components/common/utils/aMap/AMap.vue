@@ -89,7 +89,7 @@ let placeSearch, AMapObj, marker, geocoder, auto;
 
 const initMap = () => {
   let center = null;
-  if (!!location.value) {
+  if (getCoordinates(location.value)) {
     const {longitude, latitude} = location.value;
     if (longitude !== "" && longitude != null && latitude !== "" && latitude != null) {
       center = [longitude, latitude];
@@ -139,61 +139,6 @@ const initMap = () => {
         });
         map.addControl(scale);
 
-        // 定位
-        if (props.geolocation) {
-          const geolocation = new AMap.Geolocation({
-            position: {
-              bottom: "80px",
-              right: "10px",
-            },
-            enableHighAccuracy: true, //是否使用高精度定位，默认:true
-            timeout: 10000, //超过10秒后停止定位，默认：5s
-            // maximumAge: 0, //浏览器原生定位的缓存时间，毫秒
-            /*markerOptions: {
-              visible: false,
-              icon: '/static/images/marker/marker_lightblue.png',
-              anchor: 'bottom-center',
-              label: {
-                content: "您在此处",
-              }
-            },*/
-            // circleOptions: {},
-            panToLocation: true, //定位成功后是否自动移动到响应位置
-            zoomToAccuracy: true, //定位成功后是否自动调整地图视野到定位点
-            getCityWhenFail: true,
-            needAddress: true,
-            extensions: "all"
-          });
-          map.addControl(geolocation);
-
-          const locateSuccessCallback = (result) => {
-            onMapClick({
-              lnglat: {
-                lng: result.position[0],
-                lat: result.position[1]
-              },
-            });
-          }
-
-          if (!getCoordinates(location.value)) {
-            // 自动定位一次
-            geolocation.getCurrentPosition();
-          }
-
-          // 执行回调函数
-          AMapObj.Event.addListener(geolocation, 'complete', function (data) {
-            // 定位成功时的回调函数，data包含定位结果信息
-            console.log('定位成功', data);
-            // 在这里执行你的回调函数
-            locateSuccessCallback(data);
-          });
-
-          // 监听定位失败事件
-          AMapObj.Event.addListener(geolocation, 'error', function (err) {
-            console.log('定位失败', err);
-          });
-        }
-
         // 3D地图插件
         const controlBar = new AMap.ControlBar({
           position: {
@@ -213,6 +158,7 @@ const initMap = () => {
           datatype: "all",
         });
 
+        // 地区搜索
         placeSearch = new AMap.PlaceSearch({
           map: map,
           city: "",
@@ -221,6 +167,43 @@ const initMap = () => {
           citylimit: true, // 是否强制限制在设置的城市内搜索
           autoFitView: true,
         });
+
+        // 定位
+        if (props.geolocation) {
+          const geolocation = new AMap.Geolocation({
+            position: {
+              bottom: "80px",
+              right: "10px",
+            },
+            enableHighAccuracy: true, //是否使用高精度定位，默认:true
+            timeout: 10000, //超过10秒后停止定位，默认：5s
+            panToLocation: true, //定位成功后是否自动移动到响应位置
+            zoomToAccuracy: true, //定位成功后是否自动调整地图视野到定位点
+            getCityWhenFail: true,
+            needAddress: true,
+            extensions: "all"
+          });
+          map.addControl(geolocation);
+
+          // 如果定位值不存在，自动获取当前位置
+          // 如果定位值存在，获取定位值信息
+          console.log(getCoordinates(location.value));
+          if (!getCoordinates(location.value)) {
+            geolocation.getCurrentPosition();
+          } else {
+            createMarkerByLngLat(location.value.longitude, location.value.latitude);
+          }
+
+          // 执行回调函数
+          AMapObj.Event.addListener(geolocation, 'complete', function (data) {
+            createMarkerByLngLat(...data.position);
+          });
+
+          // 监听定位失败事件
+          AMapObj.Event.addListener(geolocation, 'error', function (err) {
+            console.log('定位失败', err);
+          });
+        }
       }
     );
     drawMarker();
@@ -274,7 +257,7 @@ const onMapClick = (e) => {
       };
     }
 
-    if (location.value.longitude) {
+    if (!!getCoordinates(location.value)) {
       drawMarker();
     }
   });
@@ -316,6 +299,15 @@ const drawMarker = (val) => {
     map.setZoom(map.getZoom());
   }
 };
+
+const createMarkerByLngLat = (longitude, latitude) => {
+  onMapClick({
+    lnglat: {
+      lng: longitude,
+      lat: latitude
+    },
+  });
+}
 
 const getCoordinates = (val) => {
   if (!val) {
