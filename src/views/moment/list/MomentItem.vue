@@ -476,7 +476,7 @@ defineExpose({
 
 <style lang="scss" scoped>
 .moment-item {
-  background-color: var(--youyu-background1);
+  background-color: var(--youyu-body-background2);
 
   .moment-item-content {
     padding: 12px 16px;

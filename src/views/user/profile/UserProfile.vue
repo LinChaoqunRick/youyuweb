@@ -28,15 +28,6 @@
           </div>
         </div>
       </div>
-      <div class="user-right">
-        <div class="user-right-inner" v-aside3>
-          <div class="user-right-achievement">
-            <div v-for="item in 60">
-              {{item}}
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -132,12 +123,6 @@
       Modal.info({
         content: `Ta共收获了${user.value.extraInfo[item.value]}个点赞`,
       });
-    }
-  }
-
-  function handleNavigate(isActive, isExactActive, navigate) {
-    if (!isExactActive) {
-      navigate();
     }
   }
 
@@ -392,26 +377,6 @@
                 }
               }
             }
-          }
-
-          .content-component {
-            /*padding: 6px 10px;*/
-            /*background-color: var(--youyu-body-background2);*/
-          }
-        }
-      }
-
-      .user-right {
-        margin-top: 90px;
-        position: relative;
-        width: 300px;
-        margin-left: 8px;
-
-        .user-right-inner {
-          width: 300px;
-
-          .user-right-achievement {
-            background-color: var(--youyu-body-background2);
           }
         }
       }

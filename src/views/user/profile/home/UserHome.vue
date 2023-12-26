@@ -54,19 +54,6 @@ const isComponent = (item: any) => {
     }
   }
 
-  ::v-deep(.content-list) {
-    .bottom-operation {
-      min-height: 48px;
-      border-radius: 4px;
-      overflow: hidden;
-      background-color: var(--youyu-background1);
-
-      .ant-spin {
-        font-size: 0;
-      }
-    }
-  }
-
   .tip-text {
     margin-left: 6px;
   }

@@ -295,14 +295,13 @@ const onClearLocation = () => {
 
     .editor-content-wrapper {
       position: relative;
-      margin-bottom: 2px;
       max-height: 216px;
       overflow-y: auto;
       word-wrap: break-word;
 
       ::v-deep(.editable-div) {
         .editor-bottom {
-          padding: 4px 8px;
+          padding: 4px 8px 5px 8px;
         }
       }
     }

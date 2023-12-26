@@ -240,7 +240,7 @@ defineExpose({
       line-height: 24px;
       /*min-height: 80px;*/
       outline: none;
-      padding: 5px 12px;
+      padding: 5px 10px;
       box-sizing: content-box;
       white-space: pre-wrap;
       transition: .2s;

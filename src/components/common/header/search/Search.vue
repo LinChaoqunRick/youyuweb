@@ -221,6 +221,7 @@ const onClearHistory = () => {
             outline: none;
             box-shadow: none;
             padding: 0;
+            background-color: transparent;
           }
         }
       }
