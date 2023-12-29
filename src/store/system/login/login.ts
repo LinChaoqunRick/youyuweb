@@ -6,6 +6,7 @@ import {
   SEND_EMAIL_CODE,
   ACCOUNT_REGISTER,
   GET_CURRENT_USER,
+  GET_CONNECT_URL,
 } from "@/network/apis";
 
 export default {
@@ -59,6 +60,9 @@ export default {
     },
     getCurrentUser(context: any, params: object) {
       return http.post(GET_CURRENT_USER, params);
+    },
+    getConnectURL(context: any, params: object) {
+      return http.get(GET_CONNECT_URL, params);
     },
   },
 };

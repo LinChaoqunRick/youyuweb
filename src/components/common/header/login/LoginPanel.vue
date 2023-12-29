@@ -9,10 +9,10 @@
           <div class="login-panel-content-body" v-if="!type">
             <div class="login-panel-content-header">
               <div class="login-header-type" :class="{'type-active': loginType === 0}" @click="handleLoginChange(0)">
-                账密登录
+                账号登录
               </div>
               <div class="login-header-type" :class="{'type-active': loginType === 1}" @click="handleLoginChange(1)">
-                手机登录
+                短信登录
               </div>
             </div>
             <div class="login-panel-content-form">
@@ -110,7 +110,7 @@
 
 
       .login-panel-image {
-        background-image: url('https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/login/loginImg.jpg');
+        background-image: url('https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/login/tulip.jpg');
         background-size: cover;
         height: 100%;
         width: 270px;
@@ -118,7 +118,9 @@
         justify-content: center;
         align-items: flex-end;
         transition: .6s;
+        opacity: .8;
         z-index: 10;
+        background-repeat: no-repeat;
 
         .switch-button {
           margin-bottom: 20px;
@@ -193,6 +195,7 @@
   .transform-active {
     .login-panel-image {
       transform: translateX(520px);
+      background-position-x: -360px;
     }
 
     .login-panel-content {
@@ -202,9 +205,9 @@
 </style>
 
 <style lang="scss">
-  .dark-theme {
+  /*.dark-theme {
     .login-panel-image {
-      background-image: url('https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/login/dark-login.jpg') !important;
+      background-image: url('https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/login/tulip.jpg') !important;
     }
-  }
+  }*/
 </style>

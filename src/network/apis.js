@@ -4,6 +4,7 @@ const ApiBase = '/plat';
 export const ACCOUNT_LOGIN = ApiBase + "/oauth/token"; // 登录
 export const ACCOUNT_LOGOUT = ApiBase + "/oauth/logout"; // 注销
 export const ACCOUNT_REGISTER = ApiBase + "/oauth/register"; // 注册
+export const GET_CONNECT_URL = ApiBase + "/oauth/connect/getUrl"; // 获取QQ授权地址
 
 // 文章
 export const GET_POST_USER_DETAIL = ApiBase + "/post/open/getUserDetailById"; // 根据id获取用户详细信息（包括帖子数、粉丝数等）

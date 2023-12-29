@@ -44,6 +44,24 @@
         </a-form-item>
       </a-form>
     </div>
+    <div class="social-account-title">社交账号登录</div>
+    <div class="social-account-tag mt-10">
+      <div class="tag-item tag-wechat" title="微信">
+        <img src="/static/images/logo/wechat.png" alt="" @click="onSocialConnect('wechat')"/>
+      </div>
+      <div class="tag-item tag-qq" title="QQ">
+        <img src="/static/images/logo/qq.png" alt="" @click="onSocialConnect('qq')"/>
+      </div>
+      <div class="tag-item tag-github" title="Github">
+        <img src="/static/images/logo/github.png" alt="" @click="onSocialConnect('github')"/>
+      </div>
+      <div class="tag-item tag-alipay" title="支付宝">
+        <img src="/static/images/logo/alipay.png" alt="" @click="onSocialConnect('alipay')"/>
+      </div>
+      <div class="tag-item tag-weibo" title="微博">
+        <img src="/static/images/logo/weibo.png" alt="" @click="onSocialConnect('weibo')"/>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -93,7 +111,7 @@ const onSubmit = () => {
   });
 };
 
-function handleLogin(form) {
+const handleLogin = (form) => {
   dispatch('token', form).then(res => {
     const {userInfo, access_token, refresh_token} = res.data;
     message.success(`欢迎回来，${userInfo.nickname}`);
@@ -110,6 +128,14 @@ function handleLogin(form) {
     loading.value = false;
   })
 }
+
+const onSocialConnect = (type: string) => {
+  if (['qq', 'github']) {
+    dispatch('getConnectURL', {type}).then(res => {
+      location.href = res.data;
+    })
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -117,6 +143,7 @@ function handleLogin(form) {
   height: 100%;
   width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   position: relative;
@@ -129,7 +156,7 @@ function handleLogin(form) {
   .tip-box {
     position: absolute;
     width: 320px;
-    top: 70px;
+    top: 40px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -140,6 +167,78 @@ function handleLogin(form) {
 
     .forget-password {
 
+    }
+  }
+
+  .social-account-title {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    color: var(--youyu-body-text1);
+
+    &:before, &:after {
+      content: "";
+      position: absolute;
+      height: 1px;
+      width: 30px;
+      background-color: var(--youyu-body-text1);
+    }
+
+    &:before {
+      top: 11px;
+      left: -35px;
+    }
+
+    &:after {
+      top: 11px;
+      left: 90px;
+    }
+  }
+
+  .social-account-tag {
+    display: flex;
+
+    .tag-item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 32px;
+      width: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      overflow: hidden;
+
+      img {
+        position: relative;
+      }
+
+      &:nth-child(n+2) {
+        margin-left: 10px;
+      }
+
+      &.tag-wechat {
+        background-color: #2fd859;
+      }
+
+      &.tag-qq {
+        background-color: #1bc1fa;
+      }
+
+      &.tag-alipay {
+        background-color: #06b4fd;
+
+        img {
+          left: 1px;
+        }
+      }
+
+      &.tag-github {
+        background-color: #1f2328;
+      }
+
+      &.tag-weibo {
+        background-color: #fb5555;
+      }
     }
   }
 
