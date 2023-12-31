@@ -195,7 +195,7 @@
   .transform-active {
     .login-panel-image {
       transform: translateX(520px);
-      background-position-x: -360px;
+      background-position-x: -380px;
     }
 
     .login-panel-content {
