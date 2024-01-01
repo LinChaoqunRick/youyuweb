@@ -1,23 +1,28 @@
 <template>
-  <div class="editable-div" :class="{'editor-active': active}">
+  <div class="editable-div" :class="{ 'editor-active': active }">
     <div class="editor-content youyu-scrollbar">
-      <div id="box"
-           ref="box"
-           :contenteditable="contenteditable"
-           :placeholder="placeholder"
-           @focus="onFocus"
-           @blur="onBlur"
-           @keyup="onKeyup"
-           @keydown="onKeydown"
-           @mouseup="onMouseup"
-           @input="onInput"
-           @paste="onPaste"
-           :style="{'min-height': 2*props.row+'rem'}"
+      <div
+        id="box"
+        ref="box"
+        :contenteditable="contenteditable"
+        :placeholder="placeholder"
+        @focus="onFocus"
+        @blur="onBlur"
+        @keyup="onKeyup"
+        @keydown="onKeydown"
+        @mouseup="onMouseup"
+        @input="onInput"
+        @paste="onPaste"
+        :style="{ 'min-height': 2 * props.row + 'rem' }"
       ></div>
     </div>
     <div class="editor-bottom">
       <slot name="bottom"></slot>
-      <div v-if="showLimit" class="length-limit" :class="{'exceed-error':contentLengthExceed}">
+      <div
+        v-if="showLimit"
+        class="length-limit"
+        :class="{ 'exceed-error': contentLengthExceed }"
+      >
         {{ totalStrLength }}/{{ maxLength }}
       </div>
     </div>
@@ -26,41 +31,41 @@
 
 <script lang="ts">
 export default {
-  name: "ContentEditableDiv2"
-}
+  name: "ContentEditableDiv2",
+};
 </script>
 
 <script setup lang="ts">
-import {ref, computed, nextTick, onMounted} from 'vue';
+import { ref, computed, nextTick, onMounted } from "vue";
 
 const props = defineProps({
   modelValue: {
     type: String,
-    default: ''
+    default: "",
   },
   row: {
     type: Number,
-    default: 3
+    default: 3,
   },
   placeholder: {
     type: String,
-    default: '请输入内容...'
+    default: "请输入内容...",
   },
   maxLength: {
     type: Number,
-    default: 500
+    default: 500,
   },
   showLimit: {
     type: Boolean,
-    default: false
+    default: false,
   },
   autoFocus: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(["update:modelValue"]);
 
 const contenteditable = ref<boolean>(true);
 const box = ref<HTMLElement | null>(null);
@@ -70,7 +75,9 @@ const focusActive = ref<boolean>(false);
 let currentRange = null;
 let _parentElem = null;
 const supportRange = typeof document.createRange === "function";
-const contentLengthExceed = computed(() => totalStrLength.value > props.maxLength);
+const contentLengthExceed = computed(
+  () => totalStrLength.value > props.maxLength
+);
 
 onMounted(() => {
   box.value.innerHTML = props.modelValue;
@@ -78,7 +85,7 @@ onMounted(() => {
   if (props.autoFocus) {
     box.value.focus();
   }
-})
+});
 
 const onFocus = () => {
   focusActive.value = true;
@@ -90,7 +97,9 @@ const onBlur = () => {
 const onKeydown = (e) => {
   //  因为先执行keydownup事件 当到达长度后重新计算字符数 避免到达字符限制输入框无法输入
   // 换行 空格  以及字符超出最大限制  禁止输入    超出最大限制后除了退格其他都不可以输入
-  contenteditable.value = !(totalStrLength.value >= props.maxLength && e.keyCode !== 8);
+  contenteditable.value = !(
+    totalStrLength.value >= props.maxLength && e.keyCode !== 8
+  );
   if (!contenteditable.value) {
     e.preventDefault();
   }
@@ -177,11 +186,12 @@ const getCurrentRange = () => {
 const onPaste = (e) => {
   e.stopPropagation();
   e.preventDefault();
-  let text = '', event = (e.originalEvent || e);
+  let text = "",
+    event = e.originalEvent || e;
   if (event.clipboardData && event.clipboardData.getData) {
-    text = event.clipboardData.getData('text/plain');
+    text = event.clipboardData.getData("text/plain");
   } else if (window.clipboardData && window.clipboardData.getData) {
-    text = window.clipboardData.getData('Text');
+    text = window.clipboardData.getData("Text");
   }
   if (totalStrLength.value + text.length > props.maxLength) {
     return false;
@@ -191,28 +201,27 @@ const onPaste = (e) => {
   }
 };
 const clearContent = () => {
-  box.value.innerHTML = '';
+  box.value.innerHTML = "";
   calcTextAreaLength();
-}
+};
 const dispatchInputEvent = () => {
-  const inputEvent = new Event('input', {bubbles: false, cancelable: false});
+  const inputEvent = new Event("input", { bubbles: false, cancelable: false });
   box.value.dispatchEvent(inputEvent);
 };
-
 
 defineExpose({
   totalStrLength,
   active,
   insertHtml,
   insertText,
-  clearContent
-})
+  clearContent,
+});
 </script>
 
 <style lang="scss" scoped>
 .editable-div {
   background: var(--youyu-background5);
-  transition: .2s;
+  transition: 0.2s;
   line-height: 2rem;
   min-height: 2rem;
   border: 1px solid transparent;
@@ -243,7 +252,7 @@ defineExpose({
       padding: 5px 10px;
       box-sizing: content-box;
       white-space: pre-wrap;
-      transition: .2s;
+      transition: 0.2s;
 
       &[contenteditable]:empty:before {
         content: attr(placeholder);
@@ -251,9 +260,9 @@ defineExpose({
         cursor: text;
       }
 
-      img {
+      ::v-deep(img) {
         vertical-align: sub;
-        height: 24px;
+        height: 24px !important;
         cursor: default;
         margin: 0 2px;
       }
