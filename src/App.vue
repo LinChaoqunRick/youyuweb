@@ -15,15 +15,19 @@
 </template>
 
 <script setup lang="ts">
-import {nextTick, ref, provide, computed, watch} from 'vue';
+import {nextTick, ref, provide, computed, watch, onMounted} from 'vue';
 import {useStore} from "vuex";
+import {useRoute} from "vue-router";
 
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 import YHeader from '@/components/common/header/YHeader.vue';
 import YFooter from "@/components/common/footer/YFooter.vue";
 import {message} from "ant-design-vue";
+import Cookies from "js-cookie";
+import {generateAuthRoutes} from "@/router/config/useGenerateRoutes";
 
 const {getters, commit, dispatch} = useStore();
+const route = useRoute();
 
 const isRouterAlive = ref<boolean>(true);
 const count = ref<number>(1);
@@ -46,8 +50,35 @@ watch(() => isLogin.value, (newVal) => {
   }
 })
 
+const stopQueryStateWatch = watch(() => route.query.state, (newVal) => {
+  connectLogin();
+})
+
 provide('reload', reload);
 
+const connectLogin = () => {
+  if (isLogin.value) {
+    return;
+  }
+  const {code, state} = route.query;
+  if (!!code && !!state) {
+    dispatch('token', {
+      grant_type: 'password', // oauth认证方式
+      authType: 'github', // 校验方式设置成对应模式
+      code
+    }).then(res => {
+      const {userInfo, access_token, refresh_token} = res.data;
+      message.success(`欢迎回来，${userInfo.nickname}`);
+      commit("changeLogin", false);
+      commit("changeUser", userInfo);
+      Cookies.set("access_token", access_token, {expires: 7});
+      Cookies.set("refresh_token", refresh_token, {expires: 30});
+      // 生成权限路由
+      generateAuthRoutes();
+      stopQueryStateWatch();
+    })
+  }
+}
 </script>
 
 <style lang="scss" scoped>

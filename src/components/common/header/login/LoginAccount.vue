@@ -81,8 +81,6 @@ const handleSwitch = inject('handleSwitch')
 const formState = reactive({
   username: '',
   password: '',
-  client_id: 'web', // oauth客户端id
-  client_secret: '654321', // oauth客户端密码
   grant_type: 'password', // oauth认证方式
   authType: 'password' // 校验方式设置成密码模式
 });
