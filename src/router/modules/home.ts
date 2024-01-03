@@ -6,7 +6,8 @@ const route = [
       title: "首页",
       code: "HOME"
     },
-    component: () => import("@/views/home/Home.vue")
+    component: () => import("@/views/home/Home.vue"),
+    alias: ['/qqConnect', '/githubConnect']
   },
 ]
 

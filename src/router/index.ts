@@ -1,10 +1,11 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import whiteList from "./whiteList";
-import {generateAuthRoutes} from "@/router/config/useGenerateRoutes";
 import Cookies from "js-cookie";
 import store from "@/store";
 import {computed} from "vue";
 import {message} from "ant-design-vue";
+import {generateAuthRoutes} from "@/router/config/useGenerateRoutes";
+import {executeConnect, isConnectRoute} from "@/router/config/connect";
 
 const isLogin = computed(() => store.getters['isLogin']);
 
@@ -45,7 +46,7 @@ export const router = createRouter({
     if (to.meta.keepAlive) {
       return savedPosition
     } else {
-      return { top: 0 }
+      return {top: 0}
     }
   },
 })
@@ -53,9 +54,15 @@ export const router = createRouter({
 let isInit = false;
 router.beforeEach(async (to, from, next) => {
   if (!isInit) {
+    await executeConnect();
     await checkTokenValid();
     await generateAuthRoutes();
-    next({...to});
+    if (isConnectRoute(location.pathname)) {
+      // 如果是授权页面，清除query参数
+      next({path: "/", query: {}});
+    } else {
+      next({...to});
+    }
   } else {
     next();
   }

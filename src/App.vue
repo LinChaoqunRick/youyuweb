@@ -4,29 +4,26 @@
     <div v-for="item of count">{{item}}</div>-->
     <a-config-provider :locale="zhCN">
       <div class="header" id="header">
-        <YHeader />
+        <YHeader/>
       </div>
       <div class="main-app" id="main-app" v-if="isRouterAlive">
-        <router-view />
+        <router-view/>
       </div>
-      <YFooter />
+      <YFooter/>
     </a-config-provider>
   </div>
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, provide, computed, watch, onMounted } from "vue";
-import { useStore } from "vuex";
-import { useRoute, useRouter } from "vue-router";
+import {nextTick, ref, provide, computed, watch, onMounted} from "vue";
+import {useStore} from "vuex";
+import {useRoute, useRouter} from "vue-router";
 
 import zhCN from "ant-design-vue/es/locale/zh_CN";
 import YHeader from "@/components/common/header/YHeader.vue";
 import YFooter from "@/components/common/footer/YFooter.vue";
-import { message } from "ant-design-vue";
-import Cookies from "js-cookie";
-import { generateAuthRoutes } from "@/router/config/useGenerateRoutes";
 
-const { getters, commit, dispatch } = useStore();
+const {getters, commit, dispatch} = useStore();
 const route = useRoute();
 const router = useRouter();
 
@@ -54,42 +51,8 @@ watch(
   }
 );
 
-const stopQueryStateWatch = watch(
-  () => route.query.state,
-  (newVal) => {
-    connectLogin();
-  }
-);
-
 provide("reload", reload);
 
-const connectLogin = () => {
-  if (isLogin.value) {
-    return;
-  }
-  const { code, state } = route.query;
-  if (!!code && !!state) {
-    dispatch("token", {
-      grant_type: "password", // oauth认证方式
-      authType: "github", // 校验方式设置成对应模式
-      githubCode: code,
-    }).then(async (res) => {
-      const { userInfo, access_token, refresh_token } = res.data;
-      message.success(`欢迎回来，${userInfo.nickname}`);
-      commit("changeLogin", false);
-      commit("changeUser", userInfo);
-      Cookies.set("access_token", access_token, { expires: 7 });
-      Cookies.set("refresh_token", refresh_token, { expires: 30 });
-      // 生成权限路由
-      await generateAuthRoutes();
-      stopQueryStateWatch();
-      const query = route.query;
-      delete query.code;
-      delete query.state;
-      await router.replace({ query });
-    });
-  }
-};
 </script>
 
 <style lang="scss" scoped>
