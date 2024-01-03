@@ -15,7 +15,8 @@
       </a-spin>
     </div>
     <div class="table-pagination">
-      <a-pagination v-model:current="current"
+      <a-pagination v-if="!!total"
+                    v-model:current="current"
                     v-model:pageSize="size"
                     v-bind="paginationConfig"
                     :total="total"

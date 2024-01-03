@@ -43,14 +43,21 @@ const isComponent = (item: any) => {
 
 <style lang="scss" scoped>
 .user-home {
-  ::v-deep(.data-list) {
-    > div {
-      margin-top: 8px;
-      border-radius: 4px;
+  ::v-deep(.content-list) {
+    .data-list {
+      > div {
+        margin-top: 8px;
+        border-radius: 4px;
 
-      &:first-child {
-        margin-top: 0;
+        &:first-child {
+          margin-top: 0;
+        }
       }
+    }
+
+    .bottom-operation {
+      background-color: var(--youyu-body-background2);
+      padding: 12px 0;
     }
   }
 

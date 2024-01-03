@@ -103,7 +103,7 @@ defineExpose({
       }
 
       .bottom-operation {
-        min-height: 48px;
+        padding: 12px 0;
         border-radius: 4px;
         overflow: hidden;
         background-color: var(--youyu-background1);

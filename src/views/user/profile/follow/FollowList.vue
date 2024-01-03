@@ -34,10 +34,6 @@
     background-color: var(--youyu-background1);
     padding-bottom: 6px;
 
-    .follow-menu {
-      height: 40px;
-    }
-
     .list-body {
       padding: 0 10px;
 

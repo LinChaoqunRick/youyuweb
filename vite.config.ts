@@ -50,9 +50,8 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/plat/, '')
       },
       /*'/plat': {
-        target: "http://124.222.79.236:8080",
+        target: "https://v2.youyul.com/",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/plat/, '')
       },*/
       /*'/api': {
         target: "https://116.62.114.102:8081",

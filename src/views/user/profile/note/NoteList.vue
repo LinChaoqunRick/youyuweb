@@ -11,28 +11,30 @@
 </template>
 
 <script lang="ts" setup>
-  import {computed, inject} from 'vue';
-  import YTable from "@/components/common/table/YTable.vue";
-  import NoteItem from "./NoteItem.vue";
+import {computed, inject} from 'vue';
+import YTable from "@/components/common/table/YTable.vue";
+import NoteItem from "./NoteItem.vue";
 
-  const user = inject('user');
+const user = inject('user');
 
-  const params = computed(() => ({
-    userId: user.value.id,
-    pageSize: 10
-  }))
+const params = computed(() => ({
+  userId: user.value.id,
+  pageSize: 10
+}))
 
 </script>
 
 <style lang="scss" scoped>
-  .note-list {
-    ::v-deep(.note-item) {
-      margin-top: 8px;
-      border-radius: 4px;
+.note-list {
+  background-color: var(--youyu-background1);
 
-      &:last-child {
-        margin-bottom: 8px;
-      }
+  ::v-deep(.note-item) {
+    margin-top: 8px;
+    border-radius: 4px;
+
+    &:last-child {
+      margin-bottom: 8px;
     }
   }
+}
 </style>

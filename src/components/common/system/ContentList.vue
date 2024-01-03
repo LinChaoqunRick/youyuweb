@@ -17,6 +17,12 @@
         </slot>
       </div>
       <div
+        class="no-data"
+        v-else-if="showNoData && (totalNum === 0 || total === 0)"
+      >
+        <slot name="noDataBox">暂无数据</slot>
+      </div>
+      <div
         class="view-all-data"
         v-else-if="
           showViewAll &&
@@ -50,12 +56,6 @@
             />
           </div>
         </slot>
-      </div>
-      <div
-        class="no-data"
-        v-else-if="showNoData && (totalNum === 0 || total === 0)"
-      >
-        <slot name="noDataBox">暂无数据</slot>
       </div>
       <div
         class="loaded-all-data"
@@ -120,7 +120,7 @@ const bottomOperation = ref<HTMLElement | null>(null);
 const dataListWrapperRef = ref<HTMLElement | null>(null);
 
 const getListData = () => {
-  if ((totalPageNum.value !== -1 && pageNum > totalPageNum) || failed.value || restLoading.value)
+  if ((totalPageNum.value !== -1 && pageNum > totalPageNum) || failed.value || restLoading.value || totalNum.value === 0)
     return;
   const params = {
     pageSize: 10,
