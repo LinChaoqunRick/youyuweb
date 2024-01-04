@@ -52,13 +52,16 @@ defineExpose({
   width: 100%;
 
   ::v-deep(.map-wrapper) {
-    height: calc(100% - 40px);
   }
 
   .location-data {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
     display: flex;
     align-items: center;
-    height: 40px;
+    height: 53px;
     padding: 0 16px;
     font-weight: bold;
 

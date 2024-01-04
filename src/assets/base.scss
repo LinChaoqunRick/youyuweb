@@ -125,7 +125,7 @@ html {
   display: flex !important;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, .8);
+  background-color: var(--mask-background);
   z-index: 99999;
 
   &.animate__fadeIn {

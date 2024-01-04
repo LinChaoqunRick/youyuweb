@@ -286,7 +286,7 @@ $icon-hover-background: rgba(89, 82, 82, 0.8);
   bottom: 0;
   left: 0;
   z-index: 1000;
-  background-color: rgba(0, 0, 0, .8);
+  background-color: var(--mask-background);
 
   .image-preview-close {
     position: absolute;

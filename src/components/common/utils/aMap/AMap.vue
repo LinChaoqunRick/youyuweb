@@ -66,7 +66,10 @@ const {getters} = useStore();
 let map = null;
 const options = ref([]);
 
-// 地点
+// 当前用户位置信息
+const currentLocation = ref({});
+
+// 用户选取地点
 const location = computed({
   get() {
     return props.modelValue;
@@ -153,20 +156,27 @@ const initMap = () => {
           city: "全国",
         });
 
-        // 输入提示与POI搜索
-        auto = new AMap.AutoComplete({
-          datatype: "all",
-        });
+        const initAutoAndPlaceSearch = () => {
+          // AutoComplete主要用于即时的用户输入建议，而PlaceSearch用于获取更多关于特定地点的详细信息。
+          // 选择使用哪个API取决于你的应用需求，如果你需要快速的用户输入建议，那么AutoComplete是一个不错的选择；
+          // 如果你需要获取更多地点详细信息，那么PlaceSearch更适合。
 
-        // 地区搜索
-        placeSearch = new AMap.PlaceSearch({
-          map: map,
-          city: "",
-          pageSize: 10, // 单页显示结果条数
-          pageIndex: 1, // 页码
-          citylimit: true, // 是否强制限制在设置的城市内搜索
-          autoFitView: true,
-        });
+          // 输入提示与POI搜索
+          auto = new AMap.AutoComplete({
+            city: currentLocation.value.adcode,
+            datatype: "all",
+          });
+
+          // 地区搜索
+          placeSearch = new AMap.PlaceSearch({
+            map: map,
+            city: currentLocation.value.adcode,
+            pageSize: 10, // 单页显示结果条数
+            pageIndex: 1, // 页码
+            citylimit: true, // 是否强制限制在设置的城市内搜索
+            autoFitView: true,
+          });
+        }
 
         // 定位
         if (props.geolocation) {
@@ -179,29 +189,31 @@ const initMap = () => {
             timeout: 10000, //超过10秒后停止定位，默认：5s
             panToLocation: true, //定位成功后是否自动移动到响应位置
             zoomToAccuracy: true, //定位成功后是否自动调整地图视野到定位点
+            GeoLocationFirst: true,
             getCityWhenFail: true,
             needAddress: true,
-            extensions: "all"
+            extensions: "all",
           });
           map.addControl(geolocation);
 
-          // 如果定位值不存在，自动获取当前位置
-          // 如果定位值存在，获取定位值信息
-          console.log(getCoordinates(location.value));
           if (!getCoordinates(location.value)) {
+            // 如果定位值不存在，自动获取当前位置
             geolocation.getCurrentPosition();
           } else {
+            // 如果定位值存在，获取定位值信息
             createMarkerByLngLat(location.value.longitude, location.value.latitude);
           }
 
           // 执行回调函数
           AMapObj.Event.addListener(geolocation, 'complete', function (data) {
+            currentLocation.value = data;
             createMarkerByLngLat(...data.position);
+            initAutoAndPlaceSearch();
           });
 
           // 监听定位失败事件
           AMapObj.Event.addListener(geolocation, 'error', function (err) {
-            console.log('定位失败', err);
+            initAutoAndPlaceSearch();
           });
         }
       }
@@ -213,7 +225,7 @@ const initMap = () => {
 // 搜索地图
 const handleSearch = debounce((queryString) => {
   // 1.使用:入提示，提供了根据关键字获得提示信息的功能
-  /*auto.search(queryString, (info, result) => {
+  auto.search(queryString, (info, result) => {
     if (result && typeof result === 'object' && result.tips) {
       result.tips.forEach(item => {
         item.fullAddress = item.district + item.name;
@@ -222,10 +234,10 @@ const handleSearch = debounce((queryString) => {
     } else {
       options.value = [];
     }
-  })*/
+  })
 
-  // 2.使用:地点搜索服务，提供了关键字搜索、周边搜索、范围内搜索等功能
-  placeSearch.search(queryString, (status, result) => {
+  // 2.使用:地点搜索服务，提供了关键字搜索、周边搜索、范围内搜索等功能，与AutoComplete不同的是，它会在地图上标记地点
+  /*placeSearch.search(queryString, (status, result) => {
     if (result && typeof result === "object" && result.poiList) {
       const list = result.poiList.pois;
       list.forEach((item) => {
@@ -236,7 +248,7 @@ const handleSearch = debounce((queryString) => {
     } else {
       options.value = [];
     }
-  });
+  });*/
 }, 500);
 
 // 点击地图
