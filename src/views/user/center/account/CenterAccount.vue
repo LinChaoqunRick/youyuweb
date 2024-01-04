@@ -224,10 +224,6 @@ const onSocialBind = (type: string, bindId: string) => {
 
             &.tag-alipay {
               background-color: #06b4fd;
-
-              img {
-                left: 1px;
-              }
             }
 
             &.tag-github {
@@ -236,6 +232,12 @@ const onSocialBind = (type: string, bindId: string) => {
 
             &.tag-weibo {
               background-color: #fb5555;
+            }
+          }
+
+          &.tag-alipay {
+            img {
+              left: 1.2px;
             }
           }
         }
