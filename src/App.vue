@@ -1,7 +1,5 @@
 <template>
   <div class="app" id="youyu-app">
-    <!--<button @click="count++">count++</button>
-    <div v-for="item of count">{{item}}</div>-->
     <a-config-provider :locale="zhCN">
       <div class="header" id="header">
         <YHeader/>
@@ -28,9 +26,9 @@ const route = useRoute();
 const router = useRouter();
 
 const isRouterAlive = ref<boolean>(true);
-const count = ref<number>(1);
 
 const isLogin = computed(() => getters["isLogin"]);
+const globalSpinning = computed(() => getters["getGlobalSpinning"]);
 
 function reload() {
   isRouterAlive.value = false;

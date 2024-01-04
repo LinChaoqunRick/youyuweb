@@ -2,6 +2,7 @@ import {message} from "ant-design-vue";
 import Cookies from "js-cookie";
 import store from "@/store";
 import {computed} from "vue";
+import openSpin from "@/libs/tools/openSpin";
 
 const isLogin = computed(() => store.getters["isLogin"]);
 const connectPathList = ['/qqConnect', '/githubConnect'];
@@ -25,7 +26,11 @@ const connectLogin = async (type: string, code: string) => {
   } else if (type === 'github') {
     params.githubCode = code;
   }
-
+  const closeSpin = openSpin({
+    componentProps: {
+      tip: "登录中..."
+    }
+  });
   await store.dispatch("token", params).then(async (res) => {
     const {userInfo, access_token, refresh_token} = res.data;
     message.success(`欢迎回来，${userInfo.nickname}`);
@@ -36,6 +41,7 @@ const connectLogin = async (type: string, code: string) => {
   }).catch(e => {
     message.error("授权失败请重试！");
   })
+  closeSpin();
 };
 
 const getConnectTypeByRoute = (pathname: string) => {

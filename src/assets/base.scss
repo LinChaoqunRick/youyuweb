@@ -115,3 +115,26 @@ html {
     -webkit-transform: rotate(360deg);
   }
 }
+
+.global-spin {
+  position: absolute !important;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, .8);
+  z-index: 99999;
+
+  &.animate__fadeIn {
+    --animate-duration: 400ms;
+    --animate-delay: 0s;
+  }
+
+  &.animate__fadeOut {
+    --animate-duration: 400ms;
+    --animate-delay: 0s;
+  }
+}

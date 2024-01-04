@@ -29,6 +29,8 @@ import './assets/css/theme/dark.scss';
 import './assets/css/theme/light.scss';
 import '@icon-park/vue-next/styles/index.css'; //icon-park
 import 'md-editor-v3/lib/style.css';
+import 'animate.css';
+
 
 const app = createApp(App);
 
