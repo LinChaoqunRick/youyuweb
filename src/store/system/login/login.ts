@@ -7,6 +7,7 @@ import {
   ACCOUNT_REGISTER,
   GET_CURRENT_USER,
   GET_CONNECT_URL,
+  CONNECT_BIND
 } from "@/network/apis";
 
 export default {
@@ -63,6 +64,9 @@ export default {
     },
     getConnectURL(context: any, params: object) {
       return http.get(GET_CONNECT_URL, params);
+    },
+    connectBind(context: any, params: object) {
+      return http.get(CONNECT_BIND, params);
     },
   },
 };

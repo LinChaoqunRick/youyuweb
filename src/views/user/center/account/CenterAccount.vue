@@ -37,22 +37,22 @@
         <div class="setting-item-value social-account-tag">
           <div class="tag-item tag-wechat" :class="{'active': false}"
                :title="'微信:' + (user.wxId ? '已绑定' : '未绑定')">
-            <img src="/static/images/logo/wechat.png" alt="" @click="onSocialBind('wechat', user.wxId)"/>
+            <img src="/static/images/logo/wechat.png" alt="" @click="onSocialBind('wechat','微信', user.wxId)"/>
           </div>
           <div class="tag-item tag-qq" :class="{'active': false}" :title="'QQ:' + (user.qqId ? '已绑定' : '未绑定')">
-            <img src="/static/images/logo/qq.png" alt="" @click="onSocialBind('qq', user.qqId)"/>
+            <img src="/static/images/logo/qq.png" alt="" @click="onSocialBind('qq','QQ', user.qqId)"/>
           </div>
           <div class="tag-item tag-github" :class="{'active': user.githubId}"
                :title="'Github:' + (user.githubId ? '已绑定' : '未绑定')">
-            <img src="/static/images/logo/github.png" alt="" @click="onSocialBind('github', user.githubId)"/>
+            <img src="/static/images/logo/github.png" alt="" @click="onSocialBind('github','Github', user.githubId)"/>
           </div>
           <div class="tag-item tag-alipay" :class="{'active': false}"
                :title="'支付宝:' + (user.alipayId ? '已绑定' : '未绑定')">
-            <img src="/static/images/logo/alipay.png" alt="" @click="onSocialBind('alipay', user.alipayId)"/>
+            <img src="/static/images/logo/alipay.png" alt="" @click="onSocialBind('alipay', '支付宝', user.alipayId)"/>
           </div>
           <div class="tag-item tag-weibo" :class="{'active': false}"
                :title="'微博:' + (user.weiboId ? '已绑定' : '未绑定')">
-            <img src="/static/images/logo/weibo.png" alt="" @click="onSocialBind('weibo', user.weiboId)"/>
+            <img src="/static/images/logo/weibo.png" alt="" @click="onSocialBind('weibo','微博', user.weiboId)"/>
           </div>
         </div>
       </div>
@@ -67,11 +67,10 @@
   </div>
   <a-modal
     v-model:visible="accountBindModalVisible"
-    title="Title"
+    title="账号解绑提示"
     :confirm-loading="accountBindConfirmLoading"
-    @ok="handleOk"
-  >
-    <p>{{ modalText }}</p>
+    @ok="onSocialUnbind">
+    <p>确定要与 <strong>{{ socialAppName }}</strong> 账号解绑？后续将无法通过该方式登录！</p>
   </a-modal>
 </template>
 
@@ -86,6 +85,10 @@ import openModal from "@/libs/tools/openModal";
 
 const {getters, dispatch} = useStore();
 const user = ref({});
+const accountBindModalVisible = ref(false);
+const accountBindConfirmLoading = ref(false);
+const socialAppType = ref("Github");
+const socialAppName = ref("Github");
 const userInfo = computed(() => getters['userInfo']);
 
 function initData() {
@@ -153,8 +156,20 @@ async function onChangePassword() {
   })
 }
 
-const onSocialBind = (type: string, bindId: string) => {
+const onSocialBind = (type: string, name: string, bindId: string) => {
+  socialAppName.value = name;
+  if (bindId) {
+    accountBindModalVisible.value = true;
+    socialAppType.value = type;
+  } else {
+    dispatch('getConnectURL', {type, state: "bind"}).then(res => {
+      location.href = res.data;
+    })
+  }
+}
 
+const onSocialUnbind = () => {
+  console.log(socialAppType.value);
 }
 </script>
 

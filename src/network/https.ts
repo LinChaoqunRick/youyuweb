@@ -20,7 +20,7 @@ import {cleanCookieLocalStorage} from "@/assets/utils/utils";
 // 配置axios默认Content-type
 // axios.defaults.headers["Content-Type"] = "application/x-www-form-urlencoded";
 
-const showMessageCode = [403, 508, 509, 510, 600, 800];
+const showMessageCode = [403, 508, 509, 510, 530, 600, 800];
 
 // 创建axios的对象
 const instance = axios.create({
