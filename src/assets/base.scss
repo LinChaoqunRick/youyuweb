@@ -13,14 +13,16 @@ html, body {
 
 html {
   /*background-image: url("https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/e3408389cb0d4ea1b5f651873dab2a19.jpg");*/
-  background-image: url("https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/island_daylight.jpg");
+  //background-image: url("https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/island_daylight.jpg");
   /*background-image: url("https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/island_sunset.jpg");*/
   /*background-image: url("https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/island_ngiht.jpg");*/
   /*background-image: url("https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/earth.jpg");*/
   /*background-image: url("https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/street.png");*/
-  background-size: 100vw 100vh;
+  background-image: url("https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/gaoqi_hangpai.jpg");
+  background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  background-position: center 0;
 }
 
 * {
@@ -29,12 +31,18 @@ html {
 
 .router-link-active {
   color: #1890ff !important;
-  font-weight: bold;
+  //font-weight: bold;
+  .i-icon {
+    color: #1890ff !important;
+  }
 }
 
 .router-link-exact-active {
   color: #1890ff !important;
-  font-weight: bold;
+  //font-weight: bold;
+  .i-icon {
+    color: #1890ff !important;
+  }
 }
 
 .mt-10 {

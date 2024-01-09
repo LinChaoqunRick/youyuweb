@@ -45,10 +45,10 @@
               </div>
             </div>
             <div class="post-operation">
-              <span class="operation-item" v-if="userInfo.id && (userInfo.id === post.userId)">隐藏</span>
-              <span class="operation-item" v-if="userInfo.id && (userInfo.id === post.userId)"
+              <span class="operation-item hide" v-if="userInfo.id && (userInfo.id === post.userId)">隐藏</span>
+              <span class="operation-item edit" v-if="userInfo.id && (userInfo.id === post.userId)"
                     @click="handleEdit">编辑</span>
-              <span class="operation-item" @click="handleFold">{{ fold ? '展开' : '收起' }}</span>
+              <span class="operation-item fold" @click="handleFold">{{ fold ? '展开' : '收起' }}</span>
             </div>
           </div>
           <div class="post-info-copyright" :class="{'unfold': !fold}">
@@ -112,336 +112,337 @@
 </template>
 
 <script setup lang="ts">
-  import {ref, reactive, computed, provide, readonly, watch, inject} from 'vue';
-  import {useRoute, useRouter} from 'vue-router';
-  import {useStore} from 'vuex';
-  import {scrollToEle} from "@/assets/utils/utils";
-  import type {postData} from "@/types/post";
+import {ref, reactive, computed, provide, readonly, watch, inject} from 'vue';
+import {useRoute, useRouter} from 'vue-router';
+import {useStore} from 'vuex';
+import {scrollToEle} from "@/assets/utils/utils";
+import type {postData} from "@/types/post";
 
-  import PercentCounter from "@/components/common/utils/percentCounter/PercentCounter.vue";
-  import MdPreview from "@/components/content/mdEditor/MdPreview.vue";
-  import Spin from "@/components/common/utils/spin/Spin.vue";
-  import UserInfoPanel from "./child/UserInfoPanel.vue";
-  import MdCatalogPanel from "./child/MdCatalogPanel.vue";
-  import PostOperation from "./child/PostOperation.vue";
-  import PostComment from "./child/PostComment.vue";
-  import PostColumn from "./child/PostColumn.vue";
+import PercentCounter from "@/components/common/utils/percentCounter/PercentCounter.vue";
+import MdPreview from "@/components/content/mdEditor/MdPreview.vue";
+import Spin from "@/components/common/utils/spin/Spin.vue";
+import UserInfoPanel from "./child/UserInfoPanel.vue";
+import MdCatalogPanel from "./child/MdCatalogPanel.vue";
+import PostOperation from "./child/PostOperation.vue";
+import PostComment from "./child/PostComment.vue";
+import PostColumn from "./child/PostColumn.vue";
 
-  const reload = inject('reload')
+const reload = inject('reload')
 
-  const route = useRoute();
-  const router = useRouter();
-  const {state, dispatch, getters} = useStore();
-  const post = ref<postData>({
-    id: null,
-    title: '',
-    content: '',
-    categoryId: null,
-    tags: '',
-    thumbnail: [],
-    summary: '',
-    createType: '',
-    originalLink: '',
-    userId: null,
-    columnIds: []
-  });
-  const fold = ref(true);
-  const userInfo = computed(() => getters['userInfo']);
-  const tags = computed(() => post.value.tags?.length ? post.value.tags.split(",") : [])
-  const commentRef = ref(null);
-  const postComment = ref(null);
-  const isLogin = computed(() => getters['isLogin']);
+const route = useRoute();
+const router = useRouter();
+const {state, dispatch, getters} = useStore();
+const post = ref<postData>({
+  id: null,
+  title: '',
+  content: '',
+  categoryId: null,
+  tags: '',
+  thumbnail: [],
+  summary: '',
+  createType: '',
+  originalLink: '',
+  userId: null,
+  columnIds: []
+});
+const fold = ref(true);
+const userInfo = computed(() => getters['userInfo']);
+const tags = computed(() => post.value.tags?.length ? post.value.tags.split(",") : [])
+const commentRef = ref(null);
+const postComment = ref(null);
+const isLogin = computed(() => getters['isLogin']);
 
-  function getPostDetail() {
-    dispatch("getPostDetail", {postId: route.params.postId}).then(res => {
-      post.value = res.data;
-      document.title = res.data.title;
-    })
+function getPostDetail() {
+  dispatch("getPostDetail", {postId: route.params.postId}).then(res => {
+    post.value = res.data;
+    document.title = res.data.title;
+  })
+}
+
+getPostDetail();
+
+watch(() => route.params.postId, ((newVal) => {
+  if (newVal) {
+    reload();
   }
+}))
 
-  getPostDetail();
+function handleEdit() {
+  router.push({path: '/editPost', query: {postId: post.value.id}})
+}
 
-  watch(() => route.params.postId, ((newVal) => {
-    if (newVal) {
-      reload();
-    }
-  }))
+function handleFold() {
+  fold.value = !fold.value;
+}
 
-  function handleEdit() {
-    router.push({path: '/editPost', query: {postId: post.value.id}})
+function scrollToComment() {
+  commentRef.value && scrollToEle(commentRef.value.offsetTop - 100);
+  if (isLogin.value) {
+    postComment.value?.handleFocus();
   }
+}
 
-  function handleFold() {
-    fold.value = !fold.value;
-  }
+function setPostAttribute(name, value) {
+  post.value[name] = value;
+}
 
-  function scrollToComment() {
-    commentRef.value && scrollToEle(commentRef.value.offsetTop - 100);
-    if (isLogin.value) {
-      postComment.value?.handleFocus();
-    }
-  }
-
-  function setPostAttribute(name, value) {
-    post.value[name] = value;
-  }
-
-  provide('post', readonly(post));
-  provide('setPostAttribute', setPostAttribute);
+provide('post', readonly(post));
+provide('setPostAttribute', setPostAttribute);
 
 </script>
 
 <style lang="scss" scoped>
-  .post-detail {
-    display: flex;
-    padding: 8px 0;
-    justify-content: center;
-    /*align-items: flex-start;*/
+.post-detail {
+  display: flex;
+  padding: 8px 0;
+  justify-content: center;
+  /*align-items: flex-start;*/
 
-    .post-aside {
-      position: relative;
+  .post-aside {
+    position: relative;
+    width: 300px;
+
+    .post-aside-body {
       width: 300px;
-
-      .post-aside-body {
-        width: 300px;
-      }
     }
+  }
 
-    .post-body {
-      width: 64%;
-      max-width: 1050px;
-      margin-left: 8px;
+  .post-body {
+    width: 64%;
+    max-width: 1050px;
+    margin-left: 8px;
 
-      .post-main {
-        background-color: var(--post-detail-background);
+    .post-main {
+      background-color: var(--post-detail-background);
 
-        .post-title {
-          min-height: 35px;
-          text-align: left;
-          font-size: 24px;
-          font-weight: 700;
-          overflow: hidden;
-          padding: 6px 16px;
-        }
+      .post-title {
+        min-height: 35px;
+        text-align: left;
+        font-size: 24px;
+        font-weight: 700;
+        overflow: hidden;
+        padding: 6px 16px;
+      }
 
-        .post-info {
-          .post-info-detail {
-            position: relative;
-            width: 100%;
-            min-height: 44px;
-            background-color: var(--post-info-background);
+      .post-info {
+        .post-info-detail {
+          position: relative;
+          width: 100%;
+          min-height: 44px;
+          background-color: var(--post-info-background);
 
-            .create-type {
-              line-height: 22px;
-              text-align: center;
-              height: 20px;
-              width: 40px;
-              font-size: 14px;
-              float: left;
-            }
+          .create-type {
+            line-height: 22px;
+            text-align: center;
+            height: 20px;
+            width: 40px;
+            font-size: 14px;
+            float: left;
+          }
 
-            .post-info-data-category {
-              margin-left: 50px;
+          .post-info-data-category {
+            margin-left: 50px;
 
-              .post-info-data {
-                height: 22px;
-                display: flex;
-                align-items: center;
-
-                .post-info-data-item {
-                  display: flex;
-                  font-size: 13px;
-                  align-items: center;
-                  margin-right: 10px;
-                  color: var(--youyu-text1);
-                  cursor: pointer;
-
-                  .i-icon {
-                    position: relative;
-                    left: -2px;
-                  }
-
-                  span {
-                    margin-left: 2px;
-                  }
-                }
-              }
-
-              .post-info-category {
-                height: 24px;
-                display: flex;
-                align-items: center;
-
-                .category-label {
-                  position: relative;
-                  width: 65px;
-                  height: 20px;
-                  line-height: 20px;
-                  font-size: 13px;
-                }
-
-                .category-name {
-                  position: relative;
-                  height: 20px;
-                  line-height: 18px;
-                  font-size: 13px;
-                  margin-right: 5px;
-                  padding: 0 5px;
-                  background-color: var(--youyu-body-background3);
-                  color: #4a88c4;
-                  border: 1px solid var(--youyu-border-color);
-                  border-radius: 4px;
-                  cursor: pointer;
-                }
-
-                .tag-label {
-                  position: relative;
-                  height: 20px;
-                  line-height: 20px;
-                  font-size: 13px;
-                  margin-left: 8px;
-                }
-
-                .tag-name {
-                  position: relative;
-                  height: 20px;
-                  line-height: 18px;
-                  font-size: 13px;
-                  margin-right: 5px;
-                  padding: 0 5px;
-                  background-color: var(--youyu-body-background3);
-                  color: #4a88c4;
-                  border: 1px solid var(--youyu-border-color);
-                  border-radius: 4px;
-                  cursor: pointer;
-                }
-              }
-            }
-
-            .post-operation {
-              position: absolute;
+            .post-info-data {
               height: 22px;
-              right: 10px;
-              top: 0;
-              color: #1890ff;
               display: flex;
               align-items: center;
 
-              .operation-item {
-                position: relative;
-                height: 10px;
-                font-size: 12px;
-                cursor: pointer;
-                user-select: none;
+              .post-info-data-item {
                 display: flex;
+                font-size: 13px;
                 align-items: center;
+                margin-right: 10px;
+                color: var(--youyu-text1);
+                cursor: pointer;
 
-                &:nth-child(n+2) {
-                  margin-left: 8px;
+                .i-icon {
+                  position: relative;
+                  left: -2px;
+                }
 
-                  &:before {
-                    position: absolute;
-                    left: -4px;
-                    content: '';
-                    height: 8px;
-                    width: 1px;
-                    background-color: var(--youyu-text1);
-                  }
+                span {
+                  margin-left: 2px;
                 }
               }
             }
-          }
 
-          .post-info-copyright {
-            font-size: 13px;
-            color: #6f6f82;
-            width: 100%;
-            padding-left: 10px;
-            overflow: hidden;
-            max-height: 0;
-            transition: .3s ease-out;
-            border-bottom: 2px solid var(--youyu-border-color);
+            .post-info-category {
+              height: 24px;
+              display: flex;
+              align-items: center;
 
-            .copyright-original {
-              padding: 6px 0;
-            }
+              .category-label {
+                position: relative;
+                width: 65px;
+                height: 20px;
+                line-height: 20px;
+                font-size: 13px;
+              }
 
-            .copyright-reprint {
-              padding: 6px 0;
-            }
-          }
+              .category-name {
+                position: relative;
+                height: 20px;
+                line-height: 18px;
+                font-size: 13px;
+                margin-right: 5px;
+                padding: 0 5px;
+                background-color: var(--youyu-body-background3);
+                color: #4a88c4;
+                border: 1px solid var(--youyu-border-color);
+                border-radius: 4px;
+                cursor: pointer;
+              }
 
-          .post-info-copyright.unfold {
-            max-height: 60px;
-          }
-        }
+              .tag-label {
+                position: relative;
+                height: 20px;
+                line-height: 20px;
+                font-size: 13px;
+                margin-left: 8px;
+              }
 
-        .post-main-content {
-          padding: 16px 36px 36px 36px;
-
-          .post-summary {
-            padding: 12px;
-            background-color: var(--post-summary-background);
-            border-radius: 4px;
-
-            .post-summary-title {
-              font-size: 16px;
-              color: #1890ff;
-            }
-          }
-
-          .post-content {
-            ::v-deep(.md-editor) {
-              background-color: transparent !important;
-
-              .md-editor-preview-wrapper {
-                padding: 0;
+              .tag-name {
+                position: relative;
+                height: 20px;
+                line-height: 18px;
+                font-size: 13px;
+                margin-right: 5px;
+                padding: 0 5px;
+                background-color: var(--youyu-body-background3);
+                color: #4a88c4;
+                border: 1px solid var(--youyu-border-color);
+                border-radius: 4px;
+                cursor: pointer;
               }
             }
           }
 
-          .post-column-list {
-            border-top: 1px solid var(--youyu-border-color);
+          .post-operation {
+            position: absolute;
+            height: 22px;
+            right: 10px;
+            top: 0;
+            color: #1890ff;
+            display: flex;
+            align-items: center;
 
-            .include-text {
-              color: var(--youyu-text1);
-              margin-top: 12px;
-              margin-left: 8px;
-            }
+            .operation-item {
+              position: relative;
+              height: 10px;
+              font-size: 12px;
+              font-weight: 500;
+              cursor: pointer;
+              user-select: none;
+              display: flex;
+              align-items: center;
+              margin-left: 6px;
 
-            ::v-deep(.post-column) {
-              margin-top: 12px;
+              &.hide {
+                color: #f56c6c;
+              }
+
+              &.fold {
+                color: #409eff;
+              }
+
+              &.edit {
+                color: #e6a23c;
+              }
             }
           }
         }
-      }
 
-      .post-right {
-        position: relative;
-        z-index: 2;
+        .post-info-copyright {
+          font-size: 13px;
+          color: #6f6f82;
+          width: 100%;
+          padding-left: 10px;
+          overflow: hidden;
+          max-height: 0;
+          transition: .3s ease-out;
+          border-bottom: 2px solid var(--youyu-border-color);
 
-        .post-category {
-          position: fixed;
-          top: 100px;
-          left: calc(100vw - 90px);
+          .copyright-original {
+            padding: 6px 0;
+          }
+
+          .copyright-reprint {
+            padding: 6px 0;
+          }
         }
 
-        .post-operation {
-          position: fixed;
-          top: 260px;
-          left: calc(100vw - 90px);
+        .post-info-copyright.unfold {
+          max-height: 60px;
         }
       }
 
-      .post-comment {
-        margin-top: 8px;
+      .post-main-content {
+        padding: 16px 36px 36px 36px;
+
+        .post-summary {
+          padding: 12px;
+          background-color: var(--post-summary-background);
+          border-radius: 4px;
+
+          .post-summary-title {
+            font-size: 16px;
+            color: #1890ff;
+          }
+        }
+
+        .post-content {
+          ::v-deep(.md-editor) {
+            background-color: transparent !important;
+
+            .md-editor-preview-wrapper {
+              padding: 0;
+            }
+          }
+        }
+
+        .post-column-list {
+          border-top: 1px solid var(--youyu-border-color);
+
+          .include-text {
+            color: var(--youyu-text1);
+            margin-top: 12px;
+            margin-left: 8px;
+          }
+
+          ::v-deep(.post-column) {
+            margin-top: 12px;
+          }
+        }
       }
     }
 
-    .post-left-aside {
-      position: fixed;
-      right: 20px;
-      top: 24%;
+    .post-right {
+      position: relative;
+      z-index: 2;
+
+      .post-category {
+        position: fixed;
+        top: 100px;
+        left: calc(100vw - 90px);
+      }
+
+      .post-operation {
+        position: fixed;
+        top: 260px;
+        left: calc(100vw - 90px);
+      }
+    }
+
+    .post-comment {
+      margin-top: 8px;
     }
   }
+
+  .post-left-aside {
+    position: fixed;
+    right: 20px;
+    top: 24%;
+  }
+}
 </style>

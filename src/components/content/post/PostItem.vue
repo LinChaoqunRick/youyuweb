@@ -92,7 +92,7 @@
       height: 170px;
       width: 100%;
       margin-bottom: 8px;
-      background-color: var(--article-background);
+      background-color: var(--youyu-body-background2);
       display: flex;
       align-items: center;
       border-radius: 8px;

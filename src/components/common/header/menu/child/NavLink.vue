@@ -4,7 +4,10 @@
                 placement="bottom" overlayClassName="route-dropdown">
       <div class="route-dropdown-trigger">
         <RouterLink :to="route.path" custom v-slot="{isActive, isExactActive, navigate}">
-          <a :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}">{{ route.title }}</a>
+          <a :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}">
+            <span>{{ route.title }}</span>
+            <i-down theme="outline" size="14" fill="currentColor"/>
+          </a>
         </RouterLink>
       </div>
       <template #overlay>
@@ -39,16 +42,35 @@ const prop = defineProps({
   justify-content: center;
   align-items: center;
 
-  a{
+  a, .i-icon {
     color: var(--youyu-text2);
   }
 
-  &:hover {
-    .route-dropdown {
-      display: block;
+  .route-dropdown-trigger {
+    a {
+      display: flex;
+      align-items: center;
     }
 
+    .i-icon {
+      margin-left: 2px;
+    }
+  }
+
+  &:hover {
+
     .route-dropdown-trigger {
+
+      a, .i-icon {
+        color: #1890ff !important;
+      }
+    }
+  }
+}
+
+.nav-link-single {
+  &:hover {
+    a {
       color: #1890ff !important;
     }
   }
@@ -61,13 +83,20 @@ const prop = defineProps({
   width: 80px;
   background-color: var(--youyu-navigation);
   position: absolute;
-  top: 50px;
+  top: 50px !important;
   text-align: center;
   border-radius: 2px;
   box-shadow: 0 0 6px rgba(0, 0, 0, .12);
+  z-index: 9999;
 
   .ant-dropdown-menu {
     padding: 0;
+
+    .route-dropdown-item {
+      &:hover {
+        color: #1890ff !important;
+      }
+    }
   }
 }
 </style>
