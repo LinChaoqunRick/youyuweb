@@ -130,10 +130,8 @@ function handleSubmit(content: string, submitCallback: Function) {
     userIdTo: props.data.userId,
     content: content
   }).then(res => {
-    // loadReply();
     updateActiveId(-1);
-    setPostAttribute('commentCount', post.value.commentCount + 1);
-    emit("saveSuccess");
+    emit("saveSuccess", res.data);
     message.success('评论成功');
   }).catch(e => {
     message.error("评论失败")
@@ -225,12 +223,12 @@ const onUserToVisibleChange = (visible: boolean) => {
       }
 
       .author-text {
-        font-size: 13px;
+        font-size: 12px;
         color: #fff;
         margin-left: 5px;
         background: linear-gradient(270deg, #30b6ec, #0692ef 95%);
         border-radius: 12px;
-        padding: 0 8px;
+        padding: 0 6px;
       }
     }
 

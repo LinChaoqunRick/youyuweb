@@ -137,7 +137,7 @@ function handleFocus() {
 
 const deleteSuccess = (data: postData) => {
   ContentListRef.value.list = ContentListRef.value.list.filter(item => item.id !== data.id);
-  setPostAttribute('commentCount', post.value.commentCount - 1);
+  setPostAttribute('commentCount', post.value.commentCount - (1 + data.replyCount));
 }
 
 defineExpose({

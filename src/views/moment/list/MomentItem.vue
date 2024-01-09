@@ -10,10 +10,10 @@
             @visibleChange="onUserVisibleChange"
           >
             <template #content>
-              <UserCardMoment :user="data.user" />
+              <UserCardMoment :user="data.user"/>
             </template>
             <RouterLink :to="`/user/${data.user.id}/moment`">
-              <img :src="data.user.avatar" />
+              <img :src="data.user.avatar"/>
             </RouterLink>
           </a-popover>
         </div>
@@ -25,7 +25,7 @@
             @visibleChange="onUserVisibleChange"
           >
             <template #content>
-              <UserCardMoment :user="data.user" />
+              <UserCardMoment :user="data.user"/>
             </template>
             <RouterLink :to="`/user/${data.user.id}/moment`">
               <div class="user-nickname">{{ data.user.nickname }}</div>
@@ -53,7 +53,7 @@
                 class="operation-item delete-moment"
                 @click="onDelete"
               >
-                <i-delete theme="outline" size="14" fill="currentColor" />
+                <i-delete theme="outline" size="14" fill="currentColor"/>
                 删除
               </div>
               <div
@@ -61,7 +61,7 @@
                 class="operation-item edit-moment"
                 @click="onEdit"
               >
-                <i-editor theme="outline" size="14" fill="currentColor" />
+                <i-editor theme="outline" size="14" fill="currentColor"/>
                 编辑
               </div>
               <div class="operation-item">
@@ -73,13 +73,13 @@
                 屏蔽作者
               </div>
               <div class="operation-item">
-                <i-caution theme="outline" size="14" fill="currentColor" />
+                <i-caution theme="outline" size="14" fill="currentColor"/>
                 举报
               </div>
             </div>
           </template>
           <div class="content-top-operation">
-            <i-more-one theme="outline" size="22" fill="currentColor" />
+            <i-more-one theme="outline" size="22" fill="currentColor"/>
           </div>
         </a-popover>
       </div>
@@ -155,7 +155,7 @@
     <div class="moment-item-actions">
       <div class="item-operation">
         <div class="item-icon">
-          <i-share-one theme="outline" size="14" fill="currentColor" />
+          <i-share-one theme="outline" size="14" fill="currentColor"/>
         </div>
         <div class="item-text">分享</div>
       </div>
@@ -196,14 +196,14 @@
     >
       <div class="moment-comment-editor">
         <div class="user-avatar">
-          <img v-if="isLogin" :src="userInfo.avatar" />
+          <img v-if="isLogin" :src="userInfo.avatar"/>
           <img
             v-else
             src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png"
           />
         </div>
         <div class="reply-box-wrapper">
-          <MomentReplyEditor :placeholder="replyEditorPlaceholder" @onSubmit="onCommentSubmit" />
+          <MomentReplyEditor :placeholder="replyEditorPlaceholder" @onSubmit="onCommentSubmit"/>
         </div>
       </div>
       <div class="moment-comment-list">
@@ -211,7 +211,7 @@
           <div class="comment-count">
             全部评论（{{ data.commentCount || 0 }}）
           </div>
-          <SortSwitch v-model="sort" @onChange="onChange" />
+          <SortSwitch v-model="sort" @onChange="onChange"/>
         </div>
         <div class="comment-list">
           <ContentData
@@ -243,15 +243,15 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, nextTick } from "vue";
-import type { PropType } from "vue";
-import { useRoute, useRouter, RouterLink } from "vue-router";
-import { useStore } from "vuex";
-import type { momentListType } from "@/views/moment/types";
-import { message, Modal } from "ant-design-vue";
+import {ref, computed, nextTick} from "vue";
+import type {PropType} from "vue";
+import {useRoute, useRouter, RouterLink} from "vue-router";
+import {useStore} from "vuex";
+import type {momentListType} from "@/views/moment/types";
+import {message, Modal} from "ant-design-vue";
 import openModal from "@/libs/tools/openModal";
-import { transformHTMLToTag } from "@/components/common/utils/emoji/youyu_emoji";
-import { transformTagToHTML } from "@/components/common/utils/emoji/youyu_emoji";
+import {transformHTMLToTag} from "@/components/common/utils/emoji/youyu_emoji";
+import {transformTagToHTML} from "@/components/common/utils/emoji/youyu_emoji";
 import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
 import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
 import UserCardMoment from "../components/UserCardMoment.vue";
@@ -260,7 +260,7 @@ import ContentData from "@/components/common/system/ContentData.vue";
 import SortSwitch from "@/components/common/utils/sortSwitch/SortSwitch.vue";
 import LocationPreview from "@/components/common/utils/aMap/LocationPreview.vue";
 
-const { getters, dispatch } = useStore();
+const {getters, dispatch} = useStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -313,7 +313,7 @@ const listParams = computed(() => ({
   pageSize: 5,
   orderBy: order.value,
 }));
-const replyEditorPlaceholder = computed(()=>props.data?"回复@"+props.data?.user?.nickname:null);
+const replyEditorPlaceholder = computed(() => props.data ? "回复@" + props.data?.user?.nickname : null);
 const ContentDataRef = ref<InstanceType<typeof ContentData> | null>(null);
 
 function set(value: number) {
@@ -365,7 +365,7 @@ const deleteSuccess = (comment) => {
       (item) => item.id !== comment.id
     );
   }
-  props.data.commentCount -= 1;
+  props.data.commentCount -= (1 + comment.replyCount);
   emit("onCommentDeleteSuccess", comment);
 };
 
@@ -399,8 +399,8 @@ const onDelete = () => {
 const onEdit = () => {
   router.push({
     name: "MomentDetail",
-    params: { momentId: props.data.id },
-    query: { type: "edit" },
+    params: {momentId: props.data.id},
+    query: {type: "edit"},
   });
 };
 
@@ -436,7 +436,7 @@ const onLike = () => {
 
 const onUserVisibleChange = (visible: boolean) => {
   if (visible) {
-    dispatch("getMomentUserDetail", { userId: props.data.userId }).then(
+    dispatch("getMomentUserDetail", {userId: props.data.userId}).then(
       (res) => {
         props.data.user = res.data;
       }

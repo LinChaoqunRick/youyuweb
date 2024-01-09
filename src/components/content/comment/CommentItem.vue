@@ -312,13 +312,13 @@ const deleteSuccess = (data) => {
         }
 
         .author-text {
-          font-size: 13px;
+          font-size: 12px;
           font-weight: normal;
           color: #fff;
           margin-left: 5px;
           background: linear-gradient(270deg, #30b6ec, #0692ef 95%);
           border-radius: 12px;
-          padding: 0 8px;
+          padding: 0 6px;
         }
       }
 
