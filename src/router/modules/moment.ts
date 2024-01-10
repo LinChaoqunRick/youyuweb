@@ -50,6 +50,16 @@ const route = [
             },
             component: () => import("@/views/moment/list/MomentListFollow.vue")
           },
+          {
+            path: "me",
+            name: "MomentListMe",
+            meta: {
+              title: "时刻列表-关注",
+              code: "MOMENT_LIST",
+              keepAlive: true
+            },
+            component: () => import("@/views/moment/list/MomentListMe.vue")
+          },
         ]
       },
       {

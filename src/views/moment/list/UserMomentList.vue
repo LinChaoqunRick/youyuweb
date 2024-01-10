@@ -6,6 +6,7 @@
         :params="params"
         auto-load
         data-text="时刻"
+        class="moment-content-list"
         ref="ContentListRef"
       >
         <template v-slot="{ list }">
@@ -32,22 +33,19 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, computed, provide } from "vue";
-import { useStore } from "vuex";
-import { useRouter } from "vue-router";
-import type { momentType } from "@/views/moment/types";
+import {ref, computed, provide} from "vue";
+import {useStore} from "vuex";
+import {useRouter} from "vue-router";
+import type {momentType} from "@/views/moment/types";
 import MomentItem from "./MomentItem.vue";
 import ContentList from "@/components/common/system/ContentList.vue";
-import type { momentListType } from "@/views/moment/types";
+import type {momentListType} from "@/views/moment/types";
 
-const { dispatch } = useStore();
+const {dispatch} = useStore();
 
 const router = useRouter();
 
 const props = defineProps({
-  userIds: {
-    type: Number,
-  },
   url: {
     type: String,
     default: "momentList",
@@ -77,7 +75,7 @@ const deleteSuccess = (moment: momentListType) => {
   momentList.value.splice(index, 1);
 };
 
-provide("active", { activeId, updateActiveId });
+provide("active", {activeId, updateActiveId});
 
 defineExpose({
   unshiftItem,
@@ -87,29 +85,31 @@ defineExpose({
 <style lang="scss" scoped>
 .user-moment-list {
   .moment-list-body {
-    ::v-deep(.content-list) {
-      .moment-item {
-        margin-bottom: 8px;
-        border-radius: 4px;
-        overflow: hidden;
+    ::v-deep(.moment-content-list) {
+      &.content-list {
+        .moment-item {
+          margin-bottom: 8px;
+          border-radius: 4px;
+          overflow: hidden;
 
-        .bottom-operation {
-          min-height: 0;
+          .bottom-operation {
+            min-height: 0;
+          }
+
+          &:last-child {
+            margin-bottom: 0;
+          }
         }
 
-        &:last-child {
-          margin-bottom: 0;
-        }
-      }
+        >.bottom-operation {
+          padding: 12px 0;
+          border-radius: 4px;
+          overflow: hidden;
+          background-color: var(--youyu-background1);
 
-      .bottom-operation {
-        padding: 12px 0;
-        border-radius: 4px;
-        overflow: hidden;
-        background-color: var(--youyu-background1);
-
-        .ant-spin {
-          font-size: 0;
+          .ant-spin {
+            font-size: 0;
+          }
         }
       }
     }

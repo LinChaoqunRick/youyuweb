@@ -12,7 +12,7 @@
 
 <script lang="ts">
   export default {
-    name: "MomentListHot"
+    name: "MomentListFollow"
   }
 </script>
 

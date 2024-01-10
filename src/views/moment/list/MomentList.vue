@@ -46,6 +46,11 @@
       path: "/moment/following",
       icon: "i-concern"
     },
+    {
+      title: "我的",
+      path: "/moment/me",
+      icon: "i-user"
+    },
   ];
   const EmptyPageRef = ref<typeof EmptyPage>(null);
 
