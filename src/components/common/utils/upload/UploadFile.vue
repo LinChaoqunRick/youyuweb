@@ -34,7 +34,7 @@ import {ref} from 'vue';
 import {message, Upload} from "ant-design-vue";
 import type {UploadChangeParam, UploadProps} from 'ant-design-vue';
 import {useStore} from 'vuex';
-import {createFileName} from "@/assets/utils/utils";
+import {createFileName} from "@/components/common/utils/upload/utils";
 
 const uploadRef = ref(null);
 
