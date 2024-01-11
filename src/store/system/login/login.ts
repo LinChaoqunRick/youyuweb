@@ -16,15 +16,6 @@ export default {
     user: JSON.parse(localStorage.getItem("user") || "{}"),
     authorId: 10000, // 本站作者id
   }),
-  mutations: {
-    changeLogin(state: any, status: any) {
-      state.showLogin = status;
-    },
-    changeUser(state: any, user: any) {
-      localStorage.setItem("user", JSON.stringify(user));
-      state.user = user;
-    },
-  },
   getters: {
     loginPanelStatus(state: any) {
       return state.showLogin;
@@ -37,6 +28,15 @@ export default {
     },
     isAuthor(state: any) {
       return state.user.id === state.authorId;
+    },
+  },
+  mutations: {
+    changeLogin(state: any, status: any) {
+      state.showLogin = status;
+    },
+    changeUser(state: any, user: any) {
+      localStorage.setItem("user", JSON.stringify(user));
+      state.user = user;
     },
   },
   actions: {

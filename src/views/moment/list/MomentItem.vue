@@ -486,8 +486,8 @@ defineExpose({
       align-items: center;
 
       .user-avatar {
-        height: 40px;
-        width: 40px;
+        height: 42px;
+        width: 42px;
         border-radius: 50%;
         cursor: pointer;
         overflow: hidden;
@@ -507,14 +507,15 @@ defineExpose({
         }
 
         .user-nickname {
-          font-weight: bold;
+          font-weight: 500;
+          font-size: 15px;
           cursor: pointer;
         }
 
         .info-data {
           display: flex;
           align-items: center;
-          font-size: 13px;
+          font-size: 12px;
           color: #909090;
           margin-top: 1px;
         }
