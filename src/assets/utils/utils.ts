@@ -1,8 +1,5 @@
 import {nextTick} from 'vue';
-import dayjs from "dayjs";
-import axios from "axios";
 import store from "@/store/index";
-import type {ossType} from '../../types/oss';
 import Cookies from "js-cookie";
 
 export function getElementLeft(element: HTMLElement) {
@@ -125,65 +122,6 @@ export async function keepScrollTop() {
   document.documentElement.scrollTop = originScrollTop;
 }
 
-/**
- * 创建文件存储路径
- * @param rootDir bucket的根目录
- * @param fileName 文件名
- */
-export function createFileName(fileName: string) {
-  return dayjs(new Date()).format('YYYYMMDDHHmmss') + '_' + fileName;
-}
-
-/**
- * 创建文件前缀
- * @param fileName
- */
-// export function createFileName(fileName: string) {
-//   return dayjs(new Date()).format('YYYYMMDDHHmmss') + '_';
-// }
-
-interface policy {
-  policy: string
-  signature: string
-  accessKeyId: string
-  key: string
-  dir: string
-  host: string
-  success_action_status: string
-}
-
-export async function uploadToOss(files: File[]) {
-  let data: ossType = {}
-
-  await store.dispatch("getOssPolicy").then(res => {
-    data = res.data;
-  })
-
-  return await Promise.all(
-    files.map((file) => {
-      const file_name = createFileName(file.name);
-      const form = new FormData();
-      form.append('policy', data.policy);
-      form.append('signature', data.signature);
-      form.append('ossaccessKeyId', data.OSSAccessKeyId);
-      form.append('key', data.dir + file_name);
-      form.append('dir', data.dir);
-      form.append('host', data.host);
-      form.append('success_action_status', '200');
-      // form.append('callback', '');
-      form.append('file', file);
-
-      return axios
-        .post(data.host, form, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        })
-        .then((res) => ({url: `${data.host}/${data.dir}${file_name}`}))
-        .catch((error) => error);
-    })
-  );
-}
 
 export function getMarkDownImages(content: string) {
   const images = [];

@@ -36,7 +36,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, onMounted } from "vue";
+import {ref, computed, nextTick, onMounted} from "vue";
 
 const props = defineProps({
   modelValue: {
@@ -75,9 +75,7 @@ const focusActive = ref<boolean>(false);
 let currentRange = null;
 let _parentElem = null;
 const supportRange = typeof document.createRange === "function";
-const contentLengthExceed = computed(
-  () => totalStrLength.value > props.maxLength
-);
+const contentLengthExceed = computed(() => totalStrLength.value > props.maxLength);
 
 onMounted(() => {
   box.value.innerHTML = props.modelValue;
@@ -90,10 +88,12 @@ onMounted(() => {
 const onFocus = () => {
   focusActive.value = true;
 };
+
 const onBlur = () => {
   focusActive.value = false;
   updateModelValue();
 };
+
 const onKeydown = (e) => {
   //  因为先执行keydownup事件 当到达长度后重新计算字符数 避免到达字符限制输入框无法输入
   // 换行 空格  以及字符超出最大限制  禁止输入    超出最大限制后除了退格其他都不可以输入
@@ -110,15 +110,19 @@ const onKeydown = (e) => {
     });
   });
 };
+
 const onKeyup = (e) => {
   saveSelection();
 };
+
 const onMouseup = () => {
   saveSelection();
 };
+
 const onInput = (e) => {
   calcTextAreaLength();
 };
+
 // 计算输入框的字数
 const calcTextAreaLength = () => {
   let reg = /<img[^>]*>/gi;
@@ -128,12 +132,15 @@ const calcTextAreaLength = () => {
   totalStrLength.value = stringText.length + emojiArr.length;
   return stringText.length + emojiArr.length;
 };
+
 const saveSelection = () => {
   currentRange = getCurrentRange();
 };
+
 const updateModelValue = () => {
   emit("update:modelValue", box.value?.innerHTML);
 };
+
 const insertHtml = (html) => {
   box.value.focus();
   // 创建一个新的选区
@@ -162,6 +169,7 @@ const insertText = (text) => {
   selection.addRange(range);
   dispatchInputEvent();
 };
+
 const getCurrentRange = () => {
   let selection,
     range,
@@ -183,29 +191,54 @@ const getCurrentRange = () => {
   }
   return range;
 };
+
 const onPaste = (e) => {
   e.stopPropagation();
   e.preventDefault();
-  let text = "",
-    event = e.originalEvent || e;
-  if (event.clipboardData && event.clipboardData.getData) {
-    text = event.clipboardData.getData("text/plain");
-  } else if (window.clipboardData && window.clipboardData.getData) {
-    text = window.clipboardData.getData("Text");
+
+  const event = e.originalEvent || e;
+  const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+  /* console.log(items);
+   debugger;*/
+
+  for (const item of items) {
+    if (item.type === 'text/plain') {
+      // 如果是文本，调用处理文本的方法
+      handleText(item);
+    } else if (item.type.startsWith('image')) {
+      // 如果是图片，调用处理图片的方法
+      handleImage(item);
+    } else {
+      // todo..添加相应的处理方法
+      // 如果是文件，调用处理文件的方法
+    }
   }
-  if (totalStrLength.value + text.length > props.maxLength) {
-    return false;
-  } else {
+
+
+};
+
+const handleText = (item: DataTransferItem) => {
+  item.getAsString((text: string) => {
+    if (totalStrLength.value + text.length > props.maxLength) {
+      return false;
+    }
     insertText(text);
     dispatchInputEvent();
-  }
-};
+  })
+}
+
+const handleImage = (item: DataTransferItem) => {
+  const file = item.getAsFile()
+  console.log(file);
+}
+
 const clearContent = () => {
   box.value.innerHTML = "";
   calcTextAreaLength();
 };
+
 const dispatchInputEvent = () => {
-  const inputEvent = new Event("input", { bubbles: false, cancelable: false });
+  const inputEvent = new Event("input", {bubbles: false, cancelable: false});
   box.value.dispatchEvent(inputEvent);
 };
 
