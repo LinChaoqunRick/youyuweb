@@ -7,6 +7,7 @@
           v-model="form.content"
           showLimit
           placeholder="此刻在想什么？快来分享一些新鲜事或发表一些看法吧！"
+          @upload-success="uploadSuccess"
           ref="richEditor"
         >
           <template #bottom>
@@ -179,8 +180,10 @@ const emojiVisible = ref(false);
 const submitLoading = ref(false);
 
 const uploadSuccess = (fileList: []) => {
-  const url = fileList[0].url + "?x-oss-process=style/smallThumb";
-  props.form.images.push(url);
+  fileList.forEach((item) => {
+    const url = item.url + "?x-oss-process=style/smallThumb";
+    props.form.images.push(url);
+  })
 };
 
 const toLogin = () => {
@@ -205,7 +208,7 @@ const onSubmit = () => {
       if (isEdit) {
         router.replace({
           name: "MomentDetail",
-          params: { momentId: props.form.id }
+          params: {momentId: props.form.id}
         });
       }
     })

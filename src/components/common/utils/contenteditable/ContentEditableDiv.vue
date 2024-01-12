@@ -37,6 +37,7 @@ export default {
 
 <script setup lang="ts">
 import {ref, computed, nextTick, onMounted} from "vue";
+import {uploadToOss} from "@/components/common/utils/upload/utils";
 
 const props = defineProps({
   modelValue: {
@@ -63,9 +64,13 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  upload: {
+    type: true,
+    default: false,
+  }
 });
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue", "uploadSuccess"]);
 
 const contenteditable = ref<boolean>(true);
 const box = ref<HTMLElement | null>(null);
@@ -198,8 +203,11 @@ const onPaste = (e) => {
 
   const event = e.originalEvent || e;
   const items = (event.clipboardData || event.originalEvent.clipboardData).items;
-  /* console.log(items);
-   debugger;*/
+
+  /*console.log(items);
+  debugger;*/
+
+  let fileList: DataTransferItem[] = [];
 
   for (const item of items) {
     if (item.type === 'text/plain') {
@@ -207,7 +215,10 @@ const onPaste = (e) => {
       handleText(item);
     } else if (item.type.startsWith('image')) {
       // 如果是图片，调用处理图片的方法
-      handleImage(item);
+      fileList.push(item.getAsFile());
+      if (fileList.length === items.length) {
+        handleImage(fileList);
+      }
     } else {
       // todo..添加相应的处理方法
       // 如果是文件，调用处理文件的方法
@@ -227,9 +238,10 @@ const handleText = (item: DataTransferItem) => {
   })
 }
 
-const handleImage = (item: DataTransferItem) => {
-  const file = item.getAsFile()
-  console.log(file);
+const handleImage = async (files: File[]) => {
+  const result = await uploadToOss(files)
+  const urls = result?.map(item => item.url && item);
+  emit('uploadSuccess', urls);
 }
 
 const clearContent = () => {

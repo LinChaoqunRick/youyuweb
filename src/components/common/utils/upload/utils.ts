@@ -34,7 +34,7 @@ interface policy {
 interface uploadConfig {
   accept?: string,
   maxSize?: number,
-
+  needTip?: boolean
 }
 
 /**
@@ -46,7 +46,17 @@ export function createFileName(fileName: string) {
   return dayjs(new Date()).format('YYYYMMDDHHmmss') + '_' + fileName;
 }
 
-export async function uploadToOss(files: File[], config: uploadConfig) {
+export async function uploadToOss(files: File[], config: uploadConfig = {
+  accept: ".jpg, .jpeg, .png",
+  maxSize: 20,
+  needTip: true
+}) {
+  if (!files) {
+    throw new Error("parameter 'file' is required");
+  }
+  if (!Array.isArray(files)) {
+    files = [files];
+  }
   // 文件校验
   for (const file of files) {
     const fileNameArr = file.name.split('.');
@@ -99,44 +109,17 @@ export async function uploadToOss(files: File[], config: uploadConfig) {
         hide();
       }
     })
-  );
-}
-
-/*
-const uploadImage = (file: File, config: Config): any => {
-  const fileNameArr = file.name.split('.');
-  const suffix = fileNameArr[fileNameArr.length - 1];
-  const nameLegal = config.accept.indexOf(suffix) > -1;
-  if (!nameLegal) {
-    message.error(`只能上传${config.accept}类型的文件`);
-    return;
-  }
-  const sizeExceed = file.size / 1024 / 1024 < config.maxSize;
-  if (!sizeExceed) {
-    message.error(`文件大小不能大于${config.maxSize}MB`);
-    return;
-  }
-  const hide = message.loading('上传中...', 0);
-  store.dispatch("getOssPolicy").then(res => {
-    filename.value = createFileName(file.name);
-    res.data.key = res.data.dir + filename.value;
-    res.data.success_action_status = 200;
-    data.value = res.data;
-  }).catch((error) => {
-    console.log(error);
-  }).finally(() => {
-    hide();
+  ).then(res => {
+    if (config.needTip) {
+      const successNumber = res.filter(item => !!item.url).length;
+      const failedNumber = res.filter(item => !item.url).length;
+      const resultMessage = `共${res.length}个文件：成功 ${successNumber} 个，失败 ${failedNumber} 个`;
+      if (successNumber) {
+        message.success(resultMessage)
+      } else {
+        message.error(resultMessage)
+      }
+    }
+    return res.filter(item => item.url && item);
   });
-
-  const formData = new FormData();
-  formData.append('image', file);
-
-  axios.post('your_upload_url', formData)
-    .then(response => {
-      // 处理上传成功的逻辑
-      console.log('上传成功');
-    })
-    .catch(error => {
-      console.error('上传失败', error);
-    });
-}*/
+}
