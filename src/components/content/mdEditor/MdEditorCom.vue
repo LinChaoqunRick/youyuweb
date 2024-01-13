@@ -30,8 +30,7 @@
   import MarkExtension from '@/components/content/mdEditor/child/MarkExtension/index.vue';
   import ReadExtension from '@/components/content/mdEditor/child/ReadExtension/index.vue';
   import TimeNow from '@/components/content/mdEditor/child/TimeNow/index.vue';
-  import {extend} from "dayjs";
-  import {uploadToOss} from "@/assets/utils/utils";
+  import {uploadToOss} from "@/components/common/utils/upload/utils";
 
   const {state, dispatch} = useStore();
 
