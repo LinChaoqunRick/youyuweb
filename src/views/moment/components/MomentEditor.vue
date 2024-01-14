@@ -55,10 +55,11 @@
         </div>
       </div>
       <UploadFile
-        accept=".jpg, .jpeg, .png"
-        @uploadSuccess="uploadSuccess"
-        :disabled="uploadDisabled"
         v-if="!uploadDisabled"
+        accept=".jpg, .jpeg, .png"
+        :disabled="uploadDisabled"
+        multiple
+        @uploadSuccess="uploadSuccess"
       >
         <div class="upload-image">
           <i-plus
@@ -97,8 +98,9 @@
         </a-popover>
         <UploadFile
           accept=".jpg, .jpeg, .png"
-          @uploadSuccess="uploadSuccess"
+          multiple
           :disabled="uploadDisabled"
+          @uploadSuccess="uploadSuccess"
         >
           <div class="tool-item item-upload-image" v-login>
             <i-add-picture

@@ -37,15 +37,15 @@
       </div>
       <div class="extra-info">
         <div class="data-item">
-          <div class="data-value">{{ userMomentInfo.extraInfo?.momentCount }}</div>
+          <div class="data-value cp">{{ userMomentInfo.extraInfo?.momentCount }}</div>
           <div class="data-title">时刻</div>
         </div>
         <div class="data-item">
-          <div class="data-value">{{ userMomentInfo.extraInfo?.likeCount }}</div>
+          <div class="data-value cp">{{ userMomentInfo.extraInfo?.likeCount }}</div>
           <div class="data-title">点赞</div>
         </div>
         <div class="data-item">
-          <div class="data-value">{{ userMomentInfo.extraInfo?.fansCount }}</div>
+          <div class="data-value cp">{{ userMomentInfo.extraInfo?.fansCount }}</div>
           <div class="data-title">粉丝</div>
         </div>
       </div>

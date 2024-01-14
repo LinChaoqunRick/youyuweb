@@ -1,5 +1,5 @@
 <template>
-  <div class="upload-file" :class="{'disabled':disabled}">
+  <div class="upload-file" :class="{'disabled': attrs.disabled}">
     <a-upload
       v-model:file-list="fileList"
       :data="data"
@@ -7,10 +7,9 @@
       :show-upload-list="false"
       :action="data.host"
       :before-upload="beforeUpload"
-      :disabled="disabled"
       :max-count="1"
-      :accept="accept"
       :capture="null"
+      v-bind="$attrs"
       @change="handleChange"
       ref="uploadRef"
     >
@@ -30,32 +29,21 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue';
-import {message, Upload} from "ant-design-vue";
+import {ref, useAttrs} from 'vue';
+import {message} from "ant-design-vue";
 import type {UploadChangeParam, UploadProps} from 'ant-design-vue';
 import {useStore} from 'vuex';
 import {createFileName} from "@/components/common/utils/upload/utils";
 
+const attrs = useAttrs();
 const uploadRef = ref(null);
 
 const {dispatch} = useStore();
 const props = defineProps({
-  ...Upload.props,
-  disabled: {
-    type: Boolean,
-    default: false
-  },
   maxSize: {
     type: Number,
     default: 10
   },
-  query: {
-    type: String
-  },
-  accept: {
-    type: String,
-    default: ".jpg, .jpeg, .png"
-  }
 })
 const fileList = ref([]);
 const loading = ref<boolean>(false);
@@ -91,9 +79,9 @@ const beforeUpload = async (file: UploadProps['fileList'][number]) => {
   return new Promise((async (resolve, reject) => {
     const fileNameArr = file.name.split('.');
     const suffix = fileNameArr[fileNameArr.length - 1];
-    const nameLegal = props.accept.indexOf(suffix) > -1;
+    const nameLegal = attrs.accept.indexOf(suffix) > -1;
     if (!nameLegal) {
-      message.error(`只能上传${props.accept}类型的文件`);
+      message.error(`只能上传${attrs.accept}类型的文件`);
       return reject(false);
     }
     const sizeExceed = file.size / 1024 / 1024 < props.maxSize;
@@ -110,9 +98,7 @@ const beforeUpload = async (file: UploadProps['fileList'][number]) => {
       return resolve(true);
     }).catch(() => {
       return reject(false);
-    }).finally(() => {
-      hide();
-    });
+    })
   }))
 };
 </script>
