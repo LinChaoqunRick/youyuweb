@@ -28,7 +28,7 @@
     <div v-else>
       <div class="basic-info">
         <div class="avatar cp" v-login>
-          <img :src="userMomentInfo.avatar" alt="默认头像"/>
+          <img :src="userMomentInfo.avatar || '/static/images/avatar/default_avatar.png'" alt="默认头像"/>
         </div>
         <div class="basic-data">
           <div class="nickname cp" v-login>{{ userMomentInfo.nickname }}</div>
