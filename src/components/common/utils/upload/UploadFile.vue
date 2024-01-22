@@ -1,111 +1,122 @@
 <template>
-  <div class="upload-file" :class="{'disabled': attrs.disabled}">
-    <a-upload
-      v-model:file-list="fileList"
-      :data="data"
-      class="avatar-uploader"
-      :show-upload-list="false"
-      :action="data.host"
-      :before-upload="beforeUpload"
-      :max-count="1"
-      :capture="null"
+  <div class="upload-file" :class="{ disabled: attrs.disabled }">
+    <VueUploadComponent
+      v-model="fileList"
+      multiple
       v-bind="$attrs"
-      @change="handleChange"
+      :custom-action="uploadAction"
+      class="file-uploader"
       ref="uploadRef"
     >
       <slot :percent="percent">
         <div class="upload-box">
-          <div class="progress-box" :style="{'width': `${percent}%`}"></div>
+          <div class="progress-box" :style="{ width: `${percent}%` }"></div>
           <div class="upload-button">
-            <i-upload-one theme="outline" size="18" fill="currentColor"/>
-            <div class="ant-upload-text">
-              点击上传
-            </div>
+            <i-upload-one theme="outline" size="18" fill="currentColor" />
+            <div class="ant-upload-text">点击上传</div>
           </div>
         </div>
       </slot>
-    </a-upload>
+    </VueUploadComponent>
   </div>
 </template>
 
 <script setup lang="ts">
-import {ref, useAttrs} from 'vue';
-import {message} from "ant-design-vue";
-import type {UploadChangeParam, UploadProps} from 'ant-design-vue';
-import {useStore} from 'vuex';
-import {createFileName} from "@/components/common/utils/upload/utils";
+import { ref, useAttrs } from "vue";
+import { message } from "ant-design-vue";
+import { useStore } from "vuex";
+import { createFileName } from "@/components/common/utils/upload/utils";
+import VueUploadComponent from "vue-upload-component";
 
 const attrs = useAttrs();
 const uploadRef = ref(null);
 
-const {dispatch} = useStore();
+const { dispatch } = useStore();
 const props = defineProps({
   maxSize: {
     type: Number,
-    default: 10
+    default: 10,
   },
-})
+});
 const fileList = ref([]);
 const loading = ref<boolean>(false);
 const data = ref<object>({});
 const percent = ref<number>(100);
-const filename = ref<string>('');
+const filename = ref<string>("");
 let hide: () => void;
 
-const emit = defineEmits(['uploadSuccess']);
+const emit = defineEmits(["uploadSuccess"]);
 
-const handleChange = (info: UploadChangeParam) => {
-  if (info.file.status === 'uploading') {
+const handleChange = (info) => {
+  if (info.file.status === "uploading") {
     percent.value = info?.event?.percent ?? 0;
     loading.value = true;
     return;
   }
-  if (info.file.status === 'done') {
+  if (info.file.status === "done") {
     fileList.value[0].url = `${data.value.host}/${data.value.dir}${filename.value}`;
     loading.value = false;
-    emit('uploadSuccess', fileList.value);
-    message.success('上传成功');
+    emit("uploadSuccess", fileList.value);
+    message.success("上传成功");
     hide();
   }
-  if (info.file.status === 'error') {
+  if (info.file.status === "error") {
     loading.value = false;
-    message.error('上传失败，请重试');
+    message.error("上传失败，请重试");
     hide();
   }
 };
 
-const beforeUpload = async (file: UploadProps['fileList'][number]) => {
-  // todo...添加所有类型例如 "image/*" 的判断
-  return new Promise((async (resolve, reject) => {
-    const fileNameArr = file.name.split('.');
-    const suffix = fileNameArr[fileNameArr.length - 1];
-    const nameLegal = attrs.accept.indexOf(suffix) > -1;
-    if (!nameLegal) {
-      message.error(`只能上传${attrs.accept}类型的文件`);
-      return reject(false);
-    }
-    const sizeExceed = file.size / 1024 / 1024 < props.maxSize;
-    if (!sizeExceed) {
-      message.error(`文件大小不能大于${props.maxSize}MB`);
-      return reject(false);
-    }
-    hide = message.loading('上传中...', 0);
-    await dispatch("getOssPolicy").then(res => {
-      filename.value = createFileName(file.name);
-      res.data.key = res.data.dir + filename.value;
-      res.data.success_action_status = 200;
-      data.value = res.data;
-      return resolve(true);
-    }).catch(() => {
-      return reject(false);
-    })
-  }))
+let fileCount = 0;
+const beforeUpload = async (file, fileList) => {
+  if (++fileCount < fileList.length) {
+    return true;
+  }
+
+  if (fileCount === fileList.length) {
+    fileList.forEach((fileItem) => {
+      const fileNameArr = fileItem.name.split(".");
+      const suffix = fileNameArr[fileNameArr.length - 1];
+      const nameLegal = attrs.accept.indexOf(suffix) > -1;
+      if (!nameLegal) {
+        message.error(`只能上传${attrs.accept}类型的文件`);
+        return false;
+      }
+      const sizeExceed = fileItem.size / 1024 / 1024 < props.maxSize;
+      if (!sizeExceed) {
+        message.error(`文件大小不能大于${props.maxSize}MB`);
+        return false;
+      }
+    });
+    return new Promise(async (resolve, reject) => {
+      hide = message.loading("上传中...", 0);
+      await dispatch("getOssPolicy")
+        .then((res) => {
+          filename.value = createFileName(file.name);
+          res.data.key = res.data.dir + filename.value;
+          res.data.success_action_status = 200;
+          data.value = res.data;
+          return resolve(true);
+        })
+        .catch(() => {
+          return reject(false);
+        });
+    });
+  }
+};
+
+const uploadAction = async (file, component) => {
+  console.log("file", file);
 };
 </script>
 
 <style lang="scss" scoped>
 .upload-file {
-  cursor: pointer;
+  font-size: 0;
+
+  ::v-deep(label) {
+    cursor: pointer !important;
+  }
 
   .upload-box {
     position: relative;
@@ -142,7 +153,7 @@ const beforeUpload = async (file: UploadProps['fileList'][number]) => {
       right: 0;
       bottom: 0;
       background-color: #1890ff;
-      transition: .2s;
+      transition: 0.2s;
     }
   }
 

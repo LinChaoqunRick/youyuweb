@@ -21,8 +21,8 @@
                   />
                 </div>
                 <span class="position-text">{{
-                    form.location || "添加位置"
-                  }}</span>
+                  form.location || "添加位置"
+                }}</span>
                 <div
                   class="icon-wrapper-close"
                   v-if="form.location"
@@ -35,7 +35,7 @@
                     :strokeWidth="3"
                   />
                 </div>
-                <i-right v-else theme="outline" size="13" fill="currentColor"/>
+                <i-right v-else theme="outline" size="13" fill="currentColor" />
               </div>
             </div>
           </template>
@@ -44,7 +44,7 @@
     </div>
     <div class="image-wrapper" v-if="form.images?.length">
       <div v-for="item in form.images" class="image-item">
-        <img :src="item"/>
+        <img :src="item" />
         <div class="image-delete" @click="onImageDelete(index)">
           <i-close
             theme="outline"
@@ -131,19 +131,19 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, computed} from "vue";
-import {useStore} from "vuex";
-import {message} from "ant-design-vue";
-import {cloneDeep} from "lodash";
-import {vOnClickOutside} from "@vueuse/components";
-import {onCheckLogin} from "@/assets/utils/utils";
+import { ref, reactive, computed } from "vue";
+import { useStore } from "vuex";
+import { message } from "ant-design-vue";
+import { cloneDeep } from "lodash";
+import { vOnClickOutside } from "@vueuse/components";
+import { onCheckLogin } from "@/assets/utils/utils";
 import openModal from "@/libs/tools/openModal";
-import {transformHTMLToTag} from "@/components/common/utils/emoji/youyu_emoji";
+import { transformHTMLToTag } from "@/components/common/utils/emoji/youyu_emoji";
 import UploadFile from "@/components/common/utils/upload/UploadFile.vue";
 import EmojiPicker from "@/components/common/utils/emoji/EmojiPicker.vue";
 import ContentEditableDiv from "@/components/common/utils/contenteditable/ContentEditableDiv.vue";
 import LocationSelector from "@/components/common/utils/aMap/LocationSelector.vue";
-import {useRouter} from "vue-router";
+import { useRouter } from "vue-router";
 
 const props = defineProps({
   form: {
@@ -164,7 +164,7 @@ const props = defineProps({
 const emit = defineEmits(["saveSuccess"]);
 
 const maxLength = 500;
-const {getters, commit, dispatch} = useStore();
+const { getters, commit, dispatch } = useStore();
 const router = useRouter();
 const userInfo = computed(() => getters["userInfo"]);
 const isLogin = computed(() => getters["isLogin"]);
@@ -185,7 +185,7 @@ const uploadSuccess = (fileList: []) => {
   fileList.forEach((item) => {
     const url = item.url + "?x-oss-process=style/smallThumb";
     props.form.images.push(url);
-  })
+  });
 };
 
 const toLogin = () => {
@@ -210,7 +210,7 @@ const onSubmit = () => {
       if (isEdit) {
         router.replace({
           name: "MomentDetail",
-          params: {momentId: props.form.id}
+          params: { momentId: props.form.id },
         });
       }
     })
@@ -450,7 +450,7 @@ const onClearLocation = () => {
         }
 
         &:hover {
-          color: #1890ff;
+          color: #1890ff !important;
         }
       }
 
