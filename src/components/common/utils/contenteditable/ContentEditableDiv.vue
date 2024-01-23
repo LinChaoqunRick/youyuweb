@@ -307,7 +307,7 @@ defineExpose({
 
       ::v-deep(img) {
         vertical-align: sub;
-        height: 24px !important;
+        height: 20px !important;
         cursor: default;
         margin: 0 2px;
       }

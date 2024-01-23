@@ -7,7 +7,6 @@
           v-model="form.content"
           showLimit
           placeholder="此刻在想什么？快来分享一些新鲜事或发表一些看法吧！"
-          @upload-success="uploadSuccess"
           ref="richEditor"
         >
           <template #bottom>
@@ -54,22 +53,14 @@
           />
         </div>
       </div>
-      <UploadFile
-        v-if="!uploadDisabled"
-        accept=".jpg, .jpeg, .png"
-        :disabled="uploadDisabled"
-        multiple
-        @uploadSuccess="uploadSuccess"
-      >
-        <div class="upload-image">
-          <i-plus
-            theme="outline"
-            size="40"
-            fill="currentColor"
-            :strokeWidth="1"
-          />
-        </div>
-      </UploadFile>
+      <div class="upload-image" @click="onAddImage">
+        <i-plus
+          theme="outline"
+          size="40"
+          fill="currentColor"
+          :strokeWidth="1"
+        />
+      </div>
     </div>
     <div class="editor-bottom">
       <div class="tool-items">
@@ -100,7 +91,8 @@
           accept=".jpg, .jpeg, .png"
           multiple
           :disabled="uploadDisabled"
-          @uploadSuccess="uploadSuccess"
+          @change="onUploadChange"
+          ref="UploadFileRef"
         >
           <div class="tool-item item-upload-image" v-login>
             <i-add-picture
@@ -131,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from "vue";
+import { ref, reactive, computed, toRefs } from "vue";
 import { useStore } from "vuex";
 import { message } from "ant-design-vue";
 import { cloneDeep } from "lodash";
@@ -177,15 +169,18 @@ const uploadDisabled = computed(
 );
 
 const richEditor = ref(null);
+const UploadFileRef = ref(null);
 const active = computed(() => richEditor.value?.active);
 const emojiVisible = ref(false);
 const submitLoading = ref(false);
 
-const uploadSuccess = (fileList: []) => {
-  fileList.forEach((item) => {
-    const url = item.url + "?x-oss-process=style/smallThumb";
-    props.form.images.push(url);
-  });
+const onUploadChange = (file: File) => {
+  console.log(file);
+  props.form?.images.push(file.thumb);
+};
+
+const onAddImage = () => {
+  UploadFileRef.value?.$el?.click();
 };
 
 const toLogin = () => {
