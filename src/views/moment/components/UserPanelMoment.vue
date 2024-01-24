@@ -36,7 +36,7 @@
         </div>
       </div>
       <div class="extra-info">
-        <div class="data-item">
+        <div class="data-item" @click="router.push('/moment/me')">
           <div class="data-value cp">{{ userMomentInfo.extraInfo?.momentCount }}</div>
           <div class="data-title">时刻</div>
         </div>
@@ -56,8 +56,10 @@
 <script setup lang="ts">
 import {ref, computed} from "vue";
 import {useStore} from "vuex";
+import {useRouter} from "vue-router";
 
 const {getters, dispatch} = useStore();
+const router = useRouter();
 
 const isLogin = computed(() => getters['isLogin']);
 const userInfo = computed(() => getters['userInfo']);

@@ -29,10 +29,10 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { message, Upload } from "ant-design-vue";
+import { message } from "ant-design-vue";
 import type { UploadChangeParam, UploadProps } from "ant-design-vue";
 import { useStore } from "vuex";
-import { createFileName } from "@/components/common/utils/upload/utils";
+import { uploadToOss } from "@/components/common/utils/upload/utils";
 
 const uploadRef = ref(null);
 
@@ -65,7 +65,6 @@ const emit = defineEmits(["change", "uploadSuccess"]);
 
 const handleChange = (info: UploadChangeParam) => {
   const { file } = info;
-  console.log(file);
   file.thumb = URL.createObjectURL(file.originFileObj);
   fileList.value.push(file);
   emit("change", file);
@@ -102,8 +101,20 @@ const beforeUpload = (file: UploadProps["files"][number]) => {
 
 const customRequest = () => {};
 
+const upload = async () => {
+  const originalFiles = fileList.value.map((item) => item.originFileObj);
+  const res = await uploadToOss(originalFiles, {
+    base: "moment/images",
+    needTip: false, // 不需要提示
+  });
+  files.value = [];
+  fileList.value = [];
+  return res;
+};
+
 defineExpose({
   fileList,
+  upload,
 });
 </script>
 

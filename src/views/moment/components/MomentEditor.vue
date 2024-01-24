@@ -175,12 +175,11 @@ const emojiVisible = ref(false);
 const submitLoading = ref(false);
 
 const onUploadChange = (file: File) => {
-  console.log(file);
-  props.form?.images.push(file.thumb);
+  props.form.images.push(file.thumb);
 };
 
 const onAddImage = () => {
-  UploadFileRef.value?.$el?.click();
+  UploadFileRef.value?.$el?.querySelector("input")?.click();
 };
 
 const toLogin = () => {
@@ -191,10 +190,14 @@ const onImageDelete = (index: number) => {
   props.form.images.splice(index, 1);
 };
 
-const onSubmit = () => {
+const onSubmit = async () => {
   submitLoading.value = true;
   const isEdit = props.isEdit;
   const form = cloneDeep(props.form);
+
+  const imagesListRes = await UploadFileRef.value.upload();
+  form.images = imagesListRes.map((item) => item.url);
+
   form.images = form.images.length ? form.images.join(",") : null;
   form.content = transformHTMLToTag(form.content);
   dispatch(isEdit ? "updateMoment" : "createMoment", form)
