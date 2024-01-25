@@ -51,7 +51,11 @@ const props = defineProps({
   },
   accept: {
     type: String,
-    default: ".jpg, .jpeg, .png",
+    default: ".jpg, .jpeg, .png, .JPG, .PNG",
+  },
+  autoUpload: {
+    type: Boolean,
+    default: false,
   },
 });
 const files = ref([]);
@@ -61,23 +65,13 @@ const percent = ref<number>(100);
 const filename = ref<string>("");
 let hide: () => void;
 
-const emit = defineEmits(["change", "uploadSuccess"]);
+const emit = defineEmits(["change"]);
 
 const handleChange = (info: UploadChangeParam) => {
   const { file } = info;
   file.thumb = URL.createObjectURL(file.originFileObj);
   fileList.value.push(file);
   emit("change", file);
-  if (info.file.status === "uploading") {
-    percent.value = info?.event?.percent ?? 0;
-    return;
-  }
-  if (info.file.status === "done") {
-    files.value[0].url = `${data.value.host}/${data.value.dir}${filename.value}`;
-    emit("uploadSuccess", files.value);
-  }
-  if (info.file.status === "error") {
-  }
 };
 
 const beforeUpload = (file: UploadProps["files"][number]) => {
@@ -106,10 +100,15 @@ const upload = async () => {
   const res = await uploadToOss(originalFiles, {
     base: "moment/images",
     needTip: false, // 不需要提示
+    progress: uploadProgress,
   });
   files.value = [];
   fileList.value = [];
   return res;
+};
+
+const uploadProgress = (progressList: number[]) => {
+  console.log(progressList);
 };
 
 defineExpose({

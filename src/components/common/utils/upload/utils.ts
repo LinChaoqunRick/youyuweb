@@ -36,6 +36,7 @@ interface uploadConfig {
   maxSize?: number;
   needTip?: boolean;
   base?: string;
+  progress?: Function;
 }
 
 /**
@@ -81,6 +82,7 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
   // 上传步骤1： 获取oss临时凭证
   let data: ossType = {};
   let hide;
+  let progressList = Array.from({ length: files.length }).map((item) => 0);
   if (config.needTip) {
     hide = message.loading("上传中...", 0);
   }
@@ -90,7 +92,7 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
 
   // 上传步骤2： 上传文件至oss
   return await Promise.all(
-    files.map(async (file) => {
+    files.map(async (file: File, index: number) => {
       const file_name = createFileName(file.name);
       const form = new FormData();
       form.append("policy", data.policy);
@@ -107,6 +109,11 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
         const res = await axios.post(data.host, form, {
           headers: {
             "Content-Type": "multipart/form-data",
+          },
+          onUploadProgress: (progressEvent) => {
+            const progress = Number(((progressEvent.loaded / progressEvent.total) * 100 | 0).toFixed(2));
+            progressList[index] = progress;
+            config?.progress?.(progressList);
           },
         });
         return { url: `${data.host}/${data.dir}${file_name}` };
