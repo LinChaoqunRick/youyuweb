@@ -1,7 +1,7 @@
 <template>
   <div class="upload-file" :class="{ disabled: disabled }">
     <a-upload
-      v-model:file-list="files"
+      v-model:file-list="tempFiles"
       :data="data"
       :accept="accept"
       :show-upload-list="false"
@@ -58,23 +58,28 @@ const props = defineProps({
     default: false,
   },
 });
+const tempFiles = ref([]);
 const files = ref([]);
-const fileList = ref([]);
 const data = ref<object>({});
 const percent = ref<number>(100);
-const filename = ref<string>("");
 let hide: () => void;
 
-const emit = defineEmits(["change"]);
+const emit = defineEmits(["change", "uploadSuccess"]);
 
+let tempCount = 0; // 用于handleChange计算文件数目
 const handleChange = (info: UploadChangeParam) => {
-  const { file } = info;
+  const { file, fileList } = info;
   file.thumb = URL.createObjectURL(file.originFileObj);
-  fileList.value.push(file);
+  files.value.push(file);
   emit("change", file);
+  tempCount++;
+  if (tempCount === fileList.length && props.autoUpload) {
+    console.log("ok");
+    upload();
+  }
 };
 
-const beforeUpload = (file: UploadProps["files"][number]) => {
+const beforeUpload = (file: UploadProps["tempFiles"][number]) => {
   // todo...添加所有类型例如 "image/*" 的判断
   return new Promise((resolve, reject) => {
     const fileNameArr = file.name.split(".");
@@ -96,14 +101,15 @@ const beforeUpload = (file: UploadProps["files"][number]) => {
 const customRequest = () => {};
 
 const upload = async () => {
-  const originalFiles = fileList.value.map((item) => item.originFileObj);
+  const originalFiles = files.value.map((item) => item.originFileObj);
   const res = await uploadToOss(originalFiles, {
     base: "moment/images",
     needTip: false, // 不需要提示
     progress: uploadProgress,
   });
+  tempFiles.value = [];
   files.value = [];
-  fileList.value = [];
+  emit("uploadSuccess", res);
   return res;
 };
 
@@ -112,7 +118,7 @@ const uploadProgress = (progressList: number[]) => {
 };
 
 defineExpose({
-  fileList,
+  files,
   upload,
 });
 </script>

@@ -42,8 +42,8 @@
       </div>
     </div>
     <div class="image-wrapper" v-if="form.images?.length">
-      <div v-for="item in form.images" class="image-item">
-        <img :src="item" />
+      <div v-for="(item, index) in form.images" class="image-item">
+        <img :src="item" alt="" />
         <div class="image-delete" @click="onImageDelete(index)">
           <i-close
             theme="outline"
@@ -186,7 +186,8 @@ const toLogin = () => {
   commit("changeLogin", true);
 };
 
-const onImageDelete = (index: number) => {
+const onImageDelete = (index: string | number) => {
+  console.log(index, props.form?.images);
   props.form.images.splice(index, 1);
 };
 
