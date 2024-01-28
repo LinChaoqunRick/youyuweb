@@ -294,9 +294,7 @@ const order = computed(() =>
   sort.value === "new" ? "create_time" : "support_count"
 );
 const images = computed(() => {
-  const regex = /https?:\/\/[^\s]+?\.(png|jpg|jpeg|gif|svg)/gi; // 使用正则表达式提取图片链接，支持不区分大小写的后缀
-  const matches = props.data.images.match(regex);
-  return matches;
+  return props.data.images ? props.data.images.split(",") : [];
 });
 const imageClass = computed(() => {
   const imageLength = images.value?.length ?? 0;
@@ -863,29 +861,36 @@ defineExpose({
 
 <style lang="scss">
 .moment-item-top-popover {
-  .ant-popover-inner-content {
-    padding: 8px !important;
+  padding-top: 4px;
 
-    .operation-items {
-      .operation-item {
-        cursor: pointer;
-        padding: 3px 8px;
+  .ant-popover-inner {
+    padding: 0;
 
-        &:hover {
-          background-color: var(--youyu-background2);
+    .ant-popover-inner-content {
+      padding: 6px !important;
+
+      .operation-items {
+        .operation-item {
+          cursor: pointer;
+          padding: 3px 8px;
+          border-radius: 4px;
+
+          &:hover {
+            background-color: var(--youyu-background2);
+          }
+
+          &:last-child {
+            margin-bottom: 0;
+          }
         }
 
-        &:last-child {
-          margin-bottom: 0;
+        .delete-moment {
+          color: #fc2a2a;
         }
-      }
 
-      .delete-moment {
-        color: #fc2a2a;
-      }
-
-      .edit-moment {
-        color: #1890ff;
+        .edit-moment {
+          color: #1890ff;
+        }
       }
     }
   }

@@ -192,7 +192,7 @@ const onSubmit = async () => {
   const form = cloneDeep(props.form);
 
   const imagesListRes = await UploadFileRef.value.upload();
-  form.images = imagesListRes.map((item) => item.url);
+  form.images = imagesListRes.map((item) => item.url + '?x-oss-process=style/smallThumb');
 
   form.images = form.images.length ? form.images.join(",") : null;
   form.content = transformHTMLToTag(form.content);

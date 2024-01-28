@@ -1,8 +1,18 @@
 <template>
   <div class="user-home">
-    <ContentList url="getUserDynamics" :params="params" auto-load>
-      <template v-slot="{list}">
-        <Component v-for="item in list" :is="isComponent(item)" :data="item"/>
+    <ContentList
+      url="getUserDynamics"
+      :params="params"
+      auto-load
+      ref="ContentListRef"
+    >
+      <template v-slot="{ list }">
+        <Component
+          v-for="item in list"
+          :is="isComponent(item)"
+          :data="item"
+          @deleteSuccess="deleteSuccess"
+        />
       </template>
       <template v-slot:loadMoreBox="{ restLoading }">
         <a-spin :spinning="restLoading"></a-spin>
@@ -13,20 +23,21 @@
 </template>
 
 <script setup lang="ts">
-import {computed, inject} from 'vue';
+import { computed, inject, ref } from "vue";
 import ContentList from "@/components/common/system/ContentList.vue";
-import type {userType} from "@/types/user";
+import type { userType } from "@/types/user";
 import PostItem from "../post/PostItem.vue";
 import MomentItem from "@/views/moment/list/MomentItem.vue";
 import NoteItem from "@/views/user/profile/home/component/NoteItem.vue";
 import ChapterItem from "@/views/user/profile/home/component/ChapterItem.vue";
 
-const user = inject<userType>('user');
+const user = inject<userType>("user");
+const ContentListRef = ref();
 
 const params = computed(() => ({
   userId: user.value.id,
-  pageSize: 10
-}))
+  pageSize: 10,
+}));
 
 const isComponent = (item: any) => {
   if (Reflect.has(item, "categoryId")) {
@@ -38,7 +49,16 @@ const isComponent = (item: any) => {
   } else {
     return ChapterItem;
   }
-}
+};
+
+const deleteSuccess = (data) => {
+  if (data.hasOwnProperty("momentLike")) {
+    // 删除的是一个时刻
+    ContentListRef.value.list = ContentListRef.value.list.filter(
+      (item) => item.hasOwnProperty("momentLike") && item.id !== data.id
+    );
+  }
+};
 </script>
 
 <style lang="scss" scoped>

@@ -18,9 +18,6 @@
 <script setup lang="ts">
   import {ref, computed} from "vue";
   import {useStore} from "vuex";
-  import light from 'ant-design-vue/dist/antd.css';
-  import dark from 'ant-design-vue/dist/antd.dark.css';
-
   const {state, commit} = useStore();
 
   let theme = state.theme.theme;
@@ -31,7 +28,7 @@
     checked.value = theme === 'light';
     commit("changeTheme", theme);
     document.documentElement.className = (theme === 'light') ? 'light-theme' : 'dark-theme';
-    addSkin(checked.value ? light : dark);
+    // addSkin(checked.value ? light : dark);
   }
 
   const addSkin = (content: string) => {
@@ -54,7 +51,7 @@
 
   document.documentElement.setAttribute("theme", theme);
   document.documentElement.className = (theme === 'light') ? 'light-theme' : 'dark-theme';
-  addSkin(checked.value ? light : dark);
+  // addSkin(checked.value ? light : dark);
 </script>
 
 <style lang="scss" scoped>

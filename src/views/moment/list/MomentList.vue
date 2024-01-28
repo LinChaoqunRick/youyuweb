@@ -4,32 +4,37 @@
       <div class="moment-list-left-menu" v-aside3>
         <div v-for="menu in menuList" class="menu-item">
           <RouterLink :to="menu.path">
-            <component :is="menu.icon" theme="filled" size="16" fill="currentColor"/>
+            <component
+              :is="menu.icon"
+              theme="filled"
+              size="16"
+              fill="currentColor"
+            />
             <span>{{ menu.title }}</span>
           </RouterLink>
         </div>
       </div>
     </div>
     <div class="moment-list-center mr-8">
-      <MomentEditor @saveSuccess="saveSuccess"/>
-      <EmptyPage ref="EmptyPageRef"/>
+      <MomentEditor @saveSuccess="saveSuccess" />
+      <EmptyPage ref="EmptyPageRef" />
     </div>
     <div class="moment-list-right">
-      <UserPanelMoment v-aside3/>
+      <UserPanelMoment v-aside3 />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 export default {
-  name: "MomentList"
-}
+  name: "MomentList",
+};
 </script>
 
 <script setup lang="ts">
-import {ref} from 'vue';
-import {useRoute, RouterLink} from "vue-router";
-import EmptyPage from '@/components/common/system/EmptyPage.vue';
+import { ref } from "vue";
+import { useRoute, RouterLink } from "vue-router";
+import EmptyPage from "@/components/common/system/EmptyPage.vue";
 import MomentEditor from "../components/MomentEditor.vue";
 import UserPanelMoment from "@/views/moment/components/UserPanelMoment.vue";
 
@@ -38,22 +43,22 @@ const menuList = [
   {
     title: "最新",
     path: "/moment/new",
-    icon: "i-time"
+    icon: "i-time",
   },
   {
     title: "热门",
     path: "/moment/hot",
-    icon: "i-fire"
+    icon: "i-fire",
   },
   {
     title: "关注",
     path: "/moment/following",
-    icon: "i-concern"
+    icon: "i-concern",
   },
   {
     title: "我的",
     path: "/moment/me",
-    icon: "i-user"
+    icon: "i-user",
   },
 ];
 const EmptyPageRef = ref<typeof EmptyPage>(null);
@@ -62,7 +67,7 @@ const saveSuccess = (data) => {
   if (route.name === "MomentListNew") {
     EmptyPageRef.value.Component.unshiftItem(data);
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -108,10 +113,14 @@ const saveSuccess = (data) => {
 
         .i-icon {
           margin-right: 8px;
-          color: #8A919F;
+          color: #8a919f;
         }
       }
     }
+  }
+
+  .moment-list-center {
+    width: 824px;
   }
 
   .moment-list-right {

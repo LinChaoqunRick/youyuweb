@@ -36,8 +36,8 @@
         </div>
       </div>
       <div class="extra-info">
-        <div class="data-item" @click="router.push('/moment/me')">
-          <div class="data-value cp">{{ userMomentInfo.extraInfo?.momentCount }}</div>
+        <div class="data-item cp" @click="router.push('/moment/me')">
+          <div class="data-value">{{ userMomentInfo.extraInfo?.momentCount }}</div>
           <div class="data-title">时刻</div>
         </div>
         <div class="data-item">
@@ -123,14 +123,14 @@ initData();
       overflow: hidden;
 
       .data-value {
-        font-size: 18px;
-        margin-bottom: 4px;
+        font-size: 20px;
+        margin-bottom: 2px;
         text-align: center;
       }
 
       .data-title {
         color: var(--youyu-body-text1);
-        font-size: 15px;
+        font-size: 14px;
         text-align: center;
       }
     }

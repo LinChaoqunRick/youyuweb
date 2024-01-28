@@ -370,10 +370,6 @@ onUnmounted(() => {
   ::v-deep(.amap-luopan) {
     zoom: 0.8;
   }
-
-  ::v-deep(.search-box) {
-    background-color: var(--youyu-body-background3);
-  }
 }
 </style>
 

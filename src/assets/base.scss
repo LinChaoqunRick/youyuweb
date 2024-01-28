@@ -9,6 +9,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   position: relative;
+  margin: 0;
 }
 
 html {
@@ -27,6 +28,11 @@ html {
 
 * {
   transition: background-color .3s, border .3s;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
 }
 
 .router-link-active {
@@ -157,4 +163,8 @@ html {
 
 .ant-message {
   z-index: 999999 !important;
+}
+
+.ant-popover-inner {
+  //padding: 0 !important;
 }

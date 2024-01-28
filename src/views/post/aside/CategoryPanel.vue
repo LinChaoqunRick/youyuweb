@@ -40,7 +40,7 @@
 <style lang="scss" scoped>
   .category-panel {
     width: 300px;
-    background-color: var(--article-background);
+    background-color: var(--youyu-background1);
     border-radius: 8px;
     padding: 10px 16px;
 

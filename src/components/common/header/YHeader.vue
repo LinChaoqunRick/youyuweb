@@ -46,6 +46,7 @@
     .right-nav {
       display: flex;
       align-items: center;
+      padding-right: 16px;
     }
   }
 </style>
@@ -61,7 +62,7 @@
   .right-nav {
     height: 100%;
 
-    .search, .create, .theme-switch {
+    .search, .create-center, .theme-switch {
       margin-right: 16px;
     }
 
