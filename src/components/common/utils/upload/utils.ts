@@ -49,7 +49,7 @@ export function createFileName(fileName: string) {
 }
 
 const defaultConfig = {
-  accept: ".jpg, .jpeg, .png",
+  accept: ".jpg, .jpeg, .png, .JPG, .PNG",
   maxSize: 20,
   needTip: true,
 };
@@ -112,6 +112,7 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
           },
           onUploadProgress: (progressEvent) => {
             const progress = Number(((progressEvent.loaded / progressEvent.total) * 100 | 0).toFixed(2));
+            console.log(progress);
             progressList[index] = progress;
             config?.progress?.(progressList);
           },

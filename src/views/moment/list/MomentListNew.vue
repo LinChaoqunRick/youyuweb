@@ -38,7 +38,7 @@
     justify-content: center;
 
     .moment-middle {
-      width: 750px;
+      width: 100%;
     }
   }
 </style>

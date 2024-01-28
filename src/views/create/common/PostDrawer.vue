@@ -224,6 +224,7 @@
   }
 
   function uploadSuccess(fileList) {
+    console.log(fileList);
     props.formValidate.thumbnail.push(fileList[0].url);
   }
 

@@ -43,7 +43,7 @@
     </div>
     <div class="image-wrapper" v-if="form.images?.length">
       <div v-for="(item, index) in form.images" class="image-item">
-        <img :src="item" alt="" />
+        <img :src="item.thumb" alt="" />
         <div class="image-delete" @click="onImageDelete(index)">
           <i-close
             theme="outline"
@@ -53,7 +53,7 @@
           />
         </div>
       </div>
-      <div class="upload-image" @click="onAddImage">
+      <div class="upload-image" @click="onAddImage" v-if="!uploadDisabled">
         <i-plus
           theme="outline"
           size="40"
@@ -88,10 +88,10 @@
           </div>
         </a-popover>
         <UploadFile
-          accept=".jpg, .jpeg, .png"
+          v-model="form.images"
           multiple
           :disabled="uploadDisabled"
-          @change="onUploadChange"
+          :data="{ base: 'moment/images' }"
           ref="UploadFileRef"
         >
           <div class="tool-item item-upload-image" v-login>
@@ -174,10 +174,6 @@ const active = computed(() => richEditor.value?.active);
 const emojiVisible = ref(false);
 const submitLoading = ref(false);
 
-const onUploadChange = (file: File) => {
-  props.form.images.push(file.thumb);
-};
-
 const onAddImage = () => {
   UploadFileRef.value?.$el?.querySelector("input")?.click();
 };
@@ -187,7 +183,6 @@ const toLogin = () => {
 };
 
 const onImageDelete = (index: string | number) => {
-  console.log(index, props.form?.images);
   props.form.images.splice(index, 1);
 };
 
@@ -275,7 +270,7 @@ const onClearLocation = () => {
 
 <style lang="scss" scoped>
 .moment-editor {
-  width: 750px;
+  width: 824px;
   padding: 20px 20px 0;
   background-color: var(--youyu-background1);
   border-radius: 4px;
@@ -372,6 +367,10 @@ const onClearLocation = () => {
       position: relative;
       margin: 8px 8px 0 0;
 
+      &:last-child {
+        margin-right: 0;
+      }
+
       img {
         height: 80px;
         width: 80px;
@@ -410,7 +409,7 @@ const onClearLocation = () => {
       height: 80px;
       width: 80px;
       border: 1px dashed #c5c5c5;
-      margin: 8px 8px 8px 0;
+      margin: 8px 0;
       background: rgba(248, 248, 249, 0.2);
       transition: 0.3s;
 
@@ -434,7 +433,7 @@ const onClearLocation = () => {
       .tool-item {
         display: flex;
         align-items: center;
-        cursor: pointer;
+        cursor: inherit;
         margin-right: 16px;
         transition: 0.3s;
 

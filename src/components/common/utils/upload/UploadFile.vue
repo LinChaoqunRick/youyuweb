@@ -5,7 +5,6 @@
       :data="data"
       :accept="accept"
       :show-upload-list="false"
-      :before-upload="beforeUpload"
       :disabled="disabled"
       :capture="null"
       :customRequest="customRequest"
@@ -14,9 +13,12 @@
       class="avatar-uploader"
       ref="uploadRef"
     >
-      <slot :percent="percent">
+      <slot :progress="progress">
         <div class="upload-box">
-          <div class="progress-box" :style="{ width: `${percent}%` }"></div>
+          <div
+            class="progress-box"
+            :style="{ width: `${totalProgress}%` }"
+          ></div>
           <div class="upload-button">
             <i-upload-one theme="outline" size="18" fill="currentColor" />
             <div class="ant-upload-text">点击上传</div>
@@ -28,15 +30,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { message } from "ant-design-vue";
 import type { UploadChangeParam, UploadProps } from "ant-design-vue";
 import { useStore } from "vuex";
+import { merge } from "lodash";
 import { uploadToOss } from "@/components/common/utils/upload/utils";
 
 const uploadRef = ref(null);
 
 const { dispatch } = useStore();
+const files = defineModel({ default: [] });
 const props = defineProps({
   disabled: {
     type: Boolean,
@@ -44,7 +48,7 @@ const props = defineProps({
   },
   maxSize: {
     type: Number,
-    default: 10,
+    default: 20,
   },
   query: {
     type: String,
@@ -57,31 +61,23 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  data: {
+    type: Object,
+    default: () => ({}),
+  },
 });
 const tempFiles = ref([]);
-const files = ref([]);
 const data = ref<object>({});
-const percent = ref<number>(100);
-let hide: () => void;
+const progress = ref<number[]>([]);
+const totalProgress = ref<number>(100);
 
 const emit = defineEmits(["change", "uploadSuccess"]);
 
 let tempCount = 0; // 用于handleChange计算文件数目
 const handleChange = (info: UploadChangeParam) => {
   const { file, fileList } = info;
-  file.thumb = URL.createObjectURL(file.originFileObj);
-  files.value.push(file);
-  emit("change", file);
-  tempCount++;
-  if (tempCount === fileList.length && props.autoUpload) {
-    console.log("ok");
-    upload();
-  }
-};
-
-const beforeUpload = (file: UploadProps["tempFiles"][number]) => {
-  // todo...添加所有类型例如 "image/*" 的判断
   return new Promise((resolve, reject) => {
+    // 校验文件
     const fileNameArr = file.name.split(".");
     const suffix = fileNameArr[fileNameArr.length - 1];
     const nameLegal = props.accept.indexOf(suffix) > -1;
@@ -94,7 +90,17 @@ const beforeUpload = (file: UploadProps["tempFiles"][number]) => {
       message.error(`文件大小不能大于${props.maxSize}MB`);
       return reject(false);
     }
-    resolve(true);
+
+    // 校验成功处理文件
+    file.thumb = URL.createObjectURL(file.originFileObj);
+    files.value.push(file);
+    emit("change", file);
+    tempCount++;
+    if (tempCount === fileList.length && props.autoUpload) {
+      console.log("ok");
+      upload();
+    }
+    return resolve(true);
   });
 };
 
@@ -102,11 +108,15 @@ const customRequest = () => {};
 
 const upload = async () => {
   const originalFiles = files.value.map((item) => item.originFileObj);
-  const res = await uploadToOss(originalFiles, {
-    base: "moment/images",
+  const defaultConfig = {
+    base: "post/images",
     needTip: false, // 不需要提示
     progress: uploadProgress,
-  });
+    accept: props.accept,
+    maxSize: props.maxSize
+  };
+  const mergedConfig = merge(defaultConfig, props.data);
+  const res = await uploadToOss(originalFiles, mergedConfig);
   tempFiles.value = [];
   files.value = [];
   emit("uploadSuccess", res);
@@ -114,7 +124,17 @@ const upload = async () => {
 };
 
 const uploadProgress = (progressList: number[]) => {
-  console.log(progressList);
+  progress.value = progressList;
+  console.log(progress.value);
+  files.value.forEach((file, index) => (file.progress = progressList[index]));
+  if (progress.value.length) {
+    const total = progress.value.reduce((pre, n) => pre + n, 0);
+    totalProgress.value = parseFloat(
+      ((total / (progress.value.length * 100)) * 100).toFixed(2)
+    );
+  } else {
+    totalProgress.value = 100;
+  }
 };
 
 defineExpose({
