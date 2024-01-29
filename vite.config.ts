@@ -43,63 +43,59 @@ export default defineConfig({
     vueJsx(),
     visualizer({open: true}),
     importToCDN({
-      // prodUrl: '//unpkg.com/{name}@{version}/{path}',
+      prodUrl: '//unpkg.com/{name}@{version}/{path}',
       modules: [
         {
           name: 'vue',
           var: 'Vue',
-          path: 'https://unpkg.com/vue@3.4.15/dist/vue.global.prod.js',
+          path: '/dist/vue.global.prod.js',
         },
         {
           name: 'vue-demi',
           var: 'VueDemi',
-          path: 'https://unpkg.com/vue-demi@0.14.6',
+          path: '/lib/index.iife.js',
         },
         {
           name: 'vue-router',
           var: 'VueRouter',
-          path: 'https://unpkg.com/vue-router@4.2.5/dist/vue-router.global.prod.js',
+          path: '/dist/vue-router.global.prod.js',
         },
         {
           name: 'vuex',
           var: 'Vuex',
-          path: 'https://unpkg.com/vuex@4.1.0/dist/vuex.global.prod.js',
+          path: '/dist/vuex.global.prod.js',
         },
         {
           name: 'axios',
           var: 'axios',
-          path: 'https://unpkg.com/axios@0.26.1/dist/axios.min.js',
+          path: '/dist/axios.min.js',
         },
         {
           name: 'lodash',
           var: '_',
-          path: 'https://unpkg.com/lodash@4.17.21/lodash.min.js',
-        },
-        {
-          name: 'relativeTime',
-          var: 'RelativeTime',
-          path: 'https://unpkg.com/dayjs@1.11.10/plugin/relativeTime.js',
+          path: '/lodash.min.js',
         },
         // 因为ant-design-vue使用了dayjs插件，需要配置dayjs
         {
           name: 'dayjs',
           var: 'dayjs',
           path: [
-            'https://unpkg.com/dayjs@1.11.10/dayjs.min.js',
-            'https://unpkg.com/dayjs@1.11.10/plugin/customParseFormat.js',
-            'https://unpkg.com/dayjs@1.11.10/plugin/weekday.js',
-            'https://unpkg.com/dayjs@1.11.10/plugin/localeData.js',
-            'https://unpkg.com/dayjs@1.11.10/plugin/weekOfYear.js',
-            'https://unpkg.com/dayjs@1.11.10/plugin/weekYear.js',
-            'https://unpkg.com/dayjs@1.11.10/plugin/advancedFormat.js',
-            'https://unpkg.com/dayjs@1.11.10/plugin/quarterOfYear.js',
+            '/dayjs.min.js',
+            '/plugin/customParseFormat.js',
+            '/plugin/weekday.js',
+            '/plugin/localeData.js',
+            '/plugin/weekOfYear.js',
+            '/plugin/weekYear.js',
+            '/plugin/advancedFormat.js',
+            '/plugin/quarterOfYear.js',
+            '/plugin/relativeTime.js'
           ],
         },
         {
           name: 'ant-design-vue',
           var: 'antd',
-          path: 'https://unpkg.com/ant-design-vue@3.2.20/dist/antd.min.js',
-          css: ['https://unpkg.com/ant-design-vue@3.2.20/dist/antd.min.css', 'https://unpkg.com/ant-design-vue@3.2.20/dist/antd.dark.min.css']
+          path: '/dist/antd.min.js',
+          css: ['/dist/antd.min.css', '/dist/antd.dark.min.css']
         },
       ],
     })
