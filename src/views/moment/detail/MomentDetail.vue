@@ -193,7 +193,7 @@ const saveSuccess = (data: momentListType) => {
   justify-content: center;
 
   .moment-detail-middle {
-    width: 750px;
+    width: 824px;
 
     .moment-detail-item {
       ::v-deep(.moment-item) {

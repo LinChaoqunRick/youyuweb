@@ -43,7 +43,7 @@
     </div>
     <div class="image-wrapper" v-if="form.images?.length">
       <div v-for="(item, index) in form.images" class="image-item">
-        <img :src="item.thumb" alt="" />
+        <img :src="item.thumb || item" alt="" />
         <div class="image-delete" @click="onImageDelete(index)">
           <i-close
             theme="outline"
