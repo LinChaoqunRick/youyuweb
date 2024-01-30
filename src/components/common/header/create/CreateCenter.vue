@@ -158,7 +158,7 @@ const onClickTodo = () => {
           flex-direction: column;
           justify-content: flex-end;
           align-items: center;
-          padding: 6px 13px;
+          padding: 8px 13px 6px 13px;
           cursor: pointer;
           border-radius: 4px;
 
