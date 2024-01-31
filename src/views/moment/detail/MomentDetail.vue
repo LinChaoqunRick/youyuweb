@@ -170,6 +170,7 @@ const onSaveCommentSuccess = (data: momentListType) => {
 };
 
 const onEdit = () => {
+  console.log("isEdit");
   formData.value = cloneDeep(moment.value);
   formData.value.images = formData.value.images
     ? formData.value.images.split(",")

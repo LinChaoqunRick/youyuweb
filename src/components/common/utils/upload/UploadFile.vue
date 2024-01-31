@@ -15,10 +15,7 @@
     >
       <slot :progress="progress">
         <div class="upload-box">
-          <div
-            class="progress-box"
-            :style="{ width: `${totalProgress}%` }"
-          ></div>
+          <div class="progress-box" :style="{ width: `${totalProgress}%` }"></div>
           <div class="upload-button">
             <i-upload-one theme="outline" size="18" fill="currentColor" />
             <div class="ant-upload-text">点击上传</div>
@@ -30,12 +27,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { message } from "ant-design-vue";
-import type { UploadChangeParam, UploadProps } from "ant-design-vue";
-import { useStore } from "vuex";
-import { merge } from "lodash";
-import { uploadToOss } from "@/components/common/utils/upload/utils";
+import { computed, ref } from 'vue';
+import { message } from 'ant-design-vue';
+import type { UploadChangeParam, UploadProps } from 'ant-design-vue';
+import { useStore } from 'vuex';
+import { merge } from 'lodash';
+import { uploadToOss } from '@/components/common/utils/upload/utils';
 
 const uploadRef = ref(null);
 
@@ -55,7 +52,7 @@ const props = defineProps({
   },
   accept: {
     type: String,
-    default: ".jpg, .jpeg, .png, .JPG, .PNG",
+    default: '.jpg, .jpeg, .png, .JPG, .PNG',
   },
   autoUpload: {
     type: Boolean,
@@ -71,14 +68,14 @@ const data = ref<object>({});
 const progress = ref<number[]>([]);
 const totalProgress = ref<number>(100);
 
-const emit = defineEmits(["change", "uploadSuccess"]);
+const emit = defineEmits(['change', 'uploadSuccess']);
 
 let tempCount = 0; // 用于handleChange计算文件数目
 const handleChange = (info: UploadChangeParam) => {
   const { file, fileList } = info;
   return new Promise((resolve, reject) => {
     // 校验文件
-    const fileNameArr = file.name.split(".");
+    const fileNameArr = file.name.split('.');
     const suffix = fileNameArr[fileNameArr.length - 1];
     const nameLegal = props.accept.indexOf(suffix) > -1;
     if (!nameLegal) {
@@ -94,10 +91,10 @@ const handleChange = (info: UploadChangeParam) => {
     // 校验成功处理文件
     file.thumb = URL.createObjectURL(file.originFileObj);
     files.value.push(file);
-    emit("change", file);
+    emit('change', file);
     tempCount++;
     if (tempCount === fileList.length && props.autoUpload) {
-      console.log("ok");
+      console.log('ok');
       upload();
     }
     return resolve(true);
@@ -107,31 +104,32 @@ const handleChange = (info: UploadChangeParam) => {
 const customRequest = () => {};
 
 const upload = async () => {
-  const originalFiles = files.value.map((item) => item.originFileObj);
+  const originalFiles = files.value.map(item => item?.originFileObj).filter(item => item);
+  if (!originalFiles.length) {
+    return;
+  }
   const defaultConfig = {
-    base: "post/images",
+    base: 'post/images',
     needTip: false, // 不需要提示
     progress: uploadProgress,
     accept: props.accept,
-    maxSize: props.maxSize
+    maxSize: props.maxSize,
   };
   const mergedConfig = merge(defaultConfig, props.data);
   const res = await uploadToOss(originalFiles, mergedConfig);
   tempFiles.value = [];
   files.value = [];
-  emit("uploadSuccess", res);
+  emit('uploadSuccess', res);
   return res;
 };
 
 const uploadProgress = (progressList: number[]) => {
   progress.value = progressList;
   console.log(progress.value);
-  files.value.forEach((file, index) => (file.progress = progressList[index]));
+  files.value.forEach((file, index) => (typeof file === 'object' && (file.progress = progressList[index])));
   if (progress.value.length) {
     const total = progress.value.reduce((pre, n) => pre + n, 0);
-    totalProgress.value = parseFloat(
-      ((total / (progress.value.length * 100)) * 100).toFixed(2)
-    );
+    totalProgress.value = parseFloat(((total / (progress.value.length * 100)) * 100).toFixed(2));
   } else {
     totalProgress.value = 100;
   }
