@@ -3,7 +3,7 @@ import {Modal, Button} from "ant-design-vue";
 import Antd from 'ant-design-vue';
 import store from "@/store";
 import router from "@/router";
-import {IconPark} from "@/libs/plugins/iconpark";
+import IconPark from "@/libs/plugins/iconpark";
 
 export default function openModal(config = {}) {
   const modalProps = {...Modal.props};

@@ -1,7 +1,7 @@
 import {createApp} from "vue";
 import {Image} from "ant-design-vue";
 import Antd from 'ant-design-vue';
-import {IconPark} from "@/libs/plugins/iconpark";
+import IconPark from "@/libs/plugins/iconpark";
 import ImagePreview from "@/components/common/utils/image/ImagePreview.vue";
 
 export default function openImage(config = {}) {
