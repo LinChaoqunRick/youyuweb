@@ -97,6 +97,12 @@ export default defineConfig({
           path: '/dist/antd.min.js',
           css: ['/dist/antd.min.css', '/dist/antd.dark.min.css']
         },
+        {
+          name: 'md-editor-v3',
+          var: 'MdEditorV3',
+          path: '/lib/umd/index.js',
+          css: ['/lib/preview.css', '/lib/style.css']
+        },
       ],
     })
   ],
