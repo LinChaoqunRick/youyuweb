@@ -48,60 +48,60 @@ export default defineConfig({
         {
           name: 'vue',
           var: 'Vue',
-          path: '/dist/vue.global.prod.js',
+          path: 'dist/vue.global.prod.js',
         },
         {
           name: 'vue-demi',
           var: 'VueDemi',
-          path: '/lib/index.iife.js',
+          path: 'lib/index.iife.js',
         },
         {
           name: 'vue-router',
           var: 'VueRouter',
-          path: '/dist/vue-router.global.prod.js',
+          path: 'dist/vue-router.global.prod.js',
         },
         {
           name: 'vuex',
           var: 'Vuex',
-          path: '/dist/vuex.global.prod.js',
+          path: 'dist/vuex.global.prod.js',
         },
         {
           name: 'axios',
           var: 'axios',
-          path: '/dist/axios.min.js',
+          path: 'dist/axios.min.js',
         },
         {
           name: 'lodash',
           var: '_',
-          path: '/lodash.min.js',
+          path: 'lodash.min.js',
         },
         // 因为ant-design-vue使用了dayjs插件，需要配置dayjs
         {
           name: 'dayjs',
           var: 'dayjs',
           path: [
-            '/dayjs.min.js',
-            '/plugin/customParseFormat.js',
-            '/plugin/weekday.js',
-            '/plugin/localeData.js',
-            '/plugin/weekOfYear.js',
-            '/plugin/weekYear.js',
-            '/plugin/advancedFormat.js',
-            '/plugin/quarterOfYear.js',
-            '/plugin/relativeTime.js'
+            'dayjs.min.js',
+            'plugin/customParseFormat.js',
+            'plugin/weekday.js',
+            'plugin/localeData.js',
+            'plugin/weekOfYear.js',
+            'plugin/weekYear.js',
+            'plugin/advancedFormat.js',
+            'plugin/quarterOfYear.js',
+            'plugin/relativeTime.js'
           ],
         },
         {
           name: 'ant-design-vue',
           var: 'antd',
-          path: '/dist/antd.min.js',
-          css: ['/dist/antd.min.css', '/dist/antd.dark.min.css']
+          path: 'dist/antd.min.js',
+          css: ['dist/antd.min.css', 'dist/antd.dark.min.css']
         },
         {
           name: 'md-editor-v3',
           var: 'MdEditorV3',
-          path: '/lib/umd/index.js',
-          css: ['/lib/preview.css', '/lib/style.css']
+          path: 'lib/umd/index.js',
+          css: ['lib/preview.css', 'lib/style.css']
         },
       ],
     })
