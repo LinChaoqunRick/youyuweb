@@ -19,6 +19,7 @@
 
 <style lang="scss" scoped>
   .y-footer {
+    box-sizing: border-box;
     background-color: var(--youyu-navigation);
     border-top: var(--youyu-navigation-border);
     color: #909090;

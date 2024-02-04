@@ -1,27 +1,24 @@
 <template>
-  <div class="upload-file" :class="{'disabled':disabled}">
+  <div class="upload-file" :class="{ disabled: disabled }">
     <a-upload
-      v-model:file-list="fileList"
+      v-model:file-list="tempFiles"
       :data="data"
-      class="avatar-uploader"
-      :show-upload-list="false"
-      :action="data.host"
-      :before-upload="beforeUpload"
-      :disabled="disabled"
-      :max-count="1"
       :accept="accept"
+      :show-upload-list="false"
+      :disabled="disabled"
       :capture="null"
+      :customRequest="customRequest"
       @change="handleChange"
+      v-bind="$attrs"
+      class="avatar-uploader"
       ref="uploadRef"
     >
-      <slot :percent="percent">
+      <slot :progress="progress">
         <div class="upload-box">
-          <div class="progress-box" :style="{'width': `${percent}%`}"></div>
+          <div class="progress-box" :style="{ width: `${totalProgress}%` }"></div>
           <div class="upload-button">
-            <i-upload-one theme="outline" size="18" fill="currentColor"/>
-            <div class="ant-upload-text">
-              点击上传
-            </div>
+            <i-upload-one theme="outline" size="18" fill="currentColor" />
+            <div class="ant-upload-text">点击上传</div>
           </div>
         </div>
       </slot>
@@ -30,65 +27,54 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue';
-import {message, Upload} from "ant-design-vue";
-import type {UploadChangeParam, UploadProps} from 'ant-design-vue';
-import {useStore} from 'vuex';
-import {createFileName} from "@/components/common/utils/upload/utils";
+import { computed, ref } from 'vue';
+import { message } from 'ant-design-vue';
+import type { UploadChangeParam, UploadProps } from 'ant-design-vue';
+import { useStore } from 'vuex';
+import { merge } from 'lodash';
+import { uploadToOss } from '@/components/common/utils/upload/utils';
 
 const uploadRef = ref(null);
 
-const {dispatch} = useStore();
+const { dispatch } = useStore();
+const files = defineModel({ default: [] });
 const props = defineProps({
-  ...Upload.props,
   disabled: {
     type: Boolean,
-    default: false
+    default: false,
   },
   maxSize: {
     type: Number,
-    default: 10
+    default: 20,
   },
   query: {
-    type: String
+    type: String,
   },
   accept: {
     type: String,
-    default: ".jpg, .jpeg, .png"
-  }
-})
-const fileList = ref([]);
-const loading = ref<boolean>(false);
+    default: '.jpg, .jpeg, .png, .JPG, .PNG',
+  },
+  autoUpload: {
+    type: Boolean,
+    default: false,
+  },
+  data: {
+    type: Object,
+    default: () => ({}),
+  },
+});
+const tempFiles = ref([]);
 const data = ref<object>({});
-const percent = ref<number>(100);
-const filename = ref<string>('');
-let hide: () => void;
+const progress = ref<number[]>([]);
+const totalProgress = ref<number>(100);
 
-const emit = defineEmits(['uploadSuccess']);
+const emit = defineEmits(['change', 'uploadSuccess']);
 
+let tempCount = 0; // 用于handleChange计算文件数目
 const handleChange = (info: UploadChangeParam) => {
-  if (info.file.status === 'uploading') {
-    percent.value = info?.event?.percent ?? 0;
-    loading.value = true;
-    return;
-  }
-  if (info.file.status === 'done') {
-    fileList.value[0].url = `${data.value.host}/${data.value.dir}${filename.value}`;
-    loading.value = false;
-    emit('uploadSuccess', fileList.value);
-    message.success('上传成功');
-    hide();
-  }
-  if (info.file.status === 'error') {
-    loading.value = false;
-    message.error('上传失败，请重试');
-    hide();
-  }
-};
-
-const beforeUpload = async (file: UploadProps['fileList'][number]) => {
-  // todo...添加所有类型例如 "image/*" 的判断
-  return new Promise((async (resolve, reject) => {
+  const { file, fileList } = info;
+  return new Promise((resolve, reject) => {
+    // 校验文件
     const fileNameArr = file.name.split('.');
     const suffix = fileNameArr[fileNameArr.length - 1];
     const nameLegal = props.accept.indexOf(suffix) > -1;
@@ -101,20 +87,58 @@ const beforeUpload = async (file: UploadProps['fileList'][number]) => {
       message.error(`文件大小不能大于${props.maxSize}MB`);
       return reject(false);
     }
-    hide = message.loading('上传中...', 0);
-    await dispatch("getOssPolicy").then(res => {
-      filename.value = createFileName(file.name);
-      res.data.key = res.data.dir + filename.value;
-      res.data.success_action_status = 200;
-      data.value = res.data;
-      return resolve(true);
-    }).catch(() => {
-      return reject(false);
-    }).finally(() => {
-      hide();
-    });
-  }))
+
+    // 校验成功处理文件
+    file.thumb = URL.createObjectURL(file.originFileObj);
+    files.value.push(file);
+    emit('change', file);
+    tempCount++;
+    if (tempCount === fileList.length && props.autoUpload) {
+      console.log('ok');
+      upload();
+    }
+    return resolve(true);
+  });
 };
+
+const customRequest = () => {};
+
+const upload = async () => {
+  const originalFiles = files.value.map(item => item?.originFileObj).filter(item => item);
+  if (!originalFiles.length) {
+    return;
+  }
+  const defaultConfig = {
+    base: 'post/images',
+    needTip: false, // 不需要提示
+    progress: uploadProgress,
+    accept: props.accept,
+    maxSize: props.maxSize,
+  };
+  const mergedConfig = merge(defaultConfig, props.data);
+  const res = await uploadToOss(originalFiles, mergedConfig);
+  tempFiles.value = [];
+  files.value = [];
+  emit('uploadSuccess', res);
+  return res;
+};
+
+const uploadProgress = (progressList: number[]) => {
+  progress.value = progressList;
+  console.log(progress.value);
+  files.value.forEach((file, index) => (typeof file === 'object' && (file.progress = progressList[index])));
+  if (progress.value.length) {
+    const total = progress.value.reduce((pre, n) => pre + n, 0);
+    totalProgress.value = parseFloat(((total / (progress.value.length * 100)) * 100).toFixed(2));
+  } else {
+    totalProgress.value = 100;
+  }
+};
+
+defineExpose({
+  files,
+  upload,
+});
 </script>
 
 <style lang="scss" scoped>
@@ -156,7 +180,7 @@ const beforeUpload = async (file: UploadProps['fileList'][number]) => {
       right: 0;
       bottom: 0;
       background-color: #1890ff;
-      transition: .2s;
+      transition: 0.2s;
     }
   }
 

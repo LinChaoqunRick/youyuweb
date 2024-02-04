@@ -28,7 +28,7 @@ export default {
         let windowScrollTop = document.documentElement.scrollTop;
 
         // 如果aside高度比较小，直接sticky
-        if (aside.clientHeight < document.documentElement.offsetHeight - header.offsetHeight) {
+        if ((elInitTop + aside.clientHeight) < window.innerHeight) {
           aside.style.cssText = `position: sticky;top: ${header.clientHeight + defaultGap}px`
           return;
         }

@@ -101,14 +101,12 @@
 
   onActivated(() => {
     if (cachePage) {
-      console.log(cachePage);
       route.params.page = cachePage;
       router.push(route)
     }
   })
 
   onBeforeRouteLeave(() => {
-    console.log(route, route.params);
     cachePage = Number(route.params.page ?? 1);
   })
 </script>

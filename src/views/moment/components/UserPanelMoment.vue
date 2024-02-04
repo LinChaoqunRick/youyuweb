@@ -28,7 +28,7 @@
     <div v-else>
       <div class="basic-info">
         <div class="avatar cp" v-login>
-          <img :src="userMomentInfo.avatar" alt="默认头像"/>
+          <img :src="userMomentInfo.avatar || '/static/images/avatar/default_avatar.png'" alt="默认头像"/>
         </div>
         <div class="basic-data">
           <div class="nickname cp" v-login>{{ userMomentInfo.nickname }}</div>
@@ -36,16 +36,16 @@
         </div>
       </div>
       <div class="extra-info">
-        <div class="data-item">
+        <div class="data-item cp" @click="router.push('/moment/me')">
           <div class="data-value">{{ userMomentInfo.extraInfo?.momentCount }}</div>
           <div class="data-title">时刻</div>
         </div>
         <div class="data-item">
-          <div class="data-value">{{ userMomentInfo.extraInfo?.likeCount }}</div>
+          <div class="data-value cp">{{ userMomentInfo.extraInfo?.likeCount }}</div>
           <div class="data-title">点赞</div>
         </div>
         <div class="data-item">
-          <div class="data-value">{{ userMomentInfo.extraInfo?.fansCount }}</div>
+          <div class="data-value cp">{{ userMomentInfo.extraInfo?.fansCount }}</div>
           <div class="data-title">粉丝</div>
         </div>
       </div>
@@ -56,8 +56,10 @@
 <script setup lang="ts">
 import {ref, computed} from "vue";
 import {useStore} from "vuex";
+import {useRouter} from "vue-router";
 
 const {getters, dispatch} = useStore();
+const router = useRouter();
 
 const isLogin = computed(() => getters['isLogin']);
 const userInfo = computed(() => getters['userInfo']);
@@ -121,14 +123,14 @@ initData();
       overflow: hidden;
 
       .data-value {
-        font-size: 18px;
-        margin-bottom: 4px;
+        font-size: 20px;
+        margin-bottom: 2px;
         text-align: center;
       }
 
       .data-title {
         color: var(--youyu-body-text1);
-        font-size: 15px;
+        font-size: 14px;
         text-align: center;
       }
     }

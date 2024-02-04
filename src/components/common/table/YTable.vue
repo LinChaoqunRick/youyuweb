@@ -10,7 +10,7 @@
           <div class="table-no-data" v-else-if="!loading && !dataList.length">
             暂无数据
           </div>
-          <a-skeleton active avatar v-for="item in params.pageSize" v-else></a-skeleton>
+          <a-skeleton active v-else></a-skeleton>
         </slot>
       </a-spin>
     </div>

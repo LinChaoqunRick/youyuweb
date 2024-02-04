@@ -7,35 +7,19 @@
           v-model="form.content"
           showLimit
           placeholder="此刻在想什么？快来分享一些新鲜事或发表一些看法吧！"
-          @upload-success="uploadSuccess"
           ref="richEditor"
         >
           <template #bottom>
             <div class="topic-wrapper">
               <div class="add-position" @click="onAddPosition">
                 <div class="icon-wrapper">
-                  <i-local-two
-                    theme="multi-color"
-                    size="12"
-                    :fill="['#ffffff', '#ffffff', '#3b8fff', '#3b8fff']"
-                  />
+                  <i-local-two theme="multi-color" size="12" :fill="['#ffffff', '#ffffff', '#3b8fff', '#3b8fff']" />
                 </div>
-                <span class="position-text">{{
-                    form.location || "添加位置"
-                  }}</span>
-                <div
-                  class="icon-wrapper-close"
-                  v-if="form.location"
-                  @click.stop="onClearLocation"
-                >
-                  <i-close-small
-                    theme="outline"
-                    size="13"
-                    fill="#fff"
-                    :strokeWidth="3"
-                  />
+                <span class="position-text">{{ form.location || '添加位置' }}</span>
+                <div class="icon-wrapper-close" v-if="form.location" @click.stop="onClearLocation">
+                  <i-close-small theme="outline" size="13" fill="#fff" :strokeWidth="3" />
                 </div>
-                <i-right v-else theme="outline" size="13" fill="currentColor"/>
+                <i-right v-else theme="outline" size="13" fill="currentColor" />
               </div>
             </div>
           </template>
@@ -43,70 +27,41 @@
       </div>
     </div>
     <div class="image-wrapper" v-if="form.images?.length">
-      <div v-for="item in form.images" class="image-item">
-        <img :src="item"/>
+      <div v-for="(item, index) in form.images" class="image-item">
+        <img :src="item.thumb || item" alt="" />
         <div class="image-delete" @click="onImageDelete(index)">
-          <i-close
-            theme="outline"
-            size="10"
-            fill="currentColor"
-            :strokeWidth="2"
-          />
+          <i-close theme="outline" size="10" fill="currentColor" :strokeWidth="2" />
         </div>
       </div>
-      <UploadFile
-        accept=".jpg, .jpeg, .png"
-        @uploadSuccess="uploadSuccess"
-        :disabled="uploadDisabled"
-        v-if="!uploadDisabled"
-      >
-        <div class="upload-image">
-          <i-plus
-            theme="outline"
-            size="40"
-            fill="currentColor"
-            :strokeWidth="1"
-          />
-        </div>
-      </UploadFile>
+      <div class="upload-image" @click="onAddImage" v-if="!uploadDisabled">
+        <i-plus theme="outline" size="40" fill="currentColor" :strokeWidth="1" />
+      </div>
     </div>
     <div class="editor-bottom">
       <div class="tool-items">
         <a-popover
           placement="bottomLeft"
           overlayClassName="emoji-picker-popover"
-          :getPopupContainer="(triggerNode) => triggerNode.parentNode"
+          :getPopupContainer="triggerNode => triggerNode.parentNode"
           :visible="emojiVisible"
         >
           <template #content>
-            <EmojiPicker
-              @onImagePick="onImagePick"
-              @onEmojiPick="onEmojiPick"
-              v-on-click-outside="onEmojiClose"
-            />
+            <EmojiPicker @onImagePick="onImagePick" @onEmojiPick="onEmojiPick" v-on-click-outside="onEmojiClose" />
           </template>
           <div class="tool-item" v-login="onClickEmoji">
-            <i-emotion-happy
-              theme="outline"
-              size="16"
-              fill="currentColor"
-              :strokeWidth="3"
-            />
+            <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3" />
             <span class="tool-title">表情</span>
           </div>
         </a-popover>
         <UploadFile
-          accept=".jpg, .jpeg, .png"
-          @uploadSuccess="uploadSuccess"
+          v-model="form.images"
+          multiple
           :disabled="uploadDisabled"
+          :data="{ base: 'moment/images' }"
+          ref="UploadFileRef"
         >
           <div class="tool-item item-upload-image" v-login>
-            <i-add-picture
-              theme="outline"
-              size="16"
-              fill="currentColor"
-              :strokeWidth="3"
-            />
+            <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3" />
             <span class="tool-title">图片</span>
           </div>
         </UploadFile>
@@ -129,26 +84,26 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, computed} from "vue";
-import {useStore} from "vuex";
-import {message} from "ant-design-vue";
-import {cloneDeep} from "lodash";
-import {vOnClickOutside} from "@vueuse/components";
-import {onCheckLogin} from "@/assets/utils/utils";
-import openModal from "@/libs/tools/openModal";
-import {transformHTMLToTag} from "@/components/common/utils/emoji/youyu_emoji";
-import UploadFile from "@/components/common/utils/upload/UploadFile.vue";
-import EmojiPicker from "@/components/common/utils/emoji/EmojiPicker.vue";
-import ContentEditableDiv from "@/components/common/utils/contenteditable/ContentEditableDiv.vue";
-import LocationSelector from "@/components/common/utils/aMap/LocationSelector.vue";
-import {useRouter} from "vue-router";
+import { ref, reactive, computed, toRefs } from 'vue';
+import { useStore } from 'vuex';
+import { message } from 'ant-design-vue';
+import { cloneDeep } from 'lodash';
+import { vOnClickOutside } from '@vueuse/components';
+import { onCheckLogin } from '@/assets/utils/utils';
+import openModal from '@/libs/tools/openModal';
+import { transformHTMLToTag } from '@/components/common/utils/emoji/youyu_emoji';
+import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
+import EmojiPicker from '@/components/common/utils/emoji/EmojiPicker.vue';
+import ContentEditableDiv from '@/components/common/utils/contenteditable/ContentEditableDiv.vue';
+import LocationSelector from '@/components/common/utils/aMap/LocationSelector.vue';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
   form: {
     type: Object,
     default() {
       return reactive({
-        content: "",
+        content: '',
         images: [],
       });
     },
@@ -159,56 +114,66 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["saveSuccess"]);
+const emit = defineEmits(['saveSuccess']);
 
 const maxLength = 500;
-const {getters, commit, dispatch} = useStore();
+const { getters, commit, dispatch } = useStore();
 const router = useRouter();
-const userInfo = computed(() => getters["userInfo"]);
-const isLogin = computed(() => getters["isLogin"]);
+const userInfo = computed(() => getters['userInfo']);
+const isLogin = computed(() => getters['isLogin']);
 const currentLength = computed(() => richEditor.value?.totalStrLength);
-const contentLengthExceed = computed(
-  () => richEditor.value?.contentLengthExceed
-);
-const uploadDisabled = computed(
-  () => props.form.images?.length >= 9 || !isLogin.value
-);
+const contentLengthExceed = computed(() => richEditor.value?.contentLengthExceed);
+const uploadDisabled = computed(() => props.form.images?.length >= 9 || !isLogin.value);
 
 const richEditor = ref(null);
+const UploadFileRef = ref(null);
 const active = computed(() => richEditor.value?.active);
 const emojiVisible = ref(false);
 const submitLoading = ref(false);
 
-const uploadSuccess = (fileList: []) => {
-  fileList.forEach((item) => {
-    const url = item.url + "?x-oss-process=style/smallThumb";
-    props.form.images.push(url);
-  })
+const onAddImage = () => {
+  UploadFileRef.value?.$el?.querySelector('input')?.click();
 };
 
 const toLogin = () => {
-  commit("changeLogin", true);
+  commit('changeLogin', true);
 };
 
-const onImageDelete = (index: number) => {
+const onImageDelete = (index: string | number) => {
   props.form.images.splice(index, 1);
 };
 
-const onSubmit = () => {
+const onSubmit = async () => {
   submitLoading.value = true;
   const isEdit = props.isEdit;
   const form = cloneDeep(props.form);
-  form.images = form.images.length ? form.images.join(",") : null;
+
+  const imagesListRes = await UploadFileRef.value.upload();
+
+  if (form.images?.length) {
+    if (props.isEdit) {
+      // 如果是编辑，添加新上传图片
+      if (imagesListRes) {
+        form.images.push(...imagesListRes.map(item => item.url + '?x-oss-process=style/smallThumb'));
+      }
+    } else {
+      // 如果是新增，直接赋值
+      form.images = imagesListRes.map(item => item.url + '?x-oss-process=style/smallThumb');
+    }
+    form.images = form.images.filter(item => typeof item === 'string');
+    form.images = form.images.length ? form.images.join(',') : null;
+  }
+
   form.content = transformHTMLToTag(form.content);
-  dispatch(isEdit ? "updateMoment" : "createMoment", form)
-    .then((res) => {
-      message.success(isEdit ? "修改成功" : "发布成功");
+  dispatch(isEdit ? 'updateMoment' : 'createMoment', form)
+    .then(res => {
+      message.success(isEdit ? '修改成功' : '发布成功');
       resetEditor();
-      emit("saveSuccess", res.data);
+      emit('saveSuccess', res.data);
       if (isEdit) {
         router.replace({
-          name: "MomentDetail",
-          params: {momentId: props.form.id}
+          name: 'MomentDetail',
+          params: { momentId: props.form.id },
         });
       }
     })
@@ -218,7 +183,7 @@ const onSubmit = () => {
 };
 
 const resetEditor = () => {
-  props.form.content = "";
+  props.form.content = '';
   props.form.images = [];
   richEditor.value.clearContent();
   onClearLocation();
@@ -234,7 +199,7 @@ const onEmojiPick = (value: string) => {
 
 const onClickEmoji = () => {
   if (!isLogin.value) {
-    commit("changeLogin", true);
+    commit('changeLogin', true);
     return;
   }
   emojiVisible.value = true;
@@ -250,14 +215,14 @@ const onAddPosition = () => {
     componentProps: {
       data: props.form,
     },
-    title: "添加位置",
-    width: "88vw",
+    title: '添加位置',
+    width: '88vw',
     maskClosable: false,
     keyboard: false,
     centered: true,
-    wrapClassName: "select-position-modal-wrapper",
+    wrapClassName: 'select-position-modal-wrapper',
   })
-    .then((res) => {
+    .then(res => {
       props.form.location = res.name;
       props.form.longitude = res.longitude;
       props.form.latitude = res.latitude;
@@ -266,15 +231,15 @@ const onAddPosition = () => {
 };
 
 const onClearLocation = () => {
-  props.form.location = "";
-  props.form.longitude = "";
-  props.form.latitude = "";
+  props.form.location = '';
+  props.form.longitude = '';
+  props.form.latitude = '';
 };
 </script>
 
 <style lang="scss" scoped>
 .moment-editor {
-  width: 750px;
+  width: 824px;
   padding: 20px 20px 0;
   background-color: var(--youyu-background1);
   border-radius: 4px;
@@ -371,6 +336,10 @@ const onClearLocation = () => {
       position: relative;
       margin: 8px 8px 0 0;
 
+      &:last-child {
+        margin-right: 0;
+      }
+
       img {
         height: 80px;
         width: 80px;
@@ -409,7 +378,7 @@ const onClearLocation = () => {
       height: 80px;
       width: 80px;
       border: 1px dashed #c5c5c5;
-      margin: 8px 8px 8px 0;
+      margin: 8px 0;
       background: rgba(248, 248, 249, 0.2);
       transition: 0.3s;
 
@@ -433,7 +402,7 @@ const onClearLocation = () => {
       .tool-item {
         display: flex;
         align-items: center;
-        cursor: pointer;
+        cursor: inherit;
         margin-right: 16px;
         transition: 0.3s;
 
@@ -448,7 +417,7 @@ const onClearLocation = () => {
         }
 
         &:hover {
-          color: #1890ff;
+          color: #1890ff !important;
         }
       }
 

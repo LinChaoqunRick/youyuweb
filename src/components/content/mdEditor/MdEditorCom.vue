@@ -126,7 +126,7 @@
 
   const onUploadImg = async (files: File[], callback: Function) => {
     const hide = message.loading('上传中...', 0);
-    uploadToOss(files).then(res => {
+    uploadToOss(files, {needTip: false}).then(res => {
       message.success("上传成功");
       callback(res.map((item) => item.url + '?x-oss-process=style/detailThumb'));
     }).catch(() => {

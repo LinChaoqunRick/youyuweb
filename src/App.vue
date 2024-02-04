@@ -1,31 +1,40 @@
 <template>
-  <div class="app" id="youyu-app">
-    <a-config-provider :locale="zhCN">
-      <div class="header" id="header">
-        <YHeader/>
-      </div>
-      <div class="main-app" id="main-app" v-if="isRouterAlive">
-        <router-view/>
-      </div>
-      <YFooter/>
-    </a-config-provider>
-  </div>
+  <a-config-provider
+    :theme="{
+      algorithm:
+        currentTheme === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm,
+    }"
+  >
+    <div class="app" id="youyu-app">
+      <a-config-provider :locale="zhCN">
+        <div class="header" id="header">
+          <YHeader />
+        </div>
+        <div class="main-app" id="main-app" v-if="isRouterAlive">
+          <router-view />
+        </div>
+        <YFooter />
+      </a-config-provider>
+    </div>
+  </a-config-provider>
 </template>
 
 <script setup lang="ts">
-import {nextTick, ref, provide, computed, watch, onMounted} from "vue";
-import {useStore} from "vuex";
-import {useRoute, useRouter} from "vue-router";
+import { nextTick, ref, provide, computed, watch, onMounted } from "vue";
+import { useStore } from "vuex";
+import { useRoute, useRouter } from "vue-router";
+import { theme } from "ant-design-vue";
 
 import zhCN from "ant-design-vue/es/locale/zh_CN";
 import YHeader from "@/components/common/header/YHeader.vue";
 import YFooter from "@/components/common/footer/YFooter.vue";
 
-const {getters, commit, dispatch} = useStore();
+const { getters, commit, dispatch } = useStore();
 const route = useRoute();
 const router = useRouter();
 
 const isRouterAlive = ref<boolean>(true);
+const currentTheme = computed(() => getters.currentTheme);
 
 const isLogin = computed(() => getters["isLogin"]);
 const globalSpinning = computed(() => getters["getGlobalSpinning"]);
@@ -50,7 +59,6 @@ watch(
 );
 
 provide("reload", reload);
-
 </script>
 
 <style lang="scss" scoped>

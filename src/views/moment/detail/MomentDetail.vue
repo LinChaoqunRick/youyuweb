@@ -170,6 +170,7 @@ const onSaveCommentSuccess = (data: momentListType) => {
 };
 
 const onEdit = () => {
+  console.log("isEdit");
   formData.value = cloneDeep(moment.value);
   formData.value.images = formData.value.images
     ? formData.value.images.split(",")
@@ -193,7 +194,7 @@ const saveSuccess = (data: momentListType) => {
   justify-content: center;
 
   .moment-detail-middle {
-    width: 750px;
+    width: 824px;
 
     .moment-detail-item {
       ::v-deep(.moment-item) {

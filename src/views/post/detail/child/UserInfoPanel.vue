@@ -219,6 +219,7 @@
       flex-direction: column;
       align-items: center;
       padding: 16px 8px;
+      border-radius: 8px;
       background-color: var(--youyu-body-background2);
 
       .user-avatar-nickname {
