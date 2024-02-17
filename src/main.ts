@@ -3,7 +3,9 @@ import App from './App.vue';
 import router from './router';
 import store from "@/store";
 import Antd from 'ant-design-vue';
-import {IconPark} from "@/libs/plugins/iconpark";
+import RelativeTime from "dayjs/plugin/relativeTime";
+import dayjs from "dayjs";
+import IconPark from "@/libs/plugins/iconpark";
 import MarkExtension from 'markdown-it-mark';
 import {config} from 'md-editor-v3';
 import {lineNumbers} from '@codemirror/view';
@@ -20,9 +22,6 @@ import scrollToEl from "@/libs/directives/scrollToEl.js";
 import row from "@/libs/directives/row";
 import focus from "@/libs/directives/focus";
 import zhcn from 'dayjs/locale/zh-cn';
-
-import RelativeTime from "dayjs/plugin/relativeTime";
-import dayjs from "dayjs";
 
 import './assets/main.scss';
 import './assets/css/theme/dark.scss';

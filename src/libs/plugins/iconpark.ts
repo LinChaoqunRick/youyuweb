@@ -90,7 +90,7 @@ import {
   Triangle
 } from '@icon-park/vue-next'
 
-export const IconPark = (app) => {
+const IconPark = (app) => {
   app.component('IToTop', ToTop);
   app.component('IMore', More);
   app.component('IPlus', Plus);
@@ -181,3 +181,5 @@ export const IconPark = (app) => {
   app.component('ILocalTwo', LocalTwo);
   app.component('ITriangle', Triangle);
 }
+
+export default IconPark;

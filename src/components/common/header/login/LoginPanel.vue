@@ -110,7 +110,7 @@
 
 
       .login-panel-image {
-        background-image: url('https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/login/tulip.jpg');
+        background-image: url('https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/gaoqi_hangpai.jpg');
         background-size: cover;
         height: 100%;
         width: 270px;

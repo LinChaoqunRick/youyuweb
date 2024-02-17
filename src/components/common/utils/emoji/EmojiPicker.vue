@@ -54,15 +54,15 @@
 
 <style lang="scss" scoped>
   .emoji-picker {
-    width: 416px;
+    width: 437px;
     background-color: var(--youyu-background1);
 
     .emoji-picker-header {
       display: flex;
       align-items: center;
       border-bottom: 1px solid var(--youyu-border-color);
-      padding: 0 12px;
-      height: 48px;
+      height: 36px;
+      padding-bottom: 6px;
 
       .emoji-switch {
         cursor: pointer;
@@ -95,7 +95,7 @@
     }
 
     .emoji-picker-body {
-      padding: 10px 2px 10px 10px;
+      padding: 6px 0;
 
       .list-youyu-emoji {
         display: flex;

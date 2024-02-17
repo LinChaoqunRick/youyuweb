@@ -402,7 +402,7 @@ const onClearLocation = () => {
       .tool-item {
         display: flex;
         align-items: center;
-        cursor: inherit;
+        cursor: pointer;
         margin-right: 16px;
         transition: 0.3s;
 

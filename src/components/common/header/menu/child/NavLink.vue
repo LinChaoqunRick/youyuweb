@@ -80,7 +80,6 @@ const prop = defineProps({
 <style lang="scss">
 .route-dropdown {
   width: 90px;
-  background-color: var(--youyu-navigation);
   /*position: absolute;
   top: 50px !important;
   text-align: center;

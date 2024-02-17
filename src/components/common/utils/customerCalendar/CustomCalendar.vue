@@ -12,6 +12,7 @@
   background-color: var(--youyu-background1);
   border-radius: 8px;
   padding: 12px 24px;
+  width: 300px;
 
   .calender-header {
     text-align: right;
