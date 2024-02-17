@@ -463,6 +463,10 @@ const onClearLocation = () => {
 }
 
 .select-position-modal-wrapper {
+  .ant-modal-content {
+    padding: 14px 24px;
+  }
+
   .ant-modal-body {
     padding: 0;
 

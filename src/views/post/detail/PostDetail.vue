@@ -213,6 +213,8 @@ provide('setPostAttribute', setPostAttribute);
     margin-left: 8px;
 
     .post-main {
+      border-radius: 8px;
+      overflow: hidden;
       background-color: var(--post-detail-background);
 
       .post-title {
@@ -436,6 +438,8 @@ provide('setPostAttribute', setPostAttribute);
 
     .post-comment {
       margin-top: 8px;
+      border-radius: 8px;
+      overflow: hidden;
     }
   }
 

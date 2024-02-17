@@ -56,9 +56,9 @@ defineExpose({
 
   .location-data {
     position: absolute;
-    left: 0;
+    left: 8px;
     right: 0;
-    bottom: 0;
+    bottom: 4px;
     display: flex;
     align-items: center;
     height: 53px;
