@@ -32,7 +32,7 @@
           <a-button type="link" @click="handleSearch">搜索</a-button>
         </div>
         <div class="search-content-items">
-          <div class="search-content-item">
+          <div v-if="searchHistory?.length" class="search-content-item">
             <div class="item-label">
               <span>历史搜索</span>
               <i-delete theme="outline" size="13" fill="currentColor" @click="onClearHistory"/>
@@ -44,12 +44,12 @@
             </div>
             <div v-else class="no-data">暂无记录</div>
           </div>
-          <div class="search-content-item">
+          <div v-if="searchDiscovery?.length" class="search-content-item">
             <div class="item-label">
               <span>搜索发现</span>
             </div>
             <div v-if="false">
-              <a-tag v-for="item in searchHistory">{{ item }}</a-tag>
+              <a-tag v-for="item in searchDiscovery">{{ item }}</a-tag>
             </div>
             <div v-else class="no-data">暂无记录</div>
           </div>
@@ -74,6 +74,7 @@ const active = ref(false);
 const menus = ['全部', '用户'];
 const activeIndex = ref(0);
 const searchHistory = computed(() => getters['getSearchHistory']);
+const searchDiscovery = ref([]);
 
 const handleSearch = () => {
   if (text.value) {

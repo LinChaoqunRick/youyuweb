@@ -396,7 +396,7 @@ defineExpose({
   background-color: var(--youyu-body-background2);
 
   .moment-item-content {
-    padding: 12px 16px;
+    padding: 16px;
 
     .content-top {
       display: flex;

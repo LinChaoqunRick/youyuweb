@@ -185,7 +185,7 @@ defineExpose({
     justify-content: center;
 
     ::v-deep(.ant-pagination) {
-      .ant-pagination-item {
+      .ant-pagination-item, .ant-pagination-jump-next {
         background-color: var(--pagination-background);
         border: var(--pagination-border);
         border-radius: 2px;
