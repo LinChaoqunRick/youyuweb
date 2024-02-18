@@ -20,7 +20,7 @@
             <div class="menu-title">{{ menu.title }}</div>
           </div>
         </div>
-        <div class="todo-list" v-if="todoList?.length">
+        <div class="todo-list" v-if="isLogin && todoList?.length">
           <div class="todo-header">继续完成：</div>
           <div class="todo-items">
             <div
@@ -158,7 +158,7 @@ const onClickTodo = () => {
           flex-direction: column;
           justify-content: flex-end;
           align-items: center;
-          padding: 8px 13px 6px 13px;
+          padding: 8px 16px 6px 16px;
           cursor: pointer;
           border-radius: 4px;
 

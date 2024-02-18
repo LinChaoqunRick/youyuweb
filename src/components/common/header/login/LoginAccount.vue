@@ -46,21 +46,21 @@
     </div>
     <div class="social-account-title">社交账号登录</div>
     <div class="social-account-tag mt-10">
-      <div class="tag-item tag-wechat" title="微信">
+<!--      <div class="tag-item tag-wechat" title="微信">
         <img src="/static/images/logo/wechat.png" alt="" @click="onSocialConnect('wechat')"/>
-      </div>
+      </div>-->
       <div class="tag-item tag-qq" title="QQ">
         <img src="/static/images/logo/qq.png" alt="" @click="onSocialConnect('qq')"/>
       </div>
       <div class="tag-item tag-github" title="Github">
         <img src="/static/images/logo/github.png" alt="" @click="onSocialConnect('github')"/>
       </div>
-      <div class="tag-item tag-alipay" title="支付宝">
+<!--      <div class="tag-item tag-alipay" title="支付宝">
         <img src="/static/images/logo/alipay.png" alt="" @click="onSocialConnect('alipay')"/>
-      </div>
-      <div class="tag-item tag-weibo" title="微博">
+      </div>-->
+<!--      <div class="tag-item tag-weibo" title="微博">
         <img src="/static/images/logo/weibo.png" alt="" @click="onSocialConnect('weibo')"/>
-      </div>
+      </div>-->
     </div>
   </div>
 </template>
