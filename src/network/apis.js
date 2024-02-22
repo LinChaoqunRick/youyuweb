@@ -103,7 +103,7 @@ export const OSS_POLICY = ApiBase + "/oss/policy"; //
 export const OSS_STS = ApiBase + "/oss/sts"; //
 
 // 短信
-export const MESSAGE_SEND = ApiBase + "/message/open/send"; // 发送验证码
-export const MESSAGE_VERIFY = ApiBase + "/message/open/verify"; // 发送验证码
+export const MESSAGE_SEND = ApiBase + "/sms/open/send"; // 发送验证码
+export const MESSAGE_VERIFY = ApiBase + "/sms/open/verify"; // 发送验证码
 
 
