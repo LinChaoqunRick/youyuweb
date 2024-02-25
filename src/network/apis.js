@@ -63,6 +63,9 @@ export const SAVE_EMAIL = ApiBase + "/user/saveEmail"; // 修改邮箱
 export const GET_PROFILE_MENU = ApiBase + "/user/open/getProfileMenu"; // 获取主页菜单信息
 export const SET_PROFILE_MENU = ApiBase + "/user/setProfileMenu"; // 设置主页菜单信息
 export const GET_USER_DYNAMICS = ApiBase + "/user/open/getDynamics"; // 获取用户动态
+export const CREATE_MESSAGE = ApiBase + "/message/open/create"; // 发布留言
+export const DELETE_MESSAGE = ApiBase + "/message/open/delete"; // 删除留言
+export const LIST_MESSAGE = ApiBase + "/message/open/list"; // 留言分页
 
 // 时刻
 export const MOMENT_CREATE = ApiBase + "/moment/create"; // 创建时刻

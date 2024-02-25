@@ -24,6 +24,9 @@ import {
   GET_PROFILE_MENU,
   SET_PROFILE_MENU,
   GET_USER_DYNAMICS,
+  CREATE_MESSAGE,
+  DELETE_MESSAGE,
+  LIST_MESSAGE
 } from "@/network/apis";
 
 export default {
@@ -99,6 +102,15 @@ export default {
     },
     getUserDynamics(context: any, params: object) {
       return http.post(GET_USER_DYNAMICS, params);
+    },
+    createMessage(context: any, params: object) {
+      return http.post(CREATE_MESSAGE, params);
+    },
+    deleteMessage(context: any, params: object) {
+      return http.post(DELETE_MESSAGE, params);
+    },
+    listMessage(context: any, params: object) {
+      return http.post(LIST_MESSAGE, params);
     },
   },
 };
