@@ -1,6 +1,7 @@
 <template>
   <div class="message">
     <div class="barrage-wrapper">
+      <div v-for="item in showList">{{ item}}</div>
       <div class="locate-button" :class="{ 'is-hide': formVisible }">
         <a-button type="primary" shape="round" @click="onLocate">
           <template #icon>
@@ -69,6 +70,7 @@ import { insert } from '@/assets/utils/utils';
 import Emoji from '@/components/common/utils/emoji/index.vue';
 import { message } from 'ant-design-vue';
 import { checkEmail } from '@/libs/validate/validate';
+import { useRequest } from 'vue-request';
 
 const formState = reactive({
   nickname: '',
@@ -82,6 +84,9 @@ const ContentTextareaRef = ref(null);
 const formVisible = ref(false);
 const btnLoading = ref(false);
 const pageNum = ref(1);
+const totalNum = ref(0);
+const dataList = ref([]);
+const showList = ref([]);
 
 const rules = {
   nickname: [{ required: true, message: '请输入昵称' }],
@@ -120,14 +125,27 @@ const onFinish = values => {
     });
 };
 
-const initData = () => {
-  dispatch('listMessage', { pageNum: pageNum.value }).then(res => {
-    console.log(res);
+const initData = async () => {
+  await dispatch('listMessage', { pageNum: pageNum.value }).then(res => {
+    dataList.value.push(res.data.list);
+    res.data.list.forEach((item, index) => {
+      console.log(item);
+      setTimeout(() => showList.value.push(item), 500 * (index + 1));
+    });
+
+    if (pageNum.value >= totalNum.value) {
+      // 已加载完全部数据
+      loop.cancel();
+      return;
+    }
+    totalNum.value = res.data.pages;
     pageNum.value++;
   });
 };
 
-initData();
+const loop = useRequest(initData, {
+  pollingInterval: 5 * 1000,
+});
 </script>
 
 <style scoped lang="scss">
