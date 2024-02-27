@@ -1,0 +1,55 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# �������ļ�:24.03.2023 10:21:36
+
+newmtl 02___Default
+	Ns 10.0000
+	Ni 1.5000
+	d 0.2000
+	Tr 0.8000
+	Tf 0.2000 0.2000 0.2000
+	illum 2
+	Ka 0.8431 0.9412 1.0000
+	Kd 0.8431 0.9412 1.0000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+
+newmtl men_white
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000
+	illum 2
+	Ka 0.9020 0.9020 0.9020
+	Kd 0.9020 0.9020 0.9020
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+
+newmtl menban_daping_yin
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000
+	illum 2
+	Ka 0.7490 0.7490 0.7490
+	Kd 0.7490 0.7490 0.7490
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka map\menban_daping_yin.png
+	map_Kd map\menban_daping_yin.png
+
+newmtl men_pensha
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000
+	illum 2
+	Ka 0.5882 0.5882 0.5882
+	Kd 0.5882 0.5882 0.5882
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka map\men_pensha.png
+	map_Kd map\men_pensha.png
+	map_d map\men_pensha_al.png
