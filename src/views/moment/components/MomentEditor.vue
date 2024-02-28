@@ -13,13 +13,13 @@
             <div class="topic-wrapper">
               <div class="add-position" @click="onAddPosition">
                 <div class="icon-wrapper">
-                  <i-local-two theme="multi-color" size="12" :fill="['#ffffff', '#ffffff', '#3b8fff', '#3b8fff']" />
+                  <i-local-two theme="multi-color" size="12" :fill="['#ffffff', '#ffffff', '#3b8fff', '#3b8fff']"/>
                 </div>
                 <span class="position-text">{{ form.location || '添加位置' }}</span>
                 <div class="icon-wrapper-close" v-if="form.location" @click.stop="onClearLocation">
-                  <i-close-small theme="outline" size="13" fill="#fff" :strokeWidth="3" />
+                  <i-close-small theme="outline" size="13" fill="#fff" :strokeWidth="3"/>
                 </div>
-                <i-right v-else theme="outline" size="13" fill="currentColor" />
+                <i-right v-else theme="outline" size="13" fill="currentColor"/>
               </div>
             </div>
           </template>
@@ -27,14 +27,29 @@
       </div>
     </div>
     <div class="image-wrapper" v-if="form.images?.length">
-      <div v-for="(item, index) in form.images" class="image-item">
-        <img :src="item.thumb || item" alt="" />
-        <div class="image-delete" @click="onImageDelete(index)">
-          <i-close theme="outline" size="10" fill="currentColor" :strokeWidth="2" />
-        </div>
-      </div>
+      <draggable
+        class="list-group"
+        :component-data="{
+          type: 'transition-group',
+          name: !drag ? 'flip-list' : null
+        }"
+        v-model="form.images"
+        v-bind="dragOptions"
+        @start="drag = true"
+        @end="drag = false"
+        :item-key="element => element"
+      >
+        <template #item="{ element, index }">
+          <div class="image-item">
+            <img :src="element.thumb || element" alt=""/>
+            <div class="image-delete" @click="onImageDelete(index)">
+              <i-close theme="outline" size="10" fill="currentColor" :strokeWidth="2"/>
+            </div>
+          </div>
+        </template>
+      </draggable>
       <div class="upload-image" @click="onAddImage" v-if="!uploadDisabled">
-        <i-plus theme="outline" size="40" fill="currentColor" :strokeWidth="1" />
+        <i-plus theme="outline" size="40" fill="currentColor" :strokeWidth="1"/>
       </div>
     </div>
     <div class="editor-bottom">
@@ -46,10 +61,10 @@
           :visible="emojiVisible"
         >
           <template #content>
-            <EmojiPicker @onImagePick="onImagePick" @onEmojiPick="onEmojiPick" v-on-click-outside="onEmojiClose" />
+            <EmojiPicker @onImagePick="onImagePick" @onEmojiPick="onEmojiPick" v-on-click-outside="onEmojiClose"/>
           </template>
           <div class="tool-item" v-login="onClickEmoji">
-            <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3" />
+            <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
             <span class="tool-title">表情</span>
           </div>
         </a-popover>
@@ -61,7 +76,7 @@
           ref="UploadFileRef"
         >
           <div class="tool-item item-upload-image" v-login>
-            <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3" />
+            <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
             <span class="tool-title">图片</span>
           </div>
         </UploadFile>
@@ -84,19 +99,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, toRefs } from 'vue';
-import { useStore } from 'vuex';
-import { message } from 'ant-design-vue';
-import { cloneDeep } from 'lodash';
-import { vOnClickOutside } from '@vueuse/components';
-import { onCheckLogin } from '@/assets/utils/utils';
+import {ref, reactive, computed, toRefs} from 'vue';
+import {useRouter} from 'vue-router';
+import {useStore} from 'vuex';
+import {message} from 'ant-design-vue';
+import {cloneDeep} from 'lodash';
+import {vOnClickOutside} from '@vueuse/components';
+import {onCheckLogin} from '@/assets/utils/utils';
+import draggable from 'vuedraggable'
 import openModal from '@/libs/tools/openModal';
-import { transformHTMLToTag } from '@/components/common/utils/emoji/youyu_emoji';
+import {transformHTMLToTag} from '@/components/common/utils/emoji/youyu_emoji';
 import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
 import EmojiPicker from '@/components/common/utils/emoji/EmojiPicker.vue';
 import ContentEditableDiv from '@/components/common/utils/contenteditable/ContentEditableDiv.vue';
 import LocationSelector from '@/components/common/utils/aMap/LocationSelector.vue';
-import { useRouter } from 'vue-router';
 
 const props = defineProps({
   form: {
@@ -115,9 +131,15 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['saveSuccess']);
+const dragOptions = reactive({
+  animation: 200,
+  group: "description",
+  disabled: false,
+  ghostClass: "ghost"
+});
 
 const maxLength = 500;
-const { getters, commit, dispatch } = useStore();
+const {getters, commit, dispatch} = useStore();
 const router = useRouter();
 const userInfo = computed(() => getters['userInfo']);
 const isLogin = computed(() => getters['isLogin']);
@@ -130,6 +152,7 @@ const UploadFileRef = ref(null);
 const active = computed(() => richEditor.value?.active);
 const emojiVisible = ref(false);
 const submitLoading = ref(false);
+const drag = ref(false);
 
 const onAddImage = () => {
   UploadFileRef.value?.$el?.querySelector('input')?.click();
@@ -173,7 +196,7 @@ const onSubmit = async () => {
       if (isEdit) {
         router.replace({
           name: 'MomentDetail',
-          params: { momentId: props.form.id },
+          params: {momentId: props.form.id},
         });
       }
     })
@@ -332,13 +355,13 @@ const onClearLocation = () => {
     display: flex;
     flex-wrap: wrap;
 
+    ::v-deep(.list-group) {
+      display: flex;
+    }
+
     .image-item {
       position: relative;
       margin: 8px 8px 0 0;
-
-      &:last-child {
-        margin-right: 0;
-      }
 
       img {
         height: 80px;
