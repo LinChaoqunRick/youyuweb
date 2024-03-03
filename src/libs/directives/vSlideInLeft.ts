@@ -1,41 +1,46 @@
-const DURATION = 6500;
+const DURATION = 8 * 1000;
 
 const animationMap = new WeakMap();
 
-const ob = new IntersectionObserver(entries => {
-  for (const entry of entries) {
-    console.log(1123);
-    if (entry.boundingClientRect.left < 0) {
-      entry.target.onShowFinish();
-      ob.unobserve(entry.target);
-    }
-  }
-})
-
-
 export default {
   mounted(el: HTMLElement, binding) {
-    el.onShowFinish = binding.value;
+    // const bodyClientWidth = document.body.clientWidth;
+    // const speed = bodyClientWidth / DURATION;
     const rect = el.getBoundingClientRect();
-    const animation = el.animate([
+    const translateX = Math.random() * 70 + 5;
+    const animation = el.animate(
+      [
+        {
+          transform: `translateX(100vw) translateY(${translateX}vh)`
+        },
+        {
+          transform: `translateX(calc(0vw - ${rect.width + 20}px)) translateY(${translateX}vh)`
+        }
+      ],
       {
-        transform: `translateX(100vw)`,
-      },
-      {
-        transform: `translateX(calc(0vw - ${rect.width + 20}px))`,
+        duration: DURATION,
+        easing: 'linear',
+        fill: 'forwards'
       }
-    ], {
-      duration: DURATION,
-      easing: 'linear'
-    });
+    );
     animation.play();
     animationMap.set(el, animation);
     setTimeout(() => {
-      ob.observe(el);
-    }, 500)
+      binding?.value();
+    }, DURATION + 500);
+
+    const pause = () => {
+      animation.pause();
+    };
+
+    const play = () => {
+      animation.play();
+    };
+
+    el.addEventListener('mouseover', pause, false);
+    el.addEventListener('mouseout', play, false);
   },
 
   unmount(el: HTMLElement) {
-    ob.unobserve(el);
   }
-}
+};
