@@ -135,7 +135,7 @@ const onClearHistory = () => {
     }
 
     .i-icon {
-      color: #181818;
+      color: #bdbdbd;
       transition: .3s;
     }
 

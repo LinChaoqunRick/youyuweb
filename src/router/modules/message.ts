@@ -6,7 +6,7 @@ const route = [
       title: "留言",
       code: "MESSAGE"
     },
-    component: () => import('@/views/message/Message.vue')
+    component: () => import('@/views/message/index.vue')
   }
 ]
 

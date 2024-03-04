@@ -1,13 +1,11 @@
 <template>
   <div class="message">
-    <div class="barrage-wrapper">
-      <div v-for="(item, index) in showList" v-slide-in-left="onShowFinish(item, index)" class="barrage-item">
-        {{ item.content }}
-      </div>
+    <div class="barrage-view">
+      <Barrage v-model="showList"/>
       <div class="locate-button" :class="{ 'is-hide': formVisible }">
         <a-button type="primary" shape="round" @click="onLocate">
           <template #icon>
-            <i-send-one theme="outline" size="16" fill="currentColor" />
+            <i-send-one theme="outline" size="16" fill="currentColor"/>
           </template>
           我也说一句
         </a-button>
@@ -25,20 +23,20 @@
       >
         <div class="form-top">
           <a-form-item class="nickname-item" label="昵称" name="nickname">
-            <a-input v-model:value="formState.nickname" :maxlength="10" size="large" placeholder="必填：请输入昵称" />
+            <a-input v-model:value="formState.nickname" :maxlength="10" size="large" placeholder="必填：请输入昵称"/>
           </a-form-item>
 
           <a-form-item class="email-item" label="邮箱" name="email">
-            <a-input v-model:value="formState.email" size="large" :maxlength="50" placeholder="必填：请输入邮箱" />
+            <a-input v-model:value="formState.email" size="large" :maxlength="50" placeholder="必填：请输入邮箱"/>
           </a-form-item>
 
           <a-form-item class="home-item" label="主页" name="home">
-            <a-input v-model:value="formState.home" size="large" :maxlength="50" placeholder="选填：请输入主页" />
+            <a-input v-model:value="formState.home" size="large" :maxlength="50" placeholder="选填：请输入主页"/>
           </a-form-item>
 
           <a-form-item>
             <a-button type="primary" :loading="btnLoading" size="large" html-type="submit">
-              <i-send-one theme="outline" size="16" fill="currentColor" />
+              <i-send-one theme="outline" size="16" fill="currentColor"/>
               提交
             </a-button>
           </a-form-item>
@@ -55,9 +53,9 @@
           </a-form-item>
           <a-popover placement="leftBottom" overlayClassName="message-content-emoji-popover" trigger="click">
             <template #content>
-              <Emoji @emojiHandler="emojiHandler" />
+              <Emoji @emojiHandler="emojiHandler"/>
             </template>
-            <i-smiling-face theme="outline" size="22" fill="currentColor" style="cursor: pointer" />
+            <i-smiling-face theme="outline" size="22" fill="currentColor" style="cursor: pointer"/>
           </a-popover>
         </div>
       </a-form>
@@ -66,14 +64,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
-import { useStore } from 'vuex';
-import { useIntersectionObserver } from '@vueuse/core';
-import { insert } from '@/assets/utils/utils';
+import {ref, reactive} from 'vue';
+import {useStore} from 'vuex';
+import {useIntersectionObserver} from '@vueuse/core';
+import {useRequest} from 'vue-request';
+
+import {insert} from '@/assets/utils/utils';
+import {message} from 'ant-design-vue';
+import {checkEmail} from '@/libs/validate/validate';
 import Emoji from '@/components/common/utils/emoji/index.vue';
-import { message } from 'ant-design-vue';
-import { checkEmail } from '@/libs/validate/validate';
-import { useRequest } from 'vue-request';
+import Barrage from "@/views/message/Barrage.vue";
 
 const formState = reactive({
   nickname: '',
@@ -81,7 +81,7 @@ const formState = reactive({
   home: '',
   content: '',
 });
-const { dispatch } = useStore();
+const {dispatch} = useStore();
 const FormRef = ref(null);
 const ContentTextareaRef = ref(null);
 const formVisible = ref(false);
@@ -92,15 +92,15 @@ const dataList = ref([]);
 const showList = ref([]);
 
 const rules = {
-  nickname: [{ required: true, message: '请输入昵称' }],
+  nickname: [{required: true, message: '请输入昵称'}],
   email: [
-    { required: true, message: '请输入邮箱' },
-    { required: true, validator: checkEmail, trigger: 'change' },
+    {required: true, message: '请输入邮箱'},
+    {required: true, validator: checkEmail, trigger: 'change'},
   ],
-  content: [{ required: true, message: '请输入内容' }],
+  content: [{required: true, message: '请输入内容'}],
 };
 
-const { stop } = useIntersectionObserver(FormRef, ([{ isIntersecting }], observerElement) => {
+const {stop} = useIntersectionObserver(FormRef, ([{isIntersecting}], observerElement) => {
   formVisible.value = isIntersecting;
 });
 
@@ -129,10 +129,10 @@ const onFinish = values => {
 };
 
 const initData = async () => {
-  await dispatch('listMessage', { pageNum: pageNum.value }).then(res => {
+  await dispatch('listMessage', {pageNum: pageNum.value}).then(res => {
     dataList.value.push(res.data.list);
     res.data.list.forEach((item, index) => {
-      setTimeout(() => showList.value.push(item), 2000 * (index + 1));
+      setTimeout(() => showList.value.push(item), 500 * (index + 1));
     });
 
     if (pageNum.value >= totalNum.value) {
@@ -148,15 +148,6 @@ const initData = async () => {
 const loop = useRequest(initData, {
   pollingInterval: 5 * 1000,
 });
-
-const onShowFinish = (item, index) => {
-  return () => {
-    showList.value = showList.value.filter(i => {
-      console.log(i.id, item.id);
-      return i.id != item.id;
-    });
-  };
-};
 </script>
 
 <style scoped lang="scss">
@@ -164,13 +155,9 @@ const onShowFinish = (item, index) => {
   width: 100%;
   overflow: hidden;
 
-  .barrage-wrapper {
+  .barrage-view {
     position: relative;
     height: calc(100vh - 60px);
-
-    .barrage-item {
-      position: absolute;
-    }
 
     .locate-button {
       position: absolute;

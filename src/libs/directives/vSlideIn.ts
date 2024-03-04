@@ -41,7 +41,7 @@ export default {
     ob.observe(el);
   },
 
-  unmount(el: HTMLElement) {
+  unmounted(el: HTMLElement) {
     ob.unobserve(el);
   }
 }
