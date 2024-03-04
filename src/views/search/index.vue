@@ -64,11 +64,12 @@
       top: 60px;
       height: 48px;
       background-color: var(--youyu-navigation);
+      z-index: 10;
 
       .sort-banner {
         display: flex;
         align-items: center;
-        width: 960px;
+        width: 75vw;
         height: 100%;
         margin: auto;
 
@@ -86,7 +87,7 @@
 
     .search-content {
       display: flex;
-      width: 960px;
+      width: 75vw;
       margin: 0 auto;
 
       .post-list-wrapper {
