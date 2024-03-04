@@ -101,10 +101,10 @@ onMounted(() => {
     .barrage-item-detail {
       display: flex;
       align-items: center;
-      background-color: rgba(0, 0, 0, 0.70);
+      background-color: var(--mask-background);
       padding: 6px 12px;
       border-radius: 36px;
-      color: var(--youyu-text4);
+      color: #ffffff;
       cursor: pointer;
       overflow: hidden;
     }
