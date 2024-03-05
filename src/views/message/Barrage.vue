@@ -4,7 +4,12 @@
          v-barrage-move="onShowFinish(item, index)">
       <slot :data="item">
         <div class="barrage-item-detail">
-          {{ item.content }}
+          <div class="barrage-avatar"><img
+            :src="(item.userId ? item.userInfo.avatar : item.avatar) || '/static/images/avatar/default_avatar.png'"
+            alt="头像"/>
+          </div>
+          <div class="barrage-nickname">{{ item.userId ? item.userInfo.nickname : item.nickname }}：</div>
+          <div class="barrage-content">{{ item.content }}</div>
         </div>
       </slot>
     </div>
@@ -102,11 +107,31 @@ onMounted(() => {
       display: flex;
       align-items: center;
       background-color: var(--mask-background);
-      padding: 6px 12px;
+      padding: 4px;
       border-radius: 36px;
       color: #ffffff;
       cursor: pointer;
       overflow: hidden;
+
+      .barrage-avatar {
+        height: 24px;
+        width: 24px;
+        border-radius: 50%;
+        overflow: hidden;
+
+        img {
+          height: 100%;
+          width: 100%;
+        }
+      }
+
+      .barrage-nickname {
+        padding-left: 6px;
+      }
+
+      .barrage-content {
+        padding-right: 6px;
+      }
     }
   }
 }
