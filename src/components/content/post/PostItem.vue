@@ -34,7 +34,7 @@
       <div class="content-wrapper">
         <div class="article-title">
           <RouterLink class="post-link" :to="{name:'PostDetail',params:{postId:data.id}}">
-            <p v-html="data.title"/>
+            {{ data.title }}
           </RouterLink>
         </div>
       </div>
