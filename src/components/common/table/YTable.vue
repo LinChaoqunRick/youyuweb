@@ -74,8 +74,9 @@ const dataList = ref([]);
 const loading = ref<boolean>(false);
 const failed = ref<boolean>(false);
 const paginationConfig = computed(() => Object.assign({}, {
-  showQuickJumper: true,
-  showLessItems: true,
+  // showQuickJumper: true,
+  // showLessItems: true,
+  showSizeChanger: false
 }, props.paginationProps));
 
 const initData = async () => {
