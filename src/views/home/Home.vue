@@ -1,6 +1,6 @@
 <template>
-  <a-button  @click="onOpenSpin">Global Spin</a-button>
-  <a-button @click="success">Customized display duration</a-button>
+<!--  <a-button  @click="onOpenSpin">Global Spin</a-button>-->
+<!--  <a-button @click="success">Customized display duration</a-button>-->
 </template>
 
 <script setup lang="ts">

@@ -140,6 +140,7 @@
       .ant-badge-count {
         top: 5px;
         right: 2px;
+        color: #ffffff !important;
       }
     }
   }

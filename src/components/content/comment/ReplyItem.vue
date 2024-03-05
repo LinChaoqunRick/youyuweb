@@ -9,8 +9,8 @@
           <template #content>
             <UserCard :user="data.user"/>
           </template>
-          <RouterLink :to="`/user/${data.user.id}`">
-            <img :src="data.user.avatar"/>
+          <RouterLink :to="`/user/${data.user.id}`" class="avatar">
+            <img :src="data.user.avatar" alt="头像"/>
           </RouterLink>
         </a-popover>
         <a-popover placement="top"
@@ -35,8 +35,8 @@
           <template #content>
             <UserCard :user="data.userTo"/>
           </template>
-          <RouterLink :to="`/user/${data.userTo.id}`">
-            <img :src="data.userTo.avatar"/>
+          <RouterLink :to="`/user/${data.userTo.id}`" class="avatar">
+            <img :src="data.userTo.avatar" alt="头像"/>
           </RouterLink>
         </a-popover>
         <a-popover placement="top"
@@ -207,14 +207,19 @@ const onUserToVisibleChange = (visible: boolean) => {
 
       img {
         cursor: pointer;
-        height: 30px;
-        width: 30px;
+        height: 24px;
+        width: 24px;
         border-radius: 50%;
-        margin-right: 6px;
       }
 
       a {
         color: inherit;
+      }
+
+      .avatar {
+        height: 24px;
+        width: 24px;
+        margin-right: 6px;
       }
 
       .user-nickname {

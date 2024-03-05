@@ -1,7 +1,7 @@
 <template>
   <div class="custom-calendar">
     <div class="calender-header">嗨!</div>
-    <a-calendar :fullscreen="false" />
+    <a-calendar :fullscreen="false"/>
   </div>
 </template>
 
@@ -21,6 +21,10 @@
   ::v-deep(.ant-picker-calendar) {
     padding: 0;
     background: transparent;
+
+    .ant-picker-panel {
+      background-color: transparent;
+    }
   }
 }
 </style>
