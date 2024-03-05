@@ -170,7 +170,7 @@ const onLoadData = () => {
 const onUnlock = () => {
   if (!bottomOperation.value) return;
   const ob = new IntersectionObserver((entries) => {
-    if (!entries[0].isIntersecting) return;
+    if (!entries[0].isIntersecting || (pageNum.value >= totalPageNum.value)) return;
     getListData();
   });
   ob.observe(bottomOperation.value);
