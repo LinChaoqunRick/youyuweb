@@ -54,6 +54,10 @@
                 <i-editor theme="outline" size="14" fill="currentColor" />
                 编辑
               </div>
+              <div class="operation-item" @click="onDetail">
+                <i-doc-detail theme="outline" size="14" fill="currentColor"/>
+                详情
+              </div>
               <div class="operation-item">
                 <i-people-unknown theme="outline" size="14" fill="currentColor" />
                 屏蔽作者

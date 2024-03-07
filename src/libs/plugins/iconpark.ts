@@ -88,7 +88,8 @@ import {
   OneToOne,
   LocalTwo,
   Triangle,
-  SendOne
+  SendOne,
+  DocDetail
 } from '@icon-park/vue-next'
 
 const IconPark = (app) => {
@@ -182,6 +183,7 @@ const IconPark = (app) => {
   app.component('ILocalTwo', LocalTwo);
   app.component('ITriangle', Triangle);
   app.component('ISendOne', SendOne);
+  app.component('IDocDetail', DocDetail);
 }
 
 export default IconPark;
