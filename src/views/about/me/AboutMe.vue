@@ -1,5 +1,7 @@
 <template>
-  <AMap v-model="location"/>
+  <div>
+
+  </div>
 </template>
 
 <script setup>

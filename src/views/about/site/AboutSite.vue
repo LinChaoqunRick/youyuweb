@@ -1,7 +1,6 @@
 <template>
   <div>
-    AboutSite
-    <input v-model="siteValue"/>
+
   </div>
 </template>
 
