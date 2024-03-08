@@ -8,79 +8,36 @@
 <script lang="ts" setup>
 import Stats from 'stats.js';
 import {
-  AxesHelper, BoxGeometry,
+  AxesHelper,
+  BoxGeometry,
+  GridHelper,
   Color,
   Mesh,
-  MeshBasicMaterial, MeshLambertMaterial,
+  MeshBasicMaterial,
   PerspectiveCamera,
   PlaneGeometry,
-  Scene, SphereGeometry, SpotLight,
-  WebGLRenderer
+  Scene,
+  SphereGeometry,
+  AmbientLight,
+  WebGLRenderer,
+  DoubleSide
 } from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {onMounted, reactive, ref} from 'vue';
 import * as dat from 'dat.gui';
 
 const statsRef = ref<HTMLDivElement>();
-const stats = new Stats();
-stats.showPanel(0);
 
 const containerRef = ref<HTMLDivElement>();
-const scene = new Scene();
-
-const camera = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(-30, 40, 30);
-camera.lookAt(scene.position);
-
-const renderer = new WebGLRenderer();
-renderer.setClearColor(new Color(0xeeeeee));
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.shadowMap.enabled = true;
-
-const axes = new AxesHelper(20);
-scene.add(axes);
-
-const planeGeometry = new PlaneGeometry(60, 20);
-const meshBasicMaterial = new MeshLambertMaterial({
-  color: 0xcccccc
-})
-const plane = new Mesh(planeGeometry, meshBasicMaterial);
-plane.receiveShadow = true;
-plane.rotation.x = -0.5 * Math.PI;
-plane.position.x = 15;
-scene.add(plane);
-
-const cubeGeometry = new BoxGeometry(4, 4, 4);
-const cubeMaterial = new MeshLambertMaterial({
-  color: 0xff0000,
-  wireframe: false
-})
-const cube = new Mesh(cubeGeometry, cubeMaterial);
-cube.position.set(2, 2, 2);
-cube.castShadow = true;
-scene.add(cube);
-
-const sphereGeometry = new SphereGeometry(4);
-const sphereMaterial = new MeshLambertMaterial({
-  color: 0x7777ff,
-  wireframe: false
-})
-const sphere = new Mesh(sphereGeometry, sphereMaterial);
-sphere.castShadow = true;
-sphere.position.set(20, 4, 2);
-scene.add(sphere);
-
-const spotLight = new SpotLight(0xffffff);
-spotLight.castShadow = true;
-spotLight.position.set(-40, 60, -10);
-scene.add(spotLight);
-
+let scene, renderer, camera, controls, stats, plane, cube, sphere;
+let containerRect, step = 0;
 const controlData = reactive({
   rotationSpeed: 0.01,
   bouncingSpeed: 0.01,
   numberOfObjects: 0,
   addCube: function () {
     const cubeGeometry = new BoxGeometry(4, 4, 4);
-    const cubeMaterial = new MeshLambertMaterial({
+    const cubeMaterial = new MeshBasicMaterial({
       color: 0xff0000,
       wireframe: false
     })
@@ -93,18 +50,99 @@ const controlData = reactive({
   }
 })
 
-if (document.querySelectorAll('.dg.ac>.dg.main.a').length === 0) {
+const initSceneRenderer = () => {
+  // 渲染区域Rect
+  containerRect = containerRef.value.getBoundingClientRect();
+
+  // 初始化场景
+  scene = new Scene();
+
+  // 初始化渲染器
+  renderer = new WebGLRenderer();
+  renderer.setClearColor(new Color(0xeeeeee));
+  renderer.setSize(containerRect.width, containerRect.height);
+  renderer.shadowMap.enabled = true;
+}
+
+const initCamera = () => {
+  camera = new PerspectiveCamera(45, containerRect.width / containerRect.height, 0.1, 1000);
+  camera.position.set(-80, 140, 80);
+  camera.lookAt(scene.position);
+}
+
+const initHelper = () => {
+  // 添加坐标格辅助对象
+  const gridHelper = new GridHelper(200, 20);
+  scene.add(gridHelper);
+
+  // 添加坐标轴辅助对象 红x绿y蓝z
+  const axes = new AxesHelper(60);
+  scene.add(axes);
+
+  // 添加dat.gui
   const gui = new dat.GUI();
   gui.domElement.style = 'position:absolute;top:65px;right:10px;'
   gui.add(controlData, 'rotationSpeed', 0, 0.5);
   gui.add(controlData, 'bouncingSpeed', 0, 0.5);
   gui.add(controlData, 'numberOfObjects').listen();
   gui.add(controlData, 'addCube');
+
+  // 添加Stats
+  stats = new Stats();
+  stats.showPanel(0);
+  stats.dom.style.top = '65px';
+  statsRef.value.append(stats.dom);
+
+  // 添加轨道控制器
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.update();
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.1;
+  controls.maxDistance = 200;
 }
 
-let step = 0;
+const initLight = () => {
+  const spotLight = new AmbientLight(0xffffff);
+  spotLight.castShadow = true;
+  spotLight.position.set(-40, 60, -10);
+  scene.add(spotLight);
+}
 
-function renderScene() {
+const initModels = () => {
+  const planeGeometry = new PlaneGeometry(60, 20);
+  const meshBasicMaterial = new MeshBasicMaterial({
+    color: 0xcccccc,
+    side: DoubleSide
+  })
+  plane = new Mesh(planeGeometry, meshBasicMaterial);
+  plane.receiveShadow = true;
+  plane.rotation.x = -0.5 * Math.PI;
+  plane.position.x = 15;
+  scene.add(plane);
+
+  const cubeGeometry = new BoxGeometry(4, 4, 4);
+  const cubeMaterial = new MeshBasicMaterial({
+    color: 0xff0000,
+    wireframe: false
+  })
+  cube = new Mesh(cubeGeometry, cubeMaterial);
+  cube.position.set(2, 2, 2);
+  cube.castShadow = true;
+  scene.add(cube);
+
+  const sphereGeometry = new SphereGeometry(4);
+  const sphereMaterial = new MeshBasicMaterial({
+    color: 0x7777ff,
+    wireframe: false
+  })
+  sphere = new Mesh(sphereGeometry, sphereMaterial);
+  sphere.castShadow = true;
+  sphere.position.set(20, 4, 2);
+  scene.add(sphere);
+}
+
+const renderScene = () => {
+  controls.update();
   stats.update();
   scene.traverse(e => {
     if (e instanceof Mesh && e != plane) {
@@ -126,24 +164,36 @@ function renderScene() {
   renderer.render(scene, camera);
 }
 
-renderScene();
-
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
+const resize = () => {
+  containerRect = containerRef.value.getBoundingClientRect();
+  camera.aspect = containerRect.width / containerRect.height;
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-})
+  renderer.setSize(containerRect.width, containerRect.height);
+}
+
+window.addEventListener('resize', resize);
 
 onMounted(() => {
-  stats.dom.style.top = '65px';
-  statsRef.value?.append(stats.dom);
+  initSceneRenderer();
+  initCamera();
+  initHelper();
+  initLight();
+  initModels();
+
+  // 渲染场景
   containerRef.value?.appendChild(renderer.domElement);
   renderer.render(scene, camera);
+  renderScene();
 })
-
 
 </script>
 
 <style scoped lang="scss">
+.micro-module {
+  height: calc(100vh - 100px);
 
+  .three-d-container {
+    height: 100%;
+  }
+}
 </style>
