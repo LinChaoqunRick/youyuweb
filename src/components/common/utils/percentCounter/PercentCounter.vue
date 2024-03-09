@@ -22,7 +22,7 @@
       hideHeight = element.scrollHeight - element.offsetHeight;
       value = hideHeight > 0 ? element.scrollTop / hideHeight * 100 : 0;
     } else {
-      hideHeight = document.documentElement.scrollHeight - document.documentElement.offsetHeight;
+      hideHeight = document.documentElement.scrollHeight - window.innerHeight;
       value = hideHeight > 0 ? document.documentElement.scrollTop / hideHeight * 100 : 0;
     }
     percent.value = value > 100 ? 100 : value;
