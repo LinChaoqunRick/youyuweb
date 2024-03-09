@@ -221,3 +221,18 @@ export const onCheckLogin = (e: Event) => {
     }
   }
 }
+
+/**
+ * 滚动到anchor位置
+ */
+export const scrollToAnchor = () => {
+  const anchor = window.location.hash.slice(1); // 获取URL中的锚点
+  if (anchor) {
+    const targetElement = document.getElementById(anchor); // 获取具有相应id的目标元素
+    if (targetElement) {
+      setTimeout(() => {
+        targetElement.scrollIntoView({behavior: 'smooth'}); // 滚动到目标元素
+      })
+    }
+  }
+}

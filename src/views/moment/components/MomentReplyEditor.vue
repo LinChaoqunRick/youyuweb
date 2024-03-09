@@ -2,7 +2,8 @@
   <div class="reply-editor">
     <div class="editor-box">
       <div class="login-mask" @click="toLogin" v-if="!isLogin"></div>
-      <ContentEditableDiv v-model="reply.content" :row="1" :maxLength="300" :placeholder="placeholder" auto-focus ref="richEditor"/>
+      <ContentEditableDiv v-model="reply.content" :row="1" :maxLength="300" :placeholder="placeholder"
+                          :auto-focus="autoFocus" ref="richEditor"/>
     </div>
     <div class="image-wrapper" v-if="reply.images?.length">
       <div v-for="item in reply.images" class="image-item">
@@ -46,204 +47,210 @@
 </template>
 
 <script lang="ts">
-  export default {
-    name: "MomentReplyEditor"
-  }
+export default {
+  name: "MomentReplyEditor"
+}
 </script>
 
 <script setup lang="ts">
-  import {computed, reactive, ref} from "vue";
-  import {useStore} from "vuex";
-  import {onCheckLogin} from "@/assets/utils/utils";
-  import {cloneDeep} from 'lodash';
-  import {vOnClickOutside} from '@vueuse/components'
-  import ContentEditableDiv from "@/components/common/utils/contenteditable/ContentEditableDiv.vue";
-  import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
-  import EmojiPicker from "@/components/common/utils/emoji/EmojiPicker.vue";
+import {computed, reactive, ref} from "vue";
+import {useStore} from "vuex";
+import {onCheckLogin} from "@/assets/utils/utils";
+import {cloneDeep} from 'lodash';
+import {vOnClickOutside} from '@vueuse/components'
+import ContentEditableDiv from "@/components/common/utils/contenteditable/ContentEditableDiv.vue";
+import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
+import EmojiPicker from "@/components/common/utils/emoji/EmojiPicker.vue";
 
-  const {getters, commit} = useStore();
-  const prop = defineProps({
-    placeholder: {
-      type: String,
-    }
-  });
-  const emit = defineEmits(['onSubmit']);
+const {getters, commit} = useStore();
 
-  const userInfo = computed(() => getters['userInfo']);
-  const isLogin = computed(() => getters['isLogin']);
-
-  const emojiVisible = ref(false);
-  const richEditor = ref(null);
-  const reply = reactive({
-    userId: userInfo.value.id,
-    content: '',
-    images: []
-  });
-  const uploadDisabled = computed(() => reply.images.length >= 1 || !isLogin.value);
-  const currentLength = computed(() => richEditor.value?.totalStrLength);
-  const contentLengthExceed = computed(() => richEditor.value?.contentLengthExceed);
-  const loading = ref<boolean>(false);
-
-  const onClickEmoji = () => {
-    emojiVisible.value = true;
+const props = defineProps({
+  placeholder: {
+    type: String,
+  },
+  autoFocus: {
+    type: Boolean,
+    default: true
   }
+});
+const emit = defineEmits(['onSubmit']);
 
-  const onEmojiClose = () => {
-    emojiVisible.value = false;
+const userInfo = computed(() => getters['userInfo']);
+const isLogin = computed(() => getters['isLogin']);
+
+const emojiVisible = ref(false);
+const richEditor = ref(null);
+const reply = reactive({
+  userId: userInfo.value.id,
+  content: '',
+  images: []
+});
+const uploadDisabled = computed(() => reply.images.length >= 1 || !isLogin.value);
+const currentLength = computed(() => richEditor.value?.totalStrLength);
+const contentLengthExceed = computed(() => richEditor.value?.contentLengthExceed);
+
+const loading = ref<boolean>(false);
+
+const onClickEmoji = () => {
+  emojiVisible.value = true;
+}
+
+const onEmojiClose = () => {
+  emojiVisible.value = false;
+}
+
+const onImagePick = (value: HTMLElement | string) => {
+  richEditor.value.insertHtml(value)
+}
+
+const onEmojiPick = (value: string) => {
+  richEditor.value.insertText(value)
+}
+
+const uploadSuccess = (fileList: []) => {
+  const url = fileList[0].url + '?x-oss-process=style/smallThumb';
+  reply.images.push(url);
+}
+
+const onImageDelete = (index: number) => {
+  reply.images.splice(index, 1);
+}
+
+const toLogin = () => {
+  commit("changeLogin", true);
+}
+
+const onSubmit = () => {
+  loading.value = true;
+  const successCallback = () => {
+    richEditor.value.clearContent();
+    reply.content = '';
+    reply.images = [];
+    loading.value = false;
   }
-
-  const onImagePick = (value: HTMLElement | string) => {
-    richEditor.value.insertHtml(value)
+  const failedCallback = () => {
+    loading.value = false;
   }
+  emit("onSubmit", cloneDeep(reply), successCallback, failedCallback)
+}
 
-  const onEmojiPick = (value: string) => {
-    richEditor.value.insertText(value)
-  }
-
-  const uploadSuccess = (fileList: []) => {
-    const url = fileList[0].url + '?x-oss-process=style/smallThumb';
-    reply.images.push(url);
-  }
-
-  const onImageDelete = (index: number) => {
-    reply.images.splice(index, 1);
-  }
-
-  const toLogin = () => {
-    commit("changeLogin", true);
-  }
-
-  const onSubmit = () => {
-    loading.value = true;
-    const successCallback = () => {
-      richEditor.value.clearContent();
-      reply.content = '';
-      reply.images = [];
-      loading.value = false;
-    }
-    const failedCallback = () => {
-      loading.value = false;
-    }
-    emit("onSubmit", cloneDeep(reply), successCallback, failedCallback)
-  }
-
-  defineExpose({
-    reply
-  })
+defineExpose({
+  reply
+})
 </script>
 
 <style lang="scss" scoped>
-  .reply-editor {
+.reply-editor {
 
-    .editor-box {
-      position: relative;
+  .editor-box {
+    position: relative;
 
-      .login-mask {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        z-index: 1;
-      }
-
-      ::v-deep(.editor-active) {
-        #box {
-          min-height: 4rem !important;
-        }
-      }
+    .login-mask {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 1;
     }
 
-    .image-wrapper {
-      display: flex;
-      flex-wrap: wrap;
-
-      .image-item {
-        position: relative;
-        margin: 8px 8px 0 0;
-
-        img {
-          height: 80px;
-          width: 80px;
-          object-fit: cover;
-        }
-
-        .image-delete {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          cursor: pointer;
-          width: 18px;
-          height: 18px;
-          position: absolute;
-          top: 4px;
-          right: 4px;
-          border-radius: 50%;
-          border: 1px solid #c5c5c5;
-          background: rgba(0, 0, 0, .4);
-
-          &:hover {
-            background: rgba(0, 0, 0, .3);
-          }
-
-          .i-icon {
-            color: white;
-          }
-        }
-      }
-
-      .upload-image {
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 80px;
-        width: 80px;
-        border: 1px dashed #c5c5c5;
-        margin: 8px 8px 8px 0;
-        background: rgba(248, 248, 249, 0.2);
-        transition: .3s;
-
-        &:hover {
-          background: rgba(248, 248, 249, 0.3);
-        }
-      }
-    }
-
-    .reply-box-bottom {
-      margin-top: 12px;
-      display: flex;
-      align-items: center;
-
-      .tool-item {
-        display: flex;
-        align-items: center;
-        cursor: inherit;
-        margin-right: 16px;
-        transition: .3s;
-
-        .i-icon {
-          position: relative;
-          top: .5px;
-        }
-
-        .tool-title {
-          font-size: 13px;
-          padding-left: 4px;
-        }
-
-        &:hover {
-          color: #1890ff;
-        }
-      }
-
-      ::v-deep(.avatar-uploader) {
-        display: flex;
-      }
-
-      .submit-btn {
-        margin-left: auto;
+    ::v-deep(.editor-active) {
+      #box {
+        min-height: 4rem !important;
       }
     }
   }
+
+  .image-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+
+    .image-item {
+      position: relative;
+      margin: 8px 8px 0 0;
+
+      img {
+        height: 80px;
+        width: 80px;
+        object-fit: cover;
+      }
+
+      .image-delete {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        width: 18px;
+        height: 18px;
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        border-radius: 50%;
+        border: 1px solid #c5c5c5;
+        background: rgba(0, 0, 0, .4);
+
+        &:hover {
+          background: rgba(0, 0, 0, .3);
+        }
+
+        .i-icon {
+          color: white;
+        }
+      }
+    }
+
+    .upload-image {
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 80px;
+      width: 80px;
+      border: 1px dashed #c5c5c5;
+      margin: 8px 8px 8px 0;
+      background: rgba(248, 248, 249, 0.2);
+      transition: .3s;
+
+      &:hover {
+        background: rgba(248, 248, 249, 0.3);
+      }
+    }
+  }
+
+  .reply-box-bottom {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+
+    .tool-item {
+      display: flex;
+      align-items: center;
+      cursor: inherit;
+      margin-right: 16px;
+      transition: .3s;
+
+      .i-icon {
+        position: relative;
+        top: .5px;
+      }
+
+      .tool-title {
+        font-size: 13px;
+        padding-left: 4px;
+      }
+
+      &:hover {
+        color: #1890ff;
+      }
+    }
+
+    ::v-deep(.avatar-uploader) {
+      display: flex;
+    }
+
+    .submit-btn {
+      margin-left: auto;
+    }
+  }
+}
 </style>

@@ -21,16 +21,16 @@
           >
             <template v-slot:bottom>
               <a-button type="link" class="cancel-btn" @click="onEditCancel"
-                >取消
+              >取消
               </a-button>
             </template>
           </MomentEditor>
         </div>
         <div class="moment-comment-editor-wrapper mt-8">
           <div class="editor-title">评论</div>
-          <MomentReplyEditor @onSubmit="MomentRef?.onCommentSubmit" />
+          <MomentReplyEditor @onSubmit="MomentRef?.onCommentSubmit" :auto-focus="false"/>
         </div>
-        <div class="moment-comment-list mt-8 mb-8">
+        <div id="comment" class="moment-comment-list mt-8 mb-8">
           <div class="comment-list-top">
             <div class="comment-count">
               全部评论（{{ moment.commentCount || 0 }}）
@@ -41,7 +41,7 @@
                 :class="{ active: sort }"
                 @click="handleSort(true)"
               >
-                <i-time theme="filled" size="13" fill="currentColor" />
+                <i-time theme="filled" size="13" fill="currentColor"/>
                 最新
               </div>
               <div
@@ -49,7 +49,7 @@
                 :class="{ active: !sort }"
                 @click="handleSort(false)"
               >
-                <i-fire theme="filled" size="13" fill="currentColor" />
+                <i-fire theme="filled" size="13" fill="currentColor"/>
                 最热
               </div>
             </div>
@@ -74,10 +74,10 @@
               </template>
               <template #loadMoreBox="{ loading, total }">
                 <span class="mr-8"
-                  >查看全部
+                >查看全部
                   <span class="comment-count">{{
-                    moment.commentCount ?? total
-                  }}</span>
+                      moment.commentCount ?? total
+                    }}</span>
                   条评论</span
                 >
                 <i-down
@@ -101,28 +101,23 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  name: "MomentDetail",
-};
-</script>
-
-<script lang="ts" setup>
-import { computed, ref, nextTick } from "vue";
-import type { PropType } from "vue";
-import { useStore } from "vuex";
-import { useRoute, useRouter, onBeforeRouteUpdate } from "vue-router";
-import { cloneDeep } from "lodash";
-import type { momentListType } from "@/views/moment/types";
+<script name="MomentDetail1" lang="ts" setup>
+import {computed, ref, nextTick} from "vue";
+import type {PropType} from "vue";
+import {useStore} from "vuex";
+import {useRoute, useRouter, onBeforeRouteUpdate} from "vue-router";
+import {cloneDeep} from "lodash";
+import type {momentListType} from "@/views/moment/types";
 import MomentItem from "../list/MomentItem.vue";
 import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
 import MomentCommentItem from "../components/MomentCommentItem.vue";
 import MomentEditor from "../components/MomentEditor.vue";
 import ContentList from "@/components/common/system/ContentList.vue";
+import {scrollToAnchor} from "@/assets/utils/utils";
 
 const route = useRoute();
 const router = useRouter();
-const { dispatch } = useStore();
+const {dispatch} = useStore();
 
 const moment = ref<momentListType | null>(null);
 const MomentRef = ref<HTMLElement | null>(null);
@@ -137,7 +132,7 @@ const listParams = computed(() => ({
 const ContentListRef = ref<InstanceType<typeof ContentList> | null>(null);
 
 const getMomentDetail = () => {
-  dispatch("getMoment", { momentId: route.params.momentId }).then((res) => {
+  dispatch("getMoment", {momentId: route.params.momentId}).then((res) => {
     moment.value = res.data;
     if (isEdit.value) {
       onEdit();
@@ -190,10 +185,9 @@ const saveSuccess = (data: momentListType) => {
 
 <style lang="scss" scoped>
 .moment-detail {
-  display: flex;
-  justify-content: center;
 
   .moment-detail-middle {
+    margin: 0 auto;
     width: 824px;
 
     .moment-detail-item {
