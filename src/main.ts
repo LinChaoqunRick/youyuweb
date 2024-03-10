@@ -11,6 +11,7 @@ import {config} from 'md-editor-v3';
 import {lineNumbers} from '@codemirror/view';
 import ImageFiguresPlugin from 'markdown-it-image-figures';
 import anchor from 'markdown-it-anchor';
+import LinkAttr from 'markdown-it-link-attributes';
 
 import aside from "@/libs/directives/aside.js";
 import aside2 from "@/libs/directives/aside2.js";
@@ -56,6 +57,11 @@ config({
   markdownItConfig(md) {
     md.use(MarkExtension);
     md.use(ImageFiguresPlugin, {dataType: true, figcaption: "alt", lazy: true, async: true})
+    // md.use(LinkAttr, {
+    //   attrs: {
+    //     target: '_blank'
+    //   }
+    // })
     md.use(anchor, {permalink: true})
   },
   codeMirrorExtensions(theme, extensions) {

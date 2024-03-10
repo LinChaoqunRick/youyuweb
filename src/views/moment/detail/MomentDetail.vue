@@ -6,6 +6,7 @@
           <MomentItem
             v-if="!isEdit"
             :data="moment"
+            :show-detail="false"
             @deleteSuccess="onMomentDeleteSuccess"
             @onCommentDeleteSuccess="onCommentDeleteSuccess"
             @saveSuccess="onSaveCommentSuccess"
@@ -105,7 +106,7 @@
 import {computed, ref, nextTick} from "vue";
 import type {PropType} from "vue";
 import {useStore} from "vuex";
-import {useRoute, useRouter, onBeforeRouteUpdate} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {cloneDeep} from "lodash";
 import type {momentListType} from "@/views/moment/types";
 import MomentItem from "../list/MomentItem.vue";
@@ -113,7 +114,6 @@ import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
 import MomentCommentItem from "../components/MomentCommentItem.vue";
 import MomentEditor from "../components/MomentEditor.vue";
 import ContentList from "@/components/common/system/ContentList.vue";
-import {scrollToAnchor} from "@/assets/utils/utils";
 
 const route = useRoute();
 const router = useRouter();
@@ -165,7 +165,6 @@ const onSaveCommentSuccess = (data: momentListType) => {
 };
 
 const onEdit = () => {
-  console.log("isEdit");
   formData.value = cloneDeep(moment.value);
   formData.value.images = formData.value.images
     ? formData.value.images.split(",")

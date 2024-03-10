@@ -1,6 +1,6 @@
-import {nextTick} from 'vue';
-import store from "@/store/index";
-import Cookies from "js-cookie";
+import { nextTick } from 'vue';
+import store from '@/store/index';
+import Cookies from 'js-cookie';
 
 export function getElementLeft(element: HTMLElement) {
   let actualLeft: number = element.offsetLeft;
@@ -27,7 +27,7 @@ export function getElementTop(element: HTMLElement) {
 }
 
 export function scrollToEle(top: number, behavior: ScrollBehavior = 'smooth') {
-  window.scrollTo({top, behavior})
+  window.scrollTo({ top, behavior });
 }
 
 /**
@@ -59,7 +59,6 @@ export const setPosition = (
   });
 };
 
-
 /**
  *
  * 从focus位置插入元素
@@ -81,17 +80,15 @@ export const insert = (
     subfixVal?: string; // 后半部分内容
   }
 ) => {
-  const {deviationStart = 0, deviationEnd = 0, direct = false, select = false} = params;
+  const { deviationStart = 0, deviationEnd = 0, direct = false, select = false } = params;
   // 返回值
   let res = '';
   if (dom.selectionStart || dom.selectionStart === 0) {
     const startPos = dom.selectionStart;
     const endPos = dom.selectionEnd || 0;
 
-    const {
-      prefixVal = dom.value.substring(0, startPos),
-      subfixVal = dom.value.substring(endPos, dom.value.length)
-    } = params;
+    const { prefixVal = dom.value.substring(0, startPos), subfixVal = dom.value.substring(endPos, dom.value.length) } =
+      params;
 
     res = prefixVal + tarValue + subfixVal;
 
@@ -122,44 +119,42 @@ export async function keepScrollTop() {
   document.documentElement.scrollTop = originScrollTop;
 }
 
-
 export function getMarkDownImages(content: string) {
   const images = [];
   const pattern = /!\[(.*?)]\((https?:\/\/.+\.(png|jpe?g|webp|gif|svg))(.*\))/gi;
   let matcher;
   while ((matcher = pattern.exec(content)) !== null) {
-    images.push({alt: matcher[1], url: matcher[2]});
+    images.push({ alt: matcher[1], url: matcher[2] });
   }
   return images;
 }
-
 
 // 给元素添加class名称 el:要添加类名的元素 cn:添加的样式名称
 export const addClass = (el: HTMLElement, ...cn: string[]) => {
   for (const name of cn) {
     el.classList.add(name);
   }
-}
+};
 
 // 删除元素class名称 el:要删除类名的元素 cn:删除的样式名称
 export const removeClass = (el: HTMLElement, ...cn: string[]) => {
   for (const name of cn) {
     el.classList.remove(name);
   }
-}
+};
 
 // 判断元素是否有某个类名 el:要判断类名的元素 cn:判断的样式名称
 function hasClass(el: HTMLElement, cn: string) {
-  let reg = new RegExp("\\b" + cn + "\\b")
-  return reg.test(el.className)
+  let reg = new RegExp('\\b' + cn + '\\b');
+  return reg.test(el.className);
 }
 
 /**
  * 随机颜色
  */
 export const randomColor = () => {
-  return '#' + ('00000' + (Math.random() * 0x1000000 << 0).toString(16)).slice(-6);
-}
+  return '#' + ('00000' + ((Math.random() * 0x1000000) << 0).toString(16)).slice(-6);
+};
 
 /**
  * 16进制色值获取反色设置方法
@@ -168,15 +163,15 @@ export const randomColor = () => {
  */
 export const colorReverse = (color: string) => {
   const reverseColor: string = '0x' + color.replace(/#/g, '');
-  let str = '000000' + (0xFFFFFF - reverseColor).toString(16);
+  let str = '000000' + (0xffffff - reverseColor).toString(16);
   return '#' + str.substring(str.length - 6, str.length);
-}
+};
 
 export const cleanCookieLocalStorage = () => {
-  Cookies.remove("access_token");
-  Cookies.remove("refresh_token");
+  Cookies.remove('access_token');
+  Cookies.remove('refresh_token');
   localStorage.clear();
-}
+};
 
 /**
  * 判断body是否存在滚动条
@@ -207,7 +202,7 @@ export function enabledBodyScroll() {
  */
 export const onCheckLogin = (e: Event) => {
   if (!store.getters.isLogin) {
-    store.commit("changeLogin", true);
+    store.commit('changeLogin', true);
     if (e && e.stopPropagation) {
       e.stopPropagation();
     } else {
@@ -220,19 +215,28 @@ export const onCheckLogin = (e: Event) => {
       window.event.returnValue = false;
     }
   }
-}
+};
 
 /**
  * 滚动到anchor位置
  */
 export const scrollToAnchor = () => {
-  const anchor = window.location.hash.slice(1); // 获取URL中的锚点
+  let anchor = window.location.hash; // 获取URL中的锚点
   if (anchor) {
-    const targetElement = document.getElementById(anchor); // 获取具有相应id的目标元素
-    if (targetElement) {
-      setTimeout(() => {
-        targetElement.scrollIntoView({behavior: 'smooth'}); // 滚动到目标元素
-      })
-    }
+    // anchor = decodeURIComponent(anchor);
+    nextTick(() => {
+      // const targetElement = document.getElementById(anchor); // 获取具有相应id的目标元素
+      // if (targetElement) {
+      //   targetElement.scrollIntoView(true); // 滚动到目标元素
+      // }
+
+      const allLinks = document.getElementsByTagName('a');
+
+      for (let i = 0; i < allLinks.length; i++) {
+        if (allLinks[i].getAttribute('href') === anchor) {
+          allLinks[i].scrollIntoView();
+        }
+      }
+    });
   }
-}
+};

@@ -54,7 +54,7 @@
                 <i-editor theme="outline" size="14" fill="currentColor" />
                 编辑
               </div>
-              <div class="operation-item" @click="onDetail">
+              <div v-if="showDetail" class="operation-item" @click="onDetail">
                 <i-doc-detail theme="outline" size="14" fill="currentColor"/>
                 详情
               </div>
@@ -203,6 +203,10 @@ const props = defineProps({
   data: {
     type: Object as PropType<momentListType>,
   },
+  showDetail: {
+    type: Boolean,
+    default: true
+  }
 });
 
 const emit = defineEmits(['deleteSuccess', 'onEdit', 'saveSuccess', 'onCommentDeleteSuccess']);

@@ -2,7 +2,7 @@
   <div class="post-detail">
     <div class="post-aside">
       <div v-aside3 class="post-aside-body">
-        <UserInfoPanel :id="post.userId"/>
+        <UserInfoPanel :id="post.userId" />
       </div>
     </div>
     <div class="post-body" id="aside-right">
@@ -11,17 +11,20 @@
         <div class="post-info">
           <div class="post-info-detail">
             <div class="create-type">
-              <p v-if="post.createType==='0'" style="color: #67bb55;">
-                {{ post.createTypeDesc }}</p>
-              <p v-if="post.createType==='1'" style="color: #fc5531;">
-                {{ post.createTypeDesc }}</p>
-              <p v-if="post.createType==='2'" style="color: #6a87f1;">
-                {{ post.createTypeDesc }}</p>
+              <p v-if="post.createType === '0'" style="color: #67bb55">
+                {{ post.createTypeDesc }}
+              </p>
+              <p v-if="post.createType === '1'" style="color: #fc5531">
+                {{ post.createTypeDesc }}
+              </p>
+              <p v-if="post.createType === '2'" style="color: #6a87f1">
+                {{ post.createTypeDesc }}
+              </p>
             </div>
             <div class="post-info-data-category">
               <div class="post-info-data">
                 <div class="post-info-data-item">
-                  <i-calendar theme="outline" size="13" fill="currentColor"/>
+                  <i-calendar theme="outline" size="13" fill="currentColor" />
                   <a-tooltip placement="top">
                     <template #title>
                       <div>首次发布：{{ post.createTime }}</div>
@@ -31,8 +34,9 @@
                   </a-tooltip>
                 </div>
                 <div class="post-info-data-item">
-                  <i-preview-open theme="outline" size="14" fill="currentColor"/>
-                  <span>{{ post.viewCount }}</span>Views
+                  <i-preview-open theme="outline" size="14" fill="currentColor" />
+                  <span>{{ post.viewCount }}</span
+                  >Views
                 </div>
               </div>
               <div class="post-info-category">
@@ -45,13 +49,14 @@
               </div>
             </div>
             <div class="post-operation">
-              <span class="operation-item hide" v-if="userInfo.id && (userInfo.id === post.userId)">隐藏</span>
-              <span class="operation-item edit" v-if="userInfo.id && (userInfo.id === post.userId)"
-                    @click="handleEdit">编辑</span>
+              <span class="operation-item hide" v-if="userInfo.id && userInfo.id === post.userId">隐藏</span>
+              <span class="operation-item edit" v-if="userInfo.id && userInfo.id === post.userId" @click="handleEdit"
+                >编辑</span
+              >
               <span class="operation-item fold" @click="handleFold">{{ fold ? '展开' : '收起' }}</span>
             </div>
           </div>
-          <div class="post-info-copyright" :class="{'unfold': !fold}">
+          <div class="post-info-copyright" :class="{ unfold: !fold }">
             <div class="copyright-original" v-if="post.createType === '0'">
               <div class="creative-commons">
                 版权声明：本文为博主原创文章，遵循
@@ -60,8 +65,7 @@
               </div>
               <div class="creative-commons">
                 本文链接：
-                <a
-                  :href="'https://www.youyul.com/post/details/'+route.params.postId">
+                <a :href="'https://www.youyul.com/post/details/' + route.params.postId">
                   https://www.youyul.com/post/details/{{ route.params.postId }}
                 </a>
               </div>
@@ -69,69 +73,68 @@
             <div class="copyright-reprint" v-else>
               <div class="creative-commons">
                 原文链接：
-                <a :href=post.originalLink>{{ post.originalLink }}</a>
+                <a :href="post.originalLink">{{ post.originalLink }}</a>
               </div>
             </div>
           </div>
         </div>
         <div class="post-main-content">
-          <Spin v-if="!post.id" height="500px"/>
+          <Spin v-if="!post.id" height="500px" />
           <div class="post-summary" v-if="false">
             <div class="post-summary-title">摘要</div>
             <div class="post-summary-summary" v-html="post.summary"></div>
           </div>
           <div class="post-content">
-            <MdPreview
-              editorId="post-content"
-              :text="post.content"/>
+            <MdPreview editorId="post-content" :text="post.content" />
           </div>
           <div class="post-column-list" v-if="post.columns?.length">
             <div class="include-text">本文已收录至：</div>
-            <PostColumn v-for="item in post.columns" :data="item"/>
+            <PostColumn v-for="item in post.columns" :data="item" />
           </div>
         </div>
       </div>
       <div class="post-right">
         <div class="post-category">
-          <MdCatalogPanel editorId="post-content"/>
+          <MdCatalogPanel editorId="post-content" />
         </div>
         <div class="post-operation">
-          <PostOperation v-if="post" @scrollToComment="scrollToComment"/>
+          <PostOperation v-if="post" @scrollToComment="scrollToComment" />
         </div>
       </div>
       <div class="post-comment">
         <div class="post-comment-list" ref="commentRef">
-          <PostComment ref="postComment"/>
+          <PostComment ref="postComment" />
         </div>
       </div>
     </div>
     <Teleport to="#header">
-      <PercentCounter/>
+      <PercentCounter />
     </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, computed, provide, readonly, watch, inject} from 'vue';
-import {useRoute, useRouter} from 'vue-router';
-import {useStore} from 'vuex';
-import {scrollToEle} from "@/assets/utils/utils";
-import type {postData} from "@/types/post";
+import { ref, computed, provide, readonly, watch, inject, nextTick } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+import { scrollToEle } from '@/assets/utils/utils';
+import type { postData } from '@/types/post';
+import { scrollToAnchor } from '@/assets/utils/utils';
 
-import PercentCounter from "@/components/common/utils/percentCounter/PercentCounter.vue";
-import MdPreview from "@/components/content/mdEditor/MdPreview.vue";
-import Spin from "@/components/common/utils/spin/Spin.vue";
-import UserInfoPanel from "./child/UserInfoPanel.vue";
-import MdCatalogPanel from "./child/MdCatalogPanel.vue";
-import PostOperation from "./child/PostOperation.vue";
-import PostComment from "./child/PostComment.vue";
-import PostColumn from "./child/PostColumn.vue";
+import PercentCounter from '@/components/common/utils/percentCounter/PercentCounter.vue';
+import MdPreview from '@/components/content/mdEditor/MdPreview.vue';
+import Spin from '@/components/common/utils/spin/Spin.vue';
+import UserInfoPanel from './child/UserInfoPanel.vue';
+import MdCatalogPanel from './child/MdCatalogPanel.vue';
+import PostOperation from './child/PostOperation.vue';
+import PostComment from './child/PostComment.vue';
+import PostColumn from './child/PostColumn.vue';
 
-const reload = inject('reload')
+const reload = inject('reload');
 
 const route = useRoute();
 const router = useRouter();
-const {state, dispatch, getters} = useStore();
+const { state, dispatch, getters } = useStore();
 const post = ref<postData>({
   id: null,
   title: '',
@@ -143,32 +146,38 @@ const post = ref<postData>({
   createType: '',
   originalLink: '',
   userId: null,
-  columnIds: []
+  columnIds: [],
 });
 const fold = ref(true);
 const userInfo = computed(() => getters['userInfo']);
-const tags = computed(() => post.value.tags?.length ? post.value.tags.split(",") : [])
+const tags = computed(() => (post.value.tags?.length ? post.value.tags.split(',') : []));
 const commentRef = ref(null);
 const postComment = ref(null);
 const isLogin = computed(() => getters['isLogin']);
 
 function getPostDetail() {
-  dispatch("getPostDetail", {postId: route.params.postId}).then(res => {
+  dispatch('getPostDetail', { postId: route.params.postId }).then(res => {
     post.value = res.data;
     document.title = res.data.title;
-  })
+    setTimeout(() => {
+      scrollToAnchor();
+    }, 1000);
+  });
 }
 
 getPostDetail();
 
-watch(() => route.params.postId, ((newVal) => {
-  if (newVal) {
-    reload();
+watch(
+  () => route.params.postId,
+  newVal => {
+    if (newVal) {
+      reload();
+    }
   }
-}))
+);
 
 function handleEdit() {
-  router.push({path: '/editPost', query: {postId: post.value.id}})
+  router.push({ path: '/editPost', query: { postId: post.value.id } });
 }
 
 function handleFold() {
@@ -188,7 +197,6 @@ function setPostAttribute(name, value) {
 
 provide('post', readonly(post));
 provide('setPostAttribute', setPostAttribute);
-
 </script>
 
 <style lang="scss" scoped>
@@ -362,7 +370,7 @@ provide('setPostAttribute', setPostAttribute);
           padding-left: 10px;
           overflow: hidden;
           max-height: 0;
-          transition: .3s ease-out;
+          transition: 0.3s ease-out;
           border-bottom: 2px solid var(--youyu-border-color);
 
           .copyright-original {
