@@ -21,7 +21,7 @@
         </a-form-item>
         <div class="cover-box">
           <div class="column-cover">
-            <UploadFile @uploadSuccess="uploadSuccess">
+            <UploadFile auto-upload @uploadSuccess="uploadSuccess">
               <img :src="formValidate.cover">
             </UploadFile>
           </div>
@@ -42,7 +42,6 @@
   import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
 
   const {getters, commit, dispatch} = useStore();
-  import {computed} from "vue";
 
   const labelCol = {span: 4};
   const wrapperCol = {span: 20};

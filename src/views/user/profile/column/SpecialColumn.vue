@@ -30,7 +30,7 @@ const user = inject('user');
 const userInfo = computed(() => getters['userInfo']);
 const isOwn = computed(() => userInfo.value.id === user.value.id);
 
-const maxNum = 5;
+const maxNum = 10;
 const columnList = computed(() => ContentDataRef.value?.data ?? []);
 const loading = ref(false);
 const addBtnDisabled = computed(() => columnList.value.length >= maxNum);

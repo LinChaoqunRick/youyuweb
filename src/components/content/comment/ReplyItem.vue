@@ -250,14 +250,14 @@ const onUserToVisibleChange = (visible: boolean) => {
   }
 
   .reply-content {
-    margin: 8px 0 8px 36px;
+    margin: 8px 0 8px 30px;
     white-space: pre-wrap;
   }
 
   .reply-operation {
     display: flex;
     align-items: center;
-    margin-left: 36px;
+    margin-left: 30px;
 
 
     .ope-item {

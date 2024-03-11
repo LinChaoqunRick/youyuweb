@@ -26,8 +26,12 @@ export function getElementTop(element: HTMLElement) {
   return actualTop;
 }
 
-export function scrollToEle(top: number, behavior: ScrollBehavior = 'smooth') {
+export function scrollToTop(top: number, behavior: ScrollBehavior = 'smooth') {
   window.scrollTo({ top, behavior });
+}
+
+export function scrollToEle(element: Element, offset: number = 0, behavior: ScrollBehavior = 'smooth') {
+  window.scrollTo({ top: getElementTop(element) - offset, behavior });
 }
 
 /**
@@ -235,6 +239,7 @@ export const scrollToAnchor = () => {
       for (let i = 0; i < allLinks.length; i++) {
         if (allLinks[i].getAttribute('href') === anchor) {
           allLinks[i].scrollIntoView();
+          scrollToEle(allLinks[i], 58, 'auto')
         }
       }
     });

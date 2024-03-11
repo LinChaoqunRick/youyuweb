@@ -96,8 +96,9 @@
 
 <style lang="scss">
   .reply-editor-popover {
-    .ant-popover-inner-content {
+    .ant-popover-inner {
       padding: 4px !important;
+      user-select: none;
     }
   }
 </style>

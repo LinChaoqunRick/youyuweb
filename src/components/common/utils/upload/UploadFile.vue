@@ -94,7 +94,6 @@ const handleChange = (info: UploadChangeParam) => {
     emit('change', file);
     tempCount++;
     if (tempCount === fileList.length && props.autoUpload) {
-      console.log('ok');
       upload();
     }
     return resolve(true);
@@ -125,7 +124,6 @@ const upload = async () => {
 
 const uploadProgress = (progressList: number[]) => {
   progress.value = progressList;
-  console.log(progress.value);
   files.value.forEach((file, index) => (typeof file === 'object' && (file.progress = progressList[index])));
   if (progress.value.length) {
     const total = progress.value.reduce((pre, n) => pre + n, 0);
