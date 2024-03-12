@@ -31,8 +31,6 @@ const editorConfig = computed(() => {
   return Object.assign({}, editorProps, props.extend);
 });
 
-const mdHeadingId = (_text, _level, index) => `heading-${index}`;
-
 const onHtmlChanged = () => emit('onHtmlChanged');
 </script>
 

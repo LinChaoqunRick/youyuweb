@@ -43,10 +43,10 @@ export const router = createRouter({
   ],
   scrollBehavior(to, from, savedPosition) {
     // 返回 savedPosition，在按下 后退/前进 按钮时，就会像浏览器的原生表现那样
-    if (to.meta.keepAlive) {
+    if (savedPosition) {
       return savedPosition
     } else {
-      return {top: 0}
+      return { top: 0 }
     }
   },
 })

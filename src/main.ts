@@ -62,7 +62,7 @@ config({
     //     target: '_blank'
     //   }
     // })
-    md.use(anchor, {permalink: true})
+    // md.use(anchor, {permalink: true})
   },
   codeMirrorExtensions(theme, extensions) {
     return [...extensions, lineNumbers()];

@@ -225,22 +225,12 @@ export const onCheckLogin = (e: Event) => {
  * 滚动到anchor位置
  */
 export const scrollToAnchor = () => {
-  let anchor = window.location.hash; // 获取URL中的锚点
+  let anchor = window.location.hash.slice(1); // 获取URL中的锚点
   if (anchor) {
-    // anchor = decodeURIComponent(anchor);
-    nextTick(() => {
-      // const targetElement = document.getElementById(anchor); // 获取具有相应id的目标元素
-      // if (targetElement) {
-      //   targetElement.scrollIntoView(true); // 滚动到目标元素
-      // }
-
-      const allLinks = document.getElementsByTagName('a');
-
-      for (let i = 0; i < allLinks.length; i++) {
-        if (allLinks[i].getAttribute('href') === anchor) {
-          allLinks[i].scrollIntoView();
-          scrollToEle(allLinks[i], 58, 'auto')
-        }
+    anchor = decodeURIComponent(anchor);
+    nextTick(() => {const anchorElement = document.getElementById(anchor);
+      if (anchorElement) {
+        scrollToEle(anchorElement, 58, 'smooth')
       }
     });
   }

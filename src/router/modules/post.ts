@@ -28,7 +28,8 @@ const route = [
         meta: {
           title: "文章详情",
           hide: true,
-          code: "POST_DETAIL"
+          code: "POST_DETAIL",
+          keepAlive: true
         },
         alias: ':postId(\\d*)',
         component: () => import('@/views/post/detail/PostDetail.vue'),

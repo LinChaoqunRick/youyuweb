@@ -85,7 +85,7 @@
             <div class="post-summary-summary" v-html="post.summary"></div>
           </div>
           <div class="post-content">
-            <MdPreview editorId="post-content" :text="post.content" @onHtmlChanged="onHtmlChanged" />
+            <MdPreview editorId="post-content" :text="post.content" @onHtmlChanged="onHtmlChanged"/>
           </div>
           <div class="post-column-list" v-if="post.columns?.length">
             <div class="include-text">本文已收录至：</div>
@@ -117,9 +117,9 @@
 import { ref, computed, provide, readonly, watch, inject, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import { scrollToTop } from '@/assets/utils/utils';
+import { debounce } from 'lodash';
+import { scrollToTop, scrollToAnchor } from '@/assets/utils/utils';
 import type { postData } from '@/types/post';
-import { scrollToAnchor } from '@/assets/utils/utils';
 
 import PercentCounter from '@/components/common/utils/percentCounter/PercentCounter.vue';
 import MdPreview from '@/components/content/mdEditor/MdPreview.vue';
@@ -164,12 +164,7 @@ function getPostDetail() {
 
 getPostDetail();
 
-const onHtmlChanged = () => {
-  console.log('onHtmlChanged');
-  nextTick(() => {
-    // scrollToAnchor();
-  });
-};
+const onHtmlChanged = debounce(scrollToAnchor, 500);
 
 watch(
   () => route.params.postId,
