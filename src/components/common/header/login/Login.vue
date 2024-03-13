@@ -10,9 +10,9 @@
                  placement="bottomRight"
                  :getPopupContainer="triggerNode=>triggerNode.parentNode">
         <template #content>
-          <h3 class="login-tips">您尚未登录，登录后您可以：</h3>
+          <div class="login-tips">您尚未登录，登录后您可以：</div>
           <ul class="login-guide-list">
-            <li class="login-guide-list-item" v-for="item in guideList">
+            <li class="login-guide-list-item cp" v-for="item in guideList">
               <div class="login-guide-icon-wrap">
                 <component :is="item.icon" size="16" fill="#1e80ff"/>
               </div>
@@ -45,15 +45,15 @@
 
   const guideList = ref([
     {
-      label: "发布博客随笔",
+      label: "发布博客时刻",
       icon: "i-write"
     },
     {
-      label: "参与交流评论",
+      label: "参与交流讨论",
       icon: "i-comment"
     },
     {
-      label: "收藏有用文章",
+      label: "收藏优质文章",
       icon: "i-star"
     },
     {
@@ -117,15 +117,16 @@
   }
 
   .login-tips {
-    font-weight: bold;
+    font-size: 16px;
     color: var(--youyu-login-color);
+    margin-bottom: 12px;
   }
 
   .login-guide-list {
     width: 300px;
     display: flex;
     padding: 0;
-    margin: 0;
+    margin-bottom: 8px;
     flex-wrap: wrap;
     align-items: center;
 
