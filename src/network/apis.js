@@ -95,7 +95,7 @@ export const CATEGORY_LIST = ApiBase + "/category/open/list"; //
 // 专栏
 export const GET_COLUMN_LIST = ApiBase + "/column/open/list"; //专栏列表
 export const GET_COLUMN_DETAIL = ApiBase + "/column/open/get"; //专栏详情
-export const ADD_COLUMN = ApiBase + "/column/add"; //专栏列表
+export const ADD_COLUMN = ApiBase + "/column/create"; //专栏列表
 export const UPDATE_COLUMN = ApiBase + "/column/update"; //专栏列表
 export const DELETE_COLUMN = ApiBase + "/column/delete"; //删除专栏
 export const GET_COLUMN_POSTS = ApiBase + "/column/open/getColumnPosts"; //专栏文章列表
