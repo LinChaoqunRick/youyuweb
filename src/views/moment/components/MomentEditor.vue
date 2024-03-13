@@ -185,6 +185,8 @@ const onSubmit = async () => {
     }
     form.images = form.images.filter(item => typeof item === 'string');
     form.images = form.images.length ? form.images.join(',') : null;
+  } else {
+    form.images = '';
   }
 
   form.content = transformHTMLToTag(form.content);

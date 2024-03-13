@@ -22,10 +22,14 @@ import {
 export default {
   actions: {
     createMoment(context: any, params: object) {
-      return http.post(MOMENT_CREATE, params);
+      return http.post(MOMENT_CREATE, params, {
+        headers: { "Content-Type": "application/json" },
+      });
     },
     updateMoment(context: any, params: object) {
-      return http.post(MOMENT_UPDATE, params);
+      return http.post(MOMENT_UPDATE, params, {
+        headers: { "Content-Type": "application/json" },
+      });
     },
     deleteMoment(context: any, params: object) {
       return http.post(MOMENT_DELETE, params);
