@@ -28,7 +28,7 @@
         <div class="form-box">
           <div class="form-top" v-if="!isLogin">
             <a-form-item class="nickname-item" label="昵称" name="nickname">
-              <a-input v-model:value="formState.nickname" :maxlength="10" size="large" placeholder="必填：请输入昵称"/>
+              <a-input v-model:value="formState.nickname" :maxlength="12" size="large" placeholder="必填：请输入昵称"/>
             </a-form-item>
 
             <a-form-item class="email-item" label="邮箱" name="email">
