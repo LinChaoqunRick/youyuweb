@@ -11,15 +11,15 @@
         <div class="post-info">
           <div class="post-info-detail">
             <div class="create-type">
-              <p v-if="post.createType === '0'" style="color: #67bb55">
+              <div v-if="post.createType === '0'" style="color: #67bb55">
                 {{ post.createTypeDesc }}
-              </p>
-              <p v-if="post.createType === '1'" style="color: #fc5531">
+              </div>
+              <div v-if="post.createType === '1'" style="color: #fc5531">
                 {{ post.createTypeDesc }}
-              </p>
-              <p v-if="post.createType === '2'" style="color: #6a87f1">
+              </div>
+              <div v-if="post.createType === '2'" style="color: #6a87f1">
                 {{ post.createTypeDesc }}
-              </p>
+              </div>
             </div>
             <div class="post-info-data-category">
               <div class="post-info-data">
@@ -244,9 +244,10 @@ provide('setPostAttribute', setPostAttribute);
             line-height: 22px;
             text-align: center;
             height: 20px;
-            width: 40px;
+            width: 50px;
             font-size: 14px;
             float: left;
+            padding: 0 8px;
           }
 
           .post-info-data-category {
