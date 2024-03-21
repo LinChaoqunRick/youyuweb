@@ -224,8 +224,6 @@ const onPaste = (e) => {
       // 如果是文件，调用处理文件的方法
     }
   }
-
-
 };
 
 const handleText = (item: DataTransferItem) => {
@@ -239,9 +237,7 @@ const handleText = (item: DataTransferItem) => {
 }
 
 const handleImage = async (files: File[]) => {
-  const result = await uploadToOss(files)
-  const urls = result?.map(item => item.url && item);
-  emit('uploadSuccess', urls);
+  emit('onPasteImage', files);
 }
 
 const clearContent = () => {

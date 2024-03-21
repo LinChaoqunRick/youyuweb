@@ -7,19 +7,20 @@
           v-model="form.content"
           showLimit
           placeholder="此刻在想什么？快来分享一些新鲜事或发表一些看法吧！"
+          @onPasteImage="onPasteImage"
           ref="richEditor"
         >
           <template #bottom>
             <div class="topic-wrapper">
               <div class="add-position" @click="onAddPosition">
                 <div class="icon-wrapper">
-                  <i-local-two theme="multi-color" size="12" :fill="['#ffffff', '#ffffff', '#3b8fff', '#3b8fff']"/>
+                  <i-local-two theme="multi-color" size="12" :fill="['#ffffff', '#ffffff', '#3b8fff', '#3b8fff']" />
                 </div>
                 <span class="position-text">{{ form.location || '添加位置' }}</span>
                 <div class="icon-wrapper-close" v-if="form.location" @click.stop="onClearLocation">
-                  <i-close-small theme="outline" size="13" fill="#fff" :strokeWidth="3"/>
+                  <i-close-small theme="outline" size="13" fill="#fff" :strokeWidth="3" />
                 </div>
-                <i-right v-else theme="outline" size="13" fill="currentColor"/>
+                <i-right v-else theme="outline" size="13" fill="currentColor" />
               </div>
             </div>
           </template>
@@ -31,7 +32,7 @@
         class="list-group"
         :component-data="{
           type: 'transition-group',
-          name: !drag ? 'flip-list' : null
+          name: !drag ? 'flip-list' : null,
         }"
         v-model="form.images"
         v-bind="dragOptions"
@@ -41,15 +42,15 @@
       >
         <template #item="{ element, index }">
           <div class="image-item">
-            <img :src="element.thumb || element" alt=""/>
+            <img :src="element.thumb || element" alt="" />
             <div class="image-delete" @click="onImageDelete(index)">
-              <i-close theme="outline" size="10" fill="currentColor" :strokeWidth="2"/>
+              <i-close theme="outline" size="10" fill="currentColor" :strokeWidth="2" />
             </div>
           </div>
         </template>
       </draggable>
       <div class="upload-image" @click="onAddImage" v-if="!uploadDisabled">
-        <i-plus theme="outline" size="40" fill="currentColor" :strokeWidth="1"/>
+        <i-plus theme="outline" size="40" fill="currentColor" :strokeWidth="1" />
       </div>
     </div>
     <div class="editor-bottom">
@@ -61,10 +62,10 @@
           :visible="emojiVisible"
         >
           <template #content>
-            <EmojiPicker @onImagePick="onImagePick" @onEmojiPick="onEmojiPick" v-on-click-outside="onEmojiClose"/>
+            <EmojiPicker @onImagePick="onImagePick" @onEmojiPick="onEmojiPick" v-on-click-outside="onEmojiClose" />
           </template>
           <div class="tool-item" v-login="onClickEmoji">
-            <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
+            <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3" />
             <span class="tool-title">表情</span>
           </div>
         </a-popover>
@@ -76,7 +77,7 @@
           ref="UploadFileRef"
         >
           <div class="tool-item item-upload-image" v-login>
-            <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
+            <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3" />
             <span class="tool-title">图片</span>
           </div>
         </UploadFile>
@@ -99,16 +100,16 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, computed, toRefs} from 'vue';
-import {useRouter} from 'vue-router';
-import {useStore} from 'vuex';
-import {message} from 'ant-design-vue';
-import {cloneDeep} from 'lodash';
-import {vOnClickOutside} from '@vueuse/components';
-import {onCheckLogin} from '@/assets/utils/utils';
-import draggable from 'vuedraggable'
+import { ref, reactive, computed, toRefs } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+import { message } from 'ant-design-vue';
+import { cloneDeep } from 'lodash';
+import { vOnClickOutside } from '@vueuse/components';
+import { onCheckLogin } from '@/assets/utils/utils';
+import draggable from 'vuedraggable';
 import openModal from '@/libs/tools/openModal';
-import {transformHTMLToTag} from '@/components/common/utils/emoji/youyu_emoji';
+import { transformHTMLToTag } from '@/components/common/utils/emoji/youyu_emoji';
 import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
 import EmojiPicker from '@/components/common/utils/emoji/EmojiPicker.vue';
 import ContentEditableDiv from '@/components/common/utils/contenteditable/ContentEditableDiv.vue';
@@ -133,13 +134,13 @@ const props = defineProps({
 const emit = defineEmits(['saveSuccess']);
 const dragOptions = reactive({
   animation: 200,
-  group: "description",
+  group: 'description',
   disabled: false,
-  ghostClass: "ghost"
+  ghostClass: 'ghost',
 });
 
 const maxLength = 500;
-const {getters, commit, dispatch} = useStore();
+const { getters, commit, dispatch } = useStore();
 const router = useRouter();
 const userInfo = computed(() => getters['userInfo']);
 const isLogin = computed(() => getters['isLogin']);
@@ -172,6 +173,7 @@ const onSubmit = async () => {
   const form = cloneDeep(props.form);
 
   const imagesListRes = await UploadFileRef.value.upload();
+  console.log(imagesListRes);
 
   if (form.images?.length) {
     if (props.isEdit) {
@@ -198,7 +200,7 @@ const onSubmit = async () => {
       if (isEdit) {
         router.replace({
           name: 'MomentDetail',
-          params: {momentId: props.form.id},
+          params: { momentId: props.form.id },
         });
       }
     })
@@ -259,6 +261,19 @@ const onClearLocation = () => {
   props.form.location = '';
   props.form.longitude = '';
   props.form.latitude = '';
+};
+
+const onPasteImage = files => {
+  if (props.form?.images.length + files.length > 9) {
+    message.error('最多可上传9张图片');
+    return;
+  }
+  files.forEach(file => {
+    props.form?.images.push({
+      thumb: URL.createObjectURL(file),
+      originFileObj: file,
+    });
+  });
 };
 </script>
 
