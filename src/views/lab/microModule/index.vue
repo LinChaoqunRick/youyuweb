@@ -14,13 +14,14 @@ import {
   Color,
   Mesh,
   MeshBasicMaterial,
+  MeshPhongMaterial,
   PerspectiveCamera,
   PlaneGeometry,
   Scene,
   SphereGeometry,
   AmbientLight,
   WebGLRenderer,
-  DoubleSide
+  DoubleSide, SpotLight
 } from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {onMounted, reactive, ref} from 'vue';
@@ -37,7 +38,7 @@ const controlData = reactive({
   numberOfObjects: 0,
   addCube: function () {
     const cubeGeometry = new BoxGeometry(4, 4, 4);
-    const cubeMaterial = new MeshBasicMaterial({
+    const cubeMaterial = new MeshPhongMaterial({
       color: 0xff0000,
       wireframe: false
     })
@@ -59,7 +60,7 @@ const initSceneRenderer = () => {
 
   // 初始化渲染器
   renderer = new WebGLRenderer();
-  renderer.setClearColor(new Color(0xeeeeee));
+  renderer.setClearColor(new Color(0x666666));
   renderer.setSize(containerRect.width, containerRect.height);
   renderer.shadowMap.enabled = true;
 }
@@ -81,7 +82,8 @@ const initHelper = () => {
 
   // 添加dat.gui
   const gui = new dat.GUI();
-  gui.domElement.style = 'position:absolute;top:65px;right:10px;'
+  gui.domElement.style = 'position:absolute;top:65px;right:10px;';
+
   gui.add(controlData, 'rotationSpeed', 0, 0.5);
   gui.add(controlData, 'bouncingSpeed', 0, 0.5);
   gui.add(controlData, 'numberOfObjects').listen();
@@ -102,55 +104,62 @@ const initHelper = () => {
 }
 
 const initLight = () => {
-  const spotLight = new AmbientLight(0xffffff);
+  const ambientLight = new AmbientLight(0xffffff, 1);
+  scene.add(ambientLight);
+
+  const spotLight = new SpotLight(0xffffff, 0.6);
   spotLight.castShadow = true;
-  spotLight.position.set(-40, 60, -10);
+  spotLight.position.set(20, 10, 20);
   scene.add(spotLight);
 }
 
 const initModels = () => {
+  // 地板
   const planeGeometry = new PlaneGeometry(60, 20);
-  const meshBasicMaterial = new MeshBasicMaterial({
-    color: 0xcccccc,
+  const planeMaterial = new MeshPhongMaterial({
+    color: 0x1B5E20,
     side: DoubleSide
   })
-  plane = new Mesh(planeGeometry, meshBasicMaterial);
+  plane = new Mesh(planeGeometry, planeMaterial);
   plane.receiveShadow = true;
   plane.rotation.x = -0.5 * Math.PI;
   plane.position.x = 15;
   scene.add(plane);
 
+  // 立方体
   const cubeGeometry = new BoxGeometry(4, 4, 4);
-  const cubeMaterial = new MeshBasicMaterial({
+  const cubeMaterial = new MeshPhongMaterial({
     color: 0xff0000,
-    wireframe: false
   })
   cube = new Mesh(cubeGeometry, cubeMaterial);
   cube.position.set(2, 2, 2);
   cube.castShadow = true;
-  scene.add(cube);
+  // scene.add(cube);
 
+  // 立方体
+  const cubeGeometry2 = new BoxGeometry(4, 4, 4);
+  const cubeMaterial2 = new MeshPhongMaterial({
+    color: 0x1890FF,
+  })
+  const cube2 = new Mesh(cubeGeometry2, cubeMaterial2);
+  cube2.position.set(0, 2, 0);
+  cube2.castShadow = true;
+  scene.add(cube2);
+
+  // 圆
   const sphereGeometry = new SphereGeometry(4);
-  const sphereMaterial = new MeshBasicMaterial({
-    color: 0x7777ff,
-    wireframe: false
+  const sphereMaterial = new MeshPhongMaterial({
+    color: 0x1677ff,
   })
   sphere = new Mesh(sphereGeometry, sphereMaterial);
   sphere.castShadow = true;
   sphere.position.set(20, 4, 2);
-  scene.add(sphere);
+  // scene.add(sphere);
 }
 
 const renderScene = () => {
   controls.update();
   stats.update();
-  scene.traverse(e => {
-    if (e instanceof Mesh && e != plane) {
-      e.rotation.x += controlData.rotationSpeed;
-      e.rotation.y += controlData.rotationSpeed;
-      e.rotation.z += controlData.rotationSpeed;
-    }
-  })
 
   cube.rotation.x += controlData.rotationSpeed;
   cube.rotation.y += controlData.rotationSpeed;
