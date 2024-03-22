@@ -108,7 +108,7 @@
         <img v-else src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png"/>
       </div>
       <div class="reply-box-wrapper">
-        <MomentReplyEditor @onSubmit="onSubmit" :placeholder="replyEditorPlaceholder" ref="MomentReplyEditorRef"/>
+        <MomentReplyEditor :params="replyParams" :placeholder="replyEditorPlaceholder" @saveSuccess="onReplySuccess" ref="MomentReplyEditorRef"/>
       </div>
     </div>
   </div>
@@ -163,6 +163,13 @@ const images = computed(() => props.data.images ? props.data.images.split(",") :
 const isLogin = computed(() => getters['isLogin']);
 const showDelete = computed(() => userInfo.value.id === props.data.userId || props.moment.userId === userInfo.value.id);
 const replyEditorPlaceholder = computed(()=>props.data?"回复@"+props.data?.user?.nickname:null);
+const replyParams = computed(() => {
+  return {
+    momentId: props.moment.id,
+    userIdTo: props.data.userId,
+    rootId: props.root.id,
+  }
+})
 
 function set(value: number) {
   row.value = value;
@@ -221,23 +228,11 @@ const onClickOutside = () => {
   }
 }
 
-const onSubmit = (reply, successCallback) => {
-  reply.images = reply.images.length ? reply.images.join(",") : null;
-  reply.momentId = props.moment.id;
-  reply.userId = userInfo.value.id;
-  reply.userIdTo = props.data.userId;
-  reply.rootId = props.root.id;
-  reply.content = transformHTMLToTag(reply.content);
-  dispatch('createMomentComment', reply).then(res => {
-    if (res.data) {
-      message.success("发布成功");
-      props.moment.commentCount += 1;
-      props.root.replyCount += 1;
-      emit("saveSuccess", res.data);
-      active.value = false;
-    }
-    successCallback();
-  })
+const onReplySuccess = (reply) => {
+  props.moment.commentCount += 1;
+  props.root.replyCount += 1;
+  emit("saveSuccess", reply);
+  active.value = false;
 }
 
 const onUserVisibleChange = (visible: boolean) => {
@@ -287,8 +282,8 @@ const onUserToVisibleChange = (visible: boolean) => {
         }
 
         .user-avatar {
-          height: 30px;
-          width: 30px;
+          height: 24px;
+          width: 24px;
           border-radius: 100%;
           overflow: hidden;
 

@@ -139,7 +139,7 @@
           />
         </div>
         <div class="reply-box-wrapper">
-          <MomentReplyEditor :placeholder="replyEditorPlaceholder" @onSubmit="onCommentSubmit" />
+          <MomentReplyEditor :params="replyParams" :placeholder="replyEditorPlaceholder" @saveSuccess="onCommentSuccess" />
         </div>
       </div>
       <div class="moment-comment-list">
@@ -209,7 +209,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['deleteSuccess', 'onEdit', 'saveSuccess', 'onCommentDeleteSuccess']);
+const emit = defineEmits(['deleteSuccess', 'onEdit', 'onCommentSaveSuccess', 'onCommentDeleteSuccess']);
 
 const preview = ref(false);
 const current = ref(0);
@@ -245,6 +245,12 @@ const listParams = computed(() => ({
   orderBy: order.value,
 }));
 const replyEditorPlaceholder = computed(() => (props.data ? '回复@' + props.data?.user?.nickname : null));
+const replyParams = computed(() => {
+  return {
+    momentId: props.data.id,
+    userIdTo: props.data.userId,
+  }
+})
 const ContentDataRef = ref<InstanceType<typeof ContentData> | null>(null);
 
 function set(value: number) {
@@ -259,24 +265,10 @@ const onClose = () => {
   preview.value = false;
 };
 
-const onCommentSubmit = (reply: object, successCallback: Function, failedCallback) => {
-  reply.images = reply.images.length ? reply.images.join(',') : null;
-  reply.momentId = props.data.id;
-  reply.userId = userInfo.value.id;
-  reply.userIdTo = props.data.userId;
-  reply.content = transformHTMLToTag(reply.content);
-  dispatch('createMomentComment', reply)
-    .then(res => {
-      message.success('发布成功');
-      ContentDataRef.value.data.list.unshift(res.data);
-      props.data.commentCount += 1;
-      emit('saveSuccess', res.data);
-      successCallback();
-    })
-    .catch(e => {
-      console.log(e);
-      failedCallback();
-    });
+const onCommentSuccess = (data: object) => {
+  ContentDataRef.value.data.list.unshift(data);
+  props.data.commentCount += 1;
+  emit('onCommentSaveSuccess', data); // 用于在时刻详情页用的，列表页用不上
 };
 
 const onClickReply = () => {
@@ -394,7 +386,7 @@ const onLocationPreview = () => {
 };
 
 defineExpose({
-  onCommentSubmit,
+  // onCommentSubmit,
   deleteSuccess,
 });
 </script>

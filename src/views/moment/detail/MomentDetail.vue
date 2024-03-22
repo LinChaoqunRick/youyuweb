@@ -8,8 +8,8 @@
             :data="moment"
             :show-detail="false"
             @deleteSuccess="onMomentDeleteSuccess"
+            @onCommentSaveSuccess="onSaveCommentSuccess"
             @onCommentDeleteSuccess="onCommentDeleteSuccess"
-            @saveSuccess="onSaveCommentSuccess"
             @onEdit="onEdit"
             ref="MomentRef"
           />
@@ -29,7 +29,7 @@
         </div>
         <div class="moment-comment-editor-wrapper mt-8">
           <div class="editor-title">评论</div>
-          <MomentReplyEditor @onSubmit="MomentRef?.onCommentSubmit" :auto-focus="false"/>
+<!--          <MomentReplyEditor @onSubmit="MomentRef?.onCommentSubmit" :auto-focus="false"/>-->
         </div>
         <div id="comment" class="moment-comment-list mt-8 mb-8">
           <div class="comment-list-top">

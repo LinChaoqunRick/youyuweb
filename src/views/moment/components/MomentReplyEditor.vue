@@ -2,12 +2,16 @@
   <div class="reply-editor">
     <div class="editor-box">
       <div class="login-mask" @click="toLogin" v-if="!isLogin"></div>
-      <ContentEditableDiv v-model="reply.content" :row="1" :maxLength="300" :placeholder="placeholder"
-                          :auto-focus="autoFocus" ref="richEditor"/>
+      <ContentEditableDiv v-model="reply.content"
+                          :row="1" :maxLength="300"
+                          :placeholder="placeholder"
+                          :auto-focus="autoFocus"
+                          @onPasteImage="onPasteImage"
+                          ref="richEditorRef"/>
     </div>
     <div class="image-wrapper" v-if="reply.images?.length">
-      <div v-for="item in reply.images" class="image-item">
-        <img :src="item"/>
+      <div v-for="(item, index) in reply.images" class="image-item">
+        <img :src="item.thumb || item" :alt="item.name"/>
         <div class="image-delete" @click="onImageDelete(index)">
           <i-close theme="outline" size="10" fill="currentColor" :strokeWidth="2"/>
         </div>
@@ -20,16 +24,22 @@
                  :visible="emojiVisible">
         <template #content>
           <EmojiPicker
-            @onImagePick="onImagePick"
-            @onEmojiPick="onEmojiPick"
-            v-on-click-outside="onEmojiClose"/>
+              @onImagePick="onImagePick"
+              @onEmojiPick="onEmojiPick"
+              v-on-click-outside="onEmojiClose"/>
         </template>
         <div class="tool-item" v-login="onClickEmoji" style="cursor: pointer">
           <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
           <span class="tool-title">表情</span>
         </div>
       </a-popover>
-      <UploadFile accept=".jpg, .jpeg, .png" @uploadSuccess="uploadSuccess" :disabled="uploadDisabled">
+      <UploadFile v-model="reply.images"
+                  accept=".jpg, .jpeg, .png, .JPG, .PNG"
+                  :max-size="maxFileSize"
+                  :max-num="maxFileNum"
+                  :disabled="uploadDisabled"
+                  :data="{ base: 'moment/images' }"
+                  ref="UploadFileRef">
         <div class="tool-item item-upload-image" @click="onCheckLogin">
           <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
           <span class="tool-title">图片</span>
@@ -55,14 +65,18 @@ export default {
 <script setup lang="ts">
 import {computed, reactive, ref} from "vue";
 import {useStore} from "vuex";
-import {onCheckLogin} from "@/assets/utils/utils";
+import {message} from "ant-design-vue";
 import {cloneDeep} from 'lodash';
+import {onCheckLogin} from "@/assets/utils/utils";
 import {vOnClickOutside} from '@vueuse/components'
 import ContentEditableDiv from "@/components/common/utils/contenteditable/ContentEditableDiv.vue";
 import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
 import EmojiPicker from "@/components/common/utils/emoji/EmojiPicker.vue";
+import {
+  transformHTMLToTag,
+} from "@/components/common/utils/emoji/youyu_emoji";
 
-const {getters, commit} = useStore();
+const {getters, commit, dispatch} = useStore();
 
 const props = defineProps({
   placeholder: {
@@ -71,23 +85,30 @@ const props = defineProps({
   autoFocus: {
     type: Boolean,
     default: true
+  },
+  params: {
+    type: Object,
+    default: () => ({})
   }
 });
-const emit = defineEmits(['onSubmit']);
+const emit = defineEmits(['saveSuccess']);
 
 const userInfo = computed(() => getters['userInfo']);
 const isLogin = computed(() => getters['isLogin']);
 
+const maxFileNum = 1;
+const maxFileSize = 20;
 const emojiVisible = ref(false);
-const richEditor = ref(null);
+const richEditorRef = ref(null);
+const UploadFileRef = ref(null);
 const reply = reactive({
   userId: userInfo.value.id,
   content: '',
   images: []
 });
 const uploadDisabled = computed(() => reply.images.length >= 1 || !isLogin.value);
-const currentLength = computed(() => richEditor.value?.totalStrLength);
-const contentLengthExceed = computed(() => richEditor.value?.contentLengthExceed);
+const currentLength = computed(() => richEditorRef.value?.totalStrLength);
+const contentLengthExceed = computed(() => richEditorRef.value?.contentLengthExceed);
 
 const loading = ref<boolean>(false);
 
@@ -100,16 +121,11 @@ const onEmojiClose = () => {
 }
 
 const onImagePick = (value: HTMLElement | string) => {
-  richEditor.value.insertHtml(value)
+  richEditorRef.value.insertHtml(value)
 }
 
 const onEmojiPick = (value: string) => {
-  richEditor.value.insertText(value)
-}
-
-const uploadSuccess = (fileList: []) => {
-  const url = fileList[0].url + '?x-oss-process=style/smallThumb';
-  reply.images.push(url);
+  richEditorRef.value.insertText(value)
 }
 
 const onImageDelete = (index: number) => {
@@ -120,18 +136,52 @@ const toLogin = () => {
   commit("changeLogin", true);
 }
 
-const onSubmit = () => {
+const onSubmit = async () => {
+  // 上传图片
+  const form = cloneDeep(reply);
+  const imagesListRes = await UploadFileRef.value.upload();
+  console.log(imagesListRes);
+  if (form.images?.length) {
+    form.images = imagesListRes.map(item => item.url + '?x-oss-process=style/smallThumb');
+    form.images = form.images.length ? form.images.join(',') : null;
+  } else {
+    form.images = '';
+  }
+
+  form.content = transformHTMLToTag(form.content);
   loading.value = true;
-  const successCallback = () => {
-    richEditor.value.clearContent();
-    reply.content = '';
-    reply.images = [];
+
+  dispatch("createMomentComment", Object.assign({}, form, props.params)).then((res) => {
+    message.success("发布成功");
+    richEditorRef.value.clearContent();
+    emit("saveSuccess", res.data)
+  }).finally(() => {
     loading.value = false;
+  })
+}
+
+const onPasteImage = (files: File[]) => {
+  // 验证最大上传数量
+  if (reply.images.length + files.length > maxFileNum) {
+    return message.error(`最多可上传${maxFileNum}张图片`);
   }
-  const failedCallback = () => {
-    loading.value = false;
+  // 验证单个文件大小
+  const maxFileByteSize = maxFileSize * 1024 * 1024;
+  const validFiles: File[] = [];
+  for (const file of files) {
+    if (file.size > maxFileByteSize) { // 一个文件超过，全部退回
+      return message.error(`文件大小不能大于${maxFileSize}MB`);
+    } else {
+      validFiles.push({
+        thumb: URL.createObjectURL(file),
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        originFileObj: file,
+      })
+    }
   }
-  emit("onSubmit", cloneDeep(reply), successCallback, failedCallback)
+  reply.images.push(...validFiles);
 }
 
 defineExpose({
