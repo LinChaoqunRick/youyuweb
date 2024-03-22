@@ -303,7 +303,7 @@ const onUserToVisibleChange = (visible: boolean) => {
       .item-content {
         display: inline-block;
         line-height: 2rem;
-        max-height: 11rem;
+        max-height: 10.3rem;
         overflow: hidden;
 
         &.content-expand {
@@ -312,7 +312,7 @@ const onUserToVisibleChange = (visible: boolean) => {
 
         .user-to-info {
           position: relative;
-          top: 5px;
+          top: 5.6px;
           float: left;
           margin-right: 5px;
           padding: 0 4px;
