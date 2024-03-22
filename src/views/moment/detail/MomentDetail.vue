@@ -263,7 +263,6 @@ const saveSuccess = (data: momentListType) => {
         ::v-deep(.content-list) {
           .comment-item {
             padding: 8px 0;
-            border-bottom: 1px solid var(--youyu-border-color);
 
             &:last-child {
               border-bottom: none !important;

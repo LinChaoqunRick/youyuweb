@@ -3,16 +3,16 @@
     <div class="moment-comment-detail">
       <div class="user-avatar">
         <a-popover
-            placement="top"
-            :mouseEnterDelay="0.6"
-            :mouseLeaveDelay="0.3"
-            @visibleChange="onUserVisibleChange"
+          placement="top"
+          :mouseEnterDelay="0.6"
+          :mouseLeaveDelay="0.3"
+          @visibleChange="onUserVisibleChange"
         >
           <template #content>
             <UserCardMoment :user="data.user"/>
           </template>
           <RouterLink
-              :to="{ name: 'userHome', params: { userId: data.user.id } }"
+            :to="{ name: 'userHome', params: { userId: data.user.id } }"
           >
             <img :src="data.user.avatar"/>
           </RouterLink>
@@ -22,16 +22,16 @@
         <div class="comment-right-top">
           <div class="user-nickname">
             <a-popover
-                placement="top"
-                :mouseEnterDelay="0.6"
-                :mouseLeaveDelay="0.3"
-                @visibleChange="onUserVisibleChange"
+              placement="top"
+              :mouseEnterDelay="0.6"
+              :mouseLeaveDelay="0.3"
+              @visibleChange="onUserVisibleChange"
             >
               <template #content>
                 <UserCardMoment :user="data.user"/>
               </template>
               <RouterLink
-                  :to="{ name: 'userHome', params: { userId: data.user.id } }"
+                :to="{ name: 'userHome', params: { userId: data.user.id } }"
               >
                 <span>{{ data.user.nickname }}</span>
               </RouterLink>
@@ -48,61 +48,61 @@
           </div>
         </div>
         <div
-            class="comment-content"
-            :class="{ 'content-expand': expand }"
-            v-row="{ set: set }"
-            v-html="transformTagToHTML(data.content)"
+          class="comment-content"
+          :class="{ 'content-expand': expand }"
+          v-row="{ set: set }"
+          v-html="transformTagToHTML(data.content)"
         ></div>
         <div
-            class="limit-btn"
-            @click="expand = true"
-            v-show="row > 7 && !expand"
+          class="limit-btn"
+          @click="expand = true"
+          v-show="row > 7 && !expand"
         >
           展开
         </div>
         <div
-            class="limit-btn"
-            @click="expand = false"
-            v-show="row > 7 && expand"
+          class="limit-btn"
+          @click="expand = false"
+          v-show="row > 7 && expand"
         >
           收起
         </div>
         <div class="content-images" v-if="images?.length && !preview">
           <img
-              :src="item"
-              v-for="(item, index) in images"
-              @click="onPreview(index)"
+            :src="item"
+            v-for="(item, index) in images"
+            @click="onPreview(index)"
           />
         </div>
         <div class="content-image-preview" v-if="images?.length && preview">
           <ImagePreviewEmbed
-              :list="images"
-              :current="current"
-              @onClose="onClose"
+            :list="images"
+            :current="current"
+            @onClose="onClose"
           />
         </div>
         <div class="comment-operation">
           <div
-              class="ope-item"
-              :class="{ 'ope-active': data.commentLike }"
-              v-login="onLike"
+            class="ope-item"
+            :class="{ 'ope-active': data.commentLike }"
+            v-login="onLike"
           >
             <i-good-two
-                :theme="data.commentLike ? 'filled' : 'outline'"
-                size="14"
-                fill="currentColor"
+              :theme="data.commentLike ? 'filled' : 'outline'"
+              size="14"
+              fill="currentColor"
             />
             点赞<span v-if="data.supportCount">({{ data.supportCount }})</span>
           </div>
           <div
-              class="ope-item"
-              :class="{ 'ope-active': active }"
-              @click="onReply"
+            class="ope-item"
+            :class="{ 'ope-active': active }"
+            @click="onReply"
           >
             <i-comment
-                :theme="active ? 'filled' : 'outline'"
-                size="14"
-                fill="currentColor"
+              :theme="active ? 'filled' : 'outline'"
+              size="14"
+              fill="currentColor"
             />
             {{
               active ? "取消回复" : "回复"
@@ -111,17 +111,17 @@
           >
           </div>
           <a-popconfirm
-              v-model:visible="deleteVisible"
-              title="确认删除此评论?"
-              ok-text="是"
-              cancel-text="否"
-              @confirm="onConfirmDelete"
+            v-model:visible="deleteVisible"
+            title="确认删除此评论?"
+            ok-text="是"
+            cancel-text="否"
+            @confirm="onConfirmDelete"
           >
             <div
-                class="ope-item delete-ope"
-                :class="{ visible: deleteVisible }"
-                v-if="showDelete"
-                @click="onDelete"
+              class="ope-item delete-ope"
+              :class="{ visible: deleteVisible }"
+              v-if="showDelete"
+              @click="onDelete"
             >
               删除
             </div>
@@ -133,8 +133,8 @@
       <div class="user-avatar">
         <img v-if="isLogin" :src="userInfo.avatar"/>
         <img
-            v-else
-            src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png"
+          v-else
+          src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png"
         />
       </div>
       <div class="reply-box-wrapper">
@@ -143,25 +143,25 @@
       </div>
     </div>
     <ContentList
-        v-if="!!data.replyCount"
-        url="listMomentReplyPage"
-        class="reply-list"
-        v-slot="{ list }"
-        :total="data.replyCount"
-        :show-loaded-all="false"
-        :params="params"
-        :immediate="false"
-        foldable
-        data-text="回复"
-        ref="ContentListRef"
+      v-if="!!data.replyCount"
+      url="listMomentReplyPage"
+      class="reply-list"
+      v-slot="{ list }"
+      :total="data.replyCount"
+      :show-loaded-all="false"
+      :params="params"
+      :immediate="false"
+      foldable
+      data-text="回复"
+      ref="ContentListRef"
     >
       <MomentReplyItem
-          v-for="item in list"
-          :data="item"
-          :root="data"
-          :moment="moment"
-          @saveSuccess="saveSuccess"
-          @deleteSuccess="deleteSuccess"
+        v-for="item in list"
+        :data="item"
+        :root="data"
+        :moment="moment"
+        @saveSuccess="saveSuccess"
+        @deleteSuccess="deleteSuccess"
       />
     </ContentList>
   </div>
@@ -212,7 +212,7 @@ const current = ref<number>(0);
 
 const userInfo = computed(() => getters["userInfo"]);
 const images = computed(() =>
-    props.data.images ? props.data.images.split(",") : null
+  props.data.images ? props.data.images.split(",") : null
 );
 const isLogin = computed(() => getters["isLogin"]);
 const showDelete = computed(() => userInfo.value.id === props.data.userId || props.moment.userId === userInfo.value.id);
@@ -255,18 +255,18 @@ const onLike = () => {
   dispatch(isLike ? "cancelMomentCommentLike" : "setMomentCommentLike", {
     commentId: props.data.id,
   })
-      .then((res) => {
-        if (isLike) {
-          props.data.supportCount -= 1;
-          props.data.commentLike = null;
-        } else {
-          props.data.supportCount += 1;
-          props.data.commentLike = res.data;
-        }
-      })
-      .finally(() => {
-        likeLoading.value = false;
-      });
+    .then((res) => {
+      if (isLike) {
+        props.data.supportCount -= 1;
+        props.data.commentLike = null;
+      } else {
+        props.data.supportCount += 1;
+        props.data.commentLike = res.data;
+      }
+    })
+    .finally(() => {
+      likeLoading.value = false;
+    });
 };
 
 const onReply = () => {
@@ -305,7 +305,7 @@ const saveSuccess = (data) => {
 
 const deleteSuccess = (data) => {
   ContentListRef.value.list = ContentListRef.value.list.filter(
-      (item) => item.id !== data.id
+    (item) => item.id !== data.id
   );
   props.data.replyCount -= 1;
   props.moment.commentCount -= 1;
@@ -314,9 +314,9 @@ const deleteSuccess = (data) => {
 const onUserVisibleChange = (visible: boolean) => {
   if (visible) {
     dispatch("getMomentUserDetail", {userId: props.data.userId}).then(
-        (res) => {
-          props.data.user = res.data;
-        }
+      (res) => {
+        props.data.user = res.data;
+      }
     );
   }
 };
@@ -488,9 +488,9 @@ const onUserVisibleChange = (visible: boolean) => {
 
     ::v-deep(.data-list) {
       margin-top: 6px;
-      background-color: var(--subcomment-background);
       padding: 0 12px;
       border-radius: 6px;
+      border: 1px solid var(--youyu-border-color);
 
       .moment-reply-item {
         border-top: 1px solid var(--youyu-border-color);

@@ -32,45 +32,19 @@
               <div class="author-text" v-if="data.user.id === moment.userId">作者</div>
             </div>
           </div>
-          <div class="user-to-info" v-if="data.userTo">
-            <div class="reply-text">回复</div>
-            <div class="user-avatar">
-              <a-popover placement="top"
-                         :mouseEnterDelay="0.6"
-                         :mouseLeaveDelay="0.3"
-                         @visibleChange="onUserToVisibleChange">
-                <template #content>
-                  <UserCardMoment :user="data.userTo"/>
-                </template>
-                <RouterLink :to="{name:'userHome', params: {userId: data.userTo.id}}">
-                  <img :src="data.userTo.avatar"/>>
-                </RouterLink>
-              </a-popover>
-            </div>
-            <div class="user-nickname">
-              <a-popover placement="top"
-                         :mouseEnterDelay="0.6"
-                         :mouseLeaveDelay="0.3"
-                         @visibleChange="onUserToVisibleChange">
-                <template #content>
-                  <UserCardMoment :user="data.userTo"/>
-                </template>
-                <RouterLink :to="{name:'userHome', params: {userId: data.userTo.id}}">
-                  <span>{{ data.userTo.nickname }}</span>
-                </RouterLink>
-              </a-popover>
-              <div class="author-text" v-if="data.userTo.id === moment.userId">作者</div>
-            </div>
-          </div>
           <div class="info-data">
             <div class="publish-time" :title="data.createTime">
               {{ $dayjs().to(data.createTime) }}
             </div>
             <div class="adname" v-if="data.adname">・{{ data.adname }}</div>
-          </div>        </div>
-        <div class="reply-content" :class="{'content-expand': expand}"
-             v-row="{set: set}"
-             v-html="transformTagToHTML(data.content)"></div>
+          </div>
+        </div>
+        <div class="item-content" v-row="{set: set}" :class="{'content-expand': expand}">
+          <div class="user-to-info" v-if="data.userTo">
+            @{{ data.userTo.nickname }}
+          </div>
+          <p class="reply-content" v-html="transformTagToHTML(data.content)"></p>
+        </div>
         <div class="limit-btn" @click="expand = true" v-show="row>7 && !expand">展开</div>
         <div class="limit-btn" @click="expand = false" v-show="row>7 && expand">收起</div>
         <div class="content-images" v-if="images?.length && !preview">
@@ -108,7 +82,8 @@
         <img v-else src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png"/>
       </div>
       <div class="reply-box-wrapper">
-        <MomentReplyEditor :params="replyParams" :placeholder="replyEditorPlaceholder" @saveSuccess="onReplySuccess" ref="MomentReplyEditorRef"/>
+        <MomentReplyEditor :params="replyParams" :placeholder="replyEditorPlaceholder" @saveSuccess="onReplySuccess"
+                           ref="MomentReplyEditorRef"/>
       </div>
     </div>
   </div>
@@ -162,7 +137,7 @@ const userInfo = computed(() => getters['userInfo']);
 const images = computed(() => props.data.images ? props.data.images.split(",") : null);
 const isLogin = computed(() => getters['isLogin']);
 const showDelete = computed(() => userInfo.value.id === props.data.userId || props.moment.userId === userInfo.value.id);
-const replyEditorPlaceholder = computed(()=>props.data?"回复@"+props.data?.user?.nickname:null);
+const replyEditorPlaceholder = computed(() => props.data ? "回复@" + props.data?.user?.nickname : null);
 const replyParams = computed(() => {
   return {
     momentId: props.moment.id,
@@ -271,16 +246,6 @@ const onUserToVisibleChange = (visible: boolean) => {
           align-items: center;
         }
 
-        .user-to-info {
-          display: flex;
-          align-items: center;
-
-          .reply-text {
-            margin: 0 6px;
-            font-size: 13px;
-          }
-        }
-
         .user-avatar {
           height: 24px;
           width: 24px;
@@ -335,22 +300,38 @@ const onUserToVisibleChange = (visible: boolean) => {
         }
       }
 
-      ::v-deep(.reply-content) {
-        margin: 8px 0;
-        white-space: pre-wrap;
+      .item-content {
+        display: inline-block;
         line-height: 2rem;
-        max-height: 12rem;
+        max-height: 11rem;
         overflow: hidden;
 
         &.content-expand {
           max-height: none !important;
         }
 
-        img {
-          vertical-align: sub;
-          width: auto;
-          height: 20px;
-          margin: 0 2px;
+        .user-to-info {
+          position: relative;
+          top: 5px;
+          float: left;
+          margin-right: 5px;
+          padding: 0 4px;
+          border: 2px solid var(--youyu-border-color3);
+          border-radius: 4px;
+          font-weight: bold;
+          color: #F35532;
+        }
+
+        ::v-deep(.reply-content) {
+          margin: 8px 0;
+          white-space: pre-wrap;
+
+          img {
+            vertical-align: sub;
+            width: auto;
+            height: 20px;
+            margin: 0 2px;
+          }
         }
       }
 
