@@ -8,7 +8,6 @@
             :data="moment"
             :show-detail="false"
             @deleteSuccess="onMomentDeleteSuccess"
-            @onCommentSaveSuccess="onSaveCommentSuccess"
             @onCommentDeleteSuccess="onCommentDeleteSuccess"
             @onEdit="onEdit"
             ref="MomentRef"
@@ -29,7 +28,8 @@
         </div>
         <div class="moment-comment-editor-wrapper mt-8">
           <div class="editor-title">评论</div>
-<!--          <MomentReplyEditor @onSubmit="MomentRef?.onCommentSubmit" :auto-focus="false"/>-->
+          <MomentReplyEditor :params="replyParams" @saveSuccess="onSaveCommentSuccess"
+                             :placeholder="replyEditorPlaceholder" :auto-focus="false"/>
         </div>
         <div id="comment" class="moment-comment-list mt-8 mb-8">
           <div class="comment-list-top">
@@ -37,19 +37,11 @@
               全部评论（{{ moment.commentCount || 0 }}）
             </div>
             <div class="sort-type">
-              <div
-                class="sort-item"
-                :class="{ active: sort }"
-                @click="handleSort(true)"
-              >
+              <div class="sort-item" :class="{ active: sort }" @click="handleSort(true)">
                 <i-time theme="filled" size="13" fill="currentColor"/>
                 最新
               </div>
-              <div
-                class="sort-item"
-                :class="{ active: !sort }"
-                @click="handleSort(false)"
-              >
+              <div class="sort-item" :class="{ active: !sort }" @click="handleSort(false)">
                 <i-fire theme="filled" size="13" fill="currentColor"/>
                 最热
               </div>
@@ -59,6 +51,7 @@
             <ContentList
               url="listMomentCommentPage"
               :params="listParams"
+              :total="moment.commentCount"
               auto-load
               load-trigger
               ref="ContentListRef"
@@ -74,25 +67,11 @@
                 />
               </template>
               <template #loadMoreBox="{ loading, total }">
-                <span class="mr-8"
-                >查看全部
-                  <span class="comment-count">{{
-                      moment.commentCount ?? total
-                    }}</span>
-                  条评论</span
-                >
-                <i-down
-                  v-if="!loading"
-                  theme="outline"
-                  size="14"
-                  fill="#1890ff"
-                />
-                <i-loading-four
-                  v-else
-                  theme="outline"
-                  size="14"
-                  fill="#1890ff"
-                />
+                <span class="mr-8">查看全部<span class="comment-count">
+                  {{ moment.commentCount ?? total }}
+                </span>条评论</span>
+                <i-down v-if="!loading" theme="outline" size="14" fill="#1890ff"/>
+                <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
               </template>
             </ContentList>
           </div>
@@ -129,6 +108,12 @@ const listParams = computed(() => ({
   momentId: moment.value.id,
   orderBy: order.value,
 }));
+const replyEditorPlaceholder = computed(() => (moment.value ? '回复@' + moment.value.user.nickname : null));
+const replyParams = computed(() => {
+  return {
+    momentId: moment.value.id,
+  }
+})
 const ContentListRef = ref<InstanceType<typeof ContentList> | null>(null);
 
 const getMomentDetail = () => {
@@ -161,6 +146,7 @@ const onCommentDeleteSuccess = (comment) => {
 };
 
 const onSaveCommentSuccess = (data: momentListType) => {
+  moment.value.commentCount++;
   ContentListRef.value.list.unshift(data);
 };
 

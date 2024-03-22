@@ -132,9 +132,9 @@
     <div class="moment-item-bottom" v-if="commentListShowVisibleIf" v-show="commentListShowVisibleShow">
       <div class="moment-comment-editor">
         <div class="user-avatar">
-          <img v-if="isLogin" :src="userInfo.avatar" />
+          <img v-if="isLogin" :src="userInfo.avatar" :alt="userInfo.nickname+'的头像'"/>
           <img
-            v-else
+            v-else alt="默认头像"
             src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png"
           />
         </div>
@@ -268,7 +268,6 @@ const onClose = () => {
 const onCommentSuccess = (data: object) => {
   ContentDataRef.value.data.list.unshift(data);
   props.data.commentCount += 1;
-  emit('onCommentSaveSuccess', data); // 用于在时刻详情页用的，列表页用不上
 };
 
 const onClickReply = () => {
