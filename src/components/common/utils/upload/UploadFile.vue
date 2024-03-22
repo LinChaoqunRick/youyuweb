@@ -1,23 +1,23 @@
 <template>
   <div class="upload-file" :class="{ disabled: disabled }">
     <a-upload
-      v-model:file-list="tempFiles"
-      :data="data"
-      :accept="accept"
-      :show-upload-list="false"
-      :disabled="disabled"
-      :capture="null"
-      :customRequest="customRequest"
-      @change="handleChange"
-      v-bind="$attrs"
-      class="avatar-uploader"
-      ref="uploadRef"
+        v-model:file-list="uploadFiles"
+        :data="data"
+        :accept="accept"
+        :show-upload-list="false"
+        :disabled="disabled"
+        :capture="null"
+        :customRequest="customRequest"
+        @change="handleChange"
+        v-bind="$attrs"
+        class="avatar-uploader"
+        ref="uploadRef"
     >
       <slot :progress="progress">
         <div class="upload-box">
           <div class="progress-box" :style="{ width: `${totalProgress}%` }"></div>
           <div class="upload-button">
-            <i-upload-one theme="outline" size="18" fill="currentColor" />
+            <i-upload-one theme="outline" size="18" fill="currentColor"/>
             <div class="ant-upload-text">点击上传</div>
           </div>
         </div>
@@ -27,17 +27,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { message } from 'ant-design-vue';
-import type { UploadChangeParam, UploadProps } from 'ant-design-vue';
-import { useStore } from 'vuex';
-import { merge } from 'lodash';
-import { uploadToOss } from '@/components/common/utils/upload/utils';
+import {ref} from 'vue';
+import {message} from 'ant-design-vue';
+import type {UploadChangeParam} from 'ant-design-vue';
+import {useStore} from 'vuex';
+import {merge} from 'lodash';
+import {uploadToOss} from '@/components/common/utils/upload/utils';
 
 const uploadRef = ref(null);
 
-const { dispatch } = useStore();
-const files = defineModel({ default: [] });
+const {dispatch} = useStore();
+const files = defineModel({default: []}); // v-model双向绑定
 const props = defineProps({
   disabled: {
     type: Boolean,
@@ -46,6 +46,10 @@ const props = defineProps({
   maxSize: {
     type: Number,
     default: 20,
+  },
+  maxNum: {
+    type: Number,
+    default: 10,
   },
   query: {
     type: String,
@@ -63,7 +67,8 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-const tempFiles = ref([]);
+
+const uploadFiles = ref([]); // 临时的文件列表，仅用于上传，上传成功后清空
 const data = ref<object>({});
 const progress = ref<number[]>([]);
 const totalProgress = ref<number>(100);
@@ -72,8 +77,12 @@ const emit = defineEmits(['change', 'uploadSuccess']);
 
 let tempCount = 0; // 用于handleChange计算文件数目
 const handleChange = (info: UploadChangeParam) => {
-  const { file, fileList } = info;
+  const {file, fileList} = info;
   return new Promise((resolve, reject) => {
+    if (files.value.length + fileList.length > props.maxNum) {
+      message.error(`最多可上传${props.maxNum}个文件`);
+      return reject(false);
+    }
     // 校验文件
     const fileNameArr = file.name.split('.');
     const suffix = fileNameArr[fileNameArr.length - 1];
@@ -100,7 +109,8 @@ const handleChange = (info: UploadChangeParam) => {
   });
 };
 
-const customRequest = () => {};
+const customRequest = () => {
+};
 
 const upload = async () => {
   const originalFiles = files.value.map(item => item?.originFileObj).filter(item => item);
@@ -116,7 +126,7 @@ const upload = async () => {
   };
   const mergedConfig = merge(defaultConfig, props.data);
   const res = await uploadToOss(originalFiles, mergedConfig);
-  tempFiles.value = [];
+  uploadFiles.value = [];
   files.value = [];
   emit('uploadSuccess', res);
   return res;
