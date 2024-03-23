@@ -303,7 +303,7 @@ const onUserToVisibleChange = (visible: boolean) => {
       .item-content {
         display: inline-block;
         line-height: 2rem;
-        max-height: 10.3rem;
+        max-height: 8.4rem;
         overflow: hidden;
 
         &.content-expand {
@@ -319,11 +319,11 @@ const onUserToVisibleChange = (visible: boolean) => {
           border: 2px solid var(--youyu-border-color3);
           border-radius: 4px;
           font-weight: bold;
-          color: #F35532;
+          color: #1890ff;
         }
 
         ::v-deep(.reply-content) {
-          margin: 8px 0;
+          margin: 8px 0 0 0;
           white-space: pre-wrap;
 
           img {
