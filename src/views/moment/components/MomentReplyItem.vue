@@ -5,27 +5,21 @@
         <div class="reply-right-top">
           <div class="user-info">
             <div class="user-avatar">
-              <a-popover placement="top"
-                         :mouseEnterDelay="0.6"
-                         :mouseLeaveDelay="0.3"
-                         @visibleChange="onUserVisibleChange">
+              <a-popover placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onUserVisibleChange">
                 <template #content>
-                  <UserCardMoment :user="data.user"/>
+                  <UserCardMoment :user="data.user" />
                 </template>
-                <RouterLink :to="{name:'userHome', params: {userId: data.user.id}}">
-                  <img :src="data.user.avatar"/>
+                <RouterLink :to="{ name: 'userHome', params: { userId: data.user.id } }">
+                  <img :src="data.user.avatar" />
                 </RouterLink>
               </a-popover>
             </div>
             <div class="user-nickname">
-              <a-popover placement="top"
-                         :mouseEnterDelay="0.6"
-                         :mouseLeaveDelay="0.3"
-                         @visibleChange="onUserVisibleChange">
+              <a-popover placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onUserVisibleChange">
                 <template #content>
-                  <UserCardMoment :user="data.user"/>
+                  <UserCardMoment :user="data.user" />
                 </template>
-                <RouterLink :to="{name:'userHome', params: {userId: data.user.id}}">
+                <RouterLink :to="{ name: 'userHome', params: { userId: data.user.id } }">
                   <span>{{ data.user.nickname }}</span>
                 </RouterLink>
               </a-popover>
@@ -39,27 +33,26 @@
             <div class="adname" v-if="data.adname">・{{ data.adname }}</div>
           </div>
         </div>
-        <div class="item-content" v-row="{set: set}" :class="{'content-expand': expand}">
-          <div class="user-to-info" v-if="data.userTo">
-            @{{ data.userTo.nickname }}
-          </div>
+        <div class="item-content" :class="{ 'content-expand': expand }"
+          :style="{ 'max-height': maxRow * 2 + 0.4 + 'rem' }" v-row="{ set: set }">
+          <div class="user-to-info" v-if="data.userTo">@{{ data.userTo.nickname }}</div>
           <p class="reply-content" v-html="transformTagToHTML(data.content)"></p>
         </div>
-        <div class="limit-btn" @click="expand = true" v-show="row>7 && !expand">展开</div>
-        <div class="limit-btn" @click="expand = false" v-show="row>7 && expand">收起</div>
+        <div class="limit-btn" @click="expand = true" v-show="row > maxRow && !expand">展开</div>
+        <div class="limit-btn" @click="expand = false" v-show="row > maxRow && expand">收起</div>
         <div class="content-images" v-if="images?.length && !preview">
-          <img :src="item" v-for="(item, index) in images" @click="onPreview(index)"/>
+          <img :src="item" v-for="(item, index) in images" @click="onPreview(index)" />
         </div>
         <div class="content-image-preview" v-if="images?.length && preview">
-          <ImagePreviewEmbed :list="images" :current="current" @onClose="onClose"/>
+          <ImagePreviewEmbed :list="images" :current="current" @onClose="onClose" />
         </div>
         <div class="reply-operation">
-          <div class="ope-item" :class="{'ope-active': data.commentLike}" @click="onLike">
-            <i-good-two :theme="data.commentLike?'filled':'outline'" size="14" fill="currentColor"/>
+          <div class="ope-item" :class="{ 'ope-active': data.commentLike }" @click="onLike">
+            <i-good-two :theme="data.commentLike ? 'filled' : 'outline'" size="14" fill="currentColor" />
             点赞<span v-if="data.supportCount">({{ data.supportCount }})</span>
           </div>
-          <div class="ope-item" :class="{'ope-active': active}" @click="onReply">
-            <i-comment :theme="active?'filled':'outline'" size="14" fill="currentColor"/>
+          <div class="ope-item" :class="{ 'ope-active': active }" @click="onReply">
+            <i-comment :theme="active ? 'filled' : 'outline'" size="14" fill="currentColor" />
             <span>{{ active ? '取消回复' : '回复' }}</span>
           </div>
           <a-popconfirm
@@ -67,9 +60,9 @@
             title="确认删除此条评论?"
             ok-text="是"
             cancel-text="否"
-            @confirm="onConfirmDelete">
-            <div class="ope-item delete-ope" :class="{'visible': deleteVisible}" v-if="showDelete"
-                 @click="onDelete">
+            @confirm="onConfirmDelete"
+          >
+            <div class="ope-item delete-ope" :class="{ visible: deleteVisible }" v-if="showDelete" @click="onDelete">
               删除
             </div>
           </a-popconfirm>
@@ -78,12 +71,16 @@
     </div>
     <div v-if="active" class="moment-reply">
       <div class="user-avatar">
-        <img v-if="isLogin" :src="userInfo.avatar"/>
-        <img v-else src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png"/>
+        <img v-if="isLogin" :src="userInfo.avatar" />
+        <img v-else src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png" />
       </div>
       <div class="reply-box-wrapper">
-        <MomentReplyEditor :params="replyParams" :placeholder="replyEditorPlaceholder" @saveSuccess="onReplySuccess"
-                           ref="MomentReplyEditorRef"/>
+        <MomentReplyEditor
+          :params="replyParams"
+          :placeholder="replyEditorPlaceholder"
+          @saveSuccess="onReplySuccess"
+          ref="MomentReplyEditorRef"
+        />
       </div>
     </div>
   </div>
@@ -91,40 +88,40 @@
 
 <script lang="ts">
 export default {
-  name: "MomentReplyItem"
-}
+  name: 'MomentReplyItem',
+};
 </script>
 
 <script setup lang="ts">
-import {ref, computed, inject} from "vue";
-import {useStore} from "vuex";
-import {RouterLink} from "vue-router";
-import {message} from "ant-design-vue";
-import {vOnClickOutside} from '@vueuse/components'
-import {transformHTMLToTag, transformTagToHTML} from "@/components/common/utils/emoji/youyu_emoji";
-import ImagePreviewEmbed from "@/components/common/utils/image/ImagePreviceEmbed.vue";
-import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
-import UserCardMoment from "../components/UserCardMoment.vue";
+import { ref, computed, inject } from 'vue';
+import { useStore } from 'vuex';
+import { RouterLink } from 'vue-router';
+import { message } from 'ant-design-vue';
+import { vOnClickOutside } from '@vueuse/components';
+import { transformHTMLToTag, transformTagToHTML } from '@/components/common/utils/emoji/youyu_emoji';
+import ImagePreviewEmbed from '@/components/common/utils/image/ImagePreviceEmbed.vue';
+import MomentReplyEditor from '@/views/moment/components/MomentReplyEditor.vue';
+import UserCardMoment from '../components/UserCardMoment.vue';
 
-
-const {getters, dispatch} = useStore();
+const { getters, dispatch } = useStore();
 const props = defineProps({
   data: {
     type: Object,
-    required: true
+    required: true,
   },
   root: {
     type: Object,
-    required: true
+    required: true,
   },
   moment: {
     type: Object,
-    required: true
-  }
-})
+    required: true,
+  },
+});
 const emit = defineEmits(['saveSuccess', 'deleteSuccess']);
 
 const row = ref<number>(0);
+const maxRow = 3;
 const expand = ref<boolean>(false);
 const active = ref<boolean>(false);
 const deleteVisible = ref<boolean>(false);
@@ -134,17 +131,17 @@ const current = ref(0);
 const MomentReplyEditorRef = ref(null);
 
 const userInfo = computed(() => getters['userInfo']);
-const images = computed(() => props.data.images ? props.data.images.split(",") : null);
+const images = computed(() => (props.data.images ? props.data.images.split(',') : null));
 const isLogin = computed(() => getters['isLogin']);
 const showDelete = computed(() => userInfo.value.id === props.data.userId || props.moment.userId === userInfo.value.id);
-const replyEditorPlaceholder = computed(() => props.data ? "回复@" + props.data?.user?.nickname : null);
+const replyEditorPlaceholder = computed(() => (props.data ? '回复@' + props.data?.user?.nickname : null));
 const replyParams = computed(() => {
   return {
     momentId: props.moment.id,
     userIdTo: props.data.userId,
     rootId: props.root.id,
-  }
-})
+  };
+});
 
 function set(value: number) {
   row.value = value;
@@ -152,39 +149,41 @@ function set(value: number) {
 
 const onDelete = () => {
   deleteVisible.value = true;
-}
+};
 
 const onConfirmDelete = () => {
-  dispatch('deleteMomentComment', {commentId: props.data.id}).then(res => {
+  dispatch('deleteMomentComment', { commentId: props.data.id }).then(res => {
     if (res) {
       message.success('删除成功');
       emit('deleteSuccess', props.data);
     }
-  })
-}
+  });
+};
 
 const onLike = () => {
   if (likeLoading.value) return;
   likeLoading.value = true;
   const isLike = !!props.data.commentLike;
-  dispatch(isLike ? "cancelMomentCommentLike" : "setMomentCommentLike", {
-    commentId: props.data.id
-  }).then(res => {
-    if (isLike) {
-      props.data.supportCount -= 1;
-      props.data.commentLike = null;
-    } else {
-      props.data.supportCount += 1;
-      props.data.commentLike = res.data;
-    }
-  }).finally(() => {
-    likeLoading.value = false;
+  dispatch(isLike ? 'cancelMomentCommentLike' : 'setMomentCommentLike', {
+    commentId: props.data.id,
   })
-}
+    .then(res => {
+      if (isLike) {
+        props.data.supportCount -= 1;
+        props.data.commentLike = null;
+      } else {
+        props.data.supportCount += 1;
+        props.data.commentLike = res.data;
+      }
+    })
+    .finally(() => {
+      likeLoading.value = false;
+    });
+};
 
 const onReply = () => {
   active.value = !active.value;
-}
+};
 
 const onPreview = (index: number) => {
   preview.value = true;
@@ -201,35 +200,34 @@ const onClickOutside = () => {
   if (!reply.content && !reply.images?.length) {
     active.value = false;
   }
-}
+};
 
-const onReplySuccess = (reply) => {
+const onReplySuccess = reply => {
   props.moment.commentCount += 1;
   props.root.replyCount += 1;
-  emit("saveSuccess", reply);
+  emit('saveSuccess', reply);
   active.value = false;
-}
+};
 
 const onUserVisibleChange = (visible: boolean) => {
   if (visible) {
-    dispatch('getMomentUserDetail', {userId: props.data.user.id}).then(res => {
+    dispatch('getMomentUserDetail', { userId: props.data.user.id }).then(res => {
       props.data.user = res.data;
-    })
+    });
   }
-}
+};
 
 const onUserToVisibleChange = (visible: boolean) => {
   if (visible) {
-    dispatch('getMomentUserDetail', {userId: props.data.userTo.id}).then(res => {
+    dispatch('getMomentUserDetail', { userId: props.data.userTo.id }).then(res => {
       props.data.userTo = res.data;
-    })
+    });
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
 .moment-reply-item {
-
   .moment-reply-detail {
     display: flex;
 
@@ -292,7 +290,7 @@ const onUserToVisibleChange = (visible: boolean) => {
             position: absolute;
             top: 4.5px;
             left: 0;
-            content: "";
+            content: '';
             height: 14px;
             width: 2px;
             background-color: var(--youyu-border-color);
@@ -303,7 +301,6 @@ const onUserToVisibleChange = (visible: boolean) => {
       .item-content {
         display: inline-block;
         line-height: 2rem;
-        max-height: 8.4rem;
         overflow: hidden;
 
         &.content-expand {
@@ -352,7 +349,7 @@ const onUserToVisibleChange = (visible: boolean) => {
           margin: 0 4px 4px 0;
           object-fit: cover;
           cursor: zoom-in;
-          filter: brightness(.94);
+          filter: brightness(0.94);
         }
       }
 
@@ -426,7 +423,7 @@ const onUserToVisibleChange = (visible: boolean) => {
     ::v-deep(.editable-div) {
       border-radius: 2px;
       border: 1px solid transparent;
-      transition: .3s;
+      transition: 0.3s;
 
       &.editor-active {
         border: 1px solid #1890ff;
