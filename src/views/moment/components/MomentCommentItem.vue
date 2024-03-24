@@ -34,7 +34,7 @@
         <div
           class="comment-content"
           :class="{ 'content-expand': expand }"
-          :style="{ 'max-height': maxRow * 2 + 0.4 + 'rem' }"
+          :style="{ 'max-height': maxRow * 2 + 'rem' }"
           v-row="{ set: set }"
           v-html="transformTagToHTML(data.content)"
         ></div>

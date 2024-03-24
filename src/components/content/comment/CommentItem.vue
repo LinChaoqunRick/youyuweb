@@ -1,12 +1,7 @@
 <template>
   <div class="comment-item">
     <div class="user-avatar">
-      <a-popover
-        placement="top"
-        :mouseEnterDelay="0.6"
-        :mouseLeaveDelay="0.3"
-        @visibleChange="onVisibleChange"
-      >
+      <a-popover placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onVisibleChange">
         <template #content>
           <UserCard :user="data.user" />
         </template>
@@ -18,12 +13,7 @@
     <div class="content-box">
       <div class="user-box">
         <div class="user-nickname">
-          <a-popover
-            placement="top"
-            :mouseEnterDelay="0.2"
-            :mouseLeaveDelay="0.3"
-            @visibleChange="onVisibleChange"
-          >
+          <a-popover placement="top" :mouseEnterDelay="0.2" :mouseLeaveDelay="0.3" @visibleChange="onVisibleChange">
             <template #content>
               <UserCard :user="data.user" />
             </template>
@@ -37,65 +27,27 @@
           {{ $dayjs().to(data.createTime) }}
         </div>
       </div>
-      <div
-        class="comment-content"
-        :class="{ 'content-expand': expand }"
-        v-row="{ set: set }"
-      >
+      <div class="comment-content" :class="{ 'content-expand': expand }" :style="{ 'max-height': maxRow * 2 + 'rem' }"
+           v-row="{ set: set }">
         <MdPreview :text="data.content" editorId="md-editor" />
       </div>
       <div class="comment-operation">
-        <div
-          class="ope-item"
-          :class="{ 'ope-active': data.commentLike }"
-          v-login="onLike"
-        >
-          <i-good-two
-            :theme="data.commentLike ? 'filled' : 'outline'"
-            size="16"
-            fill="currentColor"
-          />
-          点赞<span v-if="data.supportCount">({{ data.supportCount }})</span>
-        </div>
-        <div
-          class="ope-item"
-          :class="{ 'ope-active': active }"
-          @click="handleReply"
-        >
-          <i-comment
-            :theme="active ? 'filled' : 'outline'"
-            size="16"
-            fill="currentColor"
-          />
-          {{ active ? "取消回复" : "回复"
-          }}<span v-if="data.replyCount">({{ data.replyCount }})</span>
-        </div>
-        <div class="ope-item delete-ope" v-if="showDelete" @click="onDelete">
-          删除
-        </div>
-      </div>
-      <div class="reply-editor" v-if="active">
-        <ReplyEditor
-          :placeholder="`回复@${data.user.nickname}`"
-          @handleSubmit="handleSubmit"
-          ref="replyEditor"
-        />
+        <div class="limit-btn" @click="expand = true" v-show="row > 7 && !expand">展开</div>
+        <div class="limit-btn" @click="expand = false" v-show="row > 7 && expand">收起</div>
       </div>
       <div class="comment-operation">
-        <div
-          class="limit-btn"
-          @click="expand = true"
-          v-show="row > 7 && !expand"
-        >
-          展开
+        <div class="ope-item" :class="{ 'ope-active': data.commentLike }" v-login="onLike">
+          <i-good-two :theme="data.commentLike ? 'filled' : 'outline'" size="16" fill="currentColor" />
+          点赞<span v-if="data.supportCount">({{ data.supportCount }})</span>
         </div>
-        <div
-          class="limit-btn"
-          @click="expand = false"
-          v-show="row > 7 && expand"
-        >
-          收起
+        <div class="ope-item" :class="{ 'ope-active': active }" @click="handleReply">
+          <i-comment :theme="active ? 'filled' : 'outline'" size="16" fill="currentColor" />
+          {{ active ? '取消回复' : '回复' }}<span v-if="data.replyCount">({{ data.replyCount }})</span>
         </div>
+        <div class="ope-item delete-ope" v-if="showDelete" @click="onDelete">删除</div>
+      </div>
+      <div class="reply-editor" v-if="active">
+        <ReplyEditor :placeholder="`回复@${data.user.nickname}`" @handleSubmit="handleSubmit" ref="replyEditor" />
       </div>
       <div class="sub-comment-wrapper" v-if="!!data.replyCount">
         <ContentList
@@ -126,22 +78,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, inject, nextTick } from "vue";
-import type { PropType } from "vue";
-import { useStore } from "vuex";
-import { useRouter, RouterLink } from "vue-router";
-import { message, Modal } from "ant-design-vue";
-import type { userType } from "@/types/user";
-import ReplyItem from "@/components/content/comment/ReplyItem.vue";
-import UserCard from "@/components/content/comment/UserCard.vue";
-import ReplyEditor from "@/components/content/comment/ReplyEditor.vue";
-import MdPreview from "@/components/content/mdEditor/MdPreview.vue";
-import ContentList from "@/components/common/system/ContentList.vue";
+import { ref, computed, inject, nextTick } from 'vue';
+import type { PropType } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter, RouterLink } from 'vue-router';
+import { message, Modal } from 'ant-design-vue';
+import type { userType } from '@/types/user';
+import ReplyItem from '@/components/content/comment/ReplyItem.vue';
+import UserCard from '@/components/content/comment/UserCard.vue';
+import ReplyEditor from '@/components/content/comment/ReplyEditor.vue';
+import MdPreview from '@/components/content/mdEditor/MdPreview.vue';
+import ContentList from '@/components/common/system/ContentList.vue';
 
 const { getters, commit, dispatch } = useStore();
 const router = useRouter();
-const isLogin = computed(() => getters["isLogin"]);
-const userInfo = computed(() => getters["userInfo"]);
+const isLogin = computed(() => getters['isLogin']);
+const userInfo = computed(() => getters['userInfo']);
 
 const props = defineProps({
   data: {
@@ -150,17 +102,14 @@ const props = defineProps({
   },
 });
 
-const showDelete = computed(
-  () =>
-    userInfo.value.id === props.data.userId ||
-    post.value.userId === userInfo.value.id
-);
-const post = inject("post");
-const setPostAttribute = inject("setPostAttribute");
+const showDelete = computed(() => userInfo.value.id === props.data.userId || post.value.userId === userInfo.value.id);
+const post = inject('post');
+const setPostAttribute = inject('setPostAttribute');
 const expand = ref<boolean>(false);
 const row = ref<number>(0);
+const maxRow = 4;
 const replyEditor = ref(null);
-const { activeId, updateActiveId } = inject("active");
+const { activeId, updateActiveId } = inject('active');
 const active = computed(() => activeId.value === props.data.id);
 const likeLoading = ref<boolean>(false);
 const ContentListRef = ref(null);
@@ -169,7 +118,7 @@ const params = computed(() => ({
   commentId: props.data.id,
 }));
 
-const emit = defineEmits(["deleteSuccess"]);
+const emit = defineEmits(['deleteSuccess']);
 
 function set(value: number) {
   row.value = value;
@@ -177,7 +126,7 @@ function set(value: number) {
 
 function handleReply() {
   if (!isLogin.value) {
-    commit("changeLogin", true);
+    commit('changeLogin', true);
     return;
   }
   if (!active.value) {
@@ -191,12 +140,12 @@ function onLike() {
   if (likeLoading.value) return;
   likeLoading.value = true;
   const isLike = props.data.commentLike;
-  dispatch(isLike ? "cancelCommentLike" : "setCommentLike", {
+  dispatch(isLike ? 'cancelCommentLike' : 'setCommentLike', {
     commentId: props.data.id,
     userId: userInfo.value.id,
     userIdTo: props.data.userId,
   })
-    .then((res) => {
+    .then(res => {
       if (isLike) {
         props.data.commentLike = null;
         props.data.supportCount -= 1;
@@ -211,41 +160,41 @@ function onLike() {
 }
 
 const handleSubmit = (content: string, submitCallback: Function) => {
-  dispatch("createComment", {
+  dispatch('createComment', {
     postId: props.data.postId,
     userId: userInfo.value.id,
     userIdTo: props.data.userId,
     rootId: props.data.id,
     content: content,
   })
-    .then((res) => {
+    .then(res => {
       props.data.replyCount = props.data.replyCount + 1;
       nextTick(() => {
         ContentListRef.value?.list.unshift(res.data);
-        message.success("评论成功");
+        message.success('评论成功');
         updateActiveId(-1);
-        setPostAttribute("commentCount", post.value.commentCount + 1);
+        setPostAttribute('commentCount', post.value.commentCount + 1);
       });
     })
-    .catch((e) => {
-      message.error("评论失败");
+    .catch(e => {
+      message.error('评论失败');
     })
     .finally(() => submitCallback());
 };
 
 function onDelete() {
   Modal.confirm({
-    title: "删除评论",
-    icon: "", // <help theme="outline" size="24" fill="#1890ff"/>
-    content: "确定删除这条评论吗？",
+    title: '删除评论',
+    icon: '', // <help theme="outline" size="24" fill="#1890ff"/>
+    content: '确定删除这条评论吗？',
     onOk() {
-      return dispatch("deleteComment", { commentId: props.data.id })
-        .then((res) => {
+      return dispatch('deleteComment', { commentId: props.data.id })
+        .then(res => {
           if (res.data) {
-            message.success("删除成功");
-            emit("deleteSuccess", props.data);
+            message.success('删除成功');
+            emit('deleteSuccess', props.data);
           } else {
-            message.error("删除失败");
+            message.error('删除失败');
           }
         })
         .catch(console.log);
@@ -255,23 +204,21 @@ function onDelete() {
 
 const onVisibleChange = (visible: boolean) => {
   if (visible) {
-    dispatch("getPostUserById", { userId: props.data.user.id }).then((res) => {
+    dispatch('getPostUserById', { userId: props.data.user.id }).then(res => {
       props.data.user = res.data;
     });
   }
 };
 
-const saveSuccess = (data) => {
+const saveSuccess = data => {
   ContentListRef.value.list.unshift(data);
-  setPostAttribute("commentCount", post.value.commentCount + 1);
+  setPostAttribute('commentCount', post.value.commentCount + 1);
   props.data.replyCount = props.data.replyCount + 1;
 };
 
-const deleteSuccess = (data) => {
-  ContentListRef.value.list = ContentListRef.value.list.filter(
-    (item) => item.id !== data.id
-  );
-  setPostAttribute("commentCount", post.value.commentCount - 1);
+const deleteSuccess = data => {
+  ContentListRef.value.list = ContentListRef.value.list.filter(item => item.id !== data.id);
+  setPostAttribute('commentCount', post.value.commentCount - 1);
   props.data.replyCount = props.data.replyCount - 1;
 };
 </script>
@@ -333,7 +280,6 @@ const deleteSuccess = (data) => {
       line-height: 2rem;
       color: #515767;
       margin-top: 8px;
-      max-height: 12rem;
       overflow: hidden;
 
       &.content-expand {
@@ -348,6 +294,8 @@ const deleteSuccess = (data) => {
 
           p {
             margin: 0;
+            font-size: 14px;
+            line-height: 2rem;
           }
         }
       }
@@ -358,10 +306,8 @@ const deleteSuccess = (data) => {
       align-items: center;
 
       .limit-btn {
-        margin-top: 8px;
         cursor: pointer;
         font-size: 14px;
-        line-height: 22px;
         color: #1e80ff;
         margin-right: 20px;
       }
@@ -372,8 +318,8 @@ const deleteSuccess = (data) => {
         align-items: center;
         color: #8a919f;
         margin-right: 10px;
-        padding-top: 6px;
         cursor: pointer;
+        font-size: 13px;
 
         &:hover {
           color: #1890ff;
@@ -414,8 +360,8 @@ const deleteSuccess = (data) => {
 
         .data-list {
           border-radius: 4px;
-          padding: 12px;
-          background-color: var(--subcomment-background);
+          padding: 0 12px;
+          border: 1px solid var(--youyu-border-color);
         }
 
         .bottom-operation {
@@ -428,8 +374,10 @@ const deleteSuccess = (data) => {
       }
 
       .reply-item {
+        padding: 10px 0;
+
         &:nth-child(n + 2) {
-          margin-top: 1rem;
+          border-top: 1px solid var(--youyu-border-color);
         }
       }
     }

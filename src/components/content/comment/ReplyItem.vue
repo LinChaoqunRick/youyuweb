@@ -2,23 +2,17 @@
   <div class="reply-container">
     <div class="reply-info">
       <div class="user-info">
-        <a-popover placement="top"
-                   :mouseEnterDelay="0.6"
-                   :mouseLeaveDelay="0.3"
-                   @visibleChange="onUserVisibleChange">
+        <a-popover placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onUserVisibleChange">
           <template #content>
-            <UserCard :user="data.user"/>
+            <UserCard :user="data.user" />
           </template>
           <RouterLink :to="`/user/${data.user.id}`" class="avatar">
-            <img :src="data.user.avatar" alt="头像"/>
+            <img :src="data.user.avatar" alt="头像" />
           </RouterLink>
         </a-popover>
-        <a-popover placement="top"
-                   :mouseEnterDelay="0.6"
-                   :mouseLeaveDelay="0.3"
-                   @visibleChange="onUserVisibleChange">
+        <a-popover placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onUserVisibleChange">
           <template #content>
-            <UserCard :user="data.user"/>
+            <UserCard :user="data.user" />
           </template>
           <RouterLink :to="`/user/${data.user.id}`">
             <div class="user-nickname">{{ data.user.nickname }}</div>
@@ -28,23 +22,17 @@
       </div>
       <div class="user-info" v-if="data.userTo && data.replyId !== -1">
         <p class="reply-text">回复</p>
-        <a-popover placement="top"
-                   :mouseEnterDelay="0.6"
-                   :mouseLeaveDelay="0.3"
-                   @visibleChange="onUserToVisibleChange">
+        <a-popover placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onUserToVisibleChange">
           <template #content>
-            <UserCard :user="data.userTo"/>
+            <UserCard :user="data.userTo" />
           </template>
           <RouterLink :to="`/user/${data.userTo.id}`" class="avatar">
-            <img :src="data.userTo.avatar" alt="头像"/>
+            <img :src="data.userTo.avatar" alt="头像" />
           </RouterLink>
         </a-popover>
-        <a-popover placement="top"
-                   :mouseEnterDelay="0.6"
-                   :mouseLeaveDelay="0.3"
-                   @visibleChange="onUserToVisibleChange">
+        <a-popover placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onUserToVisibleChange">
           <template #content>
-            <UserCard :user="data.userTo"/>
+            <UserCard :user="data.userTo" />
           </template>
           <RouterLink :to="`/user/${data.userTo.id}`">
             <div class="user-nickname">{{ data.userTo.nickname }}</div>
@@ -54,64 +42,71 @@
       </div>
       <div class="create-time" :title="data.createTime">{{ $dayjs().to(data.createTime) }}</div>
     </div>
-    <div class="reply-content" v-html="data.content"></div>
+    <div class="reply-content" :class="{ 'content-expand': expand }" :style="{ 'max-height': maxRow * 2 + 'rem' }"
+         v-row="{ set: set }" v-html="data.content"></div>
     <div class="reply-operation">
-      <div class="ope-item" :class="{'ope-active': data.commentLike}" v-login="onLike">
-        <i-good-two :theme="data.commentLike?'filled':'outline'" size="16" fill="currentColor"/>
+      <div class="limit-btn" @click="expand = true" v-show="row > 7 && !expand">展开</div>
+      <div class="limit-btn" @click="expand = false" v-show="row > 7 && expand">收起</div>
+    </div>
+    <div class="reply-operation">
+      <div class="ope-item" :class="{ 'ope-active': data.commentLike }" v-login="onLike">
+        <i-good-two :theme="data.commentLike ? 'filled' : 'outline'" size="16" fill="currentColor" />
         点赞<span v-if="data.supportCount">({{ data.supportCount }})</span>
       </div>
-      <div class="ope-item" :class="{'ope-active': active}" @click="handleReply">
-        <i-comment :theme="active?'filled':'outline'" size="16" fill="currentColor"/>
+      <div class="ope-item" :class="{ 'ope-active': active }" @click="handleReply">
+        <i-comment :theme="active ? 'filled' : 'outline'" size="16" fill="currentColor" />
         {{ active ? '取消回复' : '回复' }}<span v-if="data.replyCount">({{ data.replyCount }})</span>
       </div>
-      <div class="ope-item delete-ope" v-if="showDelete" @click="handleDelete">
-        删除
-      </div>
+      <div class="ope-item delete-ope" v-if="showDelete" @click="handleDelete">删除</div>
     </div>
     <div class="reply-editor" v-if="active">
-      <ReplyEditor :placeholder="`回复${data.user.nickname}`" @handleSubmit="handleSubmit" ref="replyEditor"/>
+      <ReplyEditor :placeholder="`回复${data.user.nickname}`" @handleSubmit="handleSubmit" ref="replyEditor" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {ref, computed, inject} from "vue";
-import {useStore} from "vuex";
-import {useRouter, RouterLink} from "vue-router";
-import {message, Modal} from "ant-design-vue";
+import { ref, computed, inject } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter, RouterLink } from 'vue-router';
+import { message, Modal } from 'ant-design-vue';
 
-import ReplyEditor from "@/components/content/comment/ReplyEditor.vue";
-import UserCard from "@/components/content/comment/UserCard.vue";
-import type {userType} from "@/types/user";
+import ReplyEditor from '@/components/content/comment/ReplyEditor.vue';
+import UserCard from '@/components/content/comment/UserCard.vue';
+import type { userType } from '@/types/user';
 
-const {getters, commit, dispatch} = useStore();
+const { getters, commit, dispatch } = useStore();
 const router = useRouter();
 const isLogin = computed(() => getters['isLogin']);
 const userInfo = computed(() => getters['userInfo']);
 const likeLoading = ref<boolean>(false);
+const expand = ref<boolean>(false);
+const row = ref<number>(0);
+const maxRow = 4;
 
-const emit = defineEmits(['saveSuccess', 'deleteSuccess'])
+const emit = defineEmits(['saveSuccess', 'deleteSuccess']);
 
 const props = defineProps({
-  data: { // 回复的子评论
+  data: {
+    // 回复的子评论
     type: Object,
-    required: true
+    required: true,
   },
-  root: { // 回复的子评论的父评论
-    type: Object
+  root: {
+    // 回复的子评论的父评论
+    type: Object,
   },
-})
+});
 
-const {activeId, updateActiveId} = inject('active');
+const { activeId, updateActiveId } = inject('active');
 const active = computed(() => activeId.value === props.data.id);
 const post = inject('post');
 const setPostAttribute = inject('setPostAttribute');
-const showDelete = computed(() => userInfo.value.id === props.data.userId || post.value.userId === userInfo.value.id)
-
+const showDelete = computed(() => userInfo.value.id === props.data.userId || post.value.userId === userInfo.value.id);
 
 function handleReply() {
   if (!isLogin.value) {
-    commit("changeLogin", true);
+    commit('changeLogin', true);
     return;
   }
   if (!active.value) {
@@ -122,20 +117,23 @@ function handleReply() {
 }
 
 function handleSubmit(content: string, submitCallback: Function) {
-  dispatch("createComment", {
+  dispatch('createComment', {
     postId: props.data.postId,
     userId: userInfo.value.id,
     rootId: props.data.rootId,
     replyId: props.data.id,
     userIdTo: props.data.userId,
-    content: content
-  }).then(res => {
-    updateActiveId(-1);
-    emit("saveSuccess", res.data);
-    message.success('评论成功');
-  }).catch(e => {
-    message.error("评论失败")
-  }).finally(() => submitCallback())
+    content: content,
+  })
+    .then(res => {
+      updateActiveId(-1);
+      emit('saveSuccess', res.data);
+      message.success('评论成功');
+    })
+    .catch(e => {
+      message.error('评论失败');
+    })
+    .finally(() => submitCallback());
 }
 
 function onLike() {
@@ -145,18 +143,24 @@ function onLike() {
   dispatch(isLike ? 'cancelCommentLike' : 'setCommentLike', {
     commentId: props.data.id,
     userId: userInfo.value.id,
-    userIdTo: props.data.userId
-  }).then(res => {
-    if (isLike) {
-      props.data.commentLike = null;
-      props.data.supportCount -= 1;
-    } else {
-      props.data.commentLike = res.data;
-      props.data.supportCount += 1;
-    }
-  }).finally(() => {
-    likeLoading.value = false;
+    userIdTo: props.data.userId,
   })
+    .then(res => {
+      if (isLike) {
+        props.data.commentLike = null;
+        props.data.supportCount -= 1;
+      } else {
+        props.data.commentLike = res.data;
+        props.data.supportCount += 1;
+      }
+    })
+    .finally(() => {
+      likeLoading.value = false;
+    });
+}
+
+function set(value: number) {
+  row.value = value;
 }
 
 function handleDelete() {
@@ -165,38 +169,39 @@ function handleDelete() {
     icon: '', // <help theme="outline" size="24" fill="#1890ff"/>
     content: '确定删除这条评论吗？',
     onOk() {
-      return dispatch("deleteComment", {commentId: props.data.id}).then(res => {
-        if (res.data) {
-          emit("deleteSuccess", props.data);
-          message.success('删除成功');
-        } else {
-          message.error("删除失败");
-        }
-      }).catch(console.log)
+      return dispatch('deleteComment', { commentId: props.data.id })
+        .then(res => {
+          if (res.data) {
+            emit('deleteSuccess', props.data);
+            message.success('删除成功');
+          } else {
+            message.error('删除失败');
+          }
+        })
+        .catch(console.log);
     },
   });
 }
 
 const onUserVisibleChange = (visible: boolean) => {
   if (visible) {
-    dispatch('getPostUserById', {userId: props.data.user.id}).then(res => {
+    dispatch('getPostUserById', { userId: props.data.user.id }).then(res => {
       props.data.user = res.data;
-    })
+    });
   }
-}
+};
 
 const onUserToVisibleChange = (visible: boolean) => {
   if (visible) {
-    dispatch('getPostUserById', {userId: props.data.userTo.id}).then(res => {
+    dispatch('getPostUserById', { userId: props.data.userTo.id }).then(res => {
       props.data.userTo = res.data;
-    })
+    });
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
 .reply-container {
-
   .reply-info {
     display: flex;
     align-items: center;
@@ -250,15 +255,27 @@ const onUserToVisibleChange = (visible: boolean) => {
   }
 
   .reply-content {
-    margin: 8px 0 8px 30px;
+    margin: 8px 0 0 0;
     white-space: pre-wrap;
+    overflow: hidden;
+    line-height: 2rem;
+
+    &.content-expand {
+      max-height: none !important;
+    }
   }
 
   .reply-operation {
     display: flex;
     align-items: center;
-    margin-left: 30px;
+    font-size: 13px;
 
+    .limit-btn {
+      cursor: pointer;
+      font-size: 14px;
+      color: #1e80ff;
+      margin-right: 20px;
+    }
 
     .ope-item {
       display: flex;

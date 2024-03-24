@@ -2,46 +2,51 @@
   <div class="post-comment-container" id="post-comment-id">
     <a-card title="评论" style="width: 100%" class="ant-card-self write-comment-card">
       <div class="write-comment" v-if="isLogin">
-        <MdEditorCom v-model="content"
-                     :toolbars="toolbars"
-                     :footers="footers"
-                     :extend="{
-                       maxLength: 500
-                     }"
-                     class="write-comment-editor"
-                     ref="commentEditor"/>
+        <MdEditorCom
+          v-model="content"
+          :toolbars="toolbars"
+          :footers="footers"
+          :extend="{
+            maxLength: 500,
+          }"
+          class="write-comment-editor"
+          ref="commentEditor"
+        />
         <div class="action-box">
-          <a-button type="primary" :disabled="submittable" :loading="submitLoading" @click="handleSubmit">发表评论
+          <a-button type="primary" :disabled="submittable" :loading="submitLoading" @click="handleSubmit"
+            >发表评论
           </a-button>
         </div>
       </div>
       <div class="comment-hint-wrapper" v-else>
-        <CommentHint/>
+        <CommentHint />
       </div>
     </a-card>
     <a-card style="width: 100%" class="comment-list-card">
       <template #title>
         <div class="title-container">
-          <div class="title-text large-font">
-            全部评论({{ post.commentCount }})
-          </div>
-          <SortSwitch v-model="sort" @onChange="onChange"/>
+          <div class="title-text large-font">全部评论({{ post.commentCount }})</div>
+          <SortSwitch v-model="sort" @onChange="onChange" />
         </div>
       </template>
       <div class="comment-list">
-        <ContentList url="getCommentsPage" auto-load data-text="评论"
-                     :params="params" :total="post.commentCount" load-trigger
-                     v-if="post.id" ref="ContentListRef">
-          <template v-slot="{list}">
-            <CommentItem v-for="item in list"
-                         :data="item"
-                         :key="item.id"
-                         @deleteSuccess="deleteSuccess"/>
+        <ContentList
+          url="getCommentsPage"
+          auto-load
+          data-text="评论"
+          :params="params"
+          :total="post.commentCount"
+          load-trigger
+          v-if="post.id"
+          ref="ContentListRef"
+        >
+          <template v-slot="{ list }">
+            <CommentItem v-for="item in list" :data="item" :key="item.id" @deleteSuccess="deleteSuccess" />
           </template>
-          <template v-slot:loadMoreBox="{loading}">
+          <template v-slot:loadMoreBox="{ loading }">
             查看全部 {{ post.commentCount }} 条评论
-            <i-down v-show="!loading" theme="outline" size="14" fill="#1890ff"/>
-            <i-loading-four v-show="loading" theme="outline" size="14" fill="#1890ff"/>
+            <i-down v-show="!loading" theme="outline" size="14" fill="#1890ff" />
+            <i-loading-four v-show="loading" theme="outline" size="14" fill="#1890ff" />
           </template>
           <template v-slot:loadedAllBox>
             <div>已加载全部评论 ~</div>
@@ -53,33 +58,21 @@
 </template>
 
 <script setup lang="ts">
-import {useStore} from 'vuex';
-import {computed, provide, ref, watch, inject} from "vue";
-import {message} from 'ant-design-vue';
-import CommentItem from "@/components/content/comment/CommentItem.vue";
-import MdEditorCom from "@/components/content/mdEditor/MdEditorCom.vue";
-import CommentHint from "./CommentHint.vue";
-import SortSwitch from "@/components/common/utils/sortSwitch/SortSwitch.vue";
-import ContentList from "@/components/common/system/ContentList.vue";
-import type {postData} from "@/types/post";
+import { useStore } from 'vuex';
+import { computed, provide, ref, watch, inject, nextTick } from 'vue';
+import { message } from 'ant-design-vue';
+import CommentItem from '@/components/content/comment/CommentItem.vue';
+import MdEditorCom from '@/components/content/mdEditor/MdEditorCom.vue';
+import CommentHint from './CommentHint.vue';
+import SortSwitch from '@/components/common/utils/sortSwitch/SortSwitch.vue';
+import ContentList from '@/components/common/system/ContentList.vue';
+import type { postData } from '@/types/post';
 
 const isLogin = computed(() => getters['isLogin']);
 
-const {getters, dispatch} = useStore();
+const { getters, dispatch } = useStore();
 
-const toolbars = [
-  'bold',
-  'underline',
-  'italic',
-  '-',
-  'codeRow',
-  'code',
-  'link',
-  1,
-  '-',
-  '=',
-  'preview',
-];
+const toolbars = ['bold', 'underline', 'italic', '-', 'codeRow', 'code', 'link', 1, '-', '=', 'preview'];
 const footers = ['markdownTotal', '=', 'scrollSwitch'];
 
 const post = inject<postData>('post');
@@ -93,42 +86,47 @@ const submitLoading = ref<boolean>(false);
 const commentEditor = ref(null);
 
 const submittable = computed(() => !content.value);
-const order = computed(() => sort.value === 'new' ? 'create_time' : 'support_count');
+const order = computed(() => (sort.value === 'new' ? 'create_time' : 'support_count'));
 const userInfo = computed(() => getters['userInfo']);
 const params = computed(() => ({
   postId: post.value.id,
-  orderBy: order.value
+  orderBy: order.value,
 }));
 
 const ContentListRef = ref<InstanceType<typeof ContentList>>();
 
 const updateActiveId = (value: number) => {
   activeId.value = value;
-}
+};
 
-provide('active', {activeId, updateActiveId});
+provide('active', { activeId, updateActiveId });
 
 function onChange() {
-  ContentListRef.value.initData();
+  nextTick(() => {
+    ContentListRef.value.initData();
+  });
 }
 
 function handleSubmit() {
   submitLoading.value = true;
-  dispatch("createComment", {
+  dispatch('createComment', {
     postId: post.value.id,
     userId: userInfo.value.id,
     userIdTo: post.value.userId,
-    content: content.value
-  }).then(res => {
-    message.success('评论成功');
-    content.value = '';
-    ContentListRef.value.list.unshift(res.data);
-    setPostAttribute('commentCount', post.value.commentCount + 1);
-  }).catch(e => {
-    message.error("评论失败")
-  }).finally(() => {
-    submitLoading.value = false;
+    content: content.value,
   })
+    .then(res => {
+      message.success('评论成功');
+      content.value = '';
+      ContentListRef.value.list.unshift(res.data);
+      setPostAttribute('commentCount', post.value.commentCount + 1);
+    })
+    .catch(e => {
+      message.error('评论失败');
+    })
+    .finally(() => {
+      submitLoading.value = false;
+    });
 }
 
 function handleFocus() {
@@ -138,16 +136,15 @@ function handleFocus() {
 const deleteSuccess = (data: postData) => {
   ContentListRef.value.list = ContentListRef.value.list.filter(item => item.id !== data.id);
   setPostAttribute('commentCount', post.value.commentCount - (1 + data.replyCount));
-}
+};
 
 defineExpose({
-  handleFocus
-})
+  handleFocus,
+});
 </script>
 
 <style lang="scss" scoped>
 .post-comment-container {
-
   .write-comment-card {
     ::v-deep(.ant-card-body) {
       padding: 0 24px 10px 24px;
@@ -215,7 +212,6 @@ defineExpose({
   }
 
   ::v-deep(.ant-card) {
-
     .ant-card-head {
       border-bottom: none;
     }
@@ -225,7 +221,7 @@ defineExpose({
       border-radius: 2px 2px 0 0;
     }
 
-    &:nth-child(n+2) {
+    &:nth-child(n + 2) {
       border-top: none;
       border-radius: 0;
 
