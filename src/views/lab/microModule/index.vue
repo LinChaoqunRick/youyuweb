@@ -15,13 +15,17 @@ import {
   Mesh,
   MeshBasicMaterial,
   MeshPhongMaterial,
+  MeshLambertMaterial,
   PerspectiveCamera,
   PlaneGeometry,
   Scene,
   SphereGeometry,
   AmbientLight,
   WebGLRenderer,
-  DoubleSide, SpotLight
+  DoubleSide,
+  SpotLight,
+  PointLightHelper,
+  SpotLightHelper
 } from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {onMounted, reactive, ref} from 'vue';
@@ -59,9 +63,12 @@ const initSceneRenderer = () => {
   scene = new Scene();
 
   // 初始化渲染器
-  renderer = new WebGLRenderer();
+  renderer = new WebGLRenderer({
+    antialias: true,
+  });
   renderer.setClearColor(new Color(0x666666));
   renderer.setSize(containerRect.width, containerRect.height);
+  renderer.setPixelRatio(window.devicePixelRatio);
   renderer.shadowMap.enabled = true;
 }
 
@@ -83,7 +90,6 @@ const initHelper = () => {
   // 添加dat.gui
   const gui = new dat.GUI();
   gui.domElement.style = 'position:absolute;top:65px;right:10px;';
-
   gui.add(controlData, 'rotationSpeed', 0, 0.5);
   gui.add(controlData, 'bouncingSpeed', 0, 0.5);
   gui.add(controlData, 'numberOfObjects').listen();
@@ -111,6 +117,9 @@ const initLight = () => {
   spotLight.castShadow = true;
   spotLight.position.set(20, 10, 20);
   scene.add(spotLight);
+
+  // const spotLightHelper = new SpotLightHelper(spotLight, 10);
+  // scene.add(spotLightHelper);
 }
 
 const initModels = () => {
@@ -136,14 +145,19 @@ const initModels = () => {
   cube.castShadow = true;
   // scene.add(cube);
 
-  // 立方体
+  // 立方体2
   const cubeGeometry2 = new BoxGeometry(4, 4, 4);
   const cubeMaterial2 = new MeshPhongMaterial({
     color: 0x1890FF,
+    shininess: 1000,
+    specular: 0x5F9EA0
   })
   const cube2 = new Mesh(cubeGeometry2, cubeMaterial2);
-  cube2.position.set(0, 2, 0);
+  // cube2.position.set(0, 2, 0);
   cube2.castShadow = true;
+  console.log(cube2);
+  console.log(cube2.geometry);
+  cube2.geometry.translate(0,10,0)
   scene.add(cube2);
 
   // 圆
