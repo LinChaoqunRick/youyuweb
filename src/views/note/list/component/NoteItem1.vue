@@ -27,7 +27,7 @@
           {{data.chapterCount}}
         </div>
         <div class="info-more" v-if="userInfo.id===data.userId">
-          <a-popover v-model:visible="visible" trigger="click" placement="bottom" overlayClassName="note-popover">
+          <a-popover v-model:open="visible" trigger="click" placement="bottom" overlayClassName="note-popover">
             <template #content>
               <a-button type="link" @click="handleEdit">编辑</a-button>
             </template>

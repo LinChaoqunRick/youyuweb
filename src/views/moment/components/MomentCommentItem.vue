@@ -56,7 +56,7 @@
             {{ active ? '取消回复' : '回复' }}<span v-if="data.replyCount && !active">({{ data.replyCount }})</span>
           </div>
           <a-popconfirm
-            v-model:visible="deleteVisible"
+            v-model:open="deleteVisible"
             title="确认删除此评论?"
             ok-text="是"
             cancel-text="否"

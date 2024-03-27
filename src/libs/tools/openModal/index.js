@@ -8,7 +8,7 @@ import IconPark from "@/libs/plugins/iconpark";
 export default function openModal(config = {}) {
   const modalProps = {...Modal.props};
   // 删除visible、confirmLoading用自定义
-  Reflect.deleteProperty(modalProps, "visible");
+  Reflect.deleteProperty(modalProps, "open");
   Reflect.deleteProperty(modalProps, "confirmLoading");
   config = Object.assign({}, {
     cancelText: "取消",
@@ -40,7 +40,7 @@ export default function openModal(config = {}) {
         };
       },
       template: `
-      <Modal v-model:visible="modalVisible" v-bind="$props" class="modal-body" @cancel="handleCancel(false)">
+      <Modal v-model:open="modalVisible" v-bind="$props" class="modal-body" @cancel="handleCancel(false)">
         <div class="modal-content" style="font-size:14px">
           <component ref="modalBody" is="${config.component.name}" v-bind="componentProps"/>
         </div>

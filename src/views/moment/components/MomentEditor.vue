@@ -59,7 +59,7 @@
             placement="bottomLeft"
             overlayClassName="emoji-picker-popover"
             :getPopupContainer="triggerNode => triggerNode.parentNode"
-            :visible="emojiVisible"
+            :open="emojiVisible"
         >
           <template #content>
             <EmojiPicker @onImagePick="onImagePick" @onEmojiPick="onEmojiPick" v-on-click-outside="onEmojiClose"/>

@@ -1,6 +1,6 @@
 <template>
   <div class="create-post-info">
-    <a-drawer title="发布文章" width="500" :visible="visible" @close="onClose" class="create-post-drawer">
+    <a-drawer title="发布文章" width="500" :open="visible" @close="onClose" class="create-post-drawer">
       <template #closeIcon>
         <i-close theme="outline" size="20" fill="#909090"/>
       </template>

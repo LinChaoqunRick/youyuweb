@@ -1,7 +1,7 @@
 <template>
   <div class="user-info-container">
     <a-popover
-      v-model:visible="visible"
+      v-model:open="visible"
       placement="bottomRight"
       trigger="click"
       overlayClassName="user-info-popover"

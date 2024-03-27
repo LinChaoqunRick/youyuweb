@@ -4,7 +4,7 @@
       <UserInfo/>
     </div>
     <div class="user-unlogin" v-else>
-      <a-popover v-model:visible="visible"
+      <a-popover v-model:open="visible"
                  trigger="click"
                  overlayClassName="login-container"
                  placement="bottomRight"

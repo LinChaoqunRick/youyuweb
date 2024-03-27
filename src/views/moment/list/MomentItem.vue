@@ -39,7 +39,7 @@
           </div>
         </div>
         <a-popover
-          v-model:visible="visible"
+          v-model:open="visible"
           placement="bottomRight"
           overlayClassName="moment-item-top-popover"
           :getPopupContainer="triggerNode => triggerNode.parentNode"

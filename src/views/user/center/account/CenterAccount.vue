@@ -66,7 +66,7 @@
     </div>
   </div>
   <a-modal
-    v-model:visible="accountBindModalVisible"
+    v-model:open="accountBindModalVisible"
     title="账号解绑提示"
     :confirm-loading="accountBindConfirmLoading"
     @ok="onSocialUnbind">
