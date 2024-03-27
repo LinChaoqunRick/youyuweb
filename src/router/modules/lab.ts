@@ -36,6 +36,15 @@ const route = [
         },
         component: () => import("@/views/lab/machineRoom/index.vue")
       },
+      {
+        path: "earth",
+        name: "Earth",
+        meta: {
+          title: "3D地球",
+          hide: true
+        },
+        component: () => import("@/views/lab/earth/index.vue")
+      },
     ]
   }
 ]

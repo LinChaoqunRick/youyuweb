@@ -13,6 +13,7 @@ import {
   GridHelper,
   Color,
   Mesh,
+  Vector3,
   MeshBasicMaterial,
   MeshPhongMaterial,
   MeshLambertMaterial,
@@ -25,20 +26,24 @@ import {
   DoubleSide,
   SpotLight,
   PointLightHelper,
-  SpotLightHelper
+  SpotLightHelper,
+  CircleGeometry,
+  TextureLoader,
+  RepeatWrapping,
 } from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {onMounted, reactive, ref} from 'vue';
 import * as dat from 'dat.gui';
+import Button from "@/libs/tools/openModal";
 
 const statsRef = ref<HTMLDivElement>();
 
 const containerRef = ref<HTMLDivElement>();
-let scene, renderer, camera, controls, stats, plane, cube, sphere;
+let scene, renderer, camera, controls, stats, plane, cube, sphere, cube2, earthTexture;
 let containerRect, step = 0;
 const controlData = reactive({
   rotationSpeed: 0.01,
-  bouncingSpeed: 0.01,
+  bouncingSpeed: 0.02,
   numberOfObjects: 0,
   addCube: function () {
     const cubeGeometry = new BoxGeometry(4, 4, 4);
@@ -152,15 +157,15 @@ const initModels = () => {
     shininess: 1000,
     specular: 0x5F9EA0
   })
-  const cube2 = new Mesh(cubeGeometry2, cubeMaterial2);
+  cubeGeometry2.translate(0, 2, 0,)
+  cube2 = new Mesh(cubeGeometry2, cubeMaterial2);
   // cube2.position.set(0, 2, 0);
   cube2.castShadow = true;
-  console.log(cube2);
-  console.log(cube2.geometry);
-  cube2.geometry.translate(0,10,0)
+  cube2.name = 'cube2';
+  // cube2.geometry.translate(0, 10, 0)
   scene.add(cube2);
 
-  // 圆
+  // 球
   const sphereGeometry = new SphereGeometry(4);
   const sphereMaterial = new MeshPhongMaterial({
     color: 0x1677ff,
@@ -168,7 +173,21 @@ const initModels = () => {
   sphere = new Mesh(sphereGeometry, sphereMaterial);
   sphere.castShadow = true;
   sphere.position.set(20, 4, 2);
-  // scene.add(sphere);
+  scene.add(sphere);
+
+  // 加载地球贴图
+  earthTexture = new TextureLoader().load('/static/earth/earth.jpg');
+
+  console.log(earthTexture);
+  earthTexture.wrapS = RepeatWrapping;
+
+  const circleGeometry = new CircleGeometry(10, 50);
+  const circleMaterial = new MeshLambertMaterial({
+    map: earthTexture,
+    side: DoubleSide
+  });
+  const circle = new Mesh(circleGeometry, circleMaterial);
+  scene.add(circle);
 }
 
 const renderScene = () => {
@@ -179,9 +198,11 @@ const renderScene = () => {
   cube.rotation.y += controlData.rotationSpeed;
   cube.rotation.z += controlData.rotationSpeed;
 
+  earthTexture.offset.x += 0.001;
+
   step += controlData.bouncingSpeed;
   sphere.position.x = 20 + 10 * Math.cos(step);
-  sphere.position.y = 2 + 10 * Math.abs(Math.sin(step));
+  sphere.position.y = 4 + 10 * Math.abs(Math.sin(step));
 
   requestAnimationFrame(renderScene)
   renderer.render(scene, camera);
@@ -195,6 +216,10 @@ const resize = () => {
 }
 
 window.addEventListener('resize', resize);
+
+const onRemoveCube2 = () => {
+  const cb2 = scene.getObjectByName('cube2');
+}
 
 onMounted(() => {
   initSceneRenderer();

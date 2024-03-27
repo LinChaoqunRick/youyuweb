@@ -7,6 +7,10 @@
     <RouterLink to="/lab/machineRoom">
       <a-button>机房3D</a-button>
     </RouterLink>
+
+    <RouterLink to="/lab/earth">
+      <a-button>3D地球</a-button>
+    </RouterLink>
   </div>
 </template>
 
