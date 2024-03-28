@@ -31,10 +31,10 @@ import {
   TextureLoader,
   RepeatWrapping,
 } from 'three';
-import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {onMounted, reactive, ref} from 'vue';
 import * as dat from 'dat.gui';
-import Button from "@/libs/tools/openModal";
 
 const statsRef = ref<HTMLDivElement>();
 
@@ -178,7 +178,6 @@ const initModels = () => {
   // 加载地球贴图
   earthTexture = new TextureLoader().load('/static/earth/earth.jpg');
 
-  console.log(earthTexture);
   earthTexture.wrapS = RepeatWrapping;
 
   const circleGeometry = new CircleGeometry(10, 50);
@@ -188,6 +187,11 @@ const initModels = () => {
   });
   const circle = new Mesh(circleGeometry, circleMaterial);
   scene.add(circle);
+
+  const gltfLoader = new GLTFLoader();
+  const bike = gltfLoader.load('/static/models/greasepencil-bike.gltf', (gltf) => {
+    scene.add(gltf.scene);
+  });
 }
 
 const renderScene = () => {
