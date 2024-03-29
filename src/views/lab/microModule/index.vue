@@ -80,12 +80,12 @@ const initSceneRenderer = () => {
 const initCamera = () => {
   camera = new PerspectiveCamera(45, containerRect.width / containerRect.height, 0.1, 1000);
   camera.position.set(-80, 140, 80);
-  camera.lookAt(scene.position);
+  // camera.lookAt(100, 10, 10);
 }
 
 const initHelper = () => {
   // 添加坐标格辅助对象
-  const gridHelper = new GridHelper(200, 20);
+  const gridHelper = new GridHelper(200, 40);
   scene.add(gridHelper);
 
   // 添加坐标轴辅助对象 红x绿y蓝z
@@ -108,6 +108,7 @@ const initHelper = () => {
 
   // 添加轨道控制器
   controls = new OrbitControls(camera, renderer.domElement);
+  // controls.target.set(100, 10, 10);
   controls.update();
   controls.enableDamping = true;
   controls.dampingFactor = 0.1;
@@ -180,6 +181,8 @@ const initModels = () => {
 
   earthTexture.wrapS = RepeatWrapping;
 
+  console.log(earthTexture);
+
   const circleGeometry = new CircleGeometry(10, 50);
   const circleMaterial = new MeshLambertMaterial({
     map: earthTexture,
@@ -189,12 +192,19 @@ const initModels = () => {
   scene.add(circle);
 
   const gltfLoader = new GLTFLoader();
-  const bike = gltfLoader.load('/static/models/greasepencil-bike.gltf', (gltf) => {
-    scene.add(gltf.scene);
+  gltfLoader.load('/static/models/简易小区.glb', (glb) => {
+    scene.add(glb.scene);
+
+    const b1 = scene.getObjectByName('1号楼');
+    console.log(b1);
+    b1.material = new MeshLambertMaterial({
+      color: 0xfa5c37
+    })
   });
 }
 
 const renderScene = () => {
+  // console.log(camera.position, controls.target);
   controls.update();
   stats.update();
 
