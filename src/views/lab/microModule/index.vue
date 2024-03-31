@@ -69,6 +69,7 @@ const initSceneRenderer = () => {
 
   // 初始化渲染器
   renderer = new WebGLRenderer({
+    // alpha: true,
     antialias: true,
   });
   renderer.setClearColor(new Color(0x666666));
