@@ -29,7 +29,7 @@ import {
   SpotLightHelper,
   TextureLoader
 } from 'three';
-import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {onMounted, reactive, ref} from 'vue';
 
 const statsRef = ref<HTMLDivElement>();
