@@ -3,6 +3,11 @@
     <div class="percentage-box" v-if="percentage < 100">{{ percentage }}%</div>
     <div ref="statsRef"></div>
     <div class="three-d-container" ref="containerRef"></div>
+    <div class="bottom-operation">
+      <div class="operation-item" @click="onResetOrbitControls">
+        <i-reverse-lens theme="outline" size="28" fill="#ffffff" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -38,6 +43,7 @@ const statsRef = ref<HTMLDivElement>();
 
 const containerRef = ref<HTMLDivElement>();
 const percentage = ref(0);
+let cabinetList = ref([]);
 const microConfig = {
   totalLength: 0, // 模型总长度
   doorWidth: 24, // 门的宽度
@@ -507,12 +513,336 @@ const initCabinet = async () => {
         avgTemp: null,
         avgHumi: null,
       },
+      {
+        deviceId: 1,
+        deviceType: '100',
+        deviceName: '192.168.68.227',
+        areaId: 1,
+        cabinetIndex: 24,
+        assetId: 15,
+        cabinetShortName: '机柜24',
+        cabinetType: '6',
+        cabinetWidth: '1',
+        alarmLevel: null,
+        alarmCount: 0,
+        cabinetLocateRow: '2',
+        cabinetRowOrder: 12,
+        cabinetOrderIndex: null,
+        avgTemp: null,
+        avgHumi: null,
+      },
+      {
+        deviceId: 1,
+        deviceType: '100',
+        deviceName: '192.168.68.227',
+        areaId: 1,
+        cabinetIndex: 24,
+        assetId: 15,
+        cabinetShortName: '机柜24',
+        cabinetType: '6',
+        cabinetWidth: '1',
+        alarmLevel: null,
+        alarmCount: 0,
+        cabinetLocateRow: '2',
+        cabinetRowOrder: 12,
+        cabinetOrderIndex: null,
+        avgTemp: null,
+        avgHumi: null,
+      },
+      {
+        deviceId: 1,
+        deviceType: '100',
+        deviceName: '192.168.68.227',
+        areaId: 1,
+        cabinetIndex: 24,
+        assetId: 15,
+        cabinetShortName: '机柜24',
+        cabinetType: '6',
+        cabinetWidth: '1',
+        alarmLevel: null,
+        alarmCount: 0,
+        cabinetLocateRow: '2',
+        cabinetRowOrder: 12,
+        cabinetOrderIndex: null,
+        avgTemp: null,
+        avgHumi: null,
+      },
+      {
+        deviceId: 1,
+        deviceType: '100',
+        deviceName: '192.168.68.227',
+        areaId: 1,
+        cabinetIndex: 24,
+        assetId: 15,
+        cabinetShortName: '机柜24',
+        cabinetType: '6',
+        cabinetWidth: '1',
+        alarmLevel: null,
+        alarmCount: 0,
+        cabinetLocateRow: '2',
+        cabinetRowOrder: 12,
+        cabinetOrderIndex: null,
+        avgTemp: null,
+        avgHumi: null,
+      },
+      {
+        deviceId: 1,
+        deviceType: '100',
+        deviceName: '192.168.68.227',
+        areaId: 1,
+        cabinetIndex: 15,
+        assetId: 18,
+        cabinetShortName: '机柜15',
+        cabinetType: '7',
+        cabinetWidth: '1',
+        alarmLevel: null,
+        alarmCount: 0,
+        cabinetLocateRow: '1',
+        cabinetRowOrder: 8,
+        cabinetOrderIndex: null,
+        avgTemp: null,
+        avgHumi: null,
+      },
+      {
+        deviceId: 1,
+        deviceType: '100',
+        deviceName: '192.168.68.227',
+        areaId: 1,
+        cabinetIndex: 16,
+        assetId: 11,
+        cabinetShortName: '机柜16',
+        cabinetType: '9',
+        cabinetWidth: '1',
+        alarmLevel: null,
+        alarmCount: 0,
+        cabinetLocateRow: '2',
+        cabinetRowOrder: 8,
+        cabinetOrderIndex: null,
+        avgTemp: null,
+        avgHumi: null,
+      },
+      {
+        deviceId: 1,
+        deviceType: '100',
+        deviceName: '192.168.68.227',
+        areaId: 1,
+        cabinetIndex: 17,
+        assetId: 10,
+        cabinetShortName: '机柜17',
+        cabinetType: '7',
+        cabinetWidth: '1',
+        alarmLevel: null,
+        alarmCount: 0,
+        cabinetLocateRow: '1',
+        cabinetRowOrder: 9,
+        cabinetOrderIndex: null,
+        avgTemp: null,
+        avgHumi: null,
+      },
+      {
+        deviceId: 1,
+        deviceType: '100',
+        deviceName: '192.168.68.227',
+        areaId: 1,
+        cabinetIndex: 18,
+        assetId: 13,
+        cabinetShortName: '机柜18',
+        cabinetType: '5',
+        cabinetWidth: '1',
+        alarmLevel: null,
+        alarmCount: 0,
+        cabinetLocateRow: '2',
+        cabinetRowOrder: 9,
+        cabinetOrderIndex: null,
+        avgTemp: null,
+        avgHumi: null,
+      },
+      {
+        deviceId: 1,
+        deviceType: '100',
+        deviceName: '192.168.68.227',
+        areaId: 1,
+        cabinetIndex: 19,
+        assetId: 12,
+        cabinetShortName: '机柜19',
+        cabinetType: '7',
+        cabinetWidth: '1',
+        alarmLevel: null,
+        alarmCount: 0,
+        cabinetLocateRow: '1',
+        cabinetRowOrder: 10,
+        cabinetOrderIndex: null,
+        avgTemp: null,
+        avgHumi: null,
+      },
+      {
+        deviceId: 1,
+        deviceType: '100',
+        deviceName: '192.168.68.227',
+        areaId: 1,
+        cabinetIndex: 20,
+        assetId: 20,
+        cabinetShortName: '机柜20',
+        cabinetType: '7',
+        cabinetWidth: '1',
+        alarmLevel: null,
+        alarmCount: 0,
+        cabinetLocateRow: '2',
+        cabinetRowOrder: 10,
+        cabinetOrderIndex: null,
+        avgTemp: null,
+        avgHumi: null,
+      },
+      {
+        deviceId: 1,
+        deviceType: '100',
+        deviceName: '192.168.68.227',
+        areaId: 1,
+        cabinetIndex: 21,
+        assetId: 24,
+        cabinetShortName: '机柜21',
+        cabinetType: '7',
+        cabinetWidth: '1',
+        alarmLevel: null,
+        alarmCount: 0,
+        cabinetLocateRow: '1',
+        cabinetRowOrder: 11,
+        cabinetOrderIndex: null,
+        avgTemp: null,
+        avgHumi: null,
+      },
+      {
+        deviceId: 1,
+        deviceType: '100',
+        deviceName: '192.168.68.227',
+        areaId: 1,
+        cabinetIndex: 22,
+        assetId: 22,
+        cabinetShortName: '机柜22',
+        cabinetType: '7',
+        cabinetWidth: '1',
+        alarmLevel: null,
+        alarmCount: 0,
+        cabinetLocateRow: '2',
+        cabinetRowOrder: 11,
+        cabinetOrderIndex: null,
+        avgTemp: null,
+        avgHumi: null,
+      },
+      {
+        deviceId: 1,
+        deviceType: '100',
+        deviceName: '192.168.68.227',
+        areaId: 1,
+        cabinetIndex: 23,
+        assetId: 17,
+        cabinetShortName: '机柜23',
+        cabinetType: '7',
+        cabinetWidth: '1',
+        alarmLevel: null,
+        alarmCount: 0,
+        cabinetLocateRow: '1',
+        cabinetRowOrder: 12,
+        cabinetOrderIndex: null,
+        avgTemp: null,
+        avgHumi: null,
+      },
+      {
+        deviceId: 1,
+        deviceType: '100',
+        deviceName: '192.168.68.227',
+        areaId: 1,
+        cabinetIndex: 24,
+        assetId: 15,
+        cabinetShortName: '机柜24',
+        cabinetType: '6',
+        cabinetWidth: '1',
+        alarmLevel: null,
+        alarmCount: 0,
+        cabinetLocateRow: '2',
+        cabinetRowOrder: 12,
+        cabinetOrderIndex: null,
+        avgTemp: null,
+        avgHumi: null,
+      },
+      {
+        deviceId: 1,
+        deviceType: '100',
+        deviceName: '192.168.68.227',
+        areaId: 1,
+        cabinetIndex: 24,
+        assetId: 15,
+        cabinetShortName: '机柜24',
+        cabinetType: '6',
+        cabinetWidth: '1',
+        alarmLevel: null,
+        alarmCount: 0,
+        cabinetLocateRow: '2',
+        cabinetRowOrder: 12,
+        cabinetOrderIndex: null,
+        avgTemp: null,
+        avgHumi: null,
+      },
+      {
+        deviceId: 1,
+        deviceType: '100',
+        deviceName: '192.168.68.227',
+        areaId: 1,
+        cabinetIndex: 24,
+        assetId: 15,
+        cabinetShortName: '机柜24',
+        cabinetType: '6',
+        cabinetWidth: '1',
+        alarmLevel: null,
+        alarmCount: 0,
+        cabinetLocateRow: '2',
+        cabinetRowOrder: 12,
+        cabinetOrderIndex: null,
+        avgTemp: null,
+        avgHumi: null,
+      },
+      {
+        deviceId: 1,
+        deviceType: '100',
+        deviceName: '192.168.68.227',
+        areaId: 1,
+        cabinetIndex: 24,
+        assetId: 15,
+        cabinetShortName: '机柜24',
+        cabinetType: '6',
+        cabinetWidth: '1',
+        alarmLevel: null,
+        alarmCount: 0,
+        cabinetLocateRow: '2',
+        cabinetRowOrder: 12,
+        cabinetOrderIndex: null,
+        avgTemp: null,
+        avgHumi: null,
+      },
+      {
+        deviceId: 1,
+        deviceType: '100',
+        deviceName: '192.168.68.227',
+        areaId: 1,
+        cabinetIndex: 24,
+        assetId: 15,
+        cabinetShortName: '机柜24',
+        cabinetType: '6',
+        cabinetWidth: '1',
+        alarmLevel: null,
+        alarmCount: 0,
+        cabinetLocateRow: '2',
+        cabinetRowOrder: 12,
+        cabinetOrderIndex: null,
+        avgTemp: null,
+        avgHumi: null,
+      },
     ],
   };
 
   // 添加机柜
   const cabinetListGroup = new Group();
-  const cabinetList = res.data.cabinetList;
+  cabinetList = res.data.cabinetList;
   microConfig.firstCabinetWidth = microConfig.cabinetWidthList[cabinetList[0].cabinetWidth].width;
   microConfig.totalLength = 0;
   for (let index = 0; index < cabinetList.length; index += 2) {
@@ -582,8 +912,18 @@ const initSceneRenderer = () => {
 
 const initCamera = () => {
   camera = new PerspectiveCamera(45, containerRect.width / containerRect.height, 0.1, 3000);
-  camera.position.set(-642, 188, 587);
+  const calcCameraX = microConfig.totalLength / 2 + 300;
+  camera.position.set(-(calcCameraX < 640 ? 640 : calcCameraX), 188, 587);
   // camera.lookAt(100, 10, 10);
+
+  const resize = () => {
+    containerRect = containerRef.value.getBoundingClientRect();
+    camera.aspect = containerRect.width / containerRect.height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(containerRect.width, containerRect.height);
+  };
+
+  window.addEventListener('resize', resize);
 };
 
 const initHelper = () => {
@@ -616,6 +956,7 @@ const initHelper = () => {
   controls.dampingFactor = 0.5;
   controls.maxDistance = 1600;
   controls.maxPolarAngle = Math.PI * 0.5; // 半圆，禁底部翻转
+  controls.saveState();
 };
 
 const initLight = () => {
@@ -696,22 +1037,17 @@ const renderScene = () => {
   renderer.render(scene, camera);
 };
 
-const resize = () => {
-  containerRect = containerRef.value.getBoundingClientRect();
-  camera.aspect = containerRect.width / containerRect.height;
-  camera.updateProjectionMatrix();
-  renderer.setSize(containerRect.width, containerRect.height);
+const onResetOrbitControls = () => {
+  controls.reset();
 };
-
-window.addEventListener('resize', resize);
 
 onMounted(async () => {
   await initModels();
   initSceneRenderer();
+  await initCabinet();
   initCamera();
   initHelper();
   initLight();
-  await initCabinet();
   // 渲染场景
   containerRef.value?.appendChild(renderer.domElement);
   renderer.render(scene, camera);
@@ -740,6 +1076,23 @@ onMounted(async () => {
 
   .three-d-container {
     height: 100%;
+  }
+
+  .bottom-operation {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+
+    .operation-item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 50px;
+      width: 50px;
+      border-radius: 50%;
+      background-color: #1890ff;
+      cursor: pointer;
+    }
   }
 }
 </style>
