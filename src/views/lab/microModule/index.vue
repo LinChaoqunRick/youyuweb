@@ -48,9 +48,9 @@ const microConfig = {
   totalLength: 0, // 模型总长度
   doorWidth: 24, // 门的宽度
   cabinetWidthList: [
-    { name: 'jg_80', ltd: 'ltd_80', width: 84 },
-    { name: 'jg_60', ltd: 'ltd_60', width: 64 },
-    { name: 'jg_30', ltd: 'ltd_30', width: 34 },
+    { name: 'jg_80', ltd: 'ltd_80', width: 80, correctWidth: 84 },
+    { name: 'jg_60', ltd: 'ltd_60', width: 60, correctWidth: 64 },
+    { name: 'jg_30', ltd: 'ltd_30', width: 30, correctWidth: 34 },
   ],
   cabinetZ: 120, // 机柜位置的z值，(机柜宽度的+冷通道温度) / 2
   firstCabinetWidth: 0, // 首个机柜的宽度
@@ -843,7 +843,7 @@ const initCabinet = async () => {
   // 添加机柜
   const cabinetListGroup = new Group();
   cabinetList = res.data.cabinetList;
-  microConfig.firstCabinetWidth = microConfig.cabinetWidthList[cabinetList[0].cabinetWidth].width;
+  microConfig.firstCabinetWidth = microConfig.cabinetWidthList[cabinetList[0].cabinetWidth].correctWidth;
   microConfig.totalLength = 0;
   for (let index = 0; index < cabinetList.length; index += 2) {
     const cabinetGroup = new Group();
@@ -855,7 +855,9 @@ const initCabinet = async () => {
     const cabinetModelBack = models[cabinetInfo.name].clone();
     const ltdModel = models[cabinetInfo.ltd].clone();
 
-    microConfig.totalLength += cabinetInfo.width;
+    const cabinetMaterial = cabinetModelBack.getObjectByName('Box283')?.material;
+
+    microConfig.totalLength += cabinetInfo.correctWidth;
 
     cabinetModelFront.position.z = microConfig.cabinetZ; // 前排
     cabinetModelBack.position.z = -microConfig.cabinetZ; // 后排
@@ -863,7 +865,7 @@ const initCabinet = async () => {
     cabinetGroup.add(cabinetModelFront);
     cabinetGroup.add(cabinetModelBack);
     cabinetGroup.add(ltdModel);
-    cabinetGroup.position.x = microConfig.totalLength - cabinetInfo.width / 2;
+    cabinetGroup.position.x = microConfig.totalLength - cabinetInfo.correctWidth / 2;
 
     cabinetListGroup.add(cabinetGroup);
   }
@@ -1026,6 +1028,15 @@ const initModels = async () => {
       return object;
     })
   );
+
+  // 消除机柜左侧白边
+  ['jg_30', 'jg_60', 'jg_80'].forEach(name => {
+    models[name].getObjectByName('jigui').material.forEach(item => {
+      if (item.name === 'Material__1705') {
+        item.color.set(0x000000);
+      }
+    });
+  });
 };
 
 const renderScene = () => {

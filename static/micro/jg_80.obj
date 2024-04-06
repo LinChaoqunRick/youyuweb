@@ -4,7 +4,7 @@
 mtllib jg_80.mtl
 
 #
-# object Box283
+# object jigui
 #
 
 v  -42.0000 6.0000 57.5000
@@ -31,7 +31,7 @@ vt 0.0000 1.0000 0.0000
 vt 0.0000 0.0000 0.0000
 # 4 texture coords
 
-g Box283
+g jigui
 usemtl Material__1703
 s 2
 f 1/1/1 2/2/1 3/3/1 4/4/1
