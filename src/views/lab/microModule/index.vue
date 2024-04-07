@@ -1,11 +1,16 @@
 <template>
   <div class="micro-module">
+    <div class="views">
+      <div v-for="item in views" class="view-item" @click="onViewChange(item)">
+        {{ item.name }}
+      </div>
+    </div>
     <div class="percentage-box" v-if="percentage < 100">{{ percentage }}%</div>
     <div ref="statsRef"></div>
     <div class="three-d-container" ref="containerRef"></div>
     <div class="bottom-operation">
       <div class="operation-item" @click="onResetOrbitControls">
-        <i-reverse-lens theme="outline" size="28" fill="#ffffff" />
+        <i-reverse-lens theme="outline" size="28" fill="#ffffff"/>
       </div>
     </div>
   </div>
@@ -27,44 +32,107 @@ import {
   WebGLRenderer,
   SpotLight,
   Vector3,
-  Group,
+  Group, MeshBasicMaterial,
 } from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { onMounted, reactive, ref } from 'vue';
-import { useStore } from 'vuex';
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
+import {onMounted, reactive, ref} from 'vue';
+import {useStore} from 'vuex';
 import * as dat from 'dat.gui';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader';
+import {cloneDeep} from "lodash";
 
-import { TextureLoaderCommonPromise, MTLLoaderPromise } from '@/libs/three/loaders';
 
-const { dispatch } = useStore();
+import {TextureLoaderCommonPromise, MTLLoaderPromise} from '@/libs/three/loaders';
+
+const {dispatch} = useStore();
 
 const statsRef = ref<HTMLDivElement>();
 
 const containerRef = ref<HTMLDivElement>();
 const percentage = ref(0);
-let cabinetList = ref([]);
+let cabinetList = [];
 const microConfig = {
   totalLength: 0, // 模型总长度
   doorWidth: 24, // 门的宽度
   cabinetWidthList: [
-    { name: 'jg_80', ltd: 'ltd_80', width: 80, correctWidth: 84 },
-    { name: 'jg_60', ltd: 'ltd_60', width: 60, correctWidth: 64 },
-    { name: 'jg_30', ltd: 'ltd_30', width: 30, correctWidth: 34 },
+    {name: 'jg_80', ltd: 'ltd_80', width: 80, correctWidth: 84},
+    {name: 'jg_60', ltd: 'ltd_60', width: 60, correctWidth: 64},
+    {name: 'jg_30', ltd: 'ltd_30', width: 30, correctWidth: 34},
+  ],
+  alarmLevelColorList: [
+    {
+      "alarmLevel": 1,
+      "alarmLevelName": "一级告警",
+      "alarmLevelColor": "rgba(237,64,20,1)",
+    },
+    {
+      "alarmLevel": 2,
+      "alarmLevelName": "二级告警",
+      "alarmLevelColor": "rgba(255,153,0,1)",
+    },
+    {
+      "alarmLevel": 3,
+      "alarmLevelName": "三级告警",
+      "alarmLevelColor": "rgba(13,148,170,1)",
+    },
+    {
+      "alarmLevel": 4,
+      "alarmLevelName": "四级告警",
+      "alarmLevelColor": "rgba(155,29,234,1)",
+    },
+    {
+      "alarmLevel": 5,
+      "alarmLevelName": "五级告警",
+      "alarmLevelColor": "rgba(255,255,255,1)",
+    },
+    {
+      "alarmLevel": 6,
+      "alarmLevelName": "六级告警",
+      "alarmLevelColor": "rgba(255,255,255,1)",
+    },
+    {
+      "alarmLevel": 7,
+      "alarmLevelName": "七级告警",
+      "alarmLevelColor": "rgba(255,255,255,1)",
+    },
+    {
+      "alarmLevel": 8,
+      "alarmLevelName": "八级告警",
+      "alarmLevelColor": "rgba(255,255,255,1)",
+    }
   ],
   cabinetZ: 120, // 机柜位置的z值，(机柜宽度的+冷通道温度) / 2
   firstCabinetWidth: 0, // 首个机柜的宽度
 };
 
-let scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, controls: OrbitControls, stats;
-let containerRect: DOMRect,
-  step = 0;
+let scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, controls: OrbitControls, containerRect: DOMRect, stats;
 const models = {};
-const controlData = reactive({
-  rotationSpeed: 0.01,
-  bouncingSpeed: 0.02,
-  numberOfObjects: 0,
-});
+const views = [
+  {
+    name: '3D视图',
+    type: '3d'
+  },
+  {
+    name: '安防视图',
+    type: 'security'
+  },
+  {
+    name: '温度云图',
+    type: 'temp'
+  },
+  {
+    name: 'U位视图',
+    type: 'ubit'
+  },
+  {
+    name: '配电视图',
+    type: 'power'
+  },
+  {
+    name: '制冷视图',
+    type: 'cooling'
+  },
+];
 
 const initCabinet = async () => {
   const res = await dispatch('getMicroModuleConfig');
@@ -840,22 +908,30 @@ const initCabinet = async () => {
     ],
   };
 
-  // 添加机柜
-  const cabinetListGroup = new Group();
+  // 构建微模块
+  const microGroup = new Group();
+  microGroup.name = 'micro_group';
   cabinetList = res.data.cabinetList;
   microConfig.firstCabinetWidth = microConfig.cabinetWidthList[cabinetList[0].cabinetWidth].correctWidth;
   microConfig.totalLength = 0;
+
+  // 添加机柜
   for (let index = 0; index < cabinetList.length; index += 2) {
     const cabinetGroup = new Group();
 
     const cabinetInfo = microConfig.cabinetWidthList[cabinetList[index].cabinetWidth];
 
+    // 机柜前
     const cabinetModelFront = models[cabinetInfo.name].clone();
     cabinetModelFront.rotation.y = Math.PI;
-    const cabinetModelBack = models[cabinetInfo.name].clone();
-    const ltdModel = models[cabinetInfo.ltd].clone();
+    cabinetModelFront.name = 'cabinet_' + index;
 
-    const cabinetMaterial = cabinetModelBack.getObjectByName('Box283')?.material;
+    // 机柜后
+    const cabinetModelBack = models[cabinetInfo.name].clone();
+    cabinetModelFront.name = 'cabinet_' + (index + 1);
+
+    // 冷通道
+    const ltdModel = models[cabinetInfo.ltd].clone();
 
     microConfig.totalLength += cabinetInfo.correctWidth;
 
@@ -867,9 +943,11 @@ const initCabinet = async () => {
     cabinetGroup.add(ltdModel);
     cabinetGroup.position.x = microConfig.totalLength - cabinetInfo.correctWidth / 2;
 
-    cabinetListGroup.add(cabinetGroup);
+    microGroup.add(cabinetGroup);
   }
-  cabinetListGroup.position.x = -microConfig.totalLength / 2;
+
+  // 位置整体偏移
+  microGroup.position.x = -microConfig.totalLength / 2;
 
   // 添加玻璃门
   const glassDoorModel = res.data.glassDoorLogoType === '1' ? models.men_p : models.men_r;
@@ -890,7 +968,7 @@ const initCabinet = async () => {
   doorModelBack.position.set(microConfig.totalLength / 2 + microConfig.doorWidth / 2, 0, 0);
   doorModelBack.rotation.y = Math.PI;
 
-  scene.add(doorModelFront, doorModelBack, cabinetListGroup);
+  scene.add(doorModelFront, doorModelBack, microGroup);
 };
 
 const initSceneRenderer = () => {
@@ -906,7 +984,7 @@ const initSceneRenderer = () => {
     antialias: true,
     logarithmicDepthBuffer: true, // 设置对数深度缓冲区，优化深度冲突问题
   });
-  renderer.setClearColor(new Color(0x666666));
+  renderer.setClearColor(new Color(0xFAFAFA));
   renderer.setSize(containerRect.width, containerRect.height);
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.shadowMap.enabled = true;
@@ -971,7 +1049,13 @@ const initLight = () => {
   const directionalLight_nz = new DirectionalLight(0xffffff, 8);
   directionalLight_nz.position.set(0, 0, -1);
 
-  scene.add(directionalLight_pz, directionalLight_nz);
+  const directionalLight_px = new DirectionalLight(0xffffff, 1);
+  directionalLight_px.position.set(1, 0, 0);
+
+  const directionalLight_nx = new DirectionalLight(0xffffff, 1);
+  directionalLight_nx.position.set(-1, 0, 0);
+
+  scene.add(directionalLight_pz, directionalLight_nz, directionalLight_px, directionalLight_nx);
 };
 
 const initModels = async () => {
@@ -999,7 +1083,7 @@ const initModels = async () => {
     'menmei_logo', // 标准门楣
   ];
 
-  const percentageStatusList = ref(Array.from({ length: mtlFileNames.length }).map(_ => ({ mtl: 0, obj: 0 })));
+  const percentageStatusList = ref(Array.from({length: mtlFileNames.length}).map(_ => ({mtl: 0, obj: 0})));
 
   const onProcess = (index: number, xhr: object, type: string) => {
     percentageStatusList.value[index][type] = (xhr.loaded / xhr.total) * 100;
@@ -1010,24 +1094,22 @@ const initModels = async () => {
     percentage.value = parseInt(((mtlTotal + objTotal) / 2).toFixed());
   };
 
-  await Promise.all(
-    mtlFileNames.map(async (fileName: string, index: number) => {
-      const objLoader = new OBJLoader();
-      // 加载MTL文件
-      const materials = await MTLLoaderPromise(directoryPath + fileName + '.mtl', {
-        onProcess: xhr => onProcess(index, xhr, 'mtl'),
-      });
-      materials.preload(); // 预加载材质
-      objLoader.setMaterials(materials);
+  await Promise.all(mtlFileNames.map(async (fileName: string, index: number) => {
+    const objLoader = new OBJLoader();
+    // 加载MTL文件
+    const materials = await MTLLoaderPromise(directoryPath + fileName + '.mtl', {
+      onProcess: xhr => onProcess(index, xhr, 'mtl'),
+    });
+    materials.preload(); // 预加载材质
+    objLoader.setMaterials(materials);
 
-      // 加载OBJ文件
-      const object = await TextureLoaderCommonPromise(objLoader, directoryPath + fileName + '.obj', {
-        onProcess: xhr => onProcess(index, xhr, 'obj'),
-      });
-      models[fileName] = object;
-      return object;
-    })
-  );
+    // 加载OBJ文件
+    const object = await TextureLoaderCommonPromise(objLoader, directoryPath + fileName + '.obj', {
+      onProcess: xhr => onProcess(index, xhr, 'obj'),
+    });
+    models[fileName] = object;
+    return object;
+  }));
 
   // 消除机柜左侧白边
   ['jg_30', 'jg_60', 'jg_80'].forEach(name => {
@@ -1052,6 +1134,39 @@ const onResetOrbitControls = () => {
   controls.reset();
 };
 
+const onViewChange = (item) => {
+  changeMaterial(item.type !== '3d');
+}
+
+const changeMaterial = (isTransparent: boolean) => {
+  scene.traverse(child => {
+    if (child.isMesh && child.material) {
+      if (isTransparent) {
+        // 保存原始材质
+        if (!child.savedMaterial && child.material) {
+          if (Array.isArray(child.material)) {
+            child.savedMaterial = child.material.map(material => material.clone());
+          } else {
+            child.savedMaterial = child.material.clone();
+          }
+        }
+        // 设置透明材质
+        child.material = new MeshBasicMaterial({
+          transparent: true,
+          color: 0x666666,
+          opacity: 0.15
+        });
+      } else {
+        // 还原原始材质
+        if (child.savedMaterial) {
+          child.material = child.savedMaterial;
+        }
+      }
+    }
+  });
+};
+
+
 onMounted(async () => {
   await initModels();
   initSceneRenderer();
@@ -1070,6 +1185,31 @@ onMounted(async () => {
 .micro-module {
   position: relative;
   height: calc(100vh - 100px);
+
+  .views {
+    position: fixed;
+    top: 70px;
+    right: 10px;
+
+    .view-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: 30px;
+      width: 100px;
+      border: 1px solid skyblue;
+      border-radius: 4px;
+      margin-bottom: 6px;
+      padding-left: 6px;
+      cursor: pointer;
+
+      svg {
+        position: absolute;
+        height: 30px;
+        width: 100px;
+      }
+    }
+  }
 
   .percentage-box {
     position: absolute;
