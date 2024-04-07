@@ -20,29 +20,24 @@
 import Stats from 'stats.js';
 import {
   AxesHelper,
-  BoxGeometry,
   GridHelper,
   Color,
-  Mesh,
-  MeshPhongMaterial,
   PerspectiveCamera,
   Scene,
   AmbientLight,
   DirectionalLight,
   WebGLRenderer,
-  SpotLight,
-  Vector3,
-  Group, MeshBasicMaterial,
+  Group,
+  MeshBasicMaterial,
+  CanvasTexture
 } from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import {onMounted, reactive, ref} from 'vue';
 import {useStore} from 'vuex';
 import * as dat from 'dat.gui';
 import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader';
-import {cloneDeep} from "lodash";
-
-
 import {TextureLoaderCommonPromise, MTLLoaderPromise} from '@/libs/three/loaders';
+import {createCabinetNameMesh} from "@/views/lab/microModule/utils";
 
 const {dispatch} = useStore();
 
@@ -103,9 +98,13 @@ const microConfig = {
   ],
   cabinetZ: 120, // 机柜位置的z值，(机柜宽度的+冷通道温度) / 2
   firstCabinetWidth: 0, // 首个机柜的宽度
+  cabinetHeight: 223,
+  cabinetWidth: 116,
 };
+let transparentMesh = []; // 切换透明视图，需要改变材质的mesh
 
-let scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, controls: OrbitControls, containerRect: DOMRect, stats;
+let scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, controls: OrbitControls, containerRect: DOMRect,
+  stats;
 const models = {};
 const views = [
   {
@@ -581,334 +580,11 @@ const initCabinet = async () => {
         avgTemp: null,
         avgHumi: null,
       },
-      {
-        deviceId: 1,
-        deviceType: '100',
-        deviceName: '192.168.68.227',
-        areaId: 1,
-        cabinetIndex: 24,
-        assetId: 15,
-        cabinetShortName: '机柜24',
-        cabinetType: '6',
-        cabinetWidth: '1',
-        alarmLevel: null,
-        alarmCount: 0,
-        cabinetLocateRow: '2',
-        cabinetRowOrder: 12,
-        cabinetOrderIndex: null,
-        avgTemp: null,
-        avgHumi: null,
-      },
-      {
-        deviceId: 1,
-        deviceType: '100',
-        deviceName: '192.168.68.227',
-        areaId: 1,
-        cabinetIndex: 24,
-        assetId: 15,
-        cabinetShortName: '机柜24',
-        cabinetType: '6',
-        cabinetWidth: '1',
-        alarmLevel: null,
-        alarmCount: 0,
-        cabinetLocateRow: '2',
-        cabinetRowOrder: 12,
-        cabinetOrderIndex: null,
-        avgTemp: null,
-        avgHumi: null,
-      },
-      {
-        deviceId: 1,
-        deviceType: '100',
-        deviceName: '192.168.68.227',
-        areaId: 1,
-        cabinetIndex: 24,
-        assetId: 15,
-        cabinetShortName: '机柜24',
-        cabinetType: '6',
-        cabinetWidth: '1',
-        alarmLevel: null,
-        alarmCount: 0,
-        cabinetLocateRow: '2',
-        cabinetRowOrder: 12,
-        cabinetOrderIndex: null,
-        avgTemp: null,
-        avgHumi: null,
-      },
-      {
-        deviceId: 1,
-        deviceType: '100',
-        deviceName: '192.168.68.227',
-        areaId: 1,
-        cabinetIndex: 24,
-        assetId: 15,
-        cabinetShortName: '机柜24',
-        cabinetType: '6',
-        cabinetWidth: '1',
-        alarmLevel: null,
-        alarmCount: 0,
-        cabinetLocateRow: '2',
-        cabinetRowOrder: 12,
-        cabinetOrderIndex: null,
-        avgTemp: null,
-        avgHumi: null,
-      },
-      {
-        deviceId: 1,
-        deviceType: '100',
-        deviceName: '192.168.68.227',
-        areaId: 1,
-        cabinetIndex: 15,
-        assetId: 18,
-        cabinetShortName: '机柜15',
-        cabinetType: '7',
-        cabinetWidth: '1',
-        alarmLevel: null,
-        alarmCount: 0,
-        cabinetLocateRow: '1',
-        cabinetRowOrder: 8,
-        cabinetOrderIndex: null,
-        avgTemp: null,
-        avgHumi: null,
-      },
-      {
-        deviceId: 1,
-        deviceType: '100',
-        deviceName: '192.168.68.227',
-        areaId: 1,
-        cabinetIndex: 16,
-        assetId: 11,
-        cabinetShortName: '机柜16',
-        cabinetType: '9',
-        cabinetWidth: '1',
-        alarmLevel: null,
-        alarmCount: 0,
-        cabinetLocateRow: '2',
-        cabinetRowOrder: 8,
-        cabinetOrderIndex: null,
-        avgTemp: null,
-        avgHumi: null,
-      },
-      {
-        deviceId: 1,
-        deviceType: '100',
-        deviceName: '192.168.68.227',
-        areaId: 1,
-        cabinetIndex: 17,
-        assetId: 10,
-        cabinetShortName: '机柜17',
-        cabinetType: '7',
-        cabinetWidth: '1',
-        alarmLevel: null,
-        alarmCount: 0,
-        cabinetLocateRow: '1',
-        cabinetRowOrder: 9,
-        cabinetOrderIndex: null,
-        avgTemp: null,
-        avgHumi: null,
-      },
-      {
-        deviceId: 1,
-        deviceType: '100',
-        deviceName: '192.168.68.227',
-        areaId: 1,
-        cabinetIndex: 18,
-        assetId: 13,
-        cabinetShortName: '机柜18',
-        cabinetType: '5',
-        cabinetWidth: '1',
-        alarmLevel: null,
-        alarmCount: 0,
-        cabinetLocateRow: '2',
-        cabinetRowOrder: 9,
-        cabinetOrderIndex: null,
-        avgTemp: null,
-        avgHumi: null,
-      },
-      {
-        deviceId: 1,
-        deviceType: '100',
-        deviceName: '192.168.68.227',
-        areaId: 1,
-        cabinetIndex: 19,
-        assetId: 12,
-        cabinetShortName: '机柜19',
-        cabinetType: '7',
-        cabinetWidth: '1',
-        alarmLevel: null,
-        alarmCount: 0,
-        cabinetLocateRow: '1',
-        cabinetRowOrder: 10,
-        cabinetOrderIndex: null,
-        avgTemp: null,
-        avgHumi: null,
-      },
-      {
-        deviceId: 1,
-        deviceType: '100',
-        deviceName: '192.168.68.227',
-        areaId: 1,
-        cabinetIndex: 20,
-        assetId: 20,
-        cabinetShortName: '机柜20',
-        cabinetType: '7',
-        cabinetWidth: '1',
-        alarmLevel: null,
-        alarmCount: 0,
-        cabinetLocateRow: '2',
-        cabinetRowOrder: 10,
-        cabinetOrderIndex: null,
-        avgTemp: null,
-        avgHumi: null,
-      },
-      {
-        deviceId: 1,
-        deviceType: '100',
-        deviceName: '192.168.68.227',
-        areaId: 1,
-        cabinetIndex: 21,
-        assetId: 24,
-        cabinetShortName: '机柜21',
-        cabinetType: '7',
-        cabinetWidth: '1',
-        alarmLevel: null,
-        alarmCount: 0,
-        cabinetLocateRow: '1',
-        cabinetRowOrder: 11,
-        cabinetOrderIndex: null,
-        avgTemp: null,
-        avgHumi: null,
-      },
-      {
-        deviceId: 1,
-        deviceType: '100',
-        deviceName: '192.168.68.227',
-        areaId: 1,
-        cabinetIndex: 22,
-        assetId: 22,
-        cabinetShortName: '机柜22',
-        cabinetType: '7',
-        cabinetWidth: '1',
-        alarmLevel: null,
-        alarmCount: 0,
-        cabinetLocateRow: '2',
-        cabinetRowOrder: 11,
-        cabinetOrderIndex: null,
-        avgTemp: null,
-        avgHumi: null,
-      },
-      {
-        deviceId: 1,
-        deviceType: '100',
-        deviceName: '192.168.68.227',
-        areaId: 1,
-        cabinetIndex: 23,
-        assetId: 17,
-        cabinetShortName: '机柜23',
-        cabinetType: '7',
-        cabinetWidth: '1',
-        alarmLevel: null,
-        alarmCount: 0,
-        cabinetLocateRow: '1',
-        cabinetRowOrder: 12,
-        cabinetOrderIndex: null,
-        avgTemp: null,
-        avgHumi: null,
-      },
-      {
-        deviceId: 1,
-        deviceType: '100',
-        deviceName: '192.168.68.227',
-        areaId: 1,
-        cabinetIndex: 24,
-        assetId: 15,
-        cabinetShortName: '机柜24',
-        cabinetType: '6',
-        cabinetWidth: '1',
-        alarmLevel: null,
-        alarmCount: 0,
-        cabinetLocateRow: '2',
-        cabinetRowOrder: 12,
-        cabinetOrderIndex: null,
-        avgTemp: null,
-        avgHumi: null,
-      },
-      {
-        deviceId: 1,
-        deviceType: '100',
-        deviceName: '192.168.68.227',
-        areaId: 1,
-        cabinetIndex: 24,
-        assetId: 15,
-        cabinetShortName: '机柜24',
-        cabinetType: '6',
-        cabinetWidth: '1',
-        alarmLevel: null,
-        alarmCount: 0,
-        cabinetLocateRow: '2',
-        cabinetRowOrder: 12,
-        cabinetOrderIndex: null,
-        avgTemp: null,
-        avgHumi: null,
-      },
-      {
-        deviceId: 1,
-        deviceType: '100',
-        deviceName: '192.168.68.227',
-        areaId: 1,
-        cabinetIndex: 24,
-        assetId: 15,
-        cabinetShortName: '机柜24',
-        cabinetType: '6',
-        cabinetWidth: '1',
-        alarmLevel: null,
-        alarmCount: 0,
-        cabinetLocateRow: '2',
-        cabinetRowOrder: 12,
-        cabinetOrderIndex: null,
-        avgTemp: null,
-        avgHumi: null,
-      },
-      {
-        deviceId: 1,
-        deviceType: '100',
-        deviceName: '192.168.68.227',
-        areaId: 1,
-        cabinetIndex: 24,
-        assetId: 15,
-        cabinetShortName: '机柜24',
-        cabinetType: '6',
-        cabinetWidth: '1',
-        alarmLevel: null,
-        alarmCount: 0,
-        cabinetLocateRow: '2',
-        cabinetRowOrder: 12,
-        cabinetOrderIndex: null,
-        avgTemp: null,
-        avgHumi: null,
-      },
-      {
-        deviceId: 1,
-        deviceType: '100',
-        deviceName: '192.168.68.227',
-        areaId: 1,
-        cabinetIndex: 24,
-        assetId: 15,
-        cabinetShortName: '机柜24',
-        cabinetType: '6',
-        cabinetWidth: '1',
-        alarmLevel: null,
-        alarmCount: 0,
-        cabinetLocateRow: '2',
-        cabinetRowOrder: 12,
-        cabinetOrderIndex: null,
-        avgTemp: null,
-        avgHumi: null,
-      },
     ],
   };
 
   // 构建微模块
+  transparentMesh = [];
   const microGroup = new Group();
   microGroup.name = 'micro_group';
   cabinetList = res.data.cabinetList;
@@ -917,33 +593,46 @@ const initCabinet = async () => {
 
   // 添加机柜
   for (let index = 0; index < cabinetList.length; index += 2) {
-    const cabinetGroup = new Group();
+    const cabinetFront = cabinetList[index];
+    const cabinetBack = cabinetList[index + 1];
 
-    const cabinetInfo = microConfig.cabinetWidthList[cabinetList[index].cabinetWidth];
+    const singleCabinetGroup = new Group();
+
+    const cabinetInfo = microConfig.cabinetWidthList[cabinetFront.cabinetWidth];
 
     // 机柜前
-    const cabinetModelFront = models[cabinetInfo.name].clone();
-    cabinetModelFront.rotation.y = Math.PI;
-    cabinetModelFront.name = 'cabinet_' + index;
+    const cabinetFrontGroup = new Group();
+    const cabinetMeshFront = models[cabinetInfo.name].clone();
+    cabinetMeshFront.name = 'cabinet_' + index;
+    const nameMeshFront = createCabinetNameMesh(cabinetFront.cabinetShortName, cabinetInfo.correctWidth);
+    nameMeshFront.position.set(0, microConfig.cabinetHeight, -microConfig.cabinetWidth / 2);
+    nameMeshFront.rotation.y = Math.PI;
+    cabinetFrontGroup.add(cabinetMeshFront, nameMeshFront);
+    cabinetFrontGroup.position.set(0, 0, -microConfig.cabinetWidth);
 
     // 机柜后
-    const cabinetModelBack = models[cabinetInfo.name].clone();
-    cabinetModelFront.name = 'cabinet_' + (index + 1);
+    const cabinetBackGroup = new Group();
+    const cabinetMeshBack = models[cabinetInfo.name].clone();
+    cabinetMeshBack.name = 'cabinet_' + (index + 1);
+    const nameMeshBack = createCabinetNameMesh(cabinetBack.cabinetShortName, cabinetInfo.correctWidth);
+    nameMeshBack.position.set(0, microConfig.cabinetHeight, -microConfig.cabinetWidth / 2);
+    nameMeshBack.rotation.y = Math.PI;
+    cabinetBackGroup.add(cabinetMeshBack, nameMeshBack);
+    cabinetBackGroup.position.set(0, 0, microConfig.cabinetWidth);
+    cabinetBackGroup.rotation.y = Math.PI;
+
 
     // 冷通道
     const ltdModel = models[cabinetInfo.ltd].clone();
 
     microConfig.totalLength += cabinetInfo.correctWidth;
 
-    cabinetModelFront.position.z = microConfig.cabinetZ; // 前排
-    cabinetModelBack.position.z = -microConfig.cabinetZ; // 后排
+    singleCabinetGroup.add(cabinetFrontGroup, cabinetBackGroup, ltdModel);
+    singleCabinetGroup.position.x = microConfig.totalLength - cabinetInfo.correctWidth / 2;
 
-    cabinetGroup.add(cabinetModelFront);
-    cabinetGroup.add(cabinetModelBack);
-    cabinetGroup.add(ltdModel);
-    cabinetGroup.position.x = microConfig.totalLength - cabinetInfo.correctWidth / 2;
+    microGroup.add(singleCabinetGroup);
+    transparentMesh.push(cabinetMeshFront, cabinetMeshBack, ltdModel);
 
-    microGroup.add(cabinetGroup);
   }
 
   // 位置整体偏移
@@ -959,16 +648,21 @@ const initCabinet = async () => {
   const doorModelFront = res.data.doorHeadType === '1' ? models.menban_b_ping : models.menban_h_ping;
   doorModelFront.add(glassDoorModel.clone());
   doorModelFront.add(lintelModel.clone());
-  doorModelFront.position.set(-microConfig.totalLength / 2 - microConfig.doorWidth / 2, 0, 0);
+  doorModelFront.position.set(-microConfig.doorWidth / 2, 0, 0);
 
   // 添加后门
-  const doorModelBack = res.data.doorHeadType === '1' ? models.menban_b.clone() : models.menban_h.clone();
+  const doorModelBack = res.data.doorHeadType === '1' ? models.menban_b : models.menban_h;
   doorModelBack.add(glassDoorModel.clone());
   doorModelBack.add(lintelModel.clone());
-  doorModelBack.position.set(microConfig.totalLength / 2 + microConfig.doorWidth / 2, 0, 0);
+  doorModelBack.position.set(microConfig.totalLength + microConfig.doorWidth / 2, 0, 0);
   doorModelBack.rotation.y = Math.PI;
 
-  scene.add(doorModelFront, doorModelBack, microGroup);
+  transparentMesh.push(doorModelFront, doorModelBack)
+
+  microGroup.add(doorModelFront, doorModelBack);
+  scene.add(microGroup);
+
+  console.log(models.jg_60);
 };
 
 const initSceneRenderer = () => {
@@ -1049,10 +743,10 @@ const initLight = () => {
   const directionalLight_nz = new DirectionalLight(0xffffff, 8);
   directionalLight_nz.position.set(0, 0, -1);
 
-  const directionalLight_px = new DirectionalLight(0xffffff, 1);
+  const directionalLight_px = new DirectionalLight(0xffffff, 6);
   directionalLight_px.position.set(1, 0, 0);
 
-  const directionalLight_nx = new DirectionalLight(0xffffff, 1);
+  const directionalLight_nx = new DirectionalLight(0xffffff, 6);
   directionalLight_nx.position.set(-1, 0, 0);
 
   scene.add(directionalLight_pz, directionalLight_nz, directionalLight_px, directionalLight_nx);
@@ -1136,36 +830,39 @@ const onResetOrbitControls = () => {
 
 const onViewChange = (item) => {
   changeMaterial(item.type !== '3d');
+
+  console.log(models.jg_60);
 }
 
 const changeMaterial = (isTransparent: boolean) => {
-  scene.traverse(child => {
-    if (child.isMesh && child.material) {
-      if (isTransparent) {
-        // 保存原始材质
-        if (!child.savedMaterial && child.material) {
-          if (Array.isArray(child.material)) {
-            child.savedMaterial = child.material.map(material => material.clone());
-          } else {
-            child.savedMaterial = child.material.clone();
+  transparentMesh.forEach(mesh => {
+    mesh.traverse(child => {
+      if (child.isMesh && child.material) {
+        if (isTransparent) {
+          // 保存原始材质
+          if (!child.savedMaterial && child.material) {
+            if (Array.isArray(child.material)) {
+              child.savedMaterial = child.material.map(material => material.clone());
+            } else {
+              child.savedMaterial = child.material.clone();
+            }
+          }
+          // 设置透明材质
+          child.material = new MeshBasicMaterial({
+            transparent: true,
+            color: 0x666666,
+            opacity: 0.15
+          });
+        } else {
+          // 还原原始材质
+          if (child.savedMaterial) {
+            child.material = child.savedMaterial;
           }
         }
-        // 设置透明材质
-        child.material = new MeshBasicMaterial({
-          transparent: true,
-          color: 0x666666,
-          opacity: 0.15
-        });
-      } else {
-        // 还原原始材质
-        if (child.savedMaterial) {
-          child.material = child.savedMaterial;
-        }
       }
-    }
-  });
+    });
+  })
 };
-
 
 onMounted(async () => {
   await initModels();
