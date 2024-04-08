@@ -1,10 +1,57 @@
-import {MeshBasicMaterial, PlaneGeometry, DoubleSide, CanvasTexture, Mesh} from "three";
+import {
+  MeshBasicMaterial,
+  PlaneGeometry,
+  DoubleSide,
+  CanvasTexture,
+  Mesh,
+  RepeatWrapping,
+} from "three";
+
+const overflowScale = 1.43;
+
+/**
+ * text: 字符串
+ */
+const measureText = (text: string): number => {
+  const chineseRegex = /^[\u4e00-\u9fa5]$/;
+  const numberRegex = /^[0-9]$/;
+  const upperCaseRegex = /^[A-Z]$/;
+  const lowerCaseRegex = /^[a-z]$/;
+  let appendPixel = 0;
+  for (let i = 0; i < text.length; i++) {
+    if (chineseRegex.test(text[i])) {// 如果是中文
+      appendPixel += 16;
+    } else if (upperCaseRegex.test(text[i])) {// 如果是大写字母
+      appendPixel += 14;
+    } else if (lowerCaseRegex.test(text[i])) {// 如果是小写字母
+      appendPixel += 11;
+    } else if (numberRegex.test(text[i])) {// 如果是数字
+      appendPixel += 10;
+    } else if (text[i] === '.') { // 如果是小数点
+      appendPixel += 5;
+    } else {
+      appendPixel += 12;
+    }
+  }
+  return appendPixel;
+}
 
 const createCabinetNameCanvas = (text: string, width: number, height: number): HTMLCanvasElement => {
   // 获取设备的像素比例
   const ratio = 4;
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
+
+  console.log(ctx.measureText(text));
+  // 测量文本宽度
+  const textWidth = Math.ceil(ctx.measureText(text).width * overflowScale);
+  // 文本是否会溢出
+  canvas._is_overflow = textWidth > width;
+
+  if (canvas._is_overflow) {
+    canvas._repeat_x = width / textWidth;
+    width = textWidth;
+  }
 
   // 调整canvas的大小以考虑设备像素比，增加绘图分辨率
   canvas.width = width * ratio;
@@ -32,23 +79,24 @@ const createCabinetNameCanvas = (text: string, width: number, height: number): H
   const textY = height / 2 + 1;
   ctx.fillText(text, textX, textY);
 
-  // 测量文本宽度
-  const textWidth = ctx.measureText(text).width;
-  canvas.isOverflow = textWidth > width;
+  document.documentElement.appendChild(canvas);
   return canvas;
 }
 
 const createCabinetNameMesh = (text: string, width: number, height: number = 22) => {
-  const geometry = new PlaneGeometry(width, height);
   const canvas = createCabinetNameCanvas(text, width, height);
-  console.log(canvas.isOverflow);
+  const geometry = new PlaneGeometry(width, height);
   const material = new MeshBasicMaterial({// 基础网格材质
-    map: new CanvasTexture(canvas),
+    map: new CanvasTexture(canvas, undefined, canvas._is_overflow ? RepeatWrapping : undefined),
     side: DoubleSide,// 选择哪面显示
     transparent: true,// 是否使用透明度
   });
 
+  if (canvas._is_overflow && material.map) {
+    material.map.repeat.x = canvas._repeat_x;
+  }
+
   return new Mesh(geometry, material);
 }
 
-export {createCabinetNameMesh}
+export {createCabinetNameCanvas, createCabinetNameMesh}

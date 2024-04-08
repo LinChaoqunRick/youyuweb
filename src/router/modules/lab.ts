@@ -45,6 +45,15 @@ const route = [
         },
         component: () => import("@/views/lab/earth/index.vue")
       },
+      {
+        path: "test",
+        name: "Test",
+        meta: {
+          title: "测试",
+          hide: true
+        },
+        component: () => import("@/views/lab/test/index.vue")
+      },
     ]
   }
 ]

@@ -29,12 +29,13 @@ import {
   SpotLightHelper,
   CircleGeometry,
   TextureLoader,
-  RepeatWrapping,
+  RepeatWrapping, CanvasTexture,
 } from 'three';
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {onMounted, reactive, ref} from 'vue';
 import * as dat from 'dat.gui';
+import {createCabinetNameCanvas} from "@/views/lab/microModule/utils";
 
 const statsRef = ref<HTMLDivElement>();
 
@@ -87,7 +88,7 @@ const initCamera = () => {
 const initHelper = () => {
   // 添加坐标格辅助对象
   const gridHelper = new GridHelper(200, 40);
-  scene.add(gridHelper);
+  // scene.add(gridHelper);
 
   // 添加坐标轴辅助对象 红x绿y蓝z
   const axes = new AxesHelper(60);
@@ -130,78 +131,113 @@ const initLight = () => {
 }
 
 const initModels = () => {
-  // 地板
-  const planeGeometry = new PlaneGeometry(60, 20);
-  const planeMaterial = new MeshPhongMaterial({
-    color: 0x1B5E20,
-    side: DoubleSide
-  })
-  plane = new Mesh(planeGeometry, planeMaterial);
-  plane.receiveShadow = true;
-  plane.rotation.x = -0.5 * Math.PI;
-  plane.position.x = 15;
-  scene.add(plane);
+  // // 地板
+  // const planeGeometry = new PlaneGeometry(60, 20);
+  // const planeMaterial = new MeshPhongMaterial({
+  //   color: 0x1B5E20,
+  //   side: DoubleSide
+  // })
+  // plane = new Mesh(planeGeometry, planeMaterial);
+  // plane.receiveShadow = true;
+  // plane.rotation.x = -0.5 * Math.PI;
+  // plane.position.x = 15;
+  // scene.add(plane);
+  //
+  // // 立方体
+  // const cubeGeometry = new BoxGeometry(4, 4, 4);
+  // const cubeMaterial = new MeshPhongMaterial({
+  //   color: 0xff0000,
+  // })
+  // cube = new Mesh(cubeGeometry, cubeMaterial);
+  // cube.position.set(2, 2, 2);
+  // cube.castShadow = true;
+  // // scene.add(cube);
+  //
+  // // 立方体2
+  // const cubeGeometry2 = new BoxGeometry(4, 4, 4);
+  // const cubeMaterial2 = new MeshPhongMaterial({
+  //   color: 0x1890FF,
+  //   shininess: 1000,
+  //   specular: 0x5F9EA0
+  // })
+  // cubeGeometry2.translate(0, 2, 0,)
+  // cube2 = new Mesh(cubeGeometry2, cubeMaterial2);
+  // // cube2.position.set(0, 2, 0);
+  // cube2.castShadow = true;
+  // cube2.name = 'cube2';
+  // // cube2.geometry.translate(0, 10, 0)
+  // scene.add(cube2);
+  //
+  // // 球
+  // const sphereGeometry = new SphereGeometry(4);
+  // const sphereMaterial = new MeshPhongMaterial({
+  //   color: 0x1677ff,
+  // })
+  // sphere = new Mesh(sphereGeometry, sphereMaterial);
+  // sphere.castShadow = true;
+  // sphere.position.set(20, 4, 2);
+  // scene.add(sphere);
+  //
+  // // 加载地球贴图
+  // earthTexture = new TextureLoader().load('/static/earth/earth.jpg');
+  //
+  // earthTexture.wrapS = RepeatWrapping;
+  //
+  // console.log(earthTexture);
+  //
+  // const circleGeometry = new CircleGeometry(10, 50);
+  // const circleMaterial = new MeshLambertMaterial({
+  //   map: earthTexture,
+  //   side: DoubleSide
+  // });
+  // const circle = new Mesh(circleGeometry, circleMaterial);
+  // scene.add(circle);
+  //
+  // const gltfLoader = new GLTFLoader();
+  // gltfLoader.load('/static/models/简易小区.glb', (glb) => {
+  //   scene.add(glb.scene);
+  //
+  //   const b1 = scene.getObjectByName('1号楼');
+  //   console.log(b1);
+  //   b1.material = new MeshLambertMaterial({
+  //     color: 0xfa5c37
+  //   })
+  // });
 
-  // 立方体
-  const cubeGeometry = new BoxGeometry(4, 4, 4);
-  const cubeMaterial = new MeshPhongMaterial({
-    color: 0xff0000,
-  })
-  cube = new Mesh(cubeGeometry, cubeMaterial);
-  cube.position.set(2, 2, 2);
-  cube.castShadow = true;
-  // scene.add(cube);
 
-  // 立方体2
-  const cubeGeometry2 = new BoxGeometry(4, 4, 4);
-  const cubeMaterial2 = new MeshPhongMaterial({
-    color: 0x1890FF,
-    shininess: 1000,
-    specular: 0x5F9EA0
-  })
-  cubeGeometry2.translate(0, 2, 0,)
-  cube2 = new Mesh(cubeGeometry2, cubeMaterial2);
-  // cube2.position.set(0, 2, 0);
-  cube2.castShadow = true;
-  cube2.name = 'cube2';
-  // cube2.geometry.translate(0, 10, 0)
-  scene.add(cube2);
-
-  // 球
-  const sphereGeometry = new SphereGeometry(4);
-  const sphereMaterial = new MeshPhongMaterial({
-    color: 0x1677ff,
-  })
-  sphere = new Mesh(sphereGeometry, sphereMaterial);
-  sphere.castShadow = true;
-  sphere.position.set(20, 4, 2);
-  scene.add(sphere);
-
-  // 加载地球贴图
-  earthTexture = new TextureLoader().load('/static/earth/earth.jpg');
-
-  earthTexture.wrapS = RepeatWrapping;
-
-  console.log(earthTexture);
-
-  const circleGeometry = new CircleGeometry(10, 50);
-  const circleMaterial = new MeshLambertMaterial({
-    map: earthTexture,
-    side: DoubleSide
+  const canvas06 = createCabinetNameCanvas("机柜06", 52, 22);
+  const texture06 = new CanvasTexture(canvas06);
+  texture06.wrapS = RepeatWrapping;
+  texture06.repeat.x = 34 / 52;  // 设置纹理重复比例
+  const geometry06 = new PlaneGeometry(34, 22);
+  const material06 = new MeshBasicMaterial({
+    map: texture06,
+    side: DoubleSide,
+    transparent: true,
   });
-  const circle = new Mesh(circleGeometry, circleMaterial);
-  scene.add(circle);
 
-  const gltfLoader = new GLTFLoader();
-  gltfLoader.load('/static/models/简易小区.glb', (glb) => {
-    scene.add(glb.scene);
+  const nameMesh06 = new Mesh(geometry06, material06);
+  scene.add(nameMesh06);
 
-    const b1 = scene.getObjectByName('1号楼');
-    console.log(b1);
-    b1.material = new MeshLambertMaterial({
-      color: 0xfa5c37
-    })
+// 动画滚动显示
+  function animate() {
+    requestAnimationFrame(animate);
+    texture06.offset.x += 0.01;  // 调整滚动速度
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  const canvas02 = createCabinetNameCanvas("机柜02", 84, 22);
+  const geometry02 = new PlaneGeometry(84, 22);
+  const material02 = new MeshBasicMaterial({// 基础网格材质
+    map: new CanvasTexture(canvas02, undefined),
+    side: DoubleSide,// 选择哪面显示
+    transparent: true,// 是否使用透明度
   });
+
+  const nameMesh02 = new Mesh(geometry02, material02);
+  nameMesh02.position.y = 30;
+  scene.add(nameMesh02);
 }
 
 const renderScene = () => {
@@ -209,15 +245,15 @@ const renderScene = () => {
   controls.update();
   stats.update();
 
-  cube.rotation.x += controlData.rotationSpeed;
-  cube.rotation.y += controlData.rotationSpeed;
-  cube.rotation.z += controlData.rotationSpeed;
-
-  earthTexture.offset.x += 0.001;
-
-  step += controlData.bouncingSpeed;
-  sphere.position.x = 20 + 10 * Math.cos(step);
-  sphere.position.y = 4 + 10 * Math.abs(Math.sin(step));
+  // cube.rotation.x += controlData.rotationSpeed;
+  // cube.rotation.y += controlData.rotationSpeed;
+  // cube.rotation.z += controlData.rotationSpeed;
+  //
+  // earthTexture.offset.x += 0.001;
+  //
+  // step += controlData.bouncingSpeed;
+  // sphere.position.x = 20 + 10 * Math.cos(step);
+  // sphere.position.y = 4 + 10 * Math.abs(Math.sin(step));
 
   requestAnimationFrame(renderScene)
   renderer.render(scene, camera);

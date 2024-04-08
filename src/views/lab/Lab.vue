@@ -11,6 +11,10 @@
     <RouterLink to="/lab/earth">
       <a-button>3D地球</a-button>
     </RouterLink>
+
+    <RouterLink to="/lab/test">
+      <a-button>测试</a-button>
+    </RouterLink>
   </div>
 </template>
 

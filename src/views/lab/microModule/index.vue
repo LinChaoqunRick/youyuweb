@@ -29,7 +29,7 @@ import {
   WebGLRenderer,
   Group,
   MeshBasicMaterial,
-  CanvasTexture
+  RepeatWrapping
 } from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import {onMounted, reactive, ref} from 'vue';
@@ -102,6 +102,7 @@ const microConfig = {
   cabinetWidth: 116,
 };
 let transparentMesh = []; // 切换透明视图，需要改变材质的mesh
+let cabinetNameWrapsMesh = []; // 需要滚动的名称
 
 let scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, controls: OrbitControls, containerRect: DOMRect,
   stats;
@@ -173,7 +174,7 @@ const initCabinet = async () => {
         areaId: 1,
         cabinetIndex: 2,
         assetId: 8,
-        cabinetShortName: '机柜02',
+        cabinetShortName: '机柜机柜机柜机柜机柜机柜机柜机柜',
         cabinetType: '7',
         cabinetWidth: '0',
         alarmLevel: 4,
@@ -497,7 +498,7 @@ const initCabinet = async () => {
         areaId: 1,
         cabinetIndex: 20,
         assetId: 20,
-        cabinetShortName: '机柜20',
+        cabinetShortName: 'DreamDreamDreamDreamDreamDream',
         cabinetType: '7',
         cabinetWidth: '1',
         alarmLevel: null,
@@ -583,8 +584,10 @@ const initCabinet = async () => {
     ],
   };
 
-  // 构建微模块
   transparentMesh = [];
+  cabinetNameWrapsMesh = [];
+
+  // 构建微模块
   const microGroup = new Group();
   microGroup.name = 'micro_group';
   cabinetList = res.data.cabinetList;
@@ -605,6 +608,7 @@ const initCabinet = async () => {
     const cabinetMeshFront = models[cabinetInfo.name].clone();
     cabinetMeshFront.name = 'cabinet_' + index;
     const nameMeshFront = createCabinetNameMesh(cabinetFront.cabinetShortName, cabinetInfo.correctWidth);
+    addWrapsMesh(nameMeshFront);
     nameMeshFront.position.set(0, microConfig.cabinetHeight, -microConfig.cabinetWidth / 2);
     nameMeshFront.rotation.y = Math.PI;
     cabinetFrontGroup.add(cabinetMeshFront, nameMeshFront);
@@ -615,12 +619,12 @@ const initCabinet = async () => {
     const cabinetMeshBack = models[cabinetInfo.name].clone();
     cabinetMeshBack.name = 'cabinet_' + (index + 1);
     const nameMeshBack = createCabinetNameMesh(cabinetBack.cabinetShortName, cabinetInfo.correctWidth);
+    addWrapsMesh(nameMeshBack)
     nameMeshBack.position.set(0, microConfig.cabinetHeight, -microConfig.cabinetWidth / 2);
     nameMeshBack.rotation.y = Math.PI;
     cabinetBackGroup.add(cabinetMeshBack, nameMeshBack);
     cabinetBackGroup.position.set(0, 0, microConfig.cabinetWidth);
     cabinetBackGroup.rotation.y = Math.PI;
-
 
     // 冷通道
     const ltdModel = models[cabinetInfo.ltd].clone();
@@ -632,7 +636,6 @@ const initCabinet = async () => {
 
     microGroup.add(singleCabinetGroup);
     transparentMesh.push(cabinetMeshFront, cabinetMeshBack, ltdModel);
-
   }
 
   // 位置整体偏移
@@ -661,8 +664,6 @@ const initCabinet = async () => {
 
   microGroup.add(doorModelFront, doorModelBack);
   scene.add(microGroup);
-
-  console.log(models.jg_60);
 };
 
 const initSceneRenderer = () => {
@@ -816,9 +817,10 @@ const initModels = async () => {
 };
 
 const renderScene = () => {
-  // console.log(camera.position, controls.target);
   controls.update();
   stats.update();
+
+  cabinetNameMeshAnimation();
 
   requestAnimationFrame(renderScene);
   renderer.render(scene, camera);
@@ -863,6 +865,21 @@ const changeMaterial = (isTransparent: boolean) => {
     });
   })
 };
+
+const addWrapsMesh = (mesh) => {
+  if (mesh.material.map.wrapS === RepeatWrapping) {
+    cabinetNameWrapsMesh.push(mesh);
+  }
+}
+
+/**
+ * 机柜名称如果超出，滚动展示
+ */
+const cabinetNameMeshAnimation = () => {
+  cabinetNameWrapsMesh.forEach(mesh => {
+    mesh.material.map.offset.x += 0.005;
+  });
+}
 
 onMounted(async () => {
   await initModels();
