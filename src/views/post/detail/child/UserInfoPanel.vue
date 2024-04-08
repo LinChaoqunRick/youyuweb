@@ -382,6 +382,7 @@
       ul {
         list-style: none;
         padding-left: 0 !important;
+        margin: 0;
 
         li {
           margin-bottom: 6px;
