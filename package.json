@@ -27,7 +27,7 @@
     "markdown-it-implicit-figures": "^0.12.0",
     "markdown-it-mark": "^3.0.1",
     "marked": "^4.1.1",
-    "md-editor-v3": "^4.12.2",
+    "md-editor-v3": "^4.13.0",
     "qs": "^6.11.0",
     "stats.js": "^0.17.0",
     "three": "^0.163.0",
