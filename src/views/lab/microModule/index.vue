@@ -877,7 +877,7 @@ const addWrapsMesh = (mesh) => {
  */
 const cabinetNameMeshAnimation = () => {
   cabinetNameWrapsMesh.forEach(mesh => {
-    mesh.material.map.offset.x += 0.005;
+    mesh.material.map.offset.x += 1 / (mesh.material.map.canvasWidth * 2);
   });
 }
 

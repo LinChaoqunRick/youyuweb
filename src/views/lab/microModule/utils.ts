@@ -42,7 +42,6 @@ const createCabinetNameCanvas = (text: string, width: number, height: number): H
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
 
-  console.log(ctx.measureText(text));
   // 测量文本宽度
   const textWidth = Math.ceil(ctx.measureText(text).width * overflowScale);
   // 文本是否会溢出
@@ -94,6 +93,7 @@ const createCabinetNameMesh = (text: string, width: number, height: number = 22)
 
   if (canvas._is_overflow && material.map) {
     material.map.repeat.x = canvas._repeat_x;
+    material.map.canvasWidth = Math.ceil(width / canvas._repeat_x);
   }
 
   return new Mesh(geometry, material);
