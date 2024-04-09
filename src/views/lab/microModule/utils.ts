@@ -78,7 +78,7 @@ const createCabinetNameCanvas = (text: string, width: number, height: number): H
   const textY = height / 2 + 1;
   ctx.fillText(text, textX, textY);
 
-  document.documentElement.appendChild(canvas);
+  // document.documentElement.appendChild(canvas);
   return canvas;
 }
 

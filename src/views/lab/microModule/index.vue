@@ -29,15 +29,18 @@ import {
   WebGLRenderer,
   Group,
   MeshBasicMaterial,
-  RepeatWrapping
+  RepeatWrapping, Mesh, PlaneGeometry,
+  BackSide
 } from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import {onMounted, reactive, ref} from 'vue';
 import {useStore} from 'vuex';
 import * as dat from 'dat.gui';
 import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader';
-import {TextureLoaderCommonPromise, MTLLoaderPromise} from '@/libs/three/loaders';
+import {TextureLoaderCommonPromise, TextureLoaderPromise, MTLLoaderPromise} from '@/libs/three/loaders';
 import {createCabinetNameMesh} from "@/views/lab/microModule/utils";
+import {icons} from "@/views/lab/microModule/config";
+import type {infoType} from "@/views/lab/microModule/config";
 
 const {dispatch} = useStore();
 
@@ -107,6 +110,8 @@ let cabinetNameWrapsMesh = []; // 需要滚动的名称
 let scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, controls: OrbitControls, containerRect: DOMRect,
   stats;
 const models = {};
+let mtlTotal = 0, objTotal = 0, imageTotal = 0;
+const imagesTexture: object = {};
 const views = [
   {
     name: '3D视图',
@@ -133,6 +138,49 @@ const views = [
     type: 'cooling'
   },
 ];
+
+/**
+ * 构建单个机柜，包括机柜体，机柜名称，类型贴图，告警贴图，数据贴图
+ * @param cabinetInfo 机柜信息
+ * @param index 机柜下标
+ * @param cabinetData 机柜名称
+ */
+const createCabinetItem = (cabinetInfo: infoType, index: number, cabinetData: any) => {
+  const {name, correctWidth} = cabinetInfo;
+  const {cabinetShortName, cabinetType} = cabinetData;
+  const cabinetGroup = new Group();
+  const cabinetMesh = models[name].clone();
+  cabinetMesh.name = 'cabinet_' + index;
+
+  // 机柜名称Mesh
+  const nameMesh = createCabinetNameMesh(cabinetShortName, correctWidth);
+  nameMesh.position.set(0, microConfig.cabinetHeight, -microConfig.cabinetWidth / 2);
+  nameMesh.rotation.y = Math.PI;
+  addWrapsMesh(nameMesh); // 如果需要滚动显示
+
+  // 机柜类型Mesh
+  console.log(icons, cabinetType);
+  const typePlaneGeometry = new PlaneGeometry(48, 48);
+  const typePlaneMaterial = new MeshBasicMaterial({
+    map: imagesTexture[cabinetType],
+    transparent: true,
+    side: BackSide,
+    color: icons[cabinetType].color
+  });
+  const typeMesh = new Mesh(typePlaneGeometry, typePlaneMaterial);
+  typeMesh.position.set(-2, microConfig.cabinetHeight * 0.76, -microConfig.cabinetWidth / 2)
+
+  cabinetGroup.add(cabinetMesh, nameMesh, typeMesh);
+  transparentMesh.push(cabinetMesh);
+
+  return cabinetGroup;
+}
+
+const addWrapsMesh = (mesh: Mesh) => {
+  if (mesh.material.map.wrapS === RepeatWrapping) {
+    cabinetNameWrapsMesh.push(mesh);
+  }
+}
 
 const initCabinet = async () => {
   const res = await dispatch('getMicroModuleConfig');
@@ -604,25 +652,11 @@ const initCabinet = async () => {
     const cabinetInfo = microConfig.cabinetWidthList[cabinetFront.cabinetWidth];
 
     // 机柜前
-    const cabinetFrontGroup = new Group();
-    const cabinetMeshFront = models[cabinetInfo.name].clone();
-    cabinetMeshFront.name = 'cabinet_' + index;
-    const nameMeshFront = createCabinetNameMesh(cabinetFront.cabinetShortName, cabinetInfo.correctWidth);
-    addWrapsMesh(nameMeshFront);
-    nameMeshFront.position.set(0, microConfig.cabinetHeight, -microConfig.cabinetWidth / 2);
-    nameMeshFront.rotation.y = Math.PI;
-    cabinetFrontGroup.add(cabinetMeshFront, nameMeshFront);
+    const cabinetFrontGroup = createCabinetItem(cabinetInfo, index, cabinetFront);
     cabinetFrontGroup.position.set(0, 0, -microConfig.cabinetWidth);
 
     // 机柜后
-    const cabinetBackGroup = new Group();
-    const cabinetMeshBack = models[cabinetInfo.name].clone();
-    cabinetMeshBack.name = 'cabinet_' + (index + 1);
-    const nameMeshBack = createCabinetNameMesh(cabinetBack.cabinetShortName, cabinetInfo.correctWidth);
-    addWrapsMesh(nameMeshBack)
-    nameMeshBack.position.set(0, microConfig.cabinetHeight, -microConfig.cabinetWidth / 2);
-    nameMeshBack.rotation.y = Math.PI;
-    cabinetBackGroup.add(cabinetMeshBack, nameMeshBack);
+    const cabinetBackGroup = createCabinetItem(cabinetInfo, index + 1, cabinetBack);
     cabinetBackGroup.position.set(0, 0, microConfig.cabinetWidth);
     cabinetBackGroup.rotation.y = Math.PI;
 
@@ -635,7 +669,7 @@ const initCabinet = async () => {
     singleCabinetGroup.position.x = microConfig.totalLength - cabinetInfo.correctWidth / 2;
 
     microGroup.add(singleCabinetGroup);
-    transparentMesh.push(cabinetMeshFront, cabinetMeshBack, ltdModel);
+    transparentMesh.push(ltdModel);
   }
 
   // 位置整体偏移
@@ -754,6 +788,9 @@ const initLight = () => {
 };
 
 const initModels = async () => {
+  mtlTotal = 0;
+  objTotal = 0;
+  imageTotal = 0;
   // 定义目录路径
   const directoryPath = '/static/micro/';
 
@@ -778,32 +815,49 @@ const initModels = async () => {
     'menmei_logo', // 标准门楣
   ];
 
-  const percentageStatusList = ref(Array.from({length: mtlFileNames.length}).map(_ => ({mtl: 0, obj: 0})));
+  const imagesMap = [...Object.values(icons)];
 
-  const onProcess = (index: number, xhr: object, type: string) => {
-    percentageStatusList.value[index][type] = (xhr.loaded / xhr.total) * 100;
+  // 构建模型加载进度列表
+  const percentModelList: any = ref(Array.from({length: mtlFileNames.length}).map(_ => ({mtl: 0, obj: 0})));
 
-    const mtlTotal = percentageStatusList.value.reduce((pre, n) => pre + n.mtl, 0) / mtlFileNames.length;
-    const objTotal = percentageStatusList.value.reduce((pre, n) => pre + n.obj, 0) / mtlFileNames.length;
+  // 构建图片加载进度列表
+  const percentImagesList: any = ref(Array.from({length: imagesMap.length}).map(_ => ({value: 0})));
 
-    percentage.value = parseInt(((mtlTotal + objTotal) / 2).toFixed());
+  const onProcess = (type: string, index: number, xhr: object, name: string) => {
+    if (type === 'model') {
+      percentModelList.value[index][name] = (xhr.loaded / xhr.total) * 100;
+      mtlTotal = percentModelList.value.reduce((pre, n) => pre + n.mtl, 0) / mtlFileNames.length;
+      objTotal = percentModelList.value.reduce((pre, n) => pre + n.obj, 0) / mtlFileNames.length;
+    } else if (type === 'image') {
+      percentImagesList.value[index][name] = (xhr.loaded / xhr.total) * 100;
+      imageTotal = percentImagesList.value.reduce((pre, n) => pre + n.value, 0) / imagesMap.length;
+    }
+    percentage.value = parseInt(((mtlTotal + objTotal + imageTotal) / 3).toFixed());
   };
 
   await Promise.all(mtlFileNames.map(async (fileName: string, index: number) => {
     const objLoader = new OBJLoader();
     // 加载MTL文件
-    const materials = await MTLLoaderPromise(directoryPath + fileName + '.mtl', {
-      onProcess: xhr => onProcess(index, xhr, 'mtl'),
+    const materials: any = await MTLLoaderPromise(directoryPath + fileName + '.mtl', {
+      onProcess: (xhr: object) => onProcess('model', index, xhr, 'mtl'),
     });
     materials.preload(); // 预加载材质
     objLoader.setMaterials(materials);
 
     // 加载OBJ文件
     const object = await TextureLoaderCommonPromise(objLoader, directoryPath + fileName + '.obj', {
-      onProcess: xhr => onProcess(index, xhr, 'obj'),
+      onProcess: xhr => onProcess('model', index, xhr, 'obj'),
     });
     models[fileName] = object;
     return object;
+  }));
+
+  await Promise.all(imagesMap.map(async (item, index) => {
+    // 加载图片文件
+    const image = await TextureLoaderPromise(item.icon);
+    onProcess('image', index, {total: 100, loaded: 100}, 'value')
+    imagesTexture[item.code] = image;
+    return image;
   }));
 
   // 消除机柜左侧白边
@@ -832,8 +886,6 @@ const onResetOrbitControls = () => {
 
 const onViewChange = (item) => {
   changeMaterial(item.type !== '3d');
-
-  console.log(models.jg_60);
 }
 
 const changeMaterial = (isTransparent: boolean) => {
@@ -866,18 +918,12 @@ const changeMaterial = (isTransparent: boolean) => {
   })
 };
 
-const addWrapsMesh = (mesh) => {
-  if (mesh.material.map.wrapS === RepeatWrapping) {
-    cabinetNameWrapsMesh.push(mesh);
-  }
-}
-
 /**
  * 机柜名称如果超出，滚动展示
  */
 const cabinetNameMeshAnimation = () => {
   cabinetNameWrapsMesh.forEach(mesh => {
-    mesh.material.map.offset.x += 1 / (mesh.material.map.canvasWidth * 2);
+    mesh.material.map.offset.x += 1 / (mesh.material.map.canvasWidth * 6);
   });
 }
 
