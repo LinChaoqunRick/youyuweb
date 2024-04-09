@@ -5,6 +5,7 @@ import {
   CanvasTexture,
   Mesh,
   RepeatWrapping,
+  CircleGeometry
 } from "three";
 
 const overflowScale = 1.43;
@@ -99,4 +100,51 @@ const createCabinetNameMesh = (text: string, width: number, height: number = 22)
   return new Mesh(geometry, material);
 }
 
-export {createCabinetNameCanvas, createCabinetNameMesh}
+const createCabinetAlarmCanvas = (text: string, color: string, radius: number): HTMLCanvasElement => {
+  // 获取设备的像素比例
+  const ratio = 8;
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  // 调整canvas的大小以考虑设备像素比，增加绘图分辨率
+  canvas.width = radius * 2 * ratio;
+  canvas.height = radius * 2 * ratio;
+
+  // 使用CSS缩放canvas以适应原始宽高
+  canvas.style.width = radius * 2 + 'px';
+  canvas.style.height = radius * 2 + 'px';
+
+  // 缩放绘图上下文以适应设备像素比
+  ctx.scale(ratio, ratio);
+
+  // 设置长方形的背景颜色
+  ctx.fillStyle = color;
+  ctx.fillRect(0, 0, radius * 2, radius * 2);
+
+  // 设置文本的样式
+  ctx.font = '13px Microsoft YaHei';
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  // 计算文本位置并在长方形中居中显示
+  const textX = radius * 2 / 2;
+  const textY = radius * 2 / 2 + 1.6;
+  ctx.fillText(text, textX, textY);
+
+  // document.documentElement.appendChild(canvas);
+  return canvas;
+}
+
+const createCabinetAlarmMesh = (count: string, color: string, radius: number = 16) => {
+  const canvas = createCabinetAlarmCanvas(count, color, radius);
+  const geometry = new CircleGeometry(radius, 32);
+  const material = new MeshBasicMaterial({// 基础网格材质
+    map: new CanvasTexture(canvas),
+    side: DoubleSide,// 选择哪面显示
+  });
+
+  return new Mesh(geometry, material);
+}
+
+export {createCabinetNameMesh, createCabinetAlarmMesh}
