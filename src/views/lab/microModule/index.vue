@@ -33,7 +33,7 @@ import {
   RepeatWrapping,
   Mesh,
   PlaneGeometry,
-  BackSide
+  DoubleSide
 } from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import {onMounted, reactive, ref} from 'vue';
@@ -102,13 +102,17 @@ const microConfig = {
       "alarmLevelColor": "rgba(255,255,255,1)",
     }
   ],
+  securityDeviceMap: {
+    "1": {name: 'af_sp_qiu'}, // 球型摄像头
+    "2": {name: 'af_sp_qiang'}, // 枪型摄像头
+    "3": {name: ''}, // 温感
+    "4": {name: 'af_smoke'}, // 烟感
+  },
   cabinetZ: 120, // 机柜位置的z值，(机柜宽度的+冷通道温度) / 2
   firstCabinetWidth: 0, // 首个机柜的宽度
   cabinetHeight: 223,
   cabinetWidth: 116,
 };
-let transparentMesh = []; // 切换透明视图，需要改变材质的mesh
-let cabinetNameWrapsMesh = []; // 需要滚动的名称
 
 let scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, controls: OrbitControls, containerRect: DOMRect,
   stats;
@@ -141,6 +145,9 @@ const views = [
     type: 'cooling'
   },
 ];
+let transparentMesh = []; // 切换透明视图，需要改变材质的mesh
+let cabinetNameWrapsMesh = []; // 需要滚动的名称
+let securityMesh: [] = []; // 安防mesh
 
 /**
  * 构建单个机柜，包括机柜体，机柜名称，类型贴图，告警贴图，数据贴图
@@ -167,6 +174,7 @@ const createCabinetItem = (cabinetInfo: infoType, index: number, cabinetData: an
     map: imagesTexture[cabinetType],
     transparent: true,
     color: icons[cabinetType].color,
+    side: DoubleSide
   });
   const typeMesh = new Mesh(typePlaneGeometry, typePlaneMaterial);
   typeMesh.rotation.y = Math.PI;
@@ -186,6 +194,10 @@ const createCabinetItem = (cabinetInfo: infoType, index: number, cabinetData: an
   return cabinetGroup;
 }
 
+/**
+ * 添加需要滚动显示的机柜名称模型
+ * @param mesh
+ */
 const addWrapsMesh = (mesh: Mesh) => {
   if (mesh.material.map.wrapS === RepeatWrapping) {
     cabinetNameWrapsMesh.push(mesh);
@@ -930,8 +942,69 @@ const onResetOrbitControls = () => {
   controls.reset();
 };
 
-const onViewChange = (item) => {
+const onViewChange = async (item: string) => {
   changeMaterial(item.type !== '3d');
+  if (item.type === 'security') {
+    const res = await dispatch('getMicroModuleConfig');
+    res.data = [
+      {
+        "microDeviceConfigId": 29,
+        "deviceId": 18,
+        "deviceName": "192.168.68.227_DI-11#11",
+        "deviceLocation": "1",
+        "deviceType": "70",
+        "securityType": "4",
+        "deviceAlarmInfoList": []
+      },
+      {
+        "microDeviceConfigId": 31,
+        "deviceId": 42,
+        "deviceName": "192.168.68.227_网络摄像机(前)#1",
+        "deviceLocation": "3",
+        "deviceType": "38",
+        "securityType": "2",
+        "deviceAlarmInfoList": [
+          {
+            "unsolvedEventLogId": "22B65E0E2E574A83B4BBFE90C1EE3DDB",
+            "deviceName": "192.168.68.227_网络摄像机(前)#1",
+            "alarmEventName": "通讯中断",
+            "alarmLevelName": "四级告警",
+            "alarmLevel": 4,
+            "eventStartTime": "2024-04-01 16:08:02",
+            "handleState": "0",
+            "areaName": "区域"
+          }
+        ]
+      },
+      {
+        "microDeviceConfigId": 32,
+        "deviceId": 43,
+        "deviceName": "192.168.68.227_网络摄像机(后)#2",
+        "deviceLocation": "8",
+        "deviceType": "38",
+        "securityType": "1",
+        "deviceAlarmInfoList": [
+          {
+            "unsolvedEventLogId": "2E8D23DF56894F508ED97A2D8163728B",
+            "deviceName": "192.168.68.227_网络摄像机(后)#2",
+            "alarmEventName": "通讯中断",
+            "alarmLevelName": "四级告警",
+            "alarmLevel": 4,
+            "eventStartTime": "2024-04-01 16:08:02",
+            "handleState": "0",
+            "areaName": "区域"
+          }
+        ]
+      }
+    ];
+
+    res.data.forEach((item, index) => {
+      const {securityType} = item;
+      const deviceMesh = models[microConfig.securityDeviceMap[securityType].name]
+
+      console.log(deviceMesh);
+    })
+  }
 }
 
 const changeMaterial = (isTransparent: boolean) => {
