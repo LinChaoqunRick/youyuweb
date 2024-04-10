@@ -147,7 +147,7 @@ const views = [
 ];
 let transparentMesh = []; // 切换透明视图，需要改变材质的mesh
 let cabinetNameWrapsMesh = []; // 需要滚动的名称
-let securityMesh: [] = []; // 安防mesh
+let securityMeshList: [] = []; // 安防mesh
 
 /**
  * 构建单个机柜，包括机柜体，机柜名称，类型贴图，告警贴图，数据贴图
@@ -802,13 +802,6 @@ const initHelper = () => {
   const axes = new AxesHelper(800);
   scene.add(axes);
 
-  // 添加dat.gui
-  // const gui = new dat.GUI();
-  // gui.domElement.style = 'position:absolute;top:65px;right:10px;';
-  // gui.add(controlData, 'rotationSpeed', 0, 0.5);
-  // gui.add(controlData, 'bouncingSpeed', 0, 0.5);
-  // gui.add(controlData, 'numberOfObjects').listen();
-
   // 添加Stats
   stats = new Stats();
   stats.showPanel(0);
@@ -943,9 +936,11 @@ const onResetOrbitControls = () => {
 };
 
 const onViewChange = async (item: string) => {
+  removeSecurityDevice(); // 清空安防设备
   changeMaterial(item.type !== '3d');
   if (item.type === 'security') {
     const res = await dispatch('getMicroModuleConfig');
+    securityMeshList = [];
     res.data = [
       {
         "microDeviceConfigId": 29,
@@ -999,12 +994,57 @@ const onViewChange = async (item: string) => {
     ];
 
     res.data.forEach((item, index) => {
-      const {securityType} = item;
-      const deviceMesh = models[microConfig.securityDeviceMap[securityType].name]
-
-      console.log(deviceMesh);
+      addSecurityDevice(item);
     })
   }
+}
+
+const addSecurityDevice = (data: object) => {
+  const {securityType, deviceLocation} = data;
+  const deviceMesh = models[microConfig.securityDeviceMap[securityType].name];
+  const {x, y, z} = getSecurityDevicePosition(deviceLocation);
+  deviceMesh.scale.set(1.4, 1.4, 1.4);
+  deviceMesh.position.set(x, y, z);
+  if (x < 0) { // 左边的设备需要y轴旋转一下
+    deviceMesh.rotation.y = Math.PI;
+  }
+  securityMeshList.push(deviceMesh);
+  scene.add(deviceMesh);
+}
+
+const removeSecurityDevice = () => {
+  scene.remove(...securityMeshList);
+}
+
+const getSecurityDevicePosition = (location: string) => {
+  const xLeft = ["1", "2", "3", "4", "5"];
+  const xRight = ["6", "7", "8", "9", "10"];
+
+  const yTop = ["1", "6"];
+  const yTopMiddle = ["2", "7"];
+  const yMiddle = ["3", "8"];
+  const yBottomMiddle = ["4", "9"];
+  const yBottom = ["5", "10"];
+
+  const {totalLength, cabinetZ, cabinetWidth, cabinetHeight, doorWidth} = microConfig;
+
+  const deviceX = xLeft.includes(location) ? -(totalLength - doorWidth) / 2 : xRight.includes(location) ? (totalLength - doorWidth) / 2 : 0;
+  let deviceZ;
+  if (yTop.includes(location)) {
+    deviceZ = -(cabinetZ + cabinetWidth / 2)
+  } else if (yTopMiddle.includes(location)) {
+    deviceZ = -(cabinetZ - cabinetWidth / 2)
+  } else if (yMiddle.includes(location)) {
+    deviceZ = 0;
+  } else if (yBottomMiddle.includes(location)) {
+    deviceZ = cabinetZ - cabinetWidth / 2;
+  } else if (yBottom.includes(location)) {
+    deviceZ = cabinetZ + cabinetWidth / 2
+  } else {
+    deviceZ = 0;
+  }
+
+  return {x: deviceX, y: (cabinetHeight - 15), z: deviceZ};
 }
 
 const changeMaterial = (isTransparent: boolean) => {
