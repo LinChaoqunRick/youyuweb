@@ -1,7 +1,8 @@
 <template>
   <div class="micro-module">
     <div class="views">
-      <div v-for="item in views" class="view-item" @click="onViewChange(item)">
+      <div v-for="item in views" class="view-item" :class="{'active': item.type === viewType}"
+           @click="onViewChange(item)">
         {{ item.name }}
       </div>
     </div>
@@ -10,7 +11,10 @@
     <div class="three-d-container" ref="containerRef"></div>
     <div class="bottom-operation">
       <div class="operation-item" @click="onResetOrbitControls">
-        <i-reverse-lens theme="outline" size="28" fill="#ffffff"/>
+        <i-setting-two theme="outline" size="20" fill="#ffffff"/>
+      </div>
+      <div class="operation-item" @click="onResetOrbitControls">
+        <i-reverse-lens theme="outline" size="24" fill="#ffffff"/>
       </div>
     </div>
   </div>
@@ -19,31 +23,31 @@
 <script lang="ts" setup>
 import Stats from 'stats.js';
 import {
-  AxesHelper,
-  GridHelper,
-  Color,
-  PerspectiveCamera,
-  Scene,
   AmbientLight,
+  AxesHelper,
+  Color,
   DirectionalLight,
-  WebGLRenderer,
+  DoubleSide,
+  GridHelper,
   Group,
-  MeshBasicMaterial,
-  MeshPhongMaterial,
-  RepeatWrapping,
   Mesh,
+  MeshBasicMaterial,
+  PerspectiveCamera,
   PlaneGeometry,
-  DoubleSide
+  RepeatWrapping,
+  Scene,
+  WebGLRenderer
 } from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
-import {onMounted, reactive, ref} from 'vue';
+import {onMounted, ref} from 'vue';
 import {useStore} from 'vuex';
-import * as dat from 'dat.gui';
 import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader';
-import {TextureLoaderCommonPromise, TextureLoaderPromise, MTLLoaderPromise} from '@/libs/three/loaders';
-import {createCabinetNameMesh, createCabinetAlarmMesh} from "@/views/lab/microModule/utils";
-import {icons} from "@/views/lab/microModule/config";
+import {MTLLoaderPromise, TextureLoaderCommonPromise, TextureLoaderPromise} from '@/libs/three/loaders';
+import {createCabinetAlarmMesh, createCabinetNameMesh} from "@/views/lab/microModule/utils";
 import type {infoType} from "@/views/lab/microModule/config";
+import {icons, mockAlarmListData, mockCabinetData, mockSecurityData} from "@/views/lab/microModule/config";
+import {useRequest} from "vue-request";
+import {isEqual} from 'lodash';
 
 const {dispatch} = useStore();
 
@@ -51,7 +55,7 @@ const statsRef = ref<HTMLDivElement>();
 
 const containerRef = ref<HTMLDivElement>();
 const percentage = ref(0);
-let cabinetList = [];
+let microConfigData = {};
 const microConfig = {
   totalLength: 0, // 模型总长度
   doorWidth: 24, // 门的宽度
@@ -59,48 +63,6 @@ const microConfig = {
     {name: 'jg_80', ltd: 'ltd_80', width: 80, correctWidth: 84},
     {name: 'jg_60', ltd: 'ltd_60', width: 60, correctWidth: 64},
     {name: 'jg_30', ltd: 'ltd_30', width: 30, correctWidth: 34},
-  ],
-  alarmLevelColorList: [
-    {
-      "alarmLevel": 1,
-      "alarmLevelName": "一级告警",
-      "alarmLevelColor": "rgba(237,64,20,1)",
-    },
-    {
-      "alarmLevel": 2,
-      "alarmLevelName": "二级告警",
-      "alarmLevelColor": "rgba(255,153,0,1)",
-    },
-    {
-      "alarmLevel": 3,
-      "alarmLevelName": "三级告警",
-      "alarmLevelColor": "rgba(13,148,170,1)",
-    },
-    {
-      "alarmLevel": 4,
-      "alarmLevelName": "四级告警",
-      "alarmLevelColor": "rgba(155,29,234,1)",
-    },
-    {
-      "alarmLevel": 5,
-      "alarmLevelName": "五级告警",
-      "alarmLevelColor": "rgba(255,255,255,1)",
-    },
-    {
-      "alarmLevel": 6,
-      "alarmLevelName": "六级告警",
-      "alarmLevelColor": "rgba(255,255,255,1)",
-    },
-    {
-      "alarmLevel": 7,
-      "alarmLevelName": "七级告警",
-      "alarmLevelColor": "rgba(255,255,255,1)",
-    },
-    {
-      "alarmLevel": 8,
-      "alarmLevelName": "八级告警",
-      "alarmLevelColor": "rgba(255,255,255,1)",
-    }
   ],
   securityDeviceMap: {
     "1": {name: 'af_sp_qiu'}, // 球型摄像头
@@ -117,7 +79,7 @@ const microConfig = {
 let scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, controls: OrbitControls, containerRect: DOMRect,
   stats;
 const models = {};
-let mtlTotal = 0, objTotal = 0, imageTotal = 0;
+let mtlTotal = 0, objTotal = 0, imageTotal = 0, loopInterval = 10 * 1000;
 const imagesTexture: object = {};
 const views = [
   {
@@ -145,558 +107,37 @@ const views = [
     type: 'cooling'
   },
 ];
-let transparentMesh = []; // 切换透明视图，需要改变材质的mesh
-let cabinetNameWrapsMesh = []; // 需要滚动的名称
-let securityMeshList: [] = []; // 安防mesh
+const viewType = ref<string>(views[0].type);
+
+let transparentMesh: Mesh[] = []; // 切换透明视图，需要改变材质的mesh
+const cabinetMeshMap = new Map<string, Mesh | Group>(); // 机柜mesh
+const cabinetNameMeshMap = new Map<string, Mesh | Group>(); // 机柜名称mesh
+const cabinetTypeMeshMap = new Map<string, Mesh | Group>(); // 机柜类型mesh
+const cabinetAlarmMeshMap = new Map<string, Mesh | Group>(); // 机柜告警mesh
+const cabinetNameWrapsMeshMap = new Map<string, Mesh | Group>(); // 需要滚动的名称mesh
+const securityMeshMap = new Map<string, Mesh | Group>(); // 安防mesh
+
+let alarmLevelList: object[] = []; // 告警等级配置
 
 /**
- * 构建单个机柜，包括机柜体，机柜名称，类型贴图，告警贴图，数据贴图
- * @param cabinetInfo 机柜信息
- * @param index 机柜下标
- * @param cabinetData 机柜名称
+ * 初始化微模块整体模型
  */
-const createCabinetItem = (cabinetInfo: infoType, index: number, cabinetData: any) => {
-  const {name, correctWidth} = cabinetInfo;
-  const {cabinetShortName, cabinetType, alarmCount, alarmLevel} = cabinetData;
-  const cabinetGroup = new Group();
-  const cabinetMesh = models[name].clone();
-  cabinetMesh.name = 'cabinet_' + index;
+const initMicroModule = async () => {
+  const res = await getMicroModuleData();
+  res.data = mockCabinetData;
 
-  // 机柜名称Mesh
-  const nameMesh = createCabinetNameMesh(cabinetShortName, correctWidth);
-  nameMesh.position.set(0, microConfig.cabinetHeight, -microConfig.cabinetWidth / 2);
-  nameMesh.rotation.y = Math.PI;
-  addWrapsMesh(nameMesh); // 如果需要滚动显示
-
-  // 机柜类型Mesh
-  const typePlaneGeometry = new PlaneGeometry(48, 48);
-  const typePlaneMaterial = new MeshBasicMaterial({
-    map: imagesTexture[cabinetType],
-    transparent: true,
-    color: icons[cabinetType].color,
-    side: DoubleSide
-  });
-  const typeMesh = new Mesh(typePlaneGeometry, typePlaneMaterial);
-  typeMesh.rotation.y = Math.PI;
-  typeMesh.position.set(-2, microConfig.cabinetHeight * 0.76, -microConfig.cabinetWidth / 2);
-
-  // 机柜告警Mesh
-  if (alarmCount) {
-    const alarmMesh = createCabinetAlarmMesh(alarmCount > 999 ? "999+" : alarmCount, microConfig.alarmLevelColorList[alarmLevel - 1].alarmLevelColor);
-    alarmMesh.position.set(0, microConfig.cabinetHeight + 40, -microConfig.cabinetWidth / 2);
-    alarmMesh.rotation.y = Math.PI;
-    cabinetGroup.add(alarmMesh);
-  }
-
-  cabinetGroup.add(cabinetMesh, nameMesh, typeMesh);
-  transparentMesh.push(cabinetMesh);
-
-  return cabinetGroup;
-}
-
-/**
- * 添加需要滚动显示的机柜名称模型
- * @param mesh
- */
-const addWrapsMesh = (mesh: Mesh) => {
-  if (mesh.material.map.wrapS === RepeatWrapping) {
-    cabinetNameWrapsMesh.push(mesh);
-  }
-}
-
-const initCabinet = async () => {
-  const res = await dispatch('getMicroModuleConfig');
-  res.data = {
-    doorHeadType: '2',
-    lintelLogoType: '1',
-    lintelLogoFilepath: '',
-    lintelLogoName: '',
-    lcdDisplayType: '1',
-    lcdDisplayFilepath: null,
-    lcdDisplayName: null,
-    glassDoorLogoType: '1',
-    glassDoorLogoFilepath: null,
-    glassDoorLogoName: null,
-    doorType: '1',
-    cabinetList: [
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 1,
-        "assetId": 9,
-        "cabinetShortName": "机柜01",
-        "cabinetType": "1",
-        "cabinetWidth": "1",
-        "alarmLevel": 4,
-        "alarmCount": 1,
-        "cabinetLocateRow": "1",
-        "cabinetRowOrder": 1,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 2,
-        "assetId": 8,
-        "cabinetShortName": "机柜02",
-        "cabinetType": "7",
-        "cabinetWidth": "1",
-        "alarmLevel": 4,
-        "alarmCount": 113,
-        "cabinetLocateRow": "2",
-        "cabinetRowOrder": 1,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 3,
-        "assetId": 7,
-        "cabinetShortName": "机柜03",
-        "cabinetType": "2",
-        "cabinetWidth": "1",
-        "alarmLevel": 4,
-        "alarmCount": 159,
-        "cabinetLocateRow": "1",
-        "cabinetRowOrder": 2,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 4,
-        "assetId": 6,
-        "cabinetShortName": "机柜04",
-        "cabinetType": "7",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "2",
-        "cabinetRowOrder": 2,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 5,
-        "assetId": 5,
-        "cabinetShortName": "机柜05",
-        "cabinetType": "3",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "1",
-        "cabinetRowOrder": 3,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 6,
-        "assetId": 4,
-        "cabinetShortName": "机柜06",
-        "cabinetType": "7",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "2",
-        "cabinetRowOrder": 3,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 7,
-        "assetId": 3,
-        "cabinetShortName": "机柜07",
-        "cabinetType": "4",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "1",
-        "cabinetRowOrder": 4,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 8,
-        "assetId": 2,
-        "cabinetShortName": "机柜08",
-        "cabinetType": "4",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "2",
-        "cabinetRowOrder": 4,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 9,
-        "assetId": 1,
-        "cabinetShortName": "机柜09",
-        "cabinetType": "5",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "1",
-        "cabinetRowOrder": 5,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 10,
-        "assetId": 23,
-        "cabinetShortName": "机柜10",
-        "cabinetType": "9",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "2",
-        "cabinetRowOrder": 5,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 11,
-        "assetId": 21,
-        "cabinetShortName": "机柜11",
-        "cabinetType": "6",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "1",
-        "cabinetRowOrder": 6,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 12,
-        "assetId": 16,
-        "cabinetShortName": "机柜12",
-        "cabinetType": "2",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "2",
-        "cabinetRowOrder": 6,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 13,
-        "assetId": 14,
-        "cabinetShortName": "机柜13",
-        "cabinetType": "7",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "1",
-        "cabinetRowOrder": 7,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 14,
-        "assetId": 19,
-        "cabinetShortName": "机柜14",
-        "cabinetType": "3",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "2",
-        "cabinetRowOrder": 7,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 15,
-        "assetId": 18,
-        "cabinetShortName": "机柜15",
-        "cabinetType": "9",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "1",
-        "cabinetRowOrder": 8,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 16,
-        "assetId": 11,
-        "cabinetShortName": "机柜16",
-        "cabinetType": "9",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "2",
-        "cabinetRowOrder": 8,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 17,
-        "assetId": 10,
-        "cabinetShortName": "机柜17",
-        "cabinetType": "7",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "1",
-        "cabinetRowOrder": 9,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 18,
-        "assetId": 13,
-        "cabinetShortName": "机柜18",
-        "cabinetType": "5",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "2",
-        "cabinetRowOrder": 9,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 19,
-        "assetId": 12,
-        "cabinetShortName": "机柜19",
-        "cabinetType": "7",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "1",
-        "cabinetRowOrder": 10,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 20,
-        "assetId": 20,
-        "cabinetShortName": "机柜20",
-        "cabinetType": "7",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "2",
-        "cabinetRowOrder": 10,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 21,
-        "assetId": 24,
-        "cabinetShortName": "机柜21",
-        "cabinetType": "7",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "1",
-        "cabinetRowOrder": 11,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 22,
-        "assetId": 22,
-        "cabinetShortName": "机柜22",
-        "cabinetType": "7",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "2",
-        "cabinetRowOrder": 11,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 23,
-        "assetId": 17,
-        "cabinetShortName": "机柜23",
-        "cabinetType": "7",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "1",
-        "cabinetRowOrder": 12,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 24,
-        "assetId": 15,
-        "cabinetShortName": "机柜24",
-        "cabinetType": "6",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": "2",
-        "cabinetRowOrder": 12,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 25,
-        "assetId": 68,
-        "cabinetShortName": "机柜25",
-        "cabinetType": "1",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": null,
-        "cabinetRowOrder": null,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      },
-      {
-        "deviceId": 1,
-        "deviceType": "100",
-        "deviceName": "192.168.68.227",
-        "areaId": 1,
-        "cabinetIndex": 26,
-        "assetId": 69,
-        "cabinetShortName": "机柜26",
-        "cabinetType": "1",
-        "cabinetWidth": "1",
-        "alarmLevel": null,
-        "alarmCount": 0,
-        "cabinetLocateRow": null,
-        "cabinetRowOrder": null,
-        "cabinetOrderIndex": null,
-        "avgTemp": null,
-        "avgHumi": null
-      }
-    ],
-  };
+  microConfigData = res.data;
+  const {cabinetList} = microConfigData;
 
   transparentMesh = [];
-  cabinetNameWrapsMesh = [];
+  cabinetNameMeshMap.clear();
+  cabinetAlarmMeshMap.clear();
+  cabinetTypeMeshMap.clear();
+  cabinetNameWrapsMeshMap.clear();
 
   // 构建微模块
   const microGroup = new Group();
   microGroup.name = 'micro_group';
-  cabinetList = res.data.cabinetList;
   microConfig.firstCabinetWidth = microConfig.cabinetWidthList[cabinetList[0].cabinetWidth].correctWidth;
   microConfig.totalLength = 0;
 
@@ -756,8 +197,74 @@ const initCabinet = async () => {
 
   microGroup.add(doorModelFront, doorModelBack);
   scene.add(microGroup);
+
+  setTimeout(() => {
+    loop.run();
+  }, loopInterval)
 };
 
+/**
+ * 构建单个机柜，包括机柜体，机柜名称，类型贴图，告警贴图，数据贴图
+ * @param cabinetInfo 机柜信息
+ * @param index 机柜下标
+ * @param cabinetData 机柜名称
+ */
+const createCabinetItem = (cabinetInfo: infoType, index: number, cabinetData: any) => {
+  const {name, correctWidth} = cabinetInfo;
+  const {cabinetShortName, cabinetType, alarmCount, alarmLevel, assetId} = cabinetData;
+  const cabinetGroup = new Group();
+  const cabinetMesh = models[name].clone();
+  cabinetMesh.name = 'cabinet_' + index;
+
+  // 机柜名称Mesh
+  const nameMesh = createCabinetNameMesh(cabinetShortName, correctWidth);
+  nameMesh.position.set(0, microConfig.cabinetHeight, -microConfig.cabinetWidth / 2);
+  nameMesh.rotation.y = Math.PI;
+  cabinetNameMeshMap.set(assetId, nameMesh);
+  addWrapsMesh(assetId, nameMesh); // 如果需要滚动显示
+
+  // 机柜类型Mesh
+  const typePlaneGeometry = new PlaneGeometry(48, 48);
+  const typePlaneMaterial = new MeshBasicMaterial({
+    map: imagesTexture[cabinetType],
+    transparent: true,
+    color: icons[cabinetType].color,
+    side: DoubleSide
+  });
+  const typeMesh = new Mesh(typePlaneGeometry, typePlaneMaterial);
+  typeMesh.rotation.y = Math.PI;
+  typeMesh.position.set(-1.8, microConfig.cabinetHeight * 0.76, -microConfig.cabinetWidth / 2);
+  cabinetTypeMeshMap.set(assetId, typeMesh);
+
+  // 机柜告警Mesh
+  if (alarmCount) {
+    const alarmMesh = createCabinetAlarmMesh(alarmCount > 999 ? "999+" : alarmCount, alarmLevelList[alarmLevel - 1].alarmLevelColor);
+    alarmMesh.position.set(0, microConfig.cabinetHeight + 40, -microConfig.cabinetWidth / 2);
+    alarmMesh.rotation.y = Math.PI;
+    cabinetGroup.add(alarmMesh);
+    cabinetAlarmMeshMap.set(assetId, alarmMesh);
+  }
+
+  cabinetGroup.add(cabinetMesh, nameMesh, typeMesh);
+  transparentMesh.push(cabinetMesh);
+
+  return cabinetGroup;
+}
+
+/**
+ * 添加需要滚动显示的机柜名称模型
+ * @param assetId 资产id
+ * @param mesh 模型
+ */
+const addWrapsMesh = (assetId: number | string, mesh: Mesh) => {
+  if (mesh.material.map.wrapS === RepeatWrapping) {
+    cabinetNameWrapsMeshMap.set(assetId, mesh);
+  }
+}
+
+/**
+ * 初始化场景，渲染器
+ */
 const initSceneRenderer = () => {
   // 渲染区域Rect
   containerRect = containerRef.value.getBoundingClientRect();
@@ -777,6 +284,9 @@ const initSceneRenderer = () => {
   renderer.shadowMap.enabled = true;
 };
 
+/**
+ * 初始化相机
+ */
 const initCamera = () => {
   camera = new PerspectiveCamera(45, containerRect.width / containerRect.height, 0.1, 3000);
   const calcCameraX = microConfig.totalLength / 2 + 300;
@@ -793,6 +303,9 @@ const initCamera = () => {
   window.addEventListener('resize', resize);
 };
 
+/**
+ * 初始化辅助工具
+ */
 const initHelper = () => {
   // 添加坐标格辅助对象
   const gridHelper = new GridHelper(1600, 40);
@@ -813,12 +326,16 @@ const initHelper = () => {
   controls.target.set(0, 120, 0);
   controls.update();
   controls.enableDamping = true;
-  controls.dampingFactor = 0.5;
+  controls.dampingFactor = 0.3;
+  controls.rotateSpeed = 0.6;
   controls.maxDistance = 1600;
   controls.maxPolarAngle = Math.PI * 0.5; // 半圆，禁底部翻转
   controls.saveState();
 };
 
+/**
+ * 初始化灯光
+ */
 const initLight = () => {
   const ambientLight = new AmbientLight(0xffffff, 4);
   scene.add(ambientLight);
@@ -838,6 +355,9 @@ const initLight = () => {
   scene.add(directionalLight_pz, directionalLight_nz, directionalLight_px, directionalLight_nx);
 };
 
+/**
+ * 加载模型
+ */
 const initModels = async () => {
   mtlTotal = 0;
   objTotal = 0;
@@ -921,6 +441,19 @@ const initModels = async () => {
   });
 };
 
+/**
+ * 获取告警等级信息
+ */
+const initAlarmLevel = async () => {
+  const alarmRes = await dispatch('getAlarmLevelList');
+  alarmRes.data = mockAlarmListData;
+
+  alarmLevelList = alarmRes.data;
+}
+
+/**
+ * 场景渲染 requestAnimationFrame
+ */
 const renderScene = () => {
   controls.update();
   stats.update();
@@ -931,67 +464,29 @@ const renderScene = () => {
   renderer.render(scene, camera);
 };
 
+/**
+ * 重置OrbitControls
+ */
 const onResetOrbitControls = () => {
   controls.reset();
 };
 
+/**
+ * 视图切换
+ * @param item
+ */
 const onViewChange = async (item: string) => {
+  if (viewType.value === item.type) {
+    return
+  } else {
+    viewType.value = item.type;
+  }
   removeSecurityDevice(); // 清空安防设备
-  changeMaterial(item.type !== '3d');
+  changeTransparentMesh(item.type !== '3d');
   if (item.type === 'security') {
-    const res = await dispatch('getMicroModuleConfig');
-    securityMeshList = [];
-    res.data = [
-      {
-        "microDeviceConfigId": 29,
-        "deviceId": 18,
-        "deviceName": "192.168.68.227_DI-11#11",
-        "deviceLocation": "1",
-        "deviceType": "70",
-        "securityType": "4",
-        "deviceAlarmInfoList": []
-      },
-      {
-        "microDeviceConfigId": 31,
-        "deviceId": 42,
-        "deviceName": "192.168.68.227_网络摄像机(前)#1",
-        "deviceLocation": "3",
-        "deviceType": "38",
-        "securityType": "2",
-        "deviceAlarmInfoList": [
-          {
-            "unsolvedEventLogId": "22B65E0E2E574A83B4BBFE90C1EE3DDB",
-            "deviceName": "192.168.68.227_网络摄像机(前)#1",
-            "alarmEventName": "通讯中断",
-            "alarmLevelName": "四级告警",
-            "alarmLevel": 4,
-            "eventStartTime": "2024-04-01 16:08:02",
-            "handleState": "0",
-            "areaName": "区域"
-          }
-        ]
-      },
-      {
-        "microDeviceConfigId": 32,
-        "deviceId": 43,
-        "deviceName": "192.168.68.227_网络摄像机(后)#2",
-        "deviceLocation": "8",
-        "deviceType": "38",
-        "securityType": "1",
-        "deviceAlarmInfoList": [
-          {
-            "unsolvedEventLogId": "2E8D23DF56894F508ED97A2D8163728B",
-            "deviceName": "192.168.68.227_网络摄像机(后)#2",
-            "alarmEventName": "通讯中断",
-            "alarmLevelName": "四级告警",
-            "alarmLevel": 4,
-            "eventStartTime": "2024-04-01 16:08:02",
-            "handleState": "0",
-            "areaName": "区域"
-          }
-        ]
-      }
-    ];
+    const res = await dispatch('getSecurityDeviceList');
+    securityMeshMap.clear();
+    res.data = mockSecurityData;
 
     res.data.forEach((item, index) => {
       addSecurityDevice(item);
@@ -999,23 +494,34 @@ const onViewChange = async (item: string) => {
   }
 }
 
+/**
+ * 添加安防设备
+ * @param data
+ */
 const addSecurityDevice = (data: object) => {
-  const {securityType, deviceLocation} = data;
+  const {securityType, deviceLocation, deviceAlarmInfoList, deviceId} = data;
   const deviceMesh = models[microConfig.securityDeviceMap[securityType].name];
   const {x, y, z} = getSecurityDevicePosition(deviceLocation);
   deviceMesh.scale.set(1.4, 1.4, 1.4);
   deviceMesh.position.set(x, y, z);
-  if (x < 0) { // 左边的设备需要y轴旋转一下
-    deviceMesh.rotation.y = Math.PI;
+  if (x < 0) {
+    deviceMesh.rotation.y = Math.PI; // 左边的设备需要y轴旋转一下
   }
-  securityMeshList.push(deviceMesh);
+  securityMeshMap.set(deviceId, deviceMesh);
   scene.add(deviceMesh);
 }
 
+/**
+ * 删除所有安防设备
+ */
 const removeSecurityDevice = () => {
-  scene.remove(...securityMeshList);
+  scene.remove(...securityMeshMap.values());
 }
 
+/**
+ * 根据位置编号获取安防设备三维坐标
+ * @param location 位置编号
+ */
 const getSecurityDevicePosition = (location: string) => {
   const xLeft = ["1", "2", "3", "4", "5"];
   const xRight = ["6", "7", "8", "9", "10"];
@@ -1047,17 +553,21 @@ const getSecurityDevicePosition = (location: string) => {
   return {x: deviceX, y: (cabinetHeight - 15), z: deviceZ};
 }
 
-const changeMaterial = (isTransparent: boolean) => {
+/**
+ * 修改切换视图后需要透明显示模型的材质
+ * @param isTransparent
+ */
+const changeTransparentMesh = (isTransparent: boolean) => {
   transparentMesh.forEach(mesh => {
     mesh.traverse(child => {
       if (child.isMesh && child.material) {
         if (isTransparent) {
           // 保存原始材质
-          if (!child.savedMaterial && child.material) {
+          if (!child.originMaterial && child.material) {
             if (Array.isArray(child.material)) {
-              child.savedMaterial = child.material.map(material => material.clone());
+              child.originMaterial = child.material.map(material => material.clone());
             } else {
-              child.savedMaterial = child.material.clone();
+              child.originMaterial = child.material.clone();
             }
           }
           // 设置透明材质
@@ -1068,8 +578,8 @@ const changeMaterial = (isTransparent: boolean) => {
           });
         } else {
           // 还原原始材质
-          if (child.savedMaterial) {
-            child.material = child.savedMaterial;
+          if (child.originMaterial) {
+            child.material = child.originMaterial;
           }
         }
       }
@@ -1078,18 +588,69 @@ const changeMaterial = (isTransparent: boolean) => {
 };
 
 /**
- * 机柜名称如果超出，滚动展示
+ * 机柜名称如果超出，滚动展示动画
  */
 const cabinetNameMeshAnimation = () => {
-  cabinetNameWrapsMesh.forEach(mesh => {
-    mesh.material.map.offset.x += 1 / (mesh.material.map.canvasWidth * 6);
+  cabinetNameWrapsMeshMap.values().forEach(mesh => {
+    if (mesh.isMesh) {
+      mesh.material.map.offset.x += 1 / (mesh.material.map.canvasWidth * 6);
+    }
   });
+};
+
+
+const changeMeshMaterial = () => {
+
+};
+
+const getMicroModuleData = async () => {
+  return await dispatch('getMicroModuleConfig');
 }
 
+/**
+ * 处理机柜信息轮询差异
+ * @param res
+ */
+const handleCabinetConfigDiff = (res: object) => {
+  res.data = mockCabinetData;
+  const data = res.data;
+
+  const compareKeys: string[] = ['assetId', 'cabinetType', 'cabinetWidth', 'cabinetShortName', 'alarmLevel', 'alarmCount'];
+
+  const oldConfig = microConfigData.cabinetList.map(item => compareKeys.reduce((obj, key) => {
+    obj[key] = item[key];
+    return obj;
+  }, {}));
+
+  const newConfig = data.cabinetList.map(item => compareKeys.reduce((obj, key) => {
+    obj[key] = item[key];
+    return obj;
+  }, {}));
+
+  const equal = isEqual(oldConfig, newConfig);
+  if (equal) { // 相等，不做任何改变
+    return;
+  } else {
+    (data.cabinetList || []).forEach(item => {
+
+    })
+  }
+}
+
+/**
+ * 机柜信息数据轮询
+ */
+const loop = useRequest(getMicroModuleData, {
+  pollingInterval: loopInterval,
+  manual: true,
+  onSuccess: handleCabinetConfigDiff
+});
+
 onMounted(async () => {
-  await initModels();
   initSceneRenderer();
-  await initCabinet();
+  await initModels();
+  await initAlarmLevel();
+  await initMicroModule();
   initCamera();
   initHelper();
   initLight();
@@ -1122,6 +683,11 @@ onMounted(async () => {
       padding-left: 6px;
       cursor: pointer;
 
+      &.active {
+        background-color: #1890ff;
+        color: white;
+      }
+
       svg {
         position: absolute;
         height: 30px;
@@ -1150,18 +716,19 @@ onMounted(async () => {
 
   .bottom-operation {
     position: absolute;
-    bottom: 20px;
-    right: 20px;
+    bottom: 10px;
+    right: 10px;
 
     .operation-item {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 50px;
-      width: 50px;
+      height: 45px;
+      width: 45px;
       border-radius: 50%;
       background-color: #1890ff;
       cursor: pointer;
+      margin-top: 8px;
     }
   }
 }

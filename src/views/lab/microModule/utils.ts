@@ -147,4 +147,4 @@ const createCabinetAlarmMesh = (count: string, color: string, radius: number = 1
   return new Mesh(geometry, material);
 }
 
-export {createCabinetNameMesh, createCabinetAlarmMesh}
+export {createCabinetNameCanvas, createCabinetNameMesh, createCabinetAlarmMesh}

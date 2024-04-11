@@ -111,5 +111,7 @@ export const MESSAGE_VERIFY = ApiBase + "/sms/open/verify"; // 发送验证码
 
 // 实验室-微模块3D
 export const GET_MICRO_MODULE_CONFIG = ApiBase + "/category/open/list";
+export const GET_SECURITY_DEVICE_LIST = ApiBase + "/category/open/list";
+export const GET_ALARM_LEVEL_LIST = ApiBase + "/category/open/list";
 
 
