@@ -37,7 +37,7 @@ const measureText = (text: string): number => {
   return appendPixel;
 }
 
-const createCabinetNameCanvas = (text: string, width: number, height: number): HTMLCanvasElement => {
+const createCabinetNameCanvasTexture = (text: string, width: number, height: number = 22): CanvasTexture => {
   // 获取设备的像素比例
   const ratio = 4;
   const canvas = document.createElement('canvas');
@@ -46,10 +46,11 @@ const createCabinetNameCanvas = (text: string, width: number, height: number): H
   // 测量文本宽度
   const textWidth = Math.ceil(ctx.measureText(text).width * overflowScale);
   // 文本是否会溢出
-  canvas._is_overflow = textWidth > width;
+  const _is_overflow = textWidth > width;
+  let _repeat_x: number = 1;
 
-  if (canvas._is_overflow) {
-    canvas._repeat_x = width / textWidth;
+  if (_is_overflow) {
+    _repeat_x = width / textWidth;
     width = textWidth;
   }
 
@@ -80,27 +81,30 @@ const createCabinetNameCanvas = (text: string, width: number, height: number): H
   ctx.fillText(text, textX, textY);
 
   // document.documentElement.appendChild(canvas);
-  return canvas;
+  const canvasTexture = new CanvasTexture(canvas, undefined, _is_overflow ? RepeatWrapping : undefined);
+  canvasTexture._is_overflow = _is_overflow;
+  canvasTexture._repeat_x = _repeat_x;
+  return canvasTexture;
 }
 
 const createCabinetNameMesh = (text: string, width: number, height: number = 22) => {
-  const canvas = createCabinetNameCanvas(text, width, height);
+  const canvasTexture = createCabinetNameCanvasTexture(text, width, height);
   const geometry = new PlaneGeometry(width, height);
   const material = new MeshBasicMaterial({// 基础网格材质
-    map: new CanvasTexture(canvas, undefined, canvas._is_overflow ? RepeatWrapping : undefined),
+    map: canvasTexture,
     side: DoubleSide,// 选择哪面显示
     transparent: true,// 是否使用透明度
   });
 
-  if (canvas._is_overflow && material.map) {
-    material.map.repeat.x = canvas._repeat_x;
-    material.map.canvasWidth = Math.ceil(width / canvas._repeat_x);
+  if (canvasTexture._is_overflow && material.map) {
+    material.map.repeat.x = canvasTexture._repeat_x;
+    material.map.canvasWidth = Math.ceil(width / canvasTexture._repeat_x);
   }
 
   return new Mesh(geometry, material);
 }
 
-const createCabinetAlarmCanvas = (text: string, color: string, radius: number): HTMLCanvasElement => {
+const createCabinetAlarmCanvasTexture = (text: string, color: string, radius: number): CanvasTexture => {
   // 获取设备的像素比例
   const ratio = 8;
   const canvas = document.createElement('canvas');
@@ -133,18 +137,18 @@ const createCabinetAlarmCanvas = (text: string, color: string, radius: number): 
   ctx.fillText(text, textX, textY);
 
   // document.documentElement.appendChild(canvas);
-  return canvas;
+  return new CanvasTexture(canvas);
 }
 
 const createCabinetAlarmMesh = (count: string, color: string, radius: number = 16) => {
-  const canvas = createCabinetAlarmCanvas(count, color, radius);
+  const canvasTexture = createCabinetAlarmCanvasTexture(count, color, radius);
   const geometry = new CircleGeometry(radius, 32);
   const material = new MeshBasicMaterial({// 基础网格材质
-    map: new CanvasTexture(canvas),
+    map: canvasTexture,
     side: DoubleSide,// 选择哪面显示
   });
 
   return new Mesh(geometry, material);
 }
 
-export {createCabinetNameCanvas, createCabinetNameMesh, createCabinetAlarmMesh}
+export {createCabinetNameCanvasTexture, createCabinetNameMesh, createCabinetAlarmMesh}

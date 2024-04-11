@@ -35,7 +35,7 @@ import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {onMounted, reactive, ref} from 'vue';
 import * as dat from 'dat.gui';
-import {createCabinetNameCanvas} from "@/views/lab/microModule/utils";
+import {createCabinetNameCanvasTexture} from "@/views/lab/microModule/utils";
 
 const statsRef = ref<HTMLDivElement>();
 
@@ -205,7 +205,7 @@ const initModels = () => {
   // });
 
 
-  const canvas06 = createCabinetNameCanvas("机柜06", 52, 22);
+  const canvas06 = createCabinetNameCanvasTexture("机柜06", 52, 22);
   const texture06 = new CanvasTexture(canvas06);
   texture06.wrapS = RepeatWrapping;
   texture06.repeat.x = 34 / 52;  // 设置纹理重复比例
@@ -227,7 +227,7 @@ const initModels = () => {
   }
   animate();
 
-  const canvas02 = createCabinetNameCanvas("机柜02", 84, 22);
+  const canvas02 = createCabinetNameCanvasTexture("机柜02", 84, 22);
   const geometry02 = new PlaneGeometry(84, 22);
   const material02 = new MeshBasicMaterial({// 基础网格材质
     map: new CanvasTexture(canvas02, undefined),
