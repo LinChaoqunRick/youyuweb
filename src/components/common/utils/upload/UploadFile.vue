@@ -1,17 +1,18 @@
 <template>
   <div class="upload-file" :class="{ disabled: disabled }">
     <a-upload
-        v-model:file-list="uploadFiles"
-        :data="data"
-        :accept="accept"
-        :show-upload-list="false"
-        :disabled="disabled"
-        :capture="null"
-        :customRequest="customRequest"
-        @change="handleChange"
-        v-bind="$attrs"
-        class="avatar-uploader"
-        ref="uploadRef"
+      v-model:file-list="uploadFiles"
+      :data="data"
+      :accept="accept"
+      :show-upload-list="false"
+      :disabled="disabled"
+      :capture="null"
+      :customRequest="customRequest"
+      :multiple="multiple"
+      @change="handleChange"
+      v-bind="$attrs"
+      class="avatar-uploader"
+      ref="uploadRef"
     >
       <slot :progress="progress">
         <div class="upload-box">
@@ -66,6 +67,10 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  multiple: {
+    type: Boolean,
+    default: false
+  }
 });
 
 const uploadFiles = ref([]); // 临时的文件列表，仅用于上传，上传成功后清空
