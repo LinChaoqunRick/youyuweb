@@ -75,6 +75,7 @@
             :max-size="maxFileSize"
             :max-num="maxFileNum"
             :disabled="uploadDisabled"
+            multiple
             :data="{ base: 'moment/images' }"
             ref="UploadFileRef"
         >
