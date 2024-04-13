@@ -595,5 +595,36 @@ const mockAlarmListData = [
   }
 ]
 
-export {icons, mockCabinetData, mockSecurityData, mockAlarmListData};
+const mockMicroConfigEnum = {
+  doorHeadType: [
+    {"code": "1", "desc": "标准"},
+    {"code": "2", "desc": "高端"}
+  ],
+  lintelLogoType: [
+    {"code": "1", "desc": "海康Logo", image: 'menmei_logo.png'},
+    {"code": "2", "desc": "门楣主题1", image: 'men_menmei_ping.png'},
+    {"code": "3", "desc": "门楣主题2", image: 'men_menmei_ping_2.png'},
+    {"code": "4", "desc": "门楣主题3", image: 'men_menmei_ping_3.png'},
+    {"code": "5", "desc": "门楣主题4", image: 'men_menmei_ping_4.png'},
+    {"code": "99", "desc": "自定义Logo"}
+  ],
+  lcdStandardDisplayType: [
+    {"code": "1", "desc": "蓝色主题液晶屏"},
+    {"code": "99", "desc": "自定义液晶屏"}
+  ],
+  lcdHighEndDisplayType: [
+    {"code": "1", "desc": "49寸大屏"},
+    {"code": "99", "desc": "自定义液晶屏"}
+  ],
+  glassDoorLogoType: [
+    {"code": "1", "desc": "白色Logo"},
+    {"code": "99", "desc": "自定义Logo"}
+  ],
+  glassDoorType: [
+    {"code": "1", "desc": "平移门"},
+    {"code": "2", "desc": "旋转门"}
+  ],
+}
+
+export {icons, mockCabinetData, mockSecurityData, mockAlarmListData, mockMicroConfigEnum};
 export type {infoType};

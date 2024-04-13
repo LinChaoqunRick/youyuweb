@@ -17,6 +17,8 @@
         <i-reverse-lens theme="outline" size="24" fill="#ffffff"/>
       </div>
     </div>
+
+    <ConfigDrawer :form-validate="microConfigData" v-model:visible="drawerVisible"/>
   </div>
 </template>
 
@@ -49,6 +51,7 @@ import {icons, mockAlarmListData, mockCabinetData, mockSecurityData} from "@/vie
 import {useRequest} from "vue-request";
 import {cloneDeep, isEqual} from 'lodash';
 import {notification} from 'ant-design-vue';
+import ConfigDrawer from "@/views/lab/microModule/ConfigDrawer.vue";
 
 const {dispatch} = useStore();
 
@@ -109,6 +112,7 @@ const views = [
   },
 ];
 const viewType = ref<string>(views[0].type);
+const drawerVisible = ref<boolean>(true);
 
 let transparentMesh: Mesh[] = []; // 切换透明视图，需要改变材质的mesh
 const cabinetMeshMap = new Map<string, Mesh | Group>(); // 机柜mesh
@@ -494,7 +498,7 @@ const onResetOrbitControls = () => {
  * 微模块设置
  */
 const onMicroModuleSetting = () => {
-
+  drawerVisible.value = true;
 }
 
 /**
@@ -617,11 +621,15 @@ const changeTransparentMesh = (isTransparent: boolean) => {
  * 机柜名称如果超出，滚动展示动画
  */
 const cabinetNameMeshAnimation = () => {
-  cabinetNameWrapsMeshMap.values().forEach(mesh => {
-    if (mesh.isMesh) {
-      mesh.material.map.offset.x += 1 / (mesh.material.map.canvasWidth * 6);
-    }
-  });
+  if (cabinetNameWrapsMeshMap.size) {
+    console.log(cabinetNameWrapsMeshMap.values());
+    debugger;
+    cabinetNameWrapsMeshMap.values().forEach(mesh => {
+      if (mesh.isMesh) {
+        mesh.material.map.offset.x += 1 / (mesh.material.map.canvasWidth * 6);
+      }
+    });
+  }
 };
 
 
