@@ -623,7 +623,6 @@ const changeTransparentMesh = (isTransparent: boolean) => {
 const cabinetNameMeshAnimation = () => {
   if (cabinetNameWrapsMeshMap.size) {
     console.log(cabinetNameWrapsMeshMap.values());
-    debugger;
     cabinetNameWrapsMeshMap.values().forEach(mesh => {
       if (mesh.isMesh) {
         mesh.material.map.offset.x += 1 / (mesh.material.map.canvasWidth * 6);

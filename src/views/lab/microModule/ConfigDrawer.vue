@@ -82,6 +82,7 @@ const onClose = () => {
 
 const onUploadSuccess = (data) => {
   console.log(data);
+  microConfig.lintelLogoType[microConfig.lintelLogoType.length - 1].image =data[0].url;
 }
 
 const onSubmit = () => {
