@@ -5,29 +5,85 @@
     </template>
     <div class="drawer-content">
       <div class="config-form">
-        <a-form :model="formValidate" :rules="rulesRef" :label-col="{span: 1.8}" :wrapper-col="{span: 22.2}"
+        <a-form :model="formValidate" :rules="rulesRef" :label-col="{span: 3}" :wrapper-col="{span: 21}"
+                :class="['form_head_' + formValidate.doorHeadType]"
                 ref="formRef">
-          <a-form-item label="门头类型" name="doorHeadType" class="door-header-type-item">
+          <a-form-item label="门头" name="doorHeadType" class="door-header-type-item">
             <a-radio-group v-model:value="formValidate.doorHeadType">
               <a-radio-button v-for="item in microConfig.doorHeadType" :value="item.code">
                 {{ item.desc }}
               </a-radio-button>
             </a-radio-group>
           </a-form-item>
-          <a-form-item label="门楣Logo" name="lintelLogoType" class="lintel-logo-type-item">
+          <a-form-item label="门楣" name="lintelLogoType" class="lintel-logo-type-item">
             <a-radio-group v-model:value="formValidate.lintelLogoType" name="lintelRadioGroup">
-              <a-radio v-for="(item, i) in microConfig.lintelLogoType.filter(i => i.code!=99)" :value="item.code">
-                <img class="lintel-logo" :class="['lintel-logo-'+ i]" :src="'/static/micro/map/'+item.image"
+              <a-radio v-for="(item, i) in microConfig.lintelLogoType" :value="item.code">
+                <img v-if="item.code!=99" class="lintel-logo" :class="['lintel-logo-'+ i]"
+                     :src="'/static/micro/map/'+item.image"
                      :alt="item.desc"/>
+                <div v-else class="lintel-logo lintel-logo-self">
+                  <UploadFile auto-upload @uploadSuccess="onUploadLintelSuccess">
+                    <div v-if="!formValidate.lintelLogoFilePath" class="upload-box" title="点击上传">
+                      点击上传
+                    </div>
+                    <img v-else :src="formValidate.lintelLogoFilePath" alt="自定义图片"/>
+                  </UploadFile>
+                </div>
                 <div class="lintel-name">({{ item.desc }})</div>
               </a-radio>
-              <a-radio value="99">
-                <UploadFile class="lintel-logo" auto-upload @uploadSuccess="onUploadSuccess">
-                  <div class="upload-box">
-
-                  </div>
-                </UploadFile>
-                <div class="lintel-name">(自定义，尺寸340*120)</div>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item label="液晶屏" name="lcdDisplayType" class="lcd-display-type-item">
+            <a-radio-group v-model:value="formValidate.lcdDisplayType" name="lintelRadioGroup">
+              <a-radio
+                v-for="(item, i) in formValidate.doorHeadType == 1 ? microConfig.lcdStandardDisplayType : microConfig.lcdHighEndDisplayType"
+                :value="item.code">
+                <div class="lcd-logo" :class="['lcd-logo-'+ i]">
+                  <img v-if="item.code !== '99'" class="lcd-image" :src="'/static/micro/map/'+item.image"
+                       :alt="item.desc"/>
+                  <UploadFile v-else auto-upload @uploadSuccess="onUploadLcdSuccess">
+                    <div v-if="!(formValidate.doorHeadType == 1 ? formValidate.lcdDisplayStandardFilePath
+                    : formValidate.lcdDisplayHighEndFilePath)" class="upload-box" title="点击上传">
+                      点击上传
+                    </div>
+                    <img v-else :src="formValidate.doorHeadType == 1 ? formValidate.lcdDisplayStandardFilePath
+                    : formValidate.lcdDisplayHighEndFilePath" alt="自定义图片"/>
+                  </UploadFile>
+                  <div class="lcd-name">({{ item.desc }})</div>
+                </div>
+              </a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item label="门Logo" name="glassDoorLogoType" class="door-logo-type-item">
+            <a-radio-group v-model:value="formValidate.glassDoorLogoType" name="glassDoorLogoType">
+              <a-radio
+                v-for="(item, i) in  microConfig.glassDoorLogoType"
+                :value="item.code">
+                <div class="glass-logo" v-if="item.code !== '99'">
+                  <img class="glass-image" :class="['lcd-image-'+ i]" :src="'/static/micro/map/'+item.image"
+                       :alt="item.desc"/>
+                  <div class="glass-name">({{ item.desc }})</div>
+                </div>
+                <div class="glass-logo" v-else>
+                  <UploadFile auto-upload @uploadSuccess="onUploadDoorSuccess">
+                    <div v-if="!formValidate.lintelLogoFilePath" class="upload-box" title="点击上传">
+                      点击上传
+                    </div>
+                    <img v-else :src="formValidate.lintelLogoFilePath" alt="自定义图片"/>
+                  </UploadFile>
+                  <div class="lcd-name">({{ item.desc }})</div>
+                </div>
+              </a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item label="玻璃门" name="glassDoorLogoType" class="glass-door-type-item">
+            <a-radio-group v-model:value="formValidate.glassDoorType" name="glassDoorType">
+              <a-radio v-for="(item, i) in  microConfig.glassDoorType" :value="item.code">
+                <div class="glass-door">
+                  <img class="door-image" :class="['lcd-image-'+ i]" :src="'/static/micro/images/'+item.image"
+                       :alt="item.desc"/>
+                  <div class="door-name">({{ item.desc }})</div>
+                </div>
               </a-radio>
             </a-radio-group>
           </a-form-item>
@@ -48,6 +104,7 @@ import {ref} from "vue";
 import {useStore} from "vuex";
 import {mockCabinetData, mockMicroConfigEnum} from "@/views/lab/microModule/config";
 import UploadFile from "@/components/common/utils/upload/UploadFile.vue";
+import {cloneDeep} from 'lodash';
 
 const props = defineProps({
   visible: {
@@ -62,14 +119,16 @@ const formValidate = ref({});
 const microConfig = mockMicroConfigEnum;
 
 const rulesRef = {
-  doorHeadType: [{required: true, message: '请选择门头类型'}],
-  lintelLogoType: [{required: true, message: '请选择门楣Logo'}],
+  doorHeadType: [{required: true, message: '请选择门头'}],
+  lintelLogoType: [{required: true, message: '请选择门楣'}],
+  lcdDisplayType: [{required: true, message: '请选择液晶屏'}],
+  glassDoorLogoType: [{required: true, message: '请选择门Logo'}],
 };
 const submitLoading = ref(false);
 
 const initData = () => {
   dispatch('getMicroModuleConfig').then(res => {
-    res.data = mockCabinetData;
+    res.data = cloneDeep(mockCabinetData);
     formValidate.value = res.data;
   })
 };
@@ -80,9 +139,20 @@ const onClose = () => {
   emit('update:visible', false);
 }
 
-const onUploadSuccess = (data) => {
-  console.log(data);
-  microConfig.lintelLogoType[microConfig.lintelLogoType.length - 1].image =data[0].url;
+const onUploadLintelSuccess = (data) => {
+  formValidate.value.lintelLogoFilePath = data[0].url;
+}
+
+const onUploadLcdSuccess = (data) => {
+  if (formValidate.value.doorHeadType == 1) {
+    formValidate.value.lcdDisplayStandardFilePath = data[0].url;
+  } else {
+    formValidate.value.lcdDisplayHighEndFilePath = data[0].url;
+  }
+}
+
+const onUploadDoorSuccess = (data) => {
+
 }
 
 const onSubmit = () => {
@@ -105,11 +175,41 @@ const onSubmit = () => {
 
       .config-form {
         height: 100%;
-        width: 530px;
+        width: 510px;
         padding: 12px;
         border-radius: 4px;
+        border-right: 1px solid var(--youyu-border-color4);
+
+        .ant-upload-wrapper {
+          display: block;
+          border: 1px dashed #1890ff;
+          box-sizing: border-box;
+
+          .ant-upload {
+            display: block;
+            height: 100%;
+            width: 100%;
+            box-sizing: border-box;
+
+            img {
+              object-fit: contain;
+              height: 100%;
+              width: 100%;
+            }
+          }
+        }
+
+        .upload-box {
+          height: 100%;
+          width: 100%;
+        }
 
         .lintel-logo-type-item {
+          .ant-upload-wrapper {
+            height: 49px;
+            width: 170px;
+          }
+
           .ant-radio-wrapper {
             height: 80px;
             align-items: center;
@@ -118,25 +218,15 @@ const onSubmit = () => {
           .lintel-logo {
             height: 50px;
             width: 170px;
-            object-fit: contain;
 
             &.lintel-logo-0 {
               background-color: black;
+              object-fit: contain;
             }
 
-            .ant-upload-wrapper {
+            &.lintel-logo-self {
               position: relative;
               top: -2px;
-              display: block;
-              height: 100%;
-              width: 100%;
-              border: 1px dashed #1890ff;
-              box-sizing: border-box;
-            }
-
-            .upload-box {
-              height: 50px;
-              width: 170px;
             }
           }
 
@@ -150,6 +240,8 @@ const onSubmit = () => {
 
         .door-header-type-item {
           .ant-radio-group {
+            margin-left: 25px;
+
             .ant-radio-button-wrapper {
               margin-right: 10px;
               border-radius: 4px;
@@ -168,15 +260,161 @@ const onSubmit = () => {
             }
           }
         }
-      }
 
+        .lcd-display-type-item {
+          .ant-radio-group {
+            display: flex;
+          }
+
+          .ant-upload-wrapper {
+            width: 170px;
+            height: 108.25px;
+          }
+
+          .lcd-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 170px;
+            height: 106.25px;
+
+            .lcd-image {
+              width: 170px;
+              height: 106.25px;
+            }
+
+            .lcd-name {
+              white-space: nowrap;
+            }
+          }
+        }
+
+        .door-logo-type-item {
+          .ant-radio-group {
+            display: flex;
+          }
+
+          .ant-upload-wrapper {
+            width: 170px;
+            height: 22.78px;
+          }
+
+          .glass-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 170px;
+            height: 22.78px;
+
+            .glass-image {
+              width: 170px;
+              height: 22.78px;
+            }
+
+            .glass-image-self {
+              object-fit: contain;
+            }
+          }
+
+          .glass-name {
+            text-align: center;
+            white-space: nowrap;
+          }
+        }
+
+        .glass-door-type-item {
+          .ant-radio-group {
+            display: flex;
+
+            .ant-radio-wrapper {
+
+              > span:nth-child(2) {
+                width: 186px;
+              }
+            }
+          }
+
+          .ant-upload-wrapper {
+            width: 100px;
+            //height: 22.78px;
+          }
+
+          .glass-door {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100px;
+            //height: 22.78px;
+
+            .door-image {
+              width: 100px;
+              //height: 22.78px;
+            }
+          }
+        }
+      }
     }
+  }
+
+  .upload-file {
+    height: 100%;
   }
 
   .ant-drawer-footer {
     .drawer-footer {
       display: flex;
       justify-content: flex-end;
+    }
+  }
+}
+
+.form_head_2 {
+  .lcd-logo {
+    width: 116.49px !important;
+    height: 160px !important;
+
+    img {
+      width: 116.49px !important;
+      height: 200px !important;
+      object-fit: contain;
+    }
+
+    .ant-upload-wrapper {
+      width: 116.49px !important;
+      height: 200px !important;
+    }
+
+    .upload-file{
+      height: 200px !important;
+    }
+  }
+
+  .lcd-display-type-item {
+    .ant-radio-group {
+
+      .ant-radio-wrapper {
+
+        > span:nth-child(2) {
+          display: flex;
+          width: 186px;
+          height: 200px !important;
+        }
+      }
+    }
+
+    .ant-upload-wrapper {
+      //width: 100px;
+      //height: 291.84px !important;
+    }
+
+    .lcd-logo {
+      //width: 100px;
+      //height: 291.84px !important;
+
+      .lcd-image {
+        //width: 100px;
+        //height: 291.84px !important;
+      }
     }
   }
 }

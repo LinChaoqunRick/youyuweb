@@ -19,15 +19,13 @@ const icons = {
 const mockCabinetData = {
   doorHeadType: '2',
   lintelLogoType: '1',
-  lintelLogoFilepath: '',
-  lintelLogoName: '',
+  lintelLogoFilePath: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2024/0415/20240415102034_tencent.png',
   lcdDisplayType: '1',
-  lcdDisplayFilepath: null,
-  lcdDisplayName: null,
+  lcdDisplayStandardFilePath: 'https://cdn.beekka.com/blogimg/asset/202404/bg2024040303.webp',
+  lcdDisplayHighEndFilePath: 'https://cdn.beekka.com/blogimg/asset/202404/bg2024040308.webp',
   glassDoorLogoType: '1',
   glassDoorLogoFilepath: null,
-  glassDoorLogoName: null,
-  doorType: '1',
+  glassDoorType: '1',
   cabinetList: [
     {
       "deviceId": 1,
@@ -606,23 +604,23 @@ const mockMicroConfigEnum = {
     {"code": "3", "desc": "门楣主题2", image: 'men_menmei_ping_2.png'},
     {"code": "4", "desc": "门楣主题3", image: 'men_menmei_ping_3.png'},
     {"code": "5", "desc": "门楣主题4", image: 'men_menmei_ping_4.png'},
-    {"code": "99", "desc": "自定义Logo"}
+    {"code": "99", "desc": "自定义，尺寸340 * 120"}
   ],
   lcdStandardDisplayType: [
-    {"code": "1", "desc": "蓝色主题液晶屏"},
-    {"code": "99", "desc": "自定义液晶屏"}
+    {"code": "1", "desc": "白色主题液晶屏", image: 'menban_biaoping_ping.png'},
+    {"code": "99", "desc": "自定义，尺寸340 * 120"}
   ],
   lcdHighEndDisplayType: [
-    {"code": "1", "desc": "49寸大屏"},
-    {"code": "99", "desc": "自定义液晶屏"}
+    {"code": "1", "desc": "49寸大屏", image: 'menban_daping_ping.png'},
+    {"code": "99", "desc": "自定义，尺寸791 * 1358"}
   ],
   glassDoorLogoType: [
-    {"code": "1", "desc": "白色Logo"},
-    {"code": "99", "desc": "自定义Logo"}
+    {"code": "1", "desc": "白色Logo", image: 'men_pensha.png'},
+    {"code": "99", "desc": "自定义，尺寸746 * 100"}
   ],
   glassDoorType: [
-    {"code": "1", "desc": "平移门"},
-    {"code": "2", "desc": "旋转门"}
+    {"code": "1", "desc": "平移门", image: 'pan_door.png'},
+    {"code": "2", "desc": "旋转门", image: 'rotate_door.png'}
   ],
 }
 
