@@ -5,7 +5,7 @@
     </template>
     <div class="drawer-content">
       <div class="config-form">
-        <a-form :model="formValidate" :rules="rulesRef" :label-col="{span: 3}" :wrapper-col="{span: 21}"
+        <a-form :model="formValidate" :rules="rulesRef" :label-col="{span: 4}" :wrapper-col="{span: 20}"
                 :class="['form_head_' + formValidate.doorHeadType]"
                 ref="formRef">
           <a-form-item label="门头" name="doorHeadType" class="door-header-type-item">
@@ -24,6 +24,7 @@
                 <div v-else class="lintel-logo lintel-logo-self">
                   <UploadFile auto-upload @uploadSuccess="onUploadLintelSuccess">
                     <div v-if="!formValidate.lintelLogoFilePath" class="upload-box" title="点击上传">
+                      <i-plus theme="outline" size="14" fill="currentColor"/>
                       点击上传
                     </div>
                     <img v-else :src="formValidate.lintelLogoFilePath" alt="自定义图片"/>
@@ -44,6 +45,7 @@
                   <UploadFile v-else auto-upload @uploadSuccess="onUploadLcdSuccess">
                     <div v-if="!(formValidate.doorHeadType == 1 ? formValidate.lcdDisplayStandardFilePath
                     : formValidate.lcdDisplayHighEndFilePath)" class="upload-box" title="点击上传">
+                      <i-plus theme="outline" size="14" fill="currentColor"/>
                       点击上传
                     </div>
                     <img v-else :src="formValidate.doorHeadType == 1 ? formValidate.lcdDisplayStandardFilePath
@@ -67,6 +69,7 @@
                 <div class="glass-logo" v-else>
                   <UploadFile auto-upload @uploadSuccess="onUploadDoorSuccess">
                     <div v-if="!formValidate.lintelLogoFilePath" class="upload-box" title="点击上传">
+                      <i-plus theme="outline" size="14" fill="currentColor"/>
                       点击上传
                     </div>
                     <img v-else :src="formValidate.lintelLogoFilePath" alt="自定义图片"/>
@@ -100,22 +103,19 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
+import {ref, defineModel} from "vue";
 import {useStore} from "vuex";
 import {mockCabinetData, mockMicroConfigEnum} from "@/views/lab/microModule/config";
 import UploadFile from "@/components/common/utils/upload/UploadFile.vue";
 import {cloneDeep} from 'lodash';
+import {message} from "ant-design-vue";
 
-const props = defineProps({
-  visible: {
-    type: Boolean,
-    default: false
-  }
-});
+const visible = defineModel('visible', {type: Boolean, default: false});
 const {dispatch} = useStore();
 
-const emit = defineEmits(['update:visible']);
+const emit = defineEmits(['saveConfigSuccess']);
 const formValidate = ref({});
+const formRef = ref(null);
 const microConfig = mockMicroConfigEnum;
 
 const rulesRef = {
@@ -136,7 +136,7 @@ const initData = () => {
 initData();
 
 const onClose = () => {
-  emit('update:visible', false);
+  visible.value = false;
 }
 
 const onUploadLintelSuccess = (data) => {
@@ -155,8 +155,42 @@ const onUploadDoorSuccess = (data) => {
 
 }
 
-const onSubmit = () => {
+const onSubmit = async () => {
+  const form = await formRef.value.validate().catch(console.log);
 
+  const {
+    doorHeadType,
+    lintelLogoType,
+    lintelLogoFilePath,
+    lcdDisplayType,
+    lcdDisplayStandardFilePath,
+    lcdDisplayHighEndFilePath,
+    glassDoorLogoType,
+    glassDoorLogoFilepath
+  } = formValidate.value;
+
+  if (form) {
+    if (lintelLogoType === "99" && !lintelLogoFilePath) {
+      return message.error('请上传自定义门楣');
+    }
+
+    if (lcdDisplayType === "99" && !(doorHeadType == 1 ? lcdDisplayStandardFilePath : lcdDisplayHighEndFilePath)) {
+      return message.error('请上传自定义液晶屏');
+    }
+
+    if (glassDoorLogoType === "99" && !glassDoorLogoFilepath) {
+      return message.error('请上传自定义门Logo');
+    }
+
+    submitLoading.value = true;
+
+    setTimeout(() => {
+      submitLoading.value = false;
+
+      visible.value = false;
+      emit('saveConfigSuccess', formValidate.value);
+    }, 500);
+  }
 }
 </script>
 
@@ -168,17 +202,17 @@ const onSubmit = () => {
 .micro-config-drawer {
 
   .ant-drawer-body {
-    padding: 12px;
+    padding: 12px 0;
 
     .drawer-content {
       height: 100%;
 
       .config-form {
         height: 100%;
-        width: 510px;
+        width: 530px;
         padding: 12px;
         border-radius: 4px;
-        border-right: 1px solid var(--youyu-border-color4);
+        border-right: 1px solid var(--youyu-border-color3);
 
         .ant-upload-wrapper {
           display: block;
@@ -200,8 +234,15 @@ const onSubmit = () => {
         }
 
         .upload-box {
+          display: flex;
+          justify-content: center;
+          align-items: center;
           height: 100%;
           width: 100%;
+
+          .i-icon {
+            margin-right: 2px;
+          }
         }
 
         .lintel-logo-type-item {
@@ -240,7 +281,7 @@ const onSubmit = () => {
 
         .door-header-type-item {
           .ant-radio-group {
-            margin-left: 25px;
+            margin-left: 23px;
 
             .ant-radio-button-wrapper {
               margin-right: 10px;
@@ -290,6 +331,8 @@ const onSubmit = () => {
         }
 
         .door-logo-type-item {
+          margin: 35px 0;
+
           .ant-radio-group {
             display: flex;
           }
@@ -384,7 +427,7 @@ const onSubmit = () => {
       height: 200px !important;
     }
 
-    .upload-file{
+    .upload-file {
       height: 200px !important;
     }
   }

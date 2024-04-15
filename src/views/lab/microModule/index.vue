@@ -18,7 +18,7 @@
       </div>
     </div>
 
-    <ConfigDrawer :form-validate="microConfigData" v-model:visible="drawerVisible"/>
+    <ConfigDrawer v-model:visible="drawerVisible" @saveConfigSuccess="onSaveConfigSuccess"/>
   </div>
 </template>
 
@@ -41,7 +41,7 @@ import {
   WebGLRenderer
 } from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
-import {onMounted, onUnmounted, ref} from 'vue';
+import {onMounted, onUnmounted, ref, watch} from 'vue';
 import {useStore} from 'vuex';
 import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader';
 import {MTLLoaderPromise, TextureLoaderCommonPromise, TextureLoaderPromise} from '@/libs/three/loaders';
@@ -112,7 +112,7 @@ const views = [
   },
 ];
 const viewType = ref<string>(views[0].type);
-const drawerVisible = ref<boolean>(true);
+const drawerVisible = ref<boolean>(false);
 
 let transparentMesh: Mesh[] = []; // 切换透明视图，需要改变材质的mesh
 const cabinetMeshMap = new Map<string, Mesh | Group>(); // 机柜mesh
@@ -319,6 +319,9 @@ const initCamera = () => {
   window.addEventListener('resize', resize, false);
 };
 
+/**
+ * 调整窗口resize渲染区域
+ */
 const resize = () => {
   containerRect = containerRef.value.getBoundingClientRect();
   camera.aspect = containerRect.width / containerRect.height;
@@ -630,7 +633,9 @@ const cabinetNameMeshAnimation = () => {
   }
 };
 
-
+/**
+ * 修改模型材质
+ */
 const changeMeshMaterial = () => {
 
 };
@@ -773,6 +778,7 @@ const getChangedCabinetList = (oldList: [], newList: []) => {
 
   return changedCabinetList;
 }
+
 /**
  * 机柜信息数据轮询
  */
@@ -781,6 +787,14 @@ const loop = useRequest(getMicroModuleData, {
   manual: true,
   onSuccess: handleCabinetConfigDiff
 });
+
+/**
+ * 微模块配置保存成功
+ */
+const onSaveConfigSuccess = (data) => {
+  console.log(data);
+  createMicroModule(data);
+}
 
 onMounted(async () => {
   initSceneRenderer();

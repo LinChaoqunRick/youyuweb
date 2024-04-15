@@ -19,10 +19,10 @@ const icons = {
 const mockCabinetData = {
   doorHeadType: '2',
   lintelLogoType: '1',
-  lintelLogoFilePath: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2024/0415/20240415102034_tencent.png',
+  lintelLogoFilePath: '',
   lcdDisplayType: '1',
-  lcdDisplayStandardFilePath: 'https://cdn.beekka.com/blogimg/asset/202404/bg2024040303.webp',
-  lcdDisplayHighEndFilePath: 'https://cdn.beekka.com/blogimg/asset/202404/bg2024040308.webp',
+  lcdDisplayStandardFilePath: '',
+  lcdDisplayHighEndFilePath: '',
   glassDoorLogoType: '1',
   glassDoorLogoFilepath: null,
   glassDoorType: '1',
