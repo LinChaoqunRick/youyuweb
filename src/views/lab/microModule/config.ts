@@ -17,7 +17,7 @@ const icons = {
 }
 
 const mockCabinetData = {
-  doorHeadType: '2',
+  doorHeadType: '1',
   lintelLogoType: '1',
   lintelLogoFilePath: '',
   lcdDisplayType: '1',
