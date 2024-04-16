@@ -68,11 +68,11 @@
                 </div>
                 <div class="glass-logo" v-else>
                   <UploadFile auto-upload @uploadSuccess="onUploadDoorSuccess">
-                    <div v-if="!formValidate.lintelLogoFilePath" class="upload-box" title="点击上传">
+                    <div v-if="!formValidate.glassDoorLogoFilepath" class="upload-box" title="点击上传">
                       <i-plus theme="outline" size="14" fill="currentColor"/>
                       点击上传
                     </div>
-                    <img v-else :src="formValidate.lintelLogoFilePath" alt="自定义图片"/>
+                    <img v-else :src="formValidate.glassDoorLogoFilepath" alt="自定义图片"/>
                   </UploadFile>
                   <div class="lcd-name">({{ item.desc }})</div>
                 </div>
@@ -152,7 +152,7 @@ const onUploadLcdSuccess = (data) => {
 }
 
 const onUploadDoorSuccess = (data) => {
-
+  formValidate.value.glassDoorLogoFilepath = data[0].url;
 }
 
 const onSubmit = async () => {
@@ -218,6 +218,7 @@ const onSubmit = async () => {
           display: block;
           border: 1px dashed #1890ff;
           box-sizing: border-box;
+          overflow: hidden;
 
           .ant-upload {
             display: block;

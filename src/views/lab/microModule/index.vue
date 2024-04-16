@@ -37,17 +37,23 @@ import {
   PerspectiveCamera,
   PlaneGeometry,
   RepeatWrapping,
-  Scene,
+  Scene, Texture,
   WebGLRenderer
 } from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
-import {onMounted, onUnmounted, ref, watch} from 'vue';
+import {onMounted, onUnmounted, ref, watch, watchEffect} from 'vue';
 import {useStore} from 'vuex';
 import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader';
 import {MTLLoaderPromise, TextureLoaderCommonPromise, TextureLoaderPromise} from '@/libs/three/loaders';
 import {createCabinetAlarmMesh, createCabinetNameMesh} from "@/views/lab/microModule/utils";
 import type {infoType} from "@/views/lab/microModule/config";
-import {icons, mockAlarmListData, mockCabinetData, mockSecurityData} from "@/views/lab/microModule/config";
+import {
+  icons,
+  mockAlarmListData,
+  mockCabinetData,
+  mockSecurityData,
+  mockMicroConfigEnum
+} from "@/views/lab/microModule/config";
 import {useRequest} from "vue-request";
 import {cloneDeep, isEqual} from 'lodash';
 import {notification} from 'ant-design-vue';
@@ -180,19 +186,22 @@ const createMicroModule = (microConfigData) => {
   microGroup.position.x = -microConfig.totalLength / 2;
 
   // 添加玻璃门
-  const glassDoorModel = microConfigData.glassDoorLogoType === '1' ? models.men_p : models.men_r;
+  const glassDoorModel = microConfigData.glassDoorType === '1' ? models.men_p : models.men_r;
 
   // 添加门楣
-  const lintelModel = ['1', '6'].includes(microConfigData.lintelLogoType) ? models.menmei_logo : models.menmei_led;
+  const lintelModel = ['1', '99'].includes(microConfigData.lintelLogoType) ? models.menmei_logo : models.menmei_led;
+  lintelModel.name = 'lintel';
 
   // 添加前门
   const doorModelFront = microConfigData.doorHeadType === '1' ? models.menban_b_ping : models.menban_h_ping;
+  doorModelFront.name = 'front_door';
   doorModelFront.add(glassDoorModel.clone());
   doorModelFront.add(lintelModel.clone());
   doorModelFront.position.set(-microConfig.doorWidth / 2, 0, 0);
 
   // 添加后门
   const doorModelBack = microConfigData.doorHeadType === '1' ? models.menban_b : models.menban_h;
+  doorModelBack.name = 'back_door';
   doorModelBack.add(glassDoorModel.clone());
   doorModelBack.add(lintelModel.clone());
   doorModelBack.position.set(microConfig.totalLength + microConfig.doorWidth / 2, 0, 0);
@@ -201,8 +210,81 @@ const createMicroModule = (microConfigData) => {
   transparentMesh.push(doorModelFront, doorModelBack)
 
   microGroup.add(doorModelFront, doorModelBack);
+
+  handleCustomTexture(microConfigData, mockMicroConfigEnum);
+
   scene.add(microGroup);
 };
+
+/**
+ * 处理自定义贴图
+ * @param microConfigData 配置数据
+ */
+const handleCustomTexture = async (microConfigData, mockMicroConfigEnum) => {
+  const {
+    doorHeadType,
+    lintelLogoType,
+    lcdDisplayType,
+    lcdDisplayStandardFilePath,
+    lcdDisplayHighEndFilePath,
+    glassDoorLogoType,
+    glassDoorLogoFilepath,
+    glassDoorType
+  } = microConfigData;
+  const isHighEnd = doorHeadType === '2';
+  // 处理门楣
+  if (lintelLogoType !== '1') {
+    const isCustom = lintelLogoType === '99';
+    const lintelFront: Mesh = microGroup.getObjectByName('front_door')?.getObjectByName(isCustom ? 'menmei_logo' : 'menmei_ping');
+    const lintelBack = microGroup.getObjectByName('back_door')?.getObjectByName(isCustom ? 'menmei_logo' : 'menmei_ping');
+    const item = !isCustom && mockMicroConfigEnum.lintelLogoType.find(item => item.code === lintelLogoType);
+    const texture = await TextureLoaderPromise(isCustom ? microConfigData.lintelLogoFilePath : '/static/micro/map/' + item.image);
+    setMeshMaterial(lintelFront, 'men_menmei_ping', texture);
+    setMeshMaterial(lintelBack, 'men_menmei_ping', texture);
+  }
+
+  // 处理屏幕
+  if (lcdDisplayType === '99') {
+    const texture = await TextureLoaderPromise(doorHeadType === '1' ? lcdDisplayStandardFilePath : lcdDisplayHighEndFilePath);
+    const lcdFront: Mesh = microGroup.getObjectByName('front_door')?.getObjectByName(isHighEnd ? 'menban_daping' : 'menban_biaoping');
+    setMeshMaterial(lcdFront, isHighEnd ? 'menban_daping_ping' : 'menban_biaoping_ping', texture);
+  }
+
+  // 处理玻璃门Logo
+  if (glassDoorLogoType === '99') {
+    const isRotate = glassDoorType === '2';
+    const texture = await TextureLoaderPromise(glassDoorLogoFilepath);
+    const glassLogoFrontLeft: Mesh = microGroup.getObjectByName('front_door')?.getObjectByName(isRotate ? 'men_pensha_007' : 'men_pensha_01');
+    const glassLogoFrontRight: Mesh = microGroup.getObjectByName('front_door')?.getObjectByName(isRotate ? 'men_pensha_008' : 'men_pensha_02');
+
+    const glassLogoBackLeft = microGroup.getObjectByName('back_door')?.getObjectByName(isRotate ? 'men_pensha_007' : 'men_pensha_01');
+    const glassLogoBackRight = microGroup.getObjectByName('back_door')?.getObjectByName(isRotate ? 'men_pensha_008' : 'men_pensha_02');
+
+    setMeshMaterial(glassLogoFrontLeft, 'men_pensha', texture);
+    setMeshMaterial(glassLogoFrontRight, 'men_pensha', texture);
+    setMeshMaterial(glassLogoBackLeft, 'men_pensha', texture);
+    setMeshMaterial(glassLogoBackRight, 'men_pensha', texture);
+  }
+}
+
+/**
+ * 修改模型材质贴图
+ * @param mesh 模型
+ * @param materialName 材质名称
+ * @param texture 贴图
+ */
+const setMeshMaterial = (mesh: Mesh, materialName: string, texture: Texture) => {
+  const materials = mesh.material;
+  let material;
+  if (Array.isArray(materials)) {
+    material = materials.find(m => m.name === materialName);
+  } else {
+    material = materials;
+  }
+
+  texture.colorSpace = "srgb";
+  material.map = texture;
+}
 
 /**
  * 构建单个机柜，包括机柜体，机柜名称，类型贴图，告警贴图，数据贴图
@@ -792,9 +874,16 @@ const loop = useRequest(getMicroModuleData, {
  * 微模块配置保存成功
  */
 const onSaveConfigSuccess = (data) => {
-  console.log(data);
   createMicroModule(data);
 }
+
+watch(drawerVisible, () => {
+  if (!drawerVisible.value) {
+    loop.run();
+  } else {
+    loop.cancel();
+  }
+})
 
 onMounted(async () => {
   initSceneRenderer();

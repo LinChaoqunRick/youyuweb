@@ -17,14 +17,14 @@ const icons = {
 }
 
 const mockCabinetData = {
-  doorHeadType: '1',
+  doorHeadType: '2',
   lintelLogoType: '1',
-  lintelLogoFilePath: '',
-  lcdDisplayType: '1',
-  lcdDisplayStandardFilePath: '',
-  lcdDisplayHighEndFilePath: '',
-  glassDoorLogoType: '1',
-  glassDoorLogoFilepath: null,
+  lintelLogoFilePath: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2024/0416/20240416145052_tencent.png',
+  lcdDisplayType: '99',
+  lcdDisplayStandardFilePath: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2024/0416/20240416150049_1280_800.png',
+  lcdDisplayHighEndFilePath: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2024/0416/20240416150205_791_1358.png',
+  glassDoorLogoType: '99',
+  glassDoorLogoFilepath: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2024/0416/20240416150241_746_100.png',
   glassDoorType: '1',
   cabinetList: [
     {
@@ -608,7 +608,7 @@ const mockMicroConfigEnum = {
   ],
   lcdStandardDisplayType: [
     {"code": "1", "desc": "白色主题液晶屏", image: 'menban_biaoping_ping.png'},
-    {"code": "99", "desc": "自定义，尺寸340 * 120"}
+    {"code": "99", "desc": "自定义，尺寸1280 * 800"}
   ],
   lcdHighEndDisplayType: [
     {"code": "1", "desc": "49寸大屏", image: 'menban_daping_ping.png'},
