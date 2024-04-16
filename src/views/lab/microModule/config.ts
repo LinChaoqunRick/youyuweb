@@ -627,39 +627,39 @@ const mockMicroConfigEnum = {
 const mockCapacityData = [
   {
     "assetId": 9,
-    "rate": 50
+    "rate": 5
   },
   {
     "assetId": 8,
-    "rate": 50
+    "rate": 10
   },
   {
     "assetId": 7,
-    "rate": 50
+    "rate": 15
   },
   {
     "assetId": 6,
-    "rate": 50
+    "rate": 20
   },
   {
     "assetId": 5,
-    "rate": 50
+    "rate": 25
   },
   {
     "assetId": 4,
-    "rate": 50
+    "rate": 30
   },
   {
     "assetId": 3,
-    "rate": 50
+    "rate": 35
   },
   {
     "assetId": 2,
-    "rate": 50
+    "rate": 40
   },
   {
     "assetId": 1,
-    "rate": 50
+    "rate": 45
   },
   {
     "assetId": 23,
@@ -667,67 +667,67 @@ const mockCapacityData = [
   },
   {
     "assetId": 21,
-    "rate": 50
+    "rate": 55
   },
   {
     "assetId": 16,
-    "rate": 50
+    "rate": 60
   },
   {
     "assetId": 14,
-    "rate": 50
+    "rate": 65
   },
   {
     "assetId": 19,
-    "rate": 50
+    "rate": 70
   },
   {
     "assetId": 18,
-    "rate": 50
+    "rate": 75
   },
   {
     "assetId": 11,
-    "rate": 50
+    "rate": 80
   },
   {
     "assetId": 10,
-    "rate": 50
+    "rate": 85
   },
   {
     "assetId": 13,
-    "rate": 50
+    "rate": 90
   },
   {
     "assetId": 12,
-    "rate": 50
+    "rate": 95
   },
   {
     "assetId": 20,
-    "rate": 50
+    "rate": 100
   },
   {
     "assetId": 24,
-    "rate": 50
+    "rate": 105
   },
   {
     "assetId": 22,
-    "rate": 50
+    "rate": 110
   },
   {
     "assetId": 17,
-    "rate": 50
+    "rate": 115
   },
   {
     "assetId": 15,
-    "rate": 50
+    "rate": 120
   },
   {
     "assetId": 68,
-    "rate": 50
+    "rate": 125
   },
   {
     "assetId": 69,
-    "rate": 50
+    "rate": 130
   }
 ]
 

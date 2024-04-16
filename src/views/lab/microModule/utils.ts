@@ -87,7 +87,7 @@ const createCabinetNameCanvasTexture = (text: string, width: number, height: num
   return canvasTexture;
 }
 
-const createCabinetNameMesh = (text: string, width: number, height: number = 22) => {
+const createTextMesh = (text: string, width: number, height: number = 22) => {
   const canvasTexture = createCabinetNameCanvasTexture(text, width, height);
   const geometry = new PlaneGeometry(width, height);
   const material = new MeshBasicMaterial({// 基础网格材质
@@ -151,4 +151,4 @@ const createCabinetAlarmMesh = (count: string, color: string, radius: number = 1
   return new Mesh(geometry, material);
 }
 
-export {createCabinetNameCanvasTexture, createCabinetNameMesh, createCabinetAlarmMesh}
+export {createCabinetNameCanvasTexture, createTextMesh, createCabinetAlarmMesh}
