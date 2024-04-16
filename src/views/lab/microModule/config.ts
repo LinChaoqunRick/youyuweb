@@ -624,5 +624,112 @@ const mockMicroConfigEnum = {
   ],
 }
 
-export {icons, mockCabinetData, mockSecurityData, mockAlarmListData, mockMicroConfigEnum};
+const mockCapacityData = [
+  {
+    "assetId": 9,
+    "rate": 50
+  },
+  {
+    "assetId": 8,
+    "rate": 50
+  },
+  {
+    "assetId": 7,
+    "rate": 50
+  },
+  {
+    "assetId": 6,
+    "rate": 50
+  },
+  {
+    "assetId": 5,
+    "rate": 50
+  },
+  {
+    "assetId": 4,
+    "rate": 50
+  },
+  {
+    "assetId": 3,
+    "rate": 50
+  },
+  {
+    "assetId": 2,
+    "rate": 50
+  },
+  {
+    "assetId": 1,
+    "rate": 50
+  },
+  {
+    "assetId": 23,
+    "rate": 50
+  },
+  {
+    "assetId": 21,
+    "rate": 50
+  },
+  {
+    "assetId": 16,
+    "rate": 50
+  },
+  {
+    "assetId": 14,
+    "rate": 50
+  },
+  {
+    "assetId": 19,
+    "rate": 50
+  },
+  {
+    "assetId": 18,
+    "rate": 50
+  },
+  {
+    "assetId": 11,
+    "rate": 50
+  },
+  {
+    "assetId": 10,
+    "rate": 50
+  },
+  {
+    "assetId": 13,
+    "rate": 50
+  },
+  {
+    "assetId": 12,
+    "rate": 50
+  },
+  {
+    "assetId": 20,
+    "rate": 50
+  },
+  {
+    "assetId": 24,
+    "rate": 50
+  },
+  {
+    "assetId": 22,
+    "rate": 50
+  },
+  {
+    "assetId": 17,
+    "rate": 50
+  },
+  {
+    "assetId": 15,
+    "rate": 50
+  },
+  {
+    "assetId": 68,
+    "rate": 50
+  },
+  {
+    "assetId": 69,
+    "rate": 50
+  }
+]
+
+export {icons, mockCabinetData, mockSecurityData, mockAlarmListData, mockMicroConfigEnum, mockCapacityData};
 export type {infoType};

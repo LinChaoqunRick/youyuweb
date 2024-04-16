@@ -37,8 +37,9 @@ import {
   PerspectiveCamera,
   PlaneGeometry,
   RepeatWrapping,
-  Scene, Texture,
-  WebGLRenderer
+  Scene,
+  WebGLRenderer,
+  BoxGeometry
 } from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import {onMounted, onUnmounted, ref, watch, watchEffect} from 'vue';
@@ -52,7 +53,8 @@ import {
   mockAlarmListData,
   mockCabinetData,
   mockSecurityData,
-  mockMicroConfigEnum
+  mockMicroConfigEnum,
+  mockCapacityData
 } from "@/views/lab/microModule/config";
 import {useRequest} from "vue-request";
 import {cloneDeep, isEqual} from 'lodash';
@@ -106,6 +108,7 @@ let transparentMesh: Mesh[] = []; // 切换透明视图，需要改变材质的m
 const cabinetMeshMap = new Map<string, Mesh | Group>(); // 机柜mesh
 const cabinetNameWrapsMeshMap = new Map<string, Mesh | Group>(); // 需要滚动的名称mesh
 const securityMeshMap = new Map<string, Mesh | Group>(); // 安防mesh
+const capacityMeshMap = new Map<string, Mesh | Group>(); // 容量mesh
 
 let alarmLevelList: object[] = []; // 告警等级配置
 
@@ -204,14 +207,8 @@ const createMicroModule = (microConfigData) => {
  */
 const handleCustomTexture = async (microConfigData, mockMicroConfigEnum) => {
   const {
-    doorHeadType,
-    lintelLogoType,
-    lcdDisplayType,
-    lcdDisplayStandardFilePath,
-    lcdDisplayHighEndFilePath,
-    glassDoorLogoType,
-    glassDoorLogoFilepath,
-    glassDoorType
+    doorHeadType, lintelLogoType, lcdDisplayType, lcdDisplayStandardFilePath, lcdDisplayHighEndFilePath,
+    glassDoorLogoType, glassDoorLogoFilepath, glassDoorType
   } = microConfigData;
   const isHighEnd = doorHeadType === '2';
   const frontDoorMesh = microGroup.getObjectByName('front_door');
@@ -578,20 +575,26 @@ const onMicroModuleSetting = () => {
  * @param item
  */
 const onViewChange = async (item: string) => {
-  if (viewType.value === item.type) {
+  const type = item.type;
+  if (viewType.value === type) {
     return
   } else {
-    viewType.value = item.type;
+    viewType.value = type;
   }
   removeSecurityDevice(); // 清空安防设备
-  changeTransparentMesh(item.type !== '3d');
-  if (item.type === 'security') {
+  changeTransparentMesh(type !== '3d');
+  if (type === 'security') {
     const res = await dispatch('getSecurityDeviceList');
     securityMeshMap.clear();
     res.data = mockSecurityData;
 
     res.data.forEach((item, index) => {
       addSecurityDevice(item);
+    })
+  } else if (['ubit', 'cooling', 'power'].includes(type)) {
+    dispatch('getMicroCapacityUbit').then(res => {
+      res.data = mockCapacityData;
+      addCapacityColumn(res.data);
     })
   }
 }
@@ -611,6 +614,25 @@ const addSecurityDevice = (data: object) => {
   }
   securityMeshMap.set(deviceId, deviceMesh);
   scene.add(deviceMesh);
+}
+
+/**
+ * 添加容量柱
+ * @param data
+ */
+const addCapacityColumn = (data: object) => {
+  const capacityMap = new Map<string, number>();
+  data.forEach(item => capacityMap.set(item.assetId, item.rate));
+
+  const {} = microConfig;
+
+  cabinetMeshMap.values().forEach(item => {
+    const geometry = new BoxGeometry( 1, 1, 1 );
+    const material = new MeshBasicMaterial( {color: 0x00ff00} );
+    const cube = new Mesh( geometry, material );
+  })
+
+  console.log(capacityMeshMap);
 }
 
 /**
