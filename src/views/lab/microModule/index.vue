@@ -92,30 +92,12 @@ const models = {};
 let mtlTotal = 0, objTotal = 0, imageTotal = 0, loopInterval = 10 * 1000;
 const imagesTexture: object = {};
 const views = [
-  {
-    name: '3D视图',
-    type: '3d'
-  },
-  {
-    name: '安防视图',
-    type: 'security'
-  },
-  {
-    name: '温度云图',
-    type: 'temp'
-  },
-  {
-    name: 'U位视图',
-    type: 'ubit'
-  },
-  {
-    name: '配电视图',
-    type: 'power'
-  },
-  {
-    name: '制冷视图',
-    type: 'cooling'
-  },
+  {name: '3D视图', type: '3d'},
+  {name: '安防视图', type: 'security'},
+  {name: '温度云图', type: 'temp'},
+  {name: 'U位视图', type: 'ubit'},
+  {name: '配电视图', type: 'power'},
+  {name: '制冷视图', type: 'cooling'},
 ];
 const viewType = ref<string>(views[0].type);
 const drawerVisible = ref<boolean>(false);
@@ -232,38 +214,43 @@ const handleCustomTexture = async (microConfigData, mockMicroConfigEnum) => {
     glassDoorType
   } = microConfigData;
   const isHighEnd = doorHeadType === '2';
+  const frontDoorMesh = microGroup.getObjectByName('front_door');
+  const backDoorMesh = microGroup.getObjectByName('back_door');
+  if (!frontDoorMesh || !backDoorMesh) return;
   // 处理门楣
   if (lintelLogoType !== '1') {
     const isCustom = lintelLogoType === '99';
-    const lintelFront: Mesh = microGroup.getObjectByName('front_door')?.getObjectByName(isCustom ? 'menmei_logo' : 'menmei_ping');
-    const lintelBack = microGroup.getObjectByName('back_door')?.getObjectByName(isCustom ? 'menmei_logo' : 'menmei_ping');
-    const item = !isCustom && mockMicroConfigEnum.lintelLogoType.find(item => item.code === lintelLogoType);
-    const texture = await TextureLoaderPromise(isCustom ? microConfigData.lintelLogoFilePath : '/static/micro/map/' + item.image);
-    setMeshMaterial(lintelFront, 'men_menmei_ping', texture);
-    setMeshMaterial(lintelBack, 'men_menmei_ping', texture);
+    const lintelFront = frontDoorMesh.getObjectByName(isCustom ? 'menmei_logo' : 'menmei_ping');
+    const lintelBack = backDoorMesh.getObjectByName(isCustom ? 'menmei_logo' : 'menmei_ping');
+    if (lintelFront && lintelBack) {
+      const item = !isCustom && mockMicroConfigEnum.lintelLogoType.find(item => item.code === lintelLogoType);
+      const texture = await TextureLoaderPromise(isCustom ? microConfigData.lintelLogoFilePath : '/static/micro/map/' + item.image);
+      setMeshMaterial(lintelFront, 'men_menmei_ping', texture);
+      setMeshMaterial(lintelBack, 'men_menmei_ping', texture);
+    }
   }
 
   // 处理屏幕
   if (lcdDisplayType === '99') {
     const texture = await TextureLoaderPromise(doorHeadType === '1' ? lcdDisplayStandardFilePath : lcdDisplayHighEndFilePath);
-    const lcdFront: Mesh = microGroup.getObjectByName('front_door')?.getObjectByName(isHighEnd ? 'menban_daping' : 'menban_biaoping');
-    setMeshMaterial(lcdFront, isHighEnd ? 'menban_daping_ping' : 'menban_biaoping_ping', texture);
+    const lcdFront = frontDoorMesh.getObjectByName(isHighEnd ? 'menban_daping' : 'menban_biaoping');
+    lcdFront && setMeshMaterial(lcdFront, isHighEnd ? 'menban_daping_ping' : 'menban_biaoping_ping', texture);
   }
 
   // 处理玻璃门Logo
   if (glassDoorLogoType === '99') {
     const isRotate = glassDoorType === '2';
     const texture = await TextureLoaderPromise(glassDoorLogoFilepath);
-    const glassLogoFrontLeft: Mesh = microGroup.getObjectByName('front_door')?.getObjectByName(isRotate ? 'men_pensha_007' : 'men_pensha_01');
-    const glassLogoFrontRight: Mesh = microGroup.getObjectByName('front_door')?.getObjectByName(isRotate ? 'men_pensha_008' : 'men_pensha_02');
+    const glassLogoFrontLeft = frontDoorMesh.getObjectByName(isRotate ? 'men_pensha_007' : 'men_pensha_01');
+    const glassLogoFrontRight = frontDoorMesh.getObjectByName(isRotate ? 'men_pensha_008' : 'men_pensha_02');
 
-    const glassLogoBackLeft = microGroup.getObjectByName('back_door')?.getObjectByName(isRotate ? 'men_pensha_007' : 'men_pensha_01');
-    const glassLogoBackRight = microGroup.getObjectByName('back_door')?.getObjectByName(isRotate ? 'men_pensha_008' : 'men_pensha_02');
+    const glassLogoBackLeft = backDoorMesh.getObjectByName(isRotate ? 'men_pensha_007' : 'men_pensha_01');
+    const glassLogoBackRight = backDoorMesh.getObjectByName(isRotate ? 'men_pensha_008' : 'men_pensha_02');
 
-    setMeshMaterial(glassLogoFrontLeft, 'men_pensha', texture);
-    setMeshMaterial(glassLogoFrontRight, 'men_pensha', texture);
-    setMeshMaterial(glassLogoBackLeft, 'men_pensha', texture);
-    setMeshMaterial(glassLogoBackRight, 'men_pensha', texture);
+    glassLogoFrontLeft && setMeshMaterial(glassLogoFrontLeft, 'men_pensha', texture);
+    glassLogoFrontRight && setMeshMaterial(glassLogoFrontRight, 'men_pensha', texture);
+    glassLogoBackLeft && setMeshMaterial(glassLogoBackLeft, 'men_pensha', texture);
+    glassLogoBackRight && setMeshMaterial(glassLogoBackRight, 'men_pensha', texture);
   }
 }
 
@@ -273,7 +260,7 @@ const handleCustomTexture = async (microConfigData, mockMicroConfigEnum) => {
  * @param materialName 材质名称
  * @param texture 贴图
  */
-const setMeshMaterial = (mesh: Mesh, materialName: string, texture: Texture) => {
+const setMeshMaterial = (mesh, materialName: string, texture) => {
   const materials = mesh.material;
   let material;
   if (Array.isArray(materials)) {
