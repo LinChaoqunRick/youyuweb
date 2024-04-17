@@ -18,7 +18,7 @@ const icons = {
 
 const mockCabinetData = {
   doorHeadType: '2',
-  lintelLogoType: '1',
+  lintelLogoType: '2',
   lintelLogoFilePath: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2024/0416/20240416145052_tencent.png',
   lcdDisplayType: '99',
   lcdDisplayStandardFilePath: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2024/0416/20240416150049_1280_800.png',
@@ -624,66 +624,66 @@ const mockMicroConfigEnum = {
   ],
 }
 
-const mockCapacityData = [
+const mockUbitCapacityData = [
   {
     "assetId": 9,
-    "rate": 5
+    "rate": 0
   },
   {
     "assetId": 8,
-    "rate": 10
-  },
-  {
-    "assetId": 7,
-    "rate": 15
-  },
-  {
-    "assetId": 6,
-    "rate": 20
-  },
-  {
-    "assetId": 5,
     "rate": 25
   },
   {
-    "assetId": 4,
-    "rate": 30
+    "assetId": 7,
+    "rate": 0
   },
   {
-    "assetId": 3,
-    "rate": 35
+    "assetId": 6,
+    "rate": "-"
   },
   {
-    "assetId": 2,
-    "rate": 40
-  },
-  {
-    "assetId": 1,
-    "rate": 45
-  },
-  {
-    "assetId": 23,
-    "rate": 50
-  },
-  {
-    "assetId": 21,
+    "assetId": 5,
     "rate": 55
   },
   {
-    "assetId": 16,
+    "assetId": 4,
+    "rate": 0
+  },
+  {
+    "assetId": 3,
+    "rate": 0
+  },
+  {
+    "assetId": 2,
     "rate": 60
   },
   {
+    "assetId": 1,
+    "rate": 75
+  },
+  {
+    "assetId": 23,
+    "rate": 0
+  },
+  {
+    "assetId": 21,
+    "rate": 10
+  },
+  {
+    "assetId": 16,
+    "rate": 0
+  },
+  {
     "assetId": 14,
-    "rate": 65
+    "rate": 60
   },
   {
     "assetId": 19,
-    "rate": 70
+    "rate": "-"
   },
   {
     "assetId": 18,
-    "rate": 75
+    "rate": 0
   },
   {
     "assetId": 11,
@@ -691,45 +691,268 @@ const mockCapacityData = [
   },
   {
     "assetId": 10,
-    "rate": 85
+    "rate": "-"
   },
   {
     "assetId": 13,
-    "rate": 90
+    "rate": 0
   },
   {
     "assetId": 12,
-    "rate": 95
+    "rate": 0
   },
   {
     "assetId": 20,
-    "rate": 100
+    "rate": 90
   },
   {
     "assetId": 24,
-    "rate": 105
+    "rate": 84
   },
   {
     "assetId": 22,
-    "rate": 110
+    "rate": "-"
   },
   {
     "assetId": 17,
-    "rate": 115
+    "rate": 0
   },
   {
     "assetId": 15,
-    "rate": 120
+    "rate": "-"
   },
   {
     "assetId": 68,
-    "rate": 125
+    "rate": 0
   },
   {
     "assetId": 69,
-    "rate": 130
+    "rate": 70
   }
 ]
 
-export {icons, mockCabinetData, mockSecurityData, mockAlarmListData, mockMicroConfigEnum, mockCapacityData};
+const mockCoolingCapacityData = [
+  {
+    "assetId": 9,
+    "rate": 25
+  },
+  {
+    "assetId": 8,
+    "rate": 0
+  },
+  {
+    "assetId": 7,
+    "rate": "-"
+  },
+  {
+    "assetId": 6,
+    "rate": 0
+  },
+  {
+    "assetId": 5,
+    "rate": 0
+  },
+  {
+    "assetId": 4,
+    "rate": 55
+  },
+  {
+    "assetId": 3,
+    "rate": 60
+  },
+  {
+    "assetId": 2,
+    "rate": 0
+  },
+  {
+    "assetId": 1,
+    "rate": 0
+  },
+  {
+    "assetId": 23,
+    "rate": 75
+  },
+  {
+    "assetId": 21,
+    "rate": 0
+  },
+  {
+    "assetId": 16,
+    "rate": 10
+  },
+  {
+    "assetId": 14,
+    "rate": "-"
+  },
+  {
+    "assetId": 19,
+    "rate": 60
+  },
+  {
+    "assetId": 18,
+    "rate": 80
+  },
+  {
+    "assetId": 11,
+    "rate": 0
+  },
+  {
+    "assetId": 10,
+    "rate": 0
+  },
+  {
+    "assetId": 13,
+    "rate": "-"
+  },
+  {
+    "assetId": 12,
+    "rate": 90
+  },
+  {
+    "assetId": 20,
+    "rate": 0
+  },
+  {
+    "assetId": 24,
+    "rate": "-"
+  },
+  {
+    "assetId": 22,
+    "rate": 86
+  },
+  {
+    "assetId": 17,
+    "rate": 0
+  },
+  {
+    "assetId": 15,
+    "rate": "-"
+  },
+  {
+    "assetId": 68,
+    "rate": 70
+  },
+  {
+    "assetId": 69,
+    "rate": 0
+  }
+]
+
+const mockPowerCapacityData = [
+  {
+    "assetId": 9,
+    "rate": 0
+  },
+  {
+    "assetId": 8,
+    "rate": 0
+  },
+  {
+    "assetId": 7,
+    "rate": 0
+  },
+  {
+    "assetId": 6,
+    "rate": 0
+  },
+  {
+    "assetId": 5,
+    "rate": 0
+  },
+  {
+    "assetId": 4,
+    "rate": 0
+  },
+  {
+    "assetId": 3,
+    "rate": 0
+  },
+  {
+    "assetId": 2,
+    "rate": 0
+  },
+  {
+    "assetId": 1,
+    "rate": 0
+  },
+  {
+    "assetId": 23,
+    "rate": 90
+  },
+  {
+    "assetId": 21,
+    "rate": 0
+  },
+  {
+    "assetId": 16,
+    "rate": 0
+  },
+  {
+    "assetId": 14,
+    "rate": "-"
+  },
+  {
+    "assetId": 19,
+    "rate": 0
+  },
+  {
+    "assetId": 18,
+    "rate": 40
+  },
+  {
+    "assetId": 11,
+    "rate": 0
+  },
+  {
+    "assetId": 10,
+    "rate": 0
+  },
+  {
+    "assetId": 13,
+    "rate": "-"
+  },
+  {
+    "assetId": 12,
+    "rate": 60
+  },
+  {
+    "assetId": 20,
+    "rate": 0
+  },
+  {
+    "assetId": 24,
+    "rate": "-"
+  },
+  {
+    "assetId": 22,
+    "rate": 0
+  },
+  {
+    "assetId": 17,
+    "rate": 0
+  },
+  {
+    "assetId": 15,
+    "rate": "-"
+  },
+  {
+    "assetId": 68,
+    "rate": 0
+  },
+  {
+    "assetId": 69,
+    "rate": 0
+  }
+]
+
+export {
+  icons,
+  mockCabinetData,
+  mockSecurityData,
+  mockAlarmListData,
+  mockMicroConfigEnum,
+  mockUbitCapacityData,
+  mockCoolingCapacityData,
+  mockPowerCapacityData
+};
 export type {infoType};

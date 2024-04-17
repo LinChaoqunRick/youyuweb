@@ -1,7 +1,8 @@
 <template>
   <div class="micro-module">
     <div class="views">
-      <div v-for="item in views" class="view-item" :class="{ active: item.type === viewType }" @click="onViewChange(item)">
+      <div v-for="item in views" class="view-item" :class="{ active: item.type === viewType }"
+           @click="onViewChange(item)">
         {{ item.name }}
       </div>
     </div>
@@ -10,14 +11,14 @@
     <div class="three-d-container" ref="containerRef"></div>
     <div class="bottom-operation">
       <div class="operation-item" @click="onMicroModuleSetting">
-        <i-setting-two theme="outline" size="20" fill="#ffffff" />
+        <i-setting-two theme="outline" size="20" fill="#ffffff"/>
       </div>
       <div class="operation-item" @click="onResetOrbitControls">
-        <i-reverse-lens theme="outline" size="24" fill="#ffffff" />
+        <i-reverse-lens theme="outline" size="24" fill="#ffffff"/>
       </div>
     </div>
 
-    <ConfigDrawer v-model:visible="drawerVisible" @saveConfigSuccess="onSaveConfigSuccess" />
+    <ConfigDrawer v-model:visible="drawerVisible" @saveConfigSuccess="onSaveConfigSuccess"/>
   </div>
 </template>
 
@@ -40,27 +41,27 @@ import {
   WebGLRenderer,
   BoxGeometry,
 } from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { onMounted, onUnmounted, ref, watch, watchEffect } from 'vue';
-import { useStore } from 'vuex';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
-import { MTLLoaderPromise, TextureLoaderCommonPromise, TextureLoaderPromise } from '@/libs/three/loaders';
-import { createCabinetAlarmMesh, createTextMesh } from '@/views/lab/microModule/utils';
-import type { infoType } from '@/views/lab/microModule/config';
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
+import {onMounted, onUnmounted, ref, watch, computed} from 'vue';
+import {useStore} from 'vuex';
+import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader';
+import {MTLLoaderPromise, TextureLoaderCommonPromise, TextureLoaderPromise} from '@/libs/three/loaders';
+import {createCabinetAlarmMesh, createTextMesh} from '@/views/lab/microModule/utils';
+import type {infoType} from '@/views/lab/microModule/config';
 import {
   icons,
   mockAlarmListData,
   mockCabinetData,
   mockSecurityData,
   mockMicroConfigEnum,
-  mockCapacityData,
+  mockUbitCapacityData, mockCoolingCapacityData, mockPowerCapacityData,
 } from '@/views/lab/microModule/config';
-import { useRequest } from 'vue-request';
-import { cloneDeep, isEqual } from 'lodash';
-import { notification } from 'ant-design-vue';
+import {useRequest} from 'vue-request';
+import {cloneDeep, isEqual} from 'lodash';
+import {notification} from 'ant-design-vue';
 import ConfigDrawer from '@/views/lab/microModule/ConfigDrawer.vue';
 
-const { dispatch } = useStore();
+const {dispatch} = useStore();
 
 const statsRef = ref<HTMLDivElement>();
 
@@ -71,39 +72,46 @@ const microConfig = {
   totalLength: 0, // 模型总长度
   doorWidth: 24, // 门的宽度
   cabinetWidthList: [
-    { name: 'jg_80', ltd: 'ltd_80', width: 80, correctWidth: 84 },
-    { name: 'jg_60', ltd: 'ltd_60', width: 60, correctWidth: 64 },
-    { name: 'jg_30', ltd: 'ltd_30', width: 30, correctWidth: 34 },
+    {name: 'jg_80', ltd: 'ltd_80', width: 80, correctWidth: 84},
+    {name: 'jg_60', ltd: 'ltd_60', width: 60, correctWidth: 64},
+    {name: 'jg_30', ltd: 'ltd_30', width: 30, correctWidth: 34},
   ],
   securityDeviceMap: {
-    '1': { name: 'af_sp_qiu' }, // 球型摄像头
-    '2': { name: 'af_sp_qiang' }, // 枪型摄像头
-    '3': { name: '' }, // 温感
-    '4': { name: 'af_smoke' }, // 烟感
+    '1': {name: 'af_sp_qiu'}, // 球型摄像头
+    '2': {name: 'af_sp_qiang'}, // 枪型摄像头
+    '3': {name: ''}, // 温感
+    '4': {name: 'af_smoke'}, // 烟感
   },
+  capacityColorList: [
+    {limit: 0, color: 0x24d3ff},
+    {limit: 20, color: 0x15ffc0},
+    {limit: 40, color: 0x29ff4c},
+    {limit: 60, color: 0xf2da13},
+    {limit: 80, color: 0xff702a},
+    {limit: 100, color: 0xe22000}
+  ],// 容量云图对应颜色
   cabinetZ: 120, // 机柜位置的z值，(机柜宽度的+冷通道温度) / 2
   cabinetHeight: 223, // 机柜的高
   cabinetDepth: 116, // 机柜模型的z
 };
 
-let scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, controls: OrbitControls, containerRect: DOMRect, stats;
+let scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, controls: OrbitControls, containerRect: DOMRect,
+    stats;
 let microGroup = new Group(); // 整个微模块（门+机柜组）
 const models = {};
-let mtlTotal = 0,
-  objTotal = 0,
-  imageTotal = 0,
-  loopInterval = 10 * 1000;
+let mtlTotal = 0, objTotal = 0, imageTotal = 0, loopInterval = 10 * 1000;
 const imagesTexture: object = {};
 const views = [
-  { name: '3D视图', type: '3d' },
-  { name: '安防视图', type: 'security' },
-  { name: '温度云图', type: 'temp' },
-  { name: 'U位视图', type: 'ubit' },
-  { name: '配电视图', type: 'power' },
-  { name: '制冷视图', type: 'cooling' },
+  {name: '3D视图', type: '3d'},
+  {name: '安防视图', type: 'security'},
+  {name: '温度云图', type: 'temp'},
+  {name: 'U位视图', type: 'ubit'},
+  {name: '配电视图', type: 'power'},
+  {name: '制冷视图', type: 'cooling'},
 ];
 const viewType = ref<string>(views[0].type);
 const drawerVisible = ref<boolean>(false);
+const isTransparent = computed(() => viewType.value !== '3d');
 
 let transparentMesh: Mesh[] = []; // 切换透明视图，需要改变材质的mesh
 const cabinetMeshMap = new Map<string, Mesh | Group>(); // 机柜mesh
@@ -130,7 +138,7 @@ const initMicroModule = async () => {
 const createMicroModule = microConfigData => {
   scene.remove(microGroup);
   microGroup = new Group();
-  const { cabinetList } = microConfigData;
+  const {cabinetList} = microConfigData;
   transparentMesh = [];
   cabinetMeshMap.clear();
   cabinetNameWrapsMeshMap.clear();
@@ -229,7 +237,7 @@ const handleCustomTexture = async (microConfigData, mockMicroConfigEnum) => {
     if (lintelFront && lintelBack) {
       const item = !isCustom && mockMicroConfigEnum.lintelLogoType.find(item => item.code === lintelLogoType);
       const texture = await TextureLoaderPromise(
-        isCustom ? microConfigData.lintelLogoFilePath : '/static/micro/map/' + item.image
+          isCustom ? microConfigData.lintelLogoFilePath : '/static/micro/map/' + item.image
       );
       setMeshMaterial(lintelFront, 'men_menmei_ping', texture);
       setMeshMaterial(lintelBack, 'men_menmei_ping', texture);
@@ -239,7 +247,7 @@ const handleCustomTexture = async (microConfigData, mockMicroConfigEnum) => {
   // 处理屏幕
   if (lcdDisplayType === '99') {
     const texture = await TextureLoaderPromise(
-      doorHeadType === '1' ? lcdDisplayStandardFilePath : lcdDisplayHighEndFilePath
+        doorHeadType === '1' ? lcdDisplayStandardFilePath : lcdDisplayHighEndFilePath
     );
     const lcdFront = frontDoorMesh.getObjectByName(isHighEnd ? 'menban_daping' : 'menban_biaoping');
     lcdFront && setMeshMaterial(lcdFront, isHighEnd ? 'menban_daping_ping' : 'menban_biaoping_ping', texture);
@@ -288,8 +296,8 @@ const setMeshMaterial = (mesh, materialName: string, texture) => {
  * @param cabinetData 机柜名称
  */
 const createCabinetItem = (cabinetInfo: infoType, index: number, cabinetData: any) => {
-  const { name, correctWidth } = cabinetInfo;
-  const { cabinetShortName, cabinetType, alarmCount, alarmLevel, assetId } = cabinetData;
+  const {name, correctWidth} = cabinetInfo;
+  const {cabinetShortName, cabinetType, alarmCount, alarmLevel, assetId} = cabinetData;
   const cabinetGroup = new Group();
   const cabinetMesh = models[name].clone();
   cabinetMesh.name = 'cabinet_' + index;
@@ -345,8 +353,8 @@ const createTypeMesh = (cabinetType: number | string, assetId: number | string) 
  */
 const createAlarmMesh = (assetId: number | string, alarmCount: number, alarmLevel: number) => {
   const alarmMesh = createCabinetAlarmMesh(
-    alarmCount > 999 ? '999+' : alarmCount,
-    alarmLevelList[alarmLevel - 1].alarmLevelColor
+      alarmCount > 999 ? '999+' : alarmCount,
+      alarmLevelList[alarmLevel - 1].alarmLevelColor
   );
   alarmMesh.position.set(0, microConfig.cabinetHeight + 40, -microConfig.cabinetDepth / 2);
   alarmMesh.rotation.y = Math.PI;
@@ -495,10 +503,10 @@ const initModels = async () => {
   const imagesMap = [...Object.values(icons)];
 
   // 构建模型加载进度列表
-  const percentModelList: any = ref(Array.from({ length: mtlFileNames.length }).map(_ => ({ mtl: 0, obj: 0 })));
+  const percentModelList: any = ref(Array.from({length: mtlFileNames.length}).map(_ => ({mtl: 0, obj: 0})));
 
   // 构建图片加载进度列表
-  const percentImagesList: any = ref(Array.from({ length: imagesMap.length }).map(_ => ({ value: 0 })));
+  const percentImagesList: any = ref(Array.from({length: imagesMap.length}).map(_ => ({value: 0})));
 
   const onProcess = (type: string, index: number, xhr: object, name: string) => {
     if (type === 'model') {
@@ -513,32 +521,32 @@ const initModels = async () => {
   };
 
   await Promise.all(
-    mtlFileNames.map(async (fileName: string, index: number) => {
-      const objLoader = new OBJLoader();
-      // 加载MTL文件
-      const materials: any = await MTLLoaderPromise(directoryPath + fileName + '.mtl', {
-        onProcess: (xhr: object) => onProcess('model', index, xhr, 'mtl'),
-      });
-      materials.preload(); // 预加载材质
-      objLoader.setMaterials(materials);
+      mtlFileNames.map(async (fileName: string, index: number) => {
+        const objLoader = new OBJLoader();
+        // 加载MTL文件
+        const materials: any = await MTLLoaderPromise(directoryPath + fileName + '.mtl', {
+          onProcess: (xhr: object) => onProcess('model', index, xhr, 'mtl'),
+        });
+        materials.preload(); // 预加载材质
+        objLoader.setMaterials(materials);
 
-      // 加载OBJ文件
-      const object = await TextureLoaderCommonPromise(objLoader, directoryPath + fileName + '.obj', {
-        onProcess: xhr => onProcess('model', index, xhr, 'obj'),
-      });
-      models[fileName] = object;
-      return object;
-    })
+        // 加载OBJ文件
+        const object = await TextureLoaderCommonPromise(objLoader, directoryPath + fileName + '.obj', {
+          onProcess: xhr => onProcess('model', index, xhr, 'obj'),
+        });
+        models[fileName] = object;
+        return object;
+      })
   );
 
   await Promise.all(
-    imagesMap.map(async (item, index) => {
-      // 加载图片文件
-      const image = await TextureLoaderPromise(item.icon);
-      onProcess('image', index, { total: 100, loaded: 100 }, 'value');
-      imagesTexture[item.code] = image;
-      return image;
-    })
+      imagesMap.map(async (item, index) => {
+        // 加载图片文件
+        const image = await TextureLoaderPromise(item.icon);
+        onProcess('image', index, {total: 100, loaded: 100}, 'value');
+        imagesTexture[item.code] = image;
+        return image;
+      })
   );
 
   // 消除机柜左侧白边
@@ -594,6 +602,7 @@ const onMicroModuleSetting = () => {
  */
 const onViewChange = async (item: string) => {
   const type = item.type;
+  changeTransparentMesh(type);
   if (viewType.value === type) {
     return;
   } else {
@@ -601,7 +610,6 @@ const onViewChange = async (item: string) => {
   }
   removeSecurityDevice(); // 清空安防设备
   removeCapacityColumn(); // 清空容量模型
-  changeTransparentMesh(type !== '3d');
   if (type === 'security') {
     const res = await dispatch('getSecurityDeviceList');
     securityMeshMap.clear();
@@ -610,12 +618,26 @@ const onViewChange = async (item: string) => {
     res.data.forEach((item, index) => {
       addSecurityDevice(item);
     });
-  } else if (['ubit', 'cooling', 'power'].includes(type)) {
+  } else if ('ubit'.includes(type)) {
     dispatch('getMicroCapacityUbit').then(res => {
-      res.data = mockCapacityData;
+      res.data = mockUbitCapacityData;
+      addCapacityColumn(res.data);
+    });
+  } else if ('cooling' === type) {
+    dispatch('getMicroCapacityCooling').then(res => {
+      res.data = mockCoolingCapacityData;
+      addCapacityColumn(res.data);
+    });
+  } else if ('power' === type) {
+    dispatch('getMicroCapacityPower').then(res => {
+      res.data = mockPowerCapacityData;
       addCapacityColumn(res.data);
     });
   }
+};
+
+const isTransparentView = (type: string) => {
+  return type !== '3d'
 };
 
 /**
@@ -623,9 +645,9 @@ const onViewChange = async (item: string) => {
  * @param data
  */
 const addSecurityDevice = (data: object) => {
-  const { securityType, deviceLocation, deviceAlarmInfoList, deviceId } = data;
+  const {securityType, deviceLocation, deviceAlarmInfoList, deviceId} = data;
   const deviceMesh = models[microConfig.securityDeviceMap[securityType].name];
-  const { x, y, z } = getSecurityDevicePosition(deviceLocation);
+  const {x, y, z} = getSecurityDevicePosition(deviceLocation);
   deviceMesh.scale.set(1.4, 1.4, 1.4);
   deviceMesh.position.set(x, y, z);
   if (x < 0) {
@@ -639,7 +661,6 @@ const addSecurityDevice = (data: object) => {
  * 删除所有安防设备
  */
 const removeSecurityDevice = () => {
-  console.log(securityMeshMap.values());
   if (securityMeshMap.size) {
     scene.remove(...securityMeshMap.values());
   }
@@ -653,36 +674,52 @@ const addCapacityColumn = (data: object) => {
   const capacityMap = new Map<string, number>();
   data.forEach(item => capacityMap.set(item.assetId, item.rate));
 
-  const { cabinetList } = microConfigData;
-  const { cabinetDepth, cabinetHeight } = microConfig;
+  const {cabinetList} = microConfigData;
+  const {cabinetDepth, cabinetHeight} = microConfig;
 
   cabinetList.forEach(item => {
     const cabinetMesh = cabinetMeshMap.get(item.assetId);
-    const { width, correctWidth } = microConfig.cabinetWidthList[item.cabinetWidth];
+    const {width, correctWidth} = microConfig.cabinetWidthList[item.cabinetWidth];
     let cabinetCapacityData = capacityMap.get(item.assetId);
-    cabinetCapacityData = cabinetCapacityData > 100 ? 100 : cabinetCapacityData;
+    cabinetCapacityData = isNaN(cabinetCapacityData) ? 0 : cabinetCapacityData > 100 ? 100 : cabinetCapacityData;
 
-    const columnHeight = (cabinetHeight - 17) * (cabinetCapacityData / 100);
-    const geometry = new BoxGeometry(width + 2, columnHeight, cabinetDepth - 4);
-    const material = new MeshBasicMaterial({
-      color: 0x00ff00,
-      transparent: true,
-      opacity: 0.9,
-      depthTest: false,
-    });
-    const offsetY = columnHeight / 2 + 5;
     const columnGroup = new Group();
-    const columnMesh = new Mesh(geometry, material);
+    const columnHeight = (cabinetHeight - 17) * (cabinetCapacityData / 100);
+    const offsetY = columnHeight / 2 + 5;
+    if (cabinetCapacityData > 0) {
+      const geometry = new BoxGeometry(width + 2, columnHeight, cabinetDepth - 4);
+      const color = getCapacityColor(Number(cabinetCapacityData));
+      const material = new MeshBasicMaterial({
+        color,
+        transparent: true,
+        opacity: 0.9,
+        depthTest: false,
+      });
+      const columnMesh = new Mesh(geometry, material);
+      columnGroup.add(columnMesh);
+    }
     const dataMesh = createTextMesh(capacityMap.get(item.assetId) + '%', correctWidth);
     dataMesh.position.set(0, -offsetY + 15, microConfig.cabinetDepth / 2);
-    columnGroup.add(columnMesh, dataMesh);
-
+    columnGroup.add(dataMesh);
     columnGroup.position.y = offsetY;
     columnGroup.rotation.y = Math.PI;
     capacityMeshMap.set(item.assetId, columnGroup);
     cabinetMesh.add(columnGroup);
   });
 };
+
+const getCapacityColor = (rate: number) => {
+  const {capacityColorList} = microConfig;
+  let color = 0xffffff;
+  for (let item of capacityColorList) {
+    if (rate >= item.limit) {
+      color = item.color;
+    } else {
+      break;
+    }
+  }
+  return color;
+}
 
 const removeCapacityColumn = () => {
   if (capacityMeshMap.size) {
@@ -707,13 +744,13 @@ const getSecurityDevicePosition = (location: string) => {
   const yBottomMiddle = ['4', '9'];
   const yBottom = ['5', '10'];
 
-  const { totalLength, cabinetZ, cabinetWidth, cabinetHeight, doorWidth } = microConfig;
+  const {totalLength, cabinetZ, cabinetWidth, cabinetHeight, doorWidth} = microConfig;
 
   const deviceX = xLeft.includes(location)
-    ? -(totalLength - doorWidth) / 2
-    : xRight.includes(location)
-    ? (totalLength - doorWidth) / 2
-    : 0;
+      ? -(totalLength - doorWidth) / 2
+      : xRight.includes(location)
+          ? (totalLength - doorWidth) / 2
+          : 0;
   let deviceZ;
   if (yTop.includes(location)) {
     deviceZ = -(cabinetZ + cabinetWidth / 2);
@@ -729,18 +766,20 @@ const getSecurityDevicePosition = (location: string) => {
     deviceZ = 0;
   }
 
-  return { x: deviceX, y: cabinetHeight - 15, z: deviceZ };
+  return {x: deviceX, y: cabinetHeight - 15, z: deviceZ};
 };
 
 /**
  * 修改切换视图后需要透明显示模型的材质
- * @param isTransparent
+ * @param type 视图类型
  */
-const changeTransparentMesh = (isTransparent: boolean) => {
+const changeTransparentMesh = (type: string) => {
+  const transparent = isTransparentView(type);
+  if (isTransparent.value === transparent) return; // 继续是透明视图，就不变了
   transparentMesh.forEach(mesh => {
     mesh.traverse(child => {
       if (child.isMesh && child.material) {
-        if (isTransparent) {
+        if (transparent) {
           // 保存原始材质
           if (!child.originMaterial && child.material) {
             if (Array.isArray(child.material)) {
@@ -753,7 +792,8 @@ const changeTransparentMesh = (isTransparent: boolean) => {
           child.material = new MeshBasicMaterial({
             transparent: true,
             color: 0x666666,
-            opacity: 0.15,
+            opacity: 0.1,
+            depthTest: false
           });
         } else {
           // 还原原始材质
@@ -782,7 +822,8 @@ const cabinetNameMeshAnimation = () => {
 /**
  * 修改模型材质
  */
-const changeMeshMaterial = () => {};
+const changeMeshMaterial = () => {
+};
 
 const getMicroModuleData = async () => {
   return await dispatch('getMicroModuleConfig');
@@ -810,17 +851,17 @@ const handleCabinetConfigDiff = (res: object) => {
   const compareKeys: string[] = ['assetId', 'cabinetType', 'cabinetWidth', 'cabinetShortName', 'alarmLevel', 'alarmCount'];
 
   const oldConfig = microConfigData.cabinetList.map(item =>
-    compareKeys.reduce((obj, key) => {
-      obj[key] = item[key];
-      return obj;
-    }, {})
+      compareKeys.reduce((obj, key) => {
+        obj[key] = item[key];
+        return obj;
+      }, {})
   );
 
   const newConfig = data.cabinetList.map(item =>
-    compareKeys.reduce((obj, key) => {
-      obj[key] = item[key];
-      return obj;
-    }, {})
+      compareKeys.reduce((obj, key) => {
+        obj[key] = item[key];
+        return obj;
+      }, {})
   );
 
   const equal = isEqual(oldConfig, newConfig);
@@ -830,8 +871,8 @@ const handleCabinetConfigDiff = (res: object) => {
   } else {
     // 如果是机柜数量、机柜顺序、机柜尺寸改变，暂时全局刷新模型
     let lengthChange = oldConfig.length != newConfig.length,
-      orderChange = false,
-      sizeChange = false;
+        orderChange = false,
+        sizeChange = false;
     if (!lengthChange) {
       // 如果长度无变化，再判断机柜顺序、机柜尺寸是否发生变化
       for (let i = 0; i < oldConfig.length; i++) {
@@ -854,8 +895,8 @@ const handleCabinetConfigDiff = (res: object) => {
       // 如果是机柜名称、机柜告警等级、告警数量变化，局部刷新
       for (let i = 0; i < changedCabinetList.length; i++) {
         const [oldCabinet, newCabinet] = changedCabinetList[i];
-        const { assetId, cabinetWidth, cabinetShortName } = newCabinet;
-        const { correctWidth } = microConfig.cabinetWidthList[cabinetWidth];
+        const {assetId, cabinetWidth, cabinetShortName} = newCabinet;
+        const {correctWidth} = microConfig.cabinetWidthList[cabinetWidth];
         // 获取单机柜整体mesh
         const cabinetMesh = cabinetMeshMap.get(assetId);
         if (!cabinetMesh) return;
