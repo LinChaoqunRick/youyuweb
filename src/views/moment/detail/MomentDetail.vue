@@ -93,6 +93,7 @@ import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
 import MomentCommentItem from "../components/MomentCommentItem.vue";
 import MomentEditor from "../components/MomentEditor.vue";
 import ContentList from "@/components/common/system/ContentList.vue";
+import {transformTagToHTML} from "@/components/common/utils/emoji/youyu_emoji";
 
 const route = useRoute();
 const router = useRouter();
@@ -152,6 +153,7 @@ const onSaveCommentSuccess = (data: momentListType) => {
 
 const onEdit = () => {
   formData.value = cloneDeep(moment.value);
+  formData.value.content = transformTagToHTML(formData.value.content)
   formData.value.images = formData.value.images
     ? formData.value.images.split(",")
     : [];
