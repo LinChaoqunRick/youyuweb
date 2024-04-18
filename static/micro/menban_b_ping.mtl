@@ -24,8 +24,8 @@ newmtl menban_shuwen
 	Kd 0.5882 0.5882 0.5882
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka map\menban_column_line.png
-	map_Kd map\menban_column_line.png
+	map_Ka map\menban_column_line_pure.png
+	map_Kd map\menban_column_line_pure.png
 
 newmtl 08
 	Ns 10.0000
