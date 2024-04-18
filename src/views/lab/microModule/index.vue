@@ -27,6 +27,7 @@ import Stats from 'stats.js';
 import {
   AmbientLight,
   AxesHelper,
+  BoxGeometry,
   Color,
   DirectionalLight,
   DoubleSide,
@@ -39,10 +40,9 @@ import {
   RepeatWrapping,
   Scene,
   WebGLRenderer,
-  BoxGeometry,
 } from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
-import {onMounted, onUnmounted, ref, watch, computed} from 'vue';
+import {computed, onMounted, onUnmounted, ref, watch} from 'vue';
 import {useStore} from 'vuex';
 import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader';
 import {MTLLoaderPromise, TextureLoaderCommonPromise, TextureLoaderPromise} from '@/libs/three/loaders';
@@ -52,9 +52,11 @@ import {
   icons,
   mockAlarmListData,
   mockCabinetData,
-  mockSecurityData,
+  mockCoolingCapacityData,
   mockMicroConfigEnum,
-  mockUbitCapacityData, mockCoolingCapacityData, mockPowerCapacityData,
+  mockPowerCapacityData,
+  mockSecurityData,
+  mockUbitCapacityData,
 } from '@/views/lab/microModule/config';
 import {useRequest} from 'vue-request';
 import {cloneDeep, isEqual} from 'lodash';
@@ -138,14 +140,12 @@ const initMicroModule = async () => {
 const createMicroModule = microConfigData => {
   scene.remove(microGroup);
   microGroup = new Group();
-  const {cabinetList} = microConfigData;
+  const {doorHeadType, glassDoorType, lintelLogoType, cabinetList} = microConfigData;
   transparentMesh = [];
   cabinetMeshMap.clear();
   cabinetNameWrapsMeshMap.clear();
-
   // 构建微模块
   microConfig.totalLength = 0;
-
   // 添加机柜
   for (let index = 0; index < cabinetList.length; index += 2) {
     const cabinetFront = cabinetList[index];
@@ -175,38 +175,79 @@ const createMicroModule = microConfigData => {
     microGroup.add(pairCabinetGroup);
     transparentMesh.push(ltdModel);
   }
+  // 添加前门
+  const doorModelFront = createFrontDoor(doorHeadType, glassDoorType, lintelLogoType);
+  // 添加后门
+  const doorModelBack = createBackDoor(doorHeadType, glassDoorType, lintelLogoType);
 
+  microGroup.add(doorModelFront, doorModelBack);
+  handleDoorHeadTexture(microConfigData, undefined);
   // 位置整体偏移
   microGroup.position.x = -microConfig.totalLength / 2;
+  scene.add(microGroup);
+  changeTransparentMesh(viewType.value, true);
+};
 
-  // 添加玻璃门
-  const glassDoorModel = microConfigData.glassDoorType === '1' ? models.men_p : models.men_r;
+/**
+ * 创建玻璃门
+ * @param glassDoorType 玻璃门类型
+ */
+const createGlassDoor = (glassDoorType: string) => {
+  return glassDoorType === '1' ? models.men_p : models.men_r;
+}
 
-  // 添加门楣
-  const lintelModel = ['1', '99'].includes(microConfigData.lintelLogoType) ? models.menmei_logo : models.menmei_led;
+/**
+ * 创建门楣
+ * @param lintelLogoType 门楣类型
+ */
+const createLintel = (lintelLogoType: string) => {
+  const lintelModel = ['1', '99'].includes(lintelLogoType) ? models.menmei_logo : models.menmei_led;
   lintelModel.name = 'lintel';
+  return lintelModel;
+}
 
+/**
+ * 创建前门 (前门 = 门板 + 门楣 + 玻璃门)
+ * @param doorHeadType 门头类型
+ * @param glassDoorType 玻璃门类型
+ * @param lintelLogoType 门楣类型
+ */
+const createFrontDoor = (doorHeadType: string, glassDoorType: string, lintelLogoType: string) => {
+  // 添加玻璃门
+  const glassDoorModel = createGlassDoor(glassDoorType);
+  // 添加门楣
+  const lintelModel = createLintel(lintelLogoType);
   // 添加前门
-  const doorModelFront = microConfigData.doorHeadType === '1' ? models.menban_b_ping.clone() : models.menban_h_ping.clone();
+  const doorModelFront = doorHeadType === '1' ? models.menban_b_ping.clone() : models.menban_h_ping.clone();
   doorModelFront.name = 'front_door';
   doorModelFront.add(glassDoorModel.clone());
   doorModelFront.add(lintelModel.clone());
   doorModelFront.position.set(-microConfig.doorWidth / 2, 0, 0);
+  transparentMesh.push(doorModelFront);
+  return doorModelFront;
+}
 
+/**
+ * 创建后门 (后门 = 门板 + 门楣 + 玻璃门)
+ * @param doorHeadType 门头类型
+ * @param glassDoorType 玻璃门类型
+ * @param lintelLogoType 门楣类型
+ */
+const createBackDoor = (doorHeadType: string, glassDoorType: string, lintelLogoType: string) => {
+  // 添加玻璃门
+  const glassDoorModel = createGlassDoor(glassDoorType);
+  // 添加门楣
+  const lintelModel = createLintel(lintelLogoType);
   // 添加后门
-  const doorModelBack = microConfigData.doorHeadType === '1' ? models.menban_b.clone() : models.menban_h.clone();
+  const doorModelBack = doorHeadType === '1' ? models.menban_b.clone() : models.menban_h.clone();
   doorModelBack.name = 'back_door';
   doorModelBack.add(glassDoorModel.clone());
   doorModelBack.add(lintelModel.clone());
   doorModelBack.position.set(microConfig.totalLength + microConfig.doorWidth / 2, 0, 0);
   doorModelBack.rotation.y = Math.PI;
-
-  transparentMesh.push(doorModelFront, doorModelBack);
-  microGroup.add(doorModelFront, doorModelBack);
-  handleDoorHeadTexture(microConfigData, undefined);
-  scene.add(microGroup);
-  changeTransparentMesh(viewType.value, true);
-};
+  transparentMesh.push(doorModelBack);
+  return doorModelBack;
+}
 
 /**
  * 处理自定义贴图
@@ -214,17 +255,26 @@ const createMicroModule = microConfigData => {
  * @param oldConfig 旧配置数据
  */
 const handleDoorHeadTexture = (newConfig, oldConfig) => {
+  const {doorHeadType, glassDoorType, lintelLogoType} = newConfig;
+
+  const frontDoorMesh = microGroup.getObjectByName('front_door');
+  const backDoorMesh = microGroup.getObjectByName('back_door');
+
   if (oldConfig) {
-    // TODO.. 优化：改为替换门头，而不是全局更新
     // 如果门头发生改变，需要先替换新的模型
     const doorHeadTypeChanged = objectChanged(newConfig, oldConfig, ['doorHeadType']);
     if (doorHeadTypeChanged) {
-      createMicroModule(newConfig);
-      return;
+      // 删除旧的门头
+      microGroup.remove(frontDoorMesh, backDoorMesh);
+
+      // 创建并添加新的门头
+      const doorModelFront = createFrontDoor(doorHeadType, glassDoorType, lintelLogoType);
+      const doorModelBack = createBackDoor(doorHeadType, glassDoorType, lintelLogoType);
+      changeMeshTransparent(isTransparent.value, doorModelFront);
+      changeMeshTransparent(isTransparent.value, doorModelBack);
+      microGroup.add(doorModelFront, doorModelBack);
     }
   }
-  const frontDoorMesh = microGroup.getObjectByName('front_door');
-  const backDoorMesh = microGroup.getObjectByName('back_door');
   // 处理门楣
   handleLintelChange(newConfig, oldConfig, frontDoorMesh, backDoorMesh);
   // 处理屏幕
@@ -627,6 +677,7 @@ const initModels = async () => {
     })
   );
 
+  // TODO... 能否直接改模型文件中的颜色
   // 消除机柜左侧白边
   ['jg_30', 'jg_60', 'jg_80'].forEach(name => {
     models[name].getObjectByName('jigui').material.forEach(item => {
@@ -692,10 +743,7 @@ const onViewChange = async (item: string) => {
     const res = await dispatch('getSecurityDeviceList');
     securityMeshMap.clear();
     res.data = mockSecurityData;
-
-    res.data.forEach((item, index) => {
-      addSecurityDevice(item);
-    });
+    addSecurityDevice(res.data);
   } else if ('ubit'.includes(type)) {
     dispatch('getMicroCapacityUbit').then(res => {
       res.data = mockUbitCapacityData;
@@ -723,16 +771,18 @@ const isTransparentView = (type: string) => {
  * @param data
  */
 const addSecurityDevice = (data: object) => {
-  const {securityType, deviceLocation, deviceAlarmInfoList, deviceId} = data;
-  const deviceMesh = models[microConfig.securityDeviceMap[securityType].name];
-  const {x, y, z} = getSecurityDevicePosition(deviceLocation);
-  deviceMesh.scale.set(1.4, 1.4, 1.4);
-  deviceMesh.position.set(x, y, z);
-  if (x < 0) {
-    deviceMesh.rotation.y = Math.PI; // 左边的设备需要y轴旋转一下
-  }
-  securityMeshMap.set(deviceId, deviceMesh);
-  scene.add(deviceMesh);
+  data.forEach((item, index) => {
+    const {securityType, deviceLocation, deviceAlarmInfoList, deviceId} = item;
+    const deviceMesh = models[microConfig.securityDeviceMap[securityType].name];
+    const {x, y, z} = getSecurityDevicePosition(deviceLocation);
+    deviceMesh.scale.set(1.4, 1.4, 1.4);
+    deviceMesh.position.set(x, y, z);
+    if (x < 0) {
+      deviceMesh.rotation.y = Math.PI; // 左边的设备需要y轴旋转一下
+    }
+    securityMeshMap.set(deviceId, deviceMesh);
+    scene.add(deviceMesh);
+  });
 };
 
 /**
@@ -858,34 +908,43 @@ const changeTransparentMesh = (type: string, forceUpdate: boolean = false) => {
     if (isTransparent.value === transparent) return; // 继续是透明视图，就不变了
   }
   transparentMesh.forEach(mesh => {
-    mesh.traverse(child => {
-      if (child.isMesh && child.material) {
-        if (transparent) {
-          // 保存原始材质
-          if (!child.originMaterial && child.material) {
-            if (Array.isArray(child.material)) {
-              child.originMaterial = child.material.map(material => material.clone());
-            } else {
-              child.originMaterial = child.material.clone();
-            }
-          }
-          // 设置透明材质
-          child.material = new MeshBasicMaterial({
-            transparent: true,
-            color: 0x666666,
-            opacity: 0.1,
-            depthTest: false
-          });
-        } else {
-          // 还原原始材质
-          if (child.originMaterial) {
-            child.material = child.originMaterial;
-          }
-        }
-      }
-    });
+    changeMeshTransparent(transparent, mesh);
   });
 };
+
+/**
+ * 转换模型的透明状态
+ * @param transparent 是否透明
+ * @param mesh 模型
+ */
+const changeMeshTransparent = (transparent: boolean, mesh: Mesh) => {
+  mesh.traverse(child => {
+    if (child.isMesh && child.material) {
+      if (transparent) {
+        // 保存原始材质
+        if (!child.originMaterial && child.material) {
+          if (Array.isArray(child.material)) {
+            child.originMaterial = child.material.map(material => material.clone());
+          } else {
+            child.originMaterial = child.material.clone();
+          }
+        }
+        // 设置透明材质
+        child.material = new MeshBasicMaterial({
+          transparent: true,
+          color: 0x666666,
+          opacity: 0.1,
+          depthTest: false
+        });
+      } else {
+        // 还原原始材质
+        if (child.originMaterial) {
+          child.material = child.originMaterial;
+        }
+      }
+    }
+  });
+}
 
 /**
  * 机柜名称如果超出，滚动展示动画
