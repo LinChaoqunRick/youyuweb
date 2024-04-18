@@ -1,25 +1,27 @@
 <template>
-  <div class="micro-module">
-    <div class="views">
-      <div v-for="item in views" class="view-item" :class="{ active: item.type === viewType }"
-           @click="onViewChange(item)">
-        {{ item.name }}
+  <a-spin class="micro-module-spinning" :spinning="spinning">
+    <div class="micro-module">
+      <div class="views">
+        <div v-for="item in views" class="view-item" :class="{ active: item.type === viewType }"
+             @click="onViewChange(item)">
+          {{ item.name }}
+        </div>
       </div>
-    </div>
-    <div class="percentage-box" v-if="percentage < 100">{{ percentage }}%</div>
-    <div ref="statsRef"></div>
-    <div class="three-d-container" ref="containerRef"></div>
-    <div class="bottom-operation">
-      <div class="operation-item" @click="onMicroModuleSetting">
-        <i-setting-two theme="outline" size="20" fill="#ffffff"/>
+      <div class="percentage-box" v-if="percentage < 100">{{ percentage }}%</div>
+      <div ref="statsRef"></div>
+      <div class="three-d-container" ref="containerRef"></div>
+      <div class="bottom-operation">
+        <div class="operation-item" @click="onMicroModuleSetting">
+          <i-setting-two theme="outline" size="20" fill="#ffffff"/>
+        </div>
+        <div class="operation-item" @click="onResetOrbitControls">
+          <i-reverse-lens theme="outline" size="24" fill="#ffffff"/>
+        </div>
       </div>
-      <div class="operation-item" @click="onResetOrbitControls">
-        <i-reverse-lens theme="outline" size="24" fill="#ffffff"/>
-      </div>
-    </div>
 
-    <ConfigDrawer v-model:visible="drawerVisible" @saveConfigSuccess="onSaveConfigSuccess"/>
-  </div>
+      <ConfigDrawer v-model:visible="drawerVisible" @saveConfigSuccess="onSaveConfigSuccess"/>
+    </div>
+  </a-spin>
 </template>
 
 <script lang="ts" setup>
@@ -65,8 +67,8 @@ import ConfigDrawer from '@/views/lab/microModule/ConfigDrawer.vue';
 
 const {dispatch} = useStore();
 
+const spinning = ref(false);
 const statsRef = ref<HTMLDivElement>();
-
 const containerRef = ref<HTMLDivElement>();
 const percentage = ref(0);
 let microConfigData = {};
@@ -739,27 +741,34 @@ const onViewChange = async (item: string) => {
   }
   removeSecurityDevice(); // 清空安防设备
   removeCapacityColumn(); // 清空容量模型
+  spinning.value = true;
   if (type === 'security') {
-    const res = await dispatch('getSecurityDeviceList');
-    securityMeshMap.clear();
-    res.data = mockSecurityData;
-    addSecurityDevice(res.data);
+    const res = await dispatch('getSecurityDeviceList').catch(console.log);
+    if (res) {
+      securityMeshMap.clear();
+      res.data = mockSecurityData;
+      addSecurityDevice(res.data);
+    }
   } else if ('ubit'.includes(type)) {
-    dispatch('getMicroCapacityUbit').then(res => {
+    const res = await dispatch('getMicroCapacityUbit').catch(console.log);
+    if (res) {
       res.data = mockUbitCapacityData;
       addCapacityColumn(res.data);
-    });
+    }
   } else if ('cooling' === type) {
-    dispatch('getMicroCapacityCooling').then(res => {
+    const res = await dispatch('getMicroCapacityCooling').catch(console.log);
+    if (res) {
       res.data = mockCoolingCapacityData;
       addCapacityColumn(res.data);
-    });
+    }
   } else if ('power' === type) {
-    dispatch('getMicroCapacityPower').then(res => {
+    const res = await dispatch('getMicroCapacityPower').catch(console.log);
+    if (res) {
       res.data = mockPowerCapacityData;
       addCapacityColumn(res.data);
-    });
+    }
   }
+  spinning.value = false;
 };
 
 const isTransparentView = (type: string) => {
@@ -1245,5 +1254,11 @@ onUnmounted(() => {
       margin-top: 8px;
     }
   }
+}
+</style>
+
+<style lang="scss">
+.micro-module-spinning {
+  max-height: initial !important;
 }
 </style>
