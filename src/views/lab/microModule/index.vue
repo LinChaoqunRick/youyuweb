@@ -46,7 +46,7 @@ import {onMounted, onUnmounted, ref, watch, computed} from 'vue';
 import {useStore} from 'vuex';
 import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader';
 import {MTLLoaderPromise, TextureLoaderCommonPromise, TextureLoaderPromise} from '@/libs/three/loaders';
-import {createCabinetAlarmMesh, createTextMesh} from '@/views/lab/microModule/utils';
+import {createCabinetAlarmMesh, createTextMesh, objectChanged} from '@/views/lab/microModule/utils';
 import type {infoType} from '@/views/lab/microModule/config';
 import {
   icons,
@@ -96,7 +96,7 @@ const microConfig = {
 };
 
 let scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, controls: OrbitControls, containerRect: DOMRect,
-    stats;
+  stats;
 let microGroup = new Group(); // 整个微模块（门+机柜组）
 const models = {};
 let mtlTotal = 0, objTotal = 0, imageTotal = 0, loopInterval = 10 * 1000;
@@ -187,14 +187,14 @@ const createMicroModule = microConfigData => {
   lintelModel.name = 'lintel';
 
   // 添加前门
-  const doorModelFront = microConfigData.doorHeadType === '1' ? models.menban_b_ping : models.menban_h_ping;
+  const doorModelFront = microConfigData.doorHeadType === '1' ? models.menban_b_ping.clone() : models.menban_h_ping.clone();
   doorModelFront.name = 'front_door';
   doorModelFront.add(glassDoorModel.clone());
   doorModelFront.add(lintelModel.clone());
   doorModelFront.position.set(-microConfig.doorWidth / 2, 0, 0);
 
   // 添加后门
-  const doorModelBack = microConfigData.doorHeadType === '1' ? models.menban_b : models.menban_h;
+  const doorModelBack = microConfigData.doorHeadType === '1' ? models.menban_b.clone() : models.menban_h.clone();
   doorModelBack.name = 'back_door';
   doorModelBack.add(glassDoorModel.clone());
   doorModelBack.add(lintelModel.clone());
@@ -202,73 +202,151 @@ const createMicroModule = microConfigData => {
   doorModelBack.rotation.y = Math.PI;
 
   transparentMesh.push(doorModelFront, doorModelBack);
-
   microGroup.add(doorModelFront, doorModelBack);
-
-  handleCustomTexture(microConfigData, mockMicroConfigEnum);
-
+  handleDoorHeadTexture(microConfigData, undefined);
   scene.add(microGroup);
+  changeTransparentMesh(viewType.value, true);
 };
 
 /**
  * 处理自定义贴图
- * @param microConfigData 配置数据
+ * @param newConfig 新配置数据
+ * @param oldConfig 旧配置数据
  */
-const handleCustomTexture = async (microConfigData, mockMicroConfigEnum) => {
-  const {
-    doorHeadType,
-    lintelLogoType,
-    lcdDisplayType,
-    lcdDisplayStandardFilePath,
-    lcdDisplayHighEndFilePath,
-    glassDoorLogoType,
-    glassDoorLogoFilepath,
-    glassDoorType,
-  } = microConfigData;
-  const isHighEnd = doorHeadType === '2';
+const handleDoorHeadTexture = (newConfig, oldConfig) => {
+  if (oldConfig) {
+    // TODO.. 优化：改为替换门头，而不是全局更新
+    // 如果门头发生改变，需要先替换新的模型
+    const doorHeadTypeChanged = objectChanged(newConfig, oldConfig, ['doorHeadType']);
+    if (doorHeadTypeChanged) {
+      createMicroModule(newConfig);
+      return;
+    }
+  }
   const frontDoorMesh = microGroup.getObjectByName('front_door');
   const backDoorMesh = microGroup.getObjectByName('back_door');
-  if (!frontDoorMesh || !backDoorMesh) return;
   // 处理门楣
-  if (lintelLogoType !== '1') {
-    const isCustom = lintelLogoType === '99';
-    const lintelFront = frontDoorMesh.getObjectByName(isCustom ? 'menmei_logo' : 'menmei_ping');
-    const lintelBack = backDoorMesh.getObjectByName(isCustom ? 'menmei_logo' : 'menmei_ping');
-    if (lintelFront && lintelBack) {
-      const item = !isCustom && mockMicroConfigEnum.lintelLogoType.find(item => item.code === lintelLogoType);
-      const texture = await TextureLoaderPromise(
-          isCustom ? microConfigData.lintelLogoFilePath : '/static/micro/map/' + item.image
-      );
+  handleLintelChange(newConfig, oldConfig, frontDoorMesh, backDoorMesh);
+  // 处理屏幕
+  handleLcdChange(newConfig, oldConfig, frontDoorMesh);
+  // 处理玻璃门Logo
+  handleGlassLogoChange(newConfig, oldConfig, frontDoorMesh, backDoorMesh);
+};
+
+/**
+ * 处理门楣变更
+ * @param newConfig 新配置
+ * @param oldConfig 旧配置（如果是初始化，该字段可能不传）
+ * @param frontDoorMesh 前门模型
+ * @param backDoorMesh 后门模型
+ */
+const handleLintelChange = async (newConfig, oldConfig, frontDoorMesh, backDoorMesh) => {
+  const {lintelLogoType: newLintelLogoType, lintelLogoFilePath: newLintelLogoFilePath} = newConfig;
+  const changed = objectChanged(newConfig, oldConfig, ['lintelLogoType', 'lintelLogoFilePath']);
+  if (changed) {
+    const {lintelLogoType} = mockMicroConfigEnum;
+    const isLogoLintel = ['1', '99'].includes(newLintelLogoType);
+    const lintelFront = frontDoorMesh.getObjectByName(isLogoLintel ? 'menmei_logo' : 'menmei_ping');
+    const lintelBack = backDoorMesh.getObjectByName(isLogoLintel ? 'menmei_logo' : 'menmei_ping');
+
+    const setLintelTexture = (texture) => {
       setMeshMaterial(lintelFront, 'men_menmei_ping', texture);
       setMeshMaterial(lintelBack, 'men_menmei_ping', texture);
     }
+
+    // 有变化
+    if (newLintelLogoType !== '1') {
+      if (lintelFront && lintelBack) {
+        const item = !isLogoLintel && lintelLogoType.find(item => item.code === newLintelLogoType);
+        const texture = await TextureLoaderPromise(isLogoLintel ? newLintelLogoFilePath : '/static/micro/map/' + item.image);
+        setLintelTexture(texture);
+      }
+    } else {
+      if (oldConfig) {
+        // 如果存在oldConfig则是更新，而不是初始化执行
+        const defaultItem = lintelLogoType[0];
+        const texture = await TextureLoaderPromise('/static/micro/map/' + defaultItem.image);
+        setLintelTexture(texture);
+      }
+    }
+  }
+}
+
+/**
+ * 处理lcd变更
+ * @param newConfig 新配置
+ * @param oldConfig 旧配置（如果是初始化，该字段可能不传）
+ */
+const handleLcdChange = async (newConfig, oldConfig, frontDoorMesh) => {
+  const {
+    doorHeadType: newDoorHeadType,
+    lcdDisplayType: newLcdDisplayType,
+    lcdDisplayStandardFilePath: newLcdDisplayStandardFilePath,
+    lcdDisplayHighEndFilePath: newLcdDisplayHighEndFilePath
+  } = newConfig;
+  const isHighEnd = newDoorHeadType === '2';
+
+  let changed: boolean;
+  if (isHighEnd) {
+    changed = objectChanged(newConfig, oldConfig, ['lcdDisplayType', 'lcdDisplayHighEndFilePath'])
+  } else {
+    changed = objectChanged(newConfig, oldConfig, ['lcdDisplayType', 'lcdDisplayStandardFilePath'])
   }
 
-  // 处理屏幕
-  if (lcdDisplayType === '99') {
-    const texture = await TextureLoaderPromise(
-        doorHeadType === '1' ? lcdDisplayStandardFilePath : lcdDisplayHighEndFilePath
-    );
+  if (changed) {
+    const {lcdStandardDisplayType, lcdHighEndDisplayType} = mockMicroConfigEnum;
     const lcdFront = frontDoorMesh.getObjectByName(isHighEnd ? 'menban_daping' : 'menban_biaoping');
-    lcdFront && setMeshMaterial(lcdFront, isHighEnd ? 'menban_daping_ping' : 'menban_biaoping_ping', texture);
+    if (newLcdDisplayType === '99') {
+      const texture = await TextureLoaderPromise(newDoorHeadType === '1' ? newLcdDisplayStandardFilePath : newLcdDisplayHighEndFilePath);
+      lcdFront && setMeshMaterial(lcdFront, isHighEnd ? 'menban_daping_ping' : 'menban_biaoping_ping', texture);
+    } else {
+      if (oldConfig) {
+        let defaultItem = isHighEnd ? lcdHighEndDisplayType[0] : lcdStandardDisplayType[0];
+        const texture = await TextureLoaderPromise('/static/micro/map/' + defaultItem.image);
+        lcdFront && setMeshMaterial(lcdFront, isHighEnd ? 'menban_daping_ping' : 'menban_biaoping_ping', texture);
+      }
+    }
   }
+}
 
-  // 处理玻璃门Logo
-  if (glassDoorLogoType === '99') {
+/**
+ * 处理玻璃门Logo变更
+ * @param newConfig 新配置
+ * @param oldConfig 旧配置（如果是初始化，该字段可能不传）
+ */
+const handleGlassLogoChange = async (newConfig, oldConfig, frontDoorMesh, backDoorMesh) => {
+  const {glassDoorLogoType, glassDoorLogoFilepath, glassDoorType} = newConfig;
+
+  const changed = objectChanged(newConfig, oldConfig, ['glassDoorLogoType', 'glassDoorLogoFilepath', 'glassDoorType'])
+  if (changed) {
+    const {glassDoorLogoType: doorLogoType} = mockMicroConfigEnum;
     const isRotate = glassDoorType === '2';
-    const texture = await TextureLoaderPromise(glassDoorLogoFilepath);
-    const glassLogoFrontLeft = frontDoorMesh.getObjectByName(isRotate ? 'men_pensha_007' : 'men_pensha_01');
-    const glassLogoFrontRight = frontDoorMesh.getObjectByName(isRotate ? 'men_pensha_008' : 'men_pensha_02');
 
-    const glassLogoBackLeft = backDoorMesh.getObjectByName(isRotate ? 'men_pensha_007' : 'men_pensha_01');
-    const glassLogoBackRight = backDoorMesh.getObjectByName(isRotate ? 'men_pensha_008' : 'men_pensha_02');
+    const setGlassDoorLogoTexture = (texture) => {
+      const glassLogoFrontLeft = frontDoorMesh.getObjectByName(isRotate ? 'men_pensha_007' : 'men_pensha_01');
+      const glassLogoFrontRight = frontDoorMesh.getObjectByName(isRotate ? 'men_pensha_008' : 'men_pensha_02');
 
-    glassLogoFrontLeft && setMeshMaterial(glassLogoFrontLeft, 'men_pensha', texture);
-    glassLogoFrontRight && setMeshMaterial(glassLogoFrontRight, 'men_pensha', texture);
-    glassLogoBackLeft && setMeshMaterial(glassLogoBackLeft, 'men_pensha', texture);
-    glassLogoBackRight && setMeshMaterial(glassLogoBackRight, 'men_pensha', texture);
+      const glassLogoBackLeft = backDoorMesh.getObjectByName(isRotate ? 'men_pensha_007' : 'men_pensha_01');
+      const glassLogoBackRight = backDoorMesh.getObjectByName(isRotate ? 'men_pensha_008' : 'men_pensha_02');
+
+      glassLogoFrontLeft && setMeshMaterial(glassLogoFrontLeft, 'men_pensha', texture);
+      glassLogoFrontRight && setMeshMaterial(glassLogoFrontRight, 'men_pensha', texture);
+      glassLogoBackLeft && setMeshMaterial(glassLogoBackLeft, 'men_pensha', texture);
+      glassLogoBackRight && setMeshMaterial(glassLogoBackRight, 'men_pensha', texture);
+    }
+
+    if (glassDoorLogoType == '99') {
+      const texture = await TextureLoaderPromise(glassDoorLogoFilepath);
+      setGlassDoorLogoTexture(texture);
+    } else {
+      if (oldConfig) {
+        const defaultItem = doorLogoType[0];
+        const texture = await TextureLoaderPromise('/static/micro/map/' + defaultItem.image);
+        setGlassDoorLogoTexture(texture);
+      }
+    }
   }
-};
+}
 
 /**
  * 修改模型材质贴图
@@ -353,8 +431,8 @@ const createTypeMesh = (cabinetType: number | string, assetId: number | string) 
  */
 const createAlarmMesh = (assetId: number | string, alarmCount: number, alarmLevel: number) => {
   const alarmMesh = createCabinetAlarmMesh(
-      alarmCount > 999 ? '999+' : alarmCount,
-      alarmLevelList[alarmLevel - 1].alarmLevelColor
+    alarmCount > 999 ? '999+' : alarmCount,
+    alarmLevelList[alarmLevel - 1].alarmLevelColor
   );
   alarmMesh.position.set(0, microConfig.cabinetHeight + 40, -microConfig.cabinetDepth / 2);
   alarmMesh.rotation.y = Math.PI;
@@ -460,10 +538,10 @@ const initLight = () => {
   const directionalLight_nz = new DirectionalLight(0xffffff, 8);
   directionalLight_nz.position.set(0, 0, -1);
 
-  const directionalLight_px = new DirectionalLight(0xffffff, 6);
+  const directionalLight_px = new DirectionalLight(0xffffff, 3);
   directionalLight_px.position.set(1, 0, 0);
 
-  const directionalLight_nx = new DirectionalLight(0xffffff, 6);
+  const directionalLight_nx = new DirectionalLight(0xffffff, 3);
   directionalLight_nx.position.set(-1, 0, 0);
 
   scene.add(directionalLight_pz, directionalLight_nz, directionalLight_px, directionalLight_nx);
@@ -521,32 +599,32 @@ const initModels = async () => {
   };
 
   await Promise.all(
-      mtlFileNames.map(async (fileName: string, index: number) => {
-        const objLoader = new OBJLoader();
-        // 加载MTL文件
-        const materials: any = await MTLLoaderPromise(directoryPath + fileName + '.mtl', {
-          onProcess: (xhr: object) => onProcess('model', index, xhr, 'mtl'),
-        });
-        materials.preload(); // 预加载材质
-        objLoader.setMaterials(materials);
+    mtlFileNames.map(async (fileName: string, index: number) => {
+      const objLoader = new OBJLoader();
+      // 加载MTL文件
+      const materials: any = await MTLLoaderPromise(directoryPath + fileName + '.mtl', {
+        onProcess: (xhr: object) => onProcess('model', index, xhr, 'mtl'),
+      });
+      materials.preload(); // 预加载材质
+      objLoader.setMaterials(materials);
 
-        // 加载OBJ文件
-        const object = await TextureLoaderCommonPromise(objLoader, directoryPath + fileName + '.obj', {
-          onProcess: xhr => onProcess('model', index, xhr, 'obj'),
-        });
-        models[fileName] = object;
-        return object;
-      })
+      // 加载OBJ文件
+      const object = await TextureLoaderCommonPromise(objLoader, directoryPath + fileName + '.obj', {
+        onProcess: xhr => onProcess('model', index, xhr, 'obj'),
+      });
+      models[fileName] = object;
+      return object;
+    })
   );
 
   await Promise.all(
-      imagesMap.map(async (item, index) => {
-        // 加载图片文件
-        const image = await TextureLoaderPromise(item.icon);
-        onProcess('image', index, {total: 100, loaded: 100}, 'value');
-        imagesTexture[item.code] = image;
-        return image;
-      })
+    imagesMap.map(async (item, index) => {
+      // 加载图片文件
+      const image = await TextureLoaderPromise(item.icon);
+      onProcess('image', index, {total: 100, loaded: 100}, 'value');
+      imagesTexture[item.code] = image;
+      return image;
+    })
   );
 
   // 消除机柜左侧白边
@@ -747,10 +825,10 @@ const getSecurityDevicePosition = (location: string) => {
   const {totalLength, cabinetZ, cabinetWidth, cabinetHeight, doorWidth} = microConfig;
 
   const deviceX = xLeft.includes(location)
-      ? -(totalLength - doorWidth) / 2
-      : xRight.includes(location)
-          ? (totalLength - doorWidth) / 2
-          : 0;
+    ? -(totalLength - doorWidth) / 2
+    : xRight.includes(location)
+      ? (totalLength - doorWidth) / 2
+      : 0;
   let deviceZ;
   if (yTop.includes(location)) {
     deviceZ = -(cabinetZ + cabinetWidth / 2);
@@ -772,10 +850,13 @@ const getSecurityDevicePosition = (location: string) => {
 /**
  * 修改切换视图后需要透明显示模型的材质
  * @param type 视图类型
+ * @param forceUpdate 强制更新，不判断之前的状态
  */
-const changeTransparentMesh = (type: string) => {
+const changeTransparentMesh = (type: string, forceUpdate: boolean = false) => {
   const transparent = isTransparentView(type);
-  if (isTransparent.value === transparent) return; // 继续是透明视图，就不变了
+  if (!forceUpdate) {
+    if (isTransparent.value === transparent) return; // 继续是透明视图，就不变了
+  }
   transparentMesh.forEach(mesh => {
     mesh.traverse(child => {
       if (child.isMesh && child.material) {
@@ -830,68 +911,56 @@ const getMicroModuleData = async () => {
 };
 
 /**
- * 处理机柜信息轮询差异
- * @param res
+ * 处理新旧微模块信息差异
+ * @param newConfig
+ * @param oldConfig
  */
-const handleCabinetConfigDiff = (res: object) => {
-  res.data = cloneDeep(mockCabinetData);
-  const data = res.data;
-  // data.cabinetList.length = 10;
-  data.cabinetList[0].alarmLevel = null;
-  data.cabinetList[0].alarmCount = null;
-
-  data.cabinetList[1].cabinetShortName = '微模块更新成功';
-  data.cabinetList[1].alarmLevel = '3';
-  data.cabinetList[1].alarmCount = '130';
-  data.cabinetList[1].cabinetType = '6';
-
-  data.cabinetList[3].alarmLevel = '4';
-  data.cabinetList[3].alarmCount = '5';
-
+const handleCabinetConfigDiff = (newConfig, oldConfig) => {
   const compareKeys: string[] = ['assetId', 'cabinetType', 'cabinetWidth', 'cabinetShortName', 'alarmLevel', 'alarmCount'];
 
-  const oldConfig = microConfigData.cabinetList.map(item =>
-      compareKeys.reduce((obj, key) => {
-        obj[key] = item[key];
-        return obj;
-      }, {})
+  const oldCabinetList = oldConfig.cabinetList = oldConfig.cabinetList.map(item =>
+    compareKeys.reduce((obj, key) => {
+      obj[key] = item[key];
+      return obj;
+    }, {})
   );
 
-  const newConfig = data.cabinetList.map(item =>
-      compareKeys.reduce((obj, key) => {
-        obj[key] = item[key];
-        return obj;
-      }, {})
+  const newCabinetList = newConfig.cabinetList = newConfig.cabinetList.map(item =>
+    compareKeys.reduce((obj, key) => {
+      obj[key] = item[key];
+      return obj;
+    }, {})
   );
 
   const equal = isEqual(oldConfig, newConfig);
   if (equal) {
     // 相等，不做任何改变
+    console.log("信息无变更");
     return;
   } else {
-    // 如果是机柜数量、机柜顺序、机柜尺寸改变，暂时全局刷新模型
-    let lengthChange = oldConfig.length != newConfig.length,
-        orderChange = false,
-        sizeChange = false;
+    console.log("信息改变");
+    let lengthChange = oldCabinetList.length != newCabinetList.length, orderChange = false, sizeChange = false;
     if (!lengthChange) {
       // 如果长度无变化，再判断机柜顺序、机柜尺寸是否发生变化
-      for (let i = 0; i < oldConfig.length; i++) {
+      for (let i = 0; i < oldCabinetList.length; i++) {
         // 判断机柜顺序是否发生变化
-        oldConfig[i].assetId !== newConfig[i].assetId && (orderChange = true);
+        oldCabinetList[i].assetId !== newCabinetList[i].assetId && (orderChange = true);
         // 判断机柜尺寸是否发生变化
-        oldConfig[i].cabinetWidth !== newConfig[i].cabinetWidth && (sizeChange = true);
+        oldCabinetList[i].cabinetWidth !== newCabinetList[i].cabinetWidth && (sizeChange = true);
       }
     }
-    // 计算变更列表
-    const changedCabinetList = getChangedCabinetList(microConfigData.cabinetList, data.cabinetList);
-    microConfigData = data;
     if (lengthChange || orderChange || sizeChange) {
-      createMicroModule(microConfigData);
+      // 如果是机柜数量、机柜顺序、机柜尺寸改变，暂时全局刷新模型
+      createMicroModule(newConfig);
       notification.success({
         message: '微模块更新成功',
         description: '微模块的配置发生了变化，已整体更新',
       });
     } else {
+      handleDoorHeadTexture(newConfig, oldConfig);
+      // 计算变更列表
+      const changedCabinetList = getChangedCabinetList(oldCabinetList, newCabinetList);
+      microConfigData = newConfig;
       // 如果是机柜名称、机柜告警等级、告警数量变化，局部刷新
       for (let i = 0; i < changedCabinetList.length; i++) {
         const [oldCabinet, newCabinet] = changedCabinetList[i];
@@ -981,14 +1050,43 @@ const getChangedCabinetList = (oldList: [], newList: []) => {
 const loop = useRequest(getMicroModuleData, {
   pollingInterval: loopInterval,
   manual: true,
-  onSuccess: handleCabinetConfigDiff,
+  onSuccess: (res) => {
+    res.data = cloneDeep(mockCabinetData);
+    const data = res.data;
+
+    // data.cabinetList.length = 10;
+
+    // data.cabinetList[0].alarmLevel = null;
+    // data.cabinetList[0].alarmCount = null;
+
+    // data.cabinetList[1].cabinetShortName = '微模块更新成功';
+    // data.cabinetList[1].alarmLevel = '3';
+    // data.cabinetList[1].alarmCount = '130';
+    // data.cabinetList[1].cabinetType = '6';
+    //
+    // data.cabinetList[3].alarmLevel = '4';
+    // data.cabinetList[3].alarmCount = '5';
+
+    data.doorHeadType = '1';
+
+    data.lintelLogoType = '3';
+
+    data.lcdDisplayType = '1';
+
+    data.glassDoorLogoType = '1';
+
+    handleCabinetConfigDiff(data, microConfigData);
+  },
 });
 
 /**
  * 微模块配置保存成功
  */
 const onSaveConfigSuccess = data => {
-  createMicroModule(data);
+  // scene.remove(microGroup);
+  // setTimeout(() => {
+  //   createMicroModule(data);
+  // }, 1000)
 };
 
 watch(drawerVisible, () => {

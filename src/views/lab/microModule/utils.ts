@@ -8,6 +8,8 @@ import {
   CircleGeometry
 } from "three";
 
+import {isEqual} from 'lodash';
+
 const overflowScale = 1.43;
 
 /**
@@ -151,4 +153,28 @@ const createCabinetAlarmMesh = (count: string, color: string, radius: number = 1
   return new Mesh(geometry, material);
 }
 
-export {createCabinetNameCanvasTexture, createTextMesh, createCabinetAlarmMesh}
+/**
+ * 检测对象是否发生变更
+ * @param newObject 新对象
+ * @param oldObject 旧对象 可能不存在
+ * @param keys 需要比较的字段
+ */
+const objectChanged = (newObject: object, oldObject: object, keys: string[] = []) => {
+  if (!oldObject && newObject) {
+    return true;
+  }
+  let changed = false;
+  if (!keys?.length) {
+    changed = isEqual(newObject, oldObject);
+  } else {
+    for (const key of keys) {
+      if (newObject[key] !== oldObject[key]) {
+        changed = true;
+        break;
+      }
+    }
+  }
+  return changed;
+}
+
+export {createCabinetNameCanvasTexture, createTextMesh, createCabinetAlarmMesh, objectChanged}
