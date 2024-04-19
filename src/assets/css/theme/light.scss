@@ -21,6 +21,7 @@
   --youyu-body-background-4: #f7f8fa;
   --youyu-body-background-5: #eaf2ff;
   --youyu-body-background5: rgba(113, 113, 113, 0.1);
+  --youyu-body-background6: whitesmoke;
 
   --youyu-body-text: #000;
   --youyu-body-text1: #909090;
@@ -77,7 +78,7 @@
 }
 
 @mixin darkGlassFilter {
-  background-color: hsla(0, 0%, 100%, 0.7) !important;
+  background-color: hsla(0, 0%, 100%, 0.4) !important;
   backdrop-filter: blur(10px) !important;
 }
 

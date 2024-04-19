@@ -139,7 +139,6 @@ const thumbnails = computed(() => {
         font-size: 18px;
         font-weight: 700;
         cursor: pointer;
-        font-family: "Open Sans", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", Arial, Verdana, Tahoma, sans-serif;
 
         a {
           width: 100%;

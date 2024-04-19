@@ -1,32 +1,43 @@
 <template>
   <div class="note-item">
-    <div class="item-top">
-      <div class="firstPic">
-        <RouterLink :to="{name: 'NoteDetail', params: {noteId: data.id}}">
-          <img :src="data.cover" :alt="data.name">
-        </RouterLink>
-      </div>
-      <div class="caption-top">{{ data.name }}</div>
-      <div class="caption">{{ data.name }}</div>
+    <div class="note-cover">
+      <RouterLink :to="{name: 'NoteDetail', params: {noteId: data.id}}">
+        <img :src="data.cover" :alt="data.name">
+        <div class="data-items">
+          <div class="data-item" :title="'阅读数:'+data.viewCount">
+            <i-preview-open theme="outline" size="18" fill="currentColor" :strokeWidth="3"/>
+            {{ data.viewCount }}
+          </div>
+          <div class="data-item" :title="'章节数:'+data.chapterCount">
+            <i-list-view theme="outline" size="15" fill="currentColor" :strokeWidth="3"/>
+            {{ data.chapterCount }}
+          </div>
+        </div>
+        <div class="operation-btns" v-if="userInfo.id === data.user.id">
+          <a-button type="primary" size="small" @click="onEdit">编辑</a-button>
+          <a-button type="primary" size="small" danger @click="onDelete">删除</a-button>
+        </div>
+        <div class="create-time" :title="'发布于:'+data.createTime">
+          <i-calendar theme="outline" size="14" fill="currentColor" :strokeWidth="3"/>
+          {{ dayjs(data.createTime).format('YYYY-MM-DD') }}
+        </div>
+      </RouterLink>
     </div>
-    <div class="item-bottom">
-      <div class="item-info">
-        <RouterLink :to="{name:'userNote', params: {userId: data.user.id, page: 1}}" class="item-data">
-          <img :src="data.user.avatar"/>
-          <div class="user-nickname text-limit">{{ data.user.nickname }}</div>
+    <div class="note-title text-limit" :title="data.name">
+      <RouterLink :to="{name: 'NoteDetail', params: {noteId: data.id}}">
+        {{ data.name }}
+      </RouterLink>
+    </div>
+    <div class="note-caption">
+      <div class="note-user-info">
+        <RouterLink :to="{name:'userNote', params: {userId: data.user.id, page: 1}}">
+          <img class="user-avatar" :src="data.user.avatar" alt="头像"/>
+          <div class="user-nickname">{{ data.user.nickname }}</div>
         </RouterLink>
-        <div class="item-data">
-          <i-preview-open theme="outline" size="18" fill="currentColor" :strokeWidth="3"/>
-          {{ data.viewCount }}
-        </div>
-        <div class="item-data">
-          <i-list-view theme="outline" size="15" fill="currentColor" :strokeWidth="3"/>
-          {{ data.chapterCount }}
-        </div>
       </div>
-      <div class="pubDate">
-        <i-calendar theme="outline" size="15" fill="currentColor" :strokeWidth="3"/>
-        {{ dayjs(data.createTime).format('YYYY-MM-DD') }}
+      <div class="note-introduce">
+        <div class="introduce-title">简介:</div>
+        <div class="introduce-content">{{ data.introduce }}</div>
       </div>
     </div>
   </div>
@@ -35,6 +46,16 @@
 <script lang="ts" setup>
 import {RouterLink} from "vue-router";
 import dayjs from "dayjs";
+import {computed} from "vue";
+import {useStore} from "vuex";
+import openModal from "@/libs/tools/openModal";
+import NoteEdit from "@/views/note/list/component/NoteEdit.vue";
+import {message, Modal} from "ant-design-vue";
+
+const {getters, dispatch} = useStore();
+const emit = defineEmits(['onEditSuccess']);
+
+const userInfo = computed(() => getters['userInfo']);
 
 const props = defineProps({
   data: {
@@ -42,133 +63,207 @@ const props = defineProps({
     required: true
   }
 })
+
+const onEdit = async (e: Event) => {
+  e.preventDefault();
+
+  const res = await openModal({
+    component: NoteEdit,
+    componentProps: {
+      noteId: props.data.id
+    },
+    title: '编辑笔记',
+    maskClosable: false,
+    width: '620px'
+  }).catch(console.log);
+  emit('onEditSuccess');
+}
+
+const onDelete = (e: Event) => {
+  e.preventDefault();
+
+  Modal.confirm({
+    title: '删除笔记',
+    content: '确认删除该笔记？',
+    okText: '确认',
+    cancelText: '取消',
+    onOk: () => {
+      return new Promise((resolve, reject) => {
+        dispatch('deleteNote', {noteId: props.data.id}).then(res => {
+          message.success('删除成功');
+          emit('onEditSuccess');
+          resolve(true);
+        }).catch((error) => {
+          reject(error);
+        })
+      })
+    }
+  });
+}
 </script>
-
-<style scoped>
-.caption-top {
-  position: absolute;
-  top: -60px;
-  height: 50px;
-  width: 100%;
-  background-color: #1890ff6b;
-  transition: .2s;
-}
-
-.firstPic img {
-  position: relative;
-  top: 0;
-  height: 160px;
-  width: 100%;
-  cursor: pointer;
-  transition: .2s;
-  object-fit: cover;
-}
-
-.note-item:hover .caption-top {
-  top: 0;
-}
-
-.note-item:hover img {
-  position: relative;
-}
-</style>
 
 <style lang="scss" scoped>
 .note-item {
-  box-sizing: content-box;
   display: flex;
   flex-direction: column;
-
-  &:hover {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.14);
-  }
-
-  padding: 16px 16px 4px;
   width: 270px;
+  height: 360px;
+  border-radius: 4px;
+  overflow: hidden;
   background-color: var(--youyu-background1);
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: var(--youyu-shadow2);
+  cursor: pointer;
 
-  .item-top {
+  .note-cover {
+    height: 170px;
     position: relative;
-    width: 100%;
-    border-bottom: 1px solid var(--youyu-border-color);
-    overflow: hidden;
 
-    .caption-top {
-      padding: 3px 6px;
-      font-size: 13px;
-      color: #fff;
+    img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
     }
 
-    .firstPic {
-      overflow: hidden;
-      height: 160px;
-    }
+    .data-items {
+      position: absolute;
+      right: 0;
+      top: 12px;
+      color: #1890ff;
 
-    .caption {
-      overflow: hidden;
-      color: var(--youyu-text2);
-      font-size: 18px;
-      padding: 4px 0;
-    }
-  }
-
-  .item-bottom {
-    flex: 1;
-    font-size: 13px;
-    color: #999;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 4px;
-
-    .item-info {
-      display: flex;
-
-      .item-data {
+      .data-item {
         display: flex;
         align-items: center;
-
-        img {
-          height: 22px;
-          width: 22px;
-          border-radius: 50%;
-        }
-
-        .user-nickname {
-          font-size: 12px;
-          margin-left: 4px;
-          color: #1890ff;
-          max-width: 120px;
-          overflow: hidden;
-        }
+        background-color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 6px;
+        padding: 0 12px 0 8px;
+        border-radius: 15px 0 0 15px;
+        width: fit-content;
+        float: right;
+        clear: both;
 
         .i-icon {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 18px;
+          height: 18px;
           margin-right: 4px;
-        }
-
-        &:nth-child(n+2) {
-          margin-left: 12px;
         }
       }
     }
 
-    .pubDate {
+    .operation-btns {
+      position: absolute;
+      left: 6px;
+      bottom: 6px;
+      opacity: 0;
+      transition: .3s;
+
+      button {
+        margin-right: 4px;
+        height: auto;
+        font-size: 13px;
+      }
+    }
+
+    .create-time {
       display: flex;
       align-items: center;
+      position: absolute;
+      right: 6px;
+      bottom: 6px;
+      border-radius: 2px;
+      padding: 0 4px;
+      color: #1890ff;
+      background-color: rgba(255, 255, 255, 0.6);
 
       .i-icon {
-        margin-right: 2px;
+        margin-right: 3px;
       }
     }
   }
-}
-</style>
 
-<style lang="scss" scoped>
-@media (max-width: 768px) {
-  .note-item {
-    width: 300px;
+  .note-title {
+    flex-shrink: 0;
+    padding: 6px 0 6px 6px;
+    font-size: 16px;
+    border-left: 4px solid #40baee;
+    transition: .1s;
+
+    a {
+      color: var(--youyu-text) !important;
+    }
+  }
+
+  .note-caption {
+    flex: 1;
+    padding: 0 8px;
+    background-color: var(--youyu-body-background6);
+    border-bottom: 4px solid #40baee;;
+
+    .note-user-info {
+      padding: 6px 0;
+      border-bottom: var(--youyu-navigation-border);
+
+      a {
+        display: flex;
+        align-items: center;
+        width: fit-content;
+        color: var(--youyu-text) !important;
+      }
+
+      .user-avatar {
+        height: 24px;
+        width: 24px;
+        border-radius: 50%;
+        margin-right: 6px;
+      }
+
+      .user-nickname {
+        line-height: 0;
+      }
+    }
+
+    .note-introduce {
+      padding: 6px 0;
+      color: var(--youyu-text3);
+      height: 105px;
+      overflow: hidden;
+      line-height: 24px;
+
+      .introduce-title {
+        background-color: #1890ff;
+        color: white;
+        float: left;
+        padding: 0 6px;
+        border-radius: 2px;
+        margin-right: 6px;
+        line-height: 22px;
+      }
+
+      .introduce-content {
+        position: relative;
+        top: -1px;
+      }
+    }
+  }
+
+  &:hover {
+    .create-time, .data-item {
+      background-color: rgba(255, 255, 255) !important;
+    }
+
+    .note-title {
+      border-color: #1890ff;
+    }
+
+    .note-caption {
+      border-color: #1890ff;
+    }
+
+    .operation-btns {
+      opacity: 1;
+    }
   }
 }
 </style>

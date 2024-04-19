@@ -85,7 +85,7 @@
     computed: {
       ...mapGetters(['userInfo']),
       isOwn() {
-        return this.note.value?.userId === this.userInfo?.id
+        return this.note?.userId === this.userInfo?.id
       }
     },
     methods: {
@@ -94,7 +94,7 @@
         this.getListChapter()
       },
       getListChapter() {
-        this.listNoteChapter({noteId: this.note.value.id}).then(res => {
+        this.listNoteChapter({noteId: this.note.id}).then(res => {
           this.treeData = this.transferData(res.data);
           this.rawDataList = this.flatTreeData(this.treeData);
           if (this.treeData.length) { // 默认选中第一章

@@ -4,6 +4,7 @@ import {
   LIST_NOTE,
   GET_NOTE,
   UPDATE_NOTE,
+  DELETE_NOTE,
   CREATE_NOTE_CHAPTER,
   LIST_NOTE_CHAPTER,
   GET_NOTE_CHAPTER,
@@ -24,6 +25,9 @@ export default {
     },
     updateNote(context: any, params: object) {
       return http.post(UPDATE_NOTE, params);
+    },
+    deleteNote(context: any, params: object) {
+      return http.post(DELETE_NOTE, params);
     },
     createNoteChapter(context: any, params: object) {
       return http.post(CREATE_NOTE_CHAPTER, params);

@@ -4,8 +4,15 @@
     <div class="note-list-items">
       <YTable listUrl="listNote" ref="YTableRef">
         <template #default="{dataList}">
-          <div v-for="(item, index) in dataList" class="note-body" :key="item.id" ref="postItem">
-            <NoteItem :data="item" @handleEdit="handleEdit"/>
+          <div class="list-wrapper">
+            <div v-for="(item) in dataList.slice(0,5)" class="note-body" :key="item.id" ref="postItem">
+              <NoteItem :data="item" @onEditSuccess="onEditSuccess"/>
+            </div>
+          </div>
+          <div class="list-wrapper">
+            <div v-for="(item) in dataList.slice(5)" class="note-body" :key="item.id" ref="postItem">
+              <NoteItem :data="item" @onEditSuccess="onEditSuccess"/>
+            </div>
           </div>
         </template>
       </YTable>
@@ -45,16 +52,7 @@ async function handleCreate() {
   YTableRef.value.refreshData();
 }
 
-async function handleEdit(data: note) {
-  const res = await openModal({
-    component: NoteEdit,
-    componentProps: {
-      noteId: data.id
-    },
-    title: '创建笔记',
-    maskClosable: false,
-    width: '620px'
-  }).catch(console.log);
+const onEditSuccess = (data: note) => {
   YTableRef.value.refreshData();
 }
 </script>
@@ -78,7 +76,17 @@ async function handleEdit(data: note) {
       justify-items: flex-start;
 
       .note-item {
-        margin: 6px;
+        margin: 8px;
+      }
+    }
+
+    .list-wrapper {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+
+      &:last-child {
+        margin-bottom: 20px;
       }
     }
   }

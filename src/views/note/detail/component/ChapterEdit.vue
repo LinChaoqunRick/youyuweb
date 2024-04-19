@@ -36,7 +36,7 @@
   // updateNoteChapter
 
   function initData() {
-    dispatch('getNoteChapter', {id: props.id}).then(res => {
+    dispatch('getNoteChapter', {chapterId: props.id}).then(res => {
       formValidate.value = res.data;
     })
   }

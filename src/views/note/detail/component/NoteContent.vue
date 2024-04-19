@@ -76,7 +76,7 @@
 
   function initData() {
     loading.value = true;
-    dispatch("getNoteChapter", {id: props.id}).then(res => {
+    dispatch("getNoteChapter", {chapterId: props.id}).then(res => {
       chapter.value = res.data;
       chapterCopy.value = cloneDeep(chapter.value);
       if (!chapterCopy.value.content) {
