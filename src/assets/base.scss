@@ -2,7 +2,7 @@ html, body {
   color: var(--youyu-body-text) !important;
   background-color: transparent !important;
   line-height: 1.6;
-  font-family: 'pingfang SC','helvetica neue',arial,'hiragino sans gb','microsoft yahei ui','microsoft yahei',simsun,sans-serif;
+  font-family: 'pingfang SC', 'helvetica neue', arial, 'hiragino sans gb', 'microsoft yahei ui', 'microsoft yahei', simsun, sans-serif;
   font-size: 15px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -166,4 +166,8 @@ a {
 
 .ant-popover-inner {
   //padding: 0 !important;
+}
+
+.ant-card {
+  border-radius: 4px !important;
 }

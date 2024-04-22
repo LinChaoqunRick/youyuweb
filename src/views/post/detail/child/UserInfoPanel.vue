@@ -14,32 +14,29 @@
           </div>
           <div class="user-nickname">
             <RouterLink :to="`/user/${user.id}`">
-              <div class="nickname">{{user.nickname}}</div>
+              <div class="nickname">{{ user.nickname }}</div>
             </RouterLink>
-            <div class="uid">uid: {{user.id}}</div>
+            <div class="uid">uid: {{ user.id }}</div>
           </div>
         </div>
         <div class="user-statistics">
           <div class="statis-data" v-for="item in dataItems" @click="handleClickStat(item)">
-            <div class="data-value">{{user.extraInfo?.[item.value]}}</div>
-            <div class="data-label">{{item.label}}</div>
+            <div class="data-value">{{ user.extraInfo?.[item.value] }}</div>
+            <div class="data-label">{{ item.label }}</div>
           </div>
         </div>
         <div class="user-signature">
           <div class="sign-title">描述：</div>
-          <div>{{user.signature}}</div>
+          <div>{{ user.signature }}</div>
         </div>
-        <!--        <div class="user-contact">-->
-        <!--          <div class="contact-title">社交：</div>-->
-        <!--          <div class="contact-list">-->
-        <!--            <div class="contact-item">-->
-        <!--              <i-github theme="outline" size="20" fill="#909090"/>-->
-        <!--            </div>-->
-        <!--            <div class="contact-item">-->
-        <!--              <i-international theme="outline" size="20" fill="#333"/>-->
-        <!--            </div>-->
-        <!--          </div>-->
-        <!--        </div>-->
+        <div class="user-contact">
+          <div class="contact-title">社交：</div>
+          <div class="contact-list">
+            <div class="contact-item">
+              <i-github theme="outline" size="20" fill="#909090"/>
+            </div>
+          </div>
+        </div>
         <div class="user-operation">
           <a-button type="primary" class="home-button">
             <RouterLink :to="`/user/${user.id}`">
@@ -53,13 +50,18 @@
           </a-button>
           <a-button type="primary" danger v-login="handleFollow" v-if="!isOwn">
             <!--            <i-remind theme="outline" size="14" fill="currentColor"/>-->
-            {{user.follow?'取消关注':'关注'}}
+            {{ user.follow ? '取消关注' : '关注' }}
           </a-button>
         </div>
       </div>
     </slot>
     <div class="column-list mt-8">
       <a-card title="Ta的专栏" style="width: 100%">
+        <template #extra>
+          <RouterLink :to="`/user/${user.id}/column`">
+            更多
+          </RouterLink>
+        </template>
         <div class="column-list" v-if="columnList.length">
           <ColumnItemMini v-for="item in columnList" :data="item"/>
         </div>
@@ -94,324 +96,324 @@
 </template>
 
 <script lang="ts" setup>
-  import {computed, inject, ref, watch} from 'vue';
-  import {useStore} from 'vuex';
-  import {useRoute, useRouter, RouterLink} from 'vue-router';
-  import {message, Modal} from 'ant-design-vue';
-  import type {statType, userType} from "@/types/user";
-  import ColumnItemMini from '@/components/content/user/column/ColumnItemMini.vue';
+import {computed, inject, ref, watch} from 'vue';
+import {useStore} from 'vuex';
+import {useRoute, useRouter, RouterLink} from 'vue-router';
+import {message, Modal} from 'ant-design-vue';
+import type {statType, userType} from "@/types/user";
+import ColumnItemMini from '@/components/content/user/column/ColumnItemMini.vue';
 
-  const route = useRoute();
-  const router = useRouter();
+const route = useRoute();
+const router = useRouter();
 
-  const {getters, commit, dispatch} = useStore();
+const {getters, commit, dispatch} = useStore();
 
-  const props = defineProps({
-    id: {
-      type: [String, Number],
-      // required: true
+const props = defineProps({
+  id: {
+    type: [String, Number],
+    // required: true
+  }
+});
+
+const userInfo = computed(() => getters['userInfo']);
+const isLogin = computed(() => getters['isLogin']);
+const emit = defineEmits(['onLoaded'])
+
+const dataItems = [
+  {
+    value: 'postCount',
+    label: '原创',
+  },
+  {
+    value: 'viewCount',
+    label: '阅读'
+  },
+  {
+    value: 'likeCount',
+    label: '点赞'
+  },
+  {
+    value: 'fansCount',
+    label: '粉丝'
+  }
+]
+
+const isOwn = ref(true);
+const user = ref<userType | object>({});
+const columnList = ref([]);
+const hotPosts = ref([]);
+const newPosts = ref([]);
+
+function handleClickStat(item: statType) {
+  const {value} = item;
+  if (value === 'viewCount') {
+    Modal.info({
+      content: `Ta的文章已被阅读${user.value.extraInfo[item.value]}次`,
+    });
+  } else if (value === 'likeCount') {
+    Modal.info({
+      content: `Ta共收获了${user.value.extraInfo[item.value]}个点赞`,
+    });
+  } else if (value === 'postCount') {
+    router.push(`/user/${props.id}/post`)
+  }
+};
+
+function handleMessage() {
+  if (!isLogin.value) {
+    commit("changeLogin", true);
+    return;
+  }
+}
+
+function handleFollow() {
+  const isFollow = user.value.follow;
+  dispatch(isFollow ? "cancelUserFollow" : "setUserFollow", {
+    userId: userInfo.value.id,
+    userIdTo: user.value.id
+  }).then(res => {
+    if (isFollow) {
+      user.value.follow = false;
+      message.success("已取消关注");
+    } else {
+      user.value.follow = true;
+      message.success("已添加关注")
     }
-  });
+  })
+}
 
-  const userInfo = computed(() => getters['userInfo']);
-  const isLogin = computed(() => getters['isLogin']);
-  const emit = defineEmits(['onLoaded'])
-
-  const dataItems = [
-    {
-      value: 'postCount',
-      label: '原创',
-    },
-    {
-      value: 'viewCount',
-      label: '阅读'
-    },
-    {
-      value: 'likeCount',
-      label: '点赞'
-    },
-    {
-      value: 'fansCount',
-      label: '粉丝'
-    }
-  ]
-
-  const isOwn = ref(true);
-  const user = ref<userType | object>({});
-  const columnList = ref([]);
-  const hotPosts = ref([]);
-  const newPosts = ref([]);
-
-  function handleClickStat(item: statType) {
-    const {value} = item;
-    if (value === 'viewCount') {
-      Modal.info({
-        content: `Ta的文章已被阅读${user.value.extraInfo[item.value]}次`,
-      });
-    } else if (value === 'likeCount') {
-      Modal.info({
-        content: `Ta共收获了${user.value.extraInfo[item.value]}个点赞`,
-      });
-    } else if (value === 'postCount') {
-      router.push(`/user/${props.id}/post`)
-    }
-  };
-
-  function handleMessage() {
-    if (!isLogin.value) {
-      commit("changeLogin", true);
+watch(() => props.id, (val) => {
+  if (!props.id) return;
+  dispatch("getPostUserById", {userId: val}).then(res => {
+    if (!res.data) {
+      router.replace("/404")
       return;
     }
-  }
+    user.value = res.data;
+    isOwn.value = user.value.id === userInfo.value.id;
+    emit('onLoaded', user.value);
+  });
 
-  function handleFollow() {
-    const isFollow = user.value.follow;
-    dispatch(isFollow ? "cancelUserFollow" : "setUserFollow", {
-      userId: userInfo.value.id,
-      userIdTo: user.value.id
-    }).then(res => {
-      if (isFollow) {
-        user.value.follow = false;
-        message.success("已取消关注");
-      } else {
-        user.value.follow = true;
-        message.success("已添加关注")
-      }
-    })
-  }
-
-  watch(() => props.id, (val) => {
-    if (!props.id) return;
-    dispatch("getPostUserById", {userId: val}).then(res => {
-      if (!res.data) {
-        router.replace("/404")
-        return;
-      }
-      user.value = res.data;
-      isOwn.value = user.value.id === userInfo.value.id;
-      emit('onLoaded', user.value);
-    });
-
-    dispatch("getLimitPost", {userId: val, orderBy: 'view_count', orderType: 'desc'}).then(res => {
-      hotPosts.value = res.data;
-    })
-
-    dispatch("getLimitPost", {userId: val, orderBy: 'create_time', orderType: 'desc'}).then(res => {
-      newPosts.value = res.data;
-    })
-
-    dispatch('getColumnList', {userId: val}).then(res => {
-      columnList.value = res.data;
-    })
-  }, {immediate: true});
-
-  defineExpose({
-    user
+  dispatch("getLimitPost", {userId: val, orderBy: 'view_count', orderType: 'desc'}).then(res => {
+    hotPosts.value = res.data;
   })
+
+  dispatch("getLimitPost", {userId: val, orderBy: 'create_time', orderType: 'desc'}).then(res => {
+    newPosts.value = res.data;
+  })
+
+  dispatch('getColumnList', {userId: val, count: 5}).then(res => {
+    columnList.value = res.data;
+  })
+}, {immediate: true});
+
+defineExpose({
+  user
+})
 </script>
 
 <style lang="scss" scoped>
-  .user-info-panel {
-    width: 300px;
+.user-info-panel {
+  width: 300px;
 
-    .basic-info {
+  .basic-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 26px 8px;
+    border-radius: 4px;
+    background-color: var(--youyu-body-background2);
+
+    .user-avatar-nickname {
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      padding: 16px 8px;
-      border-radius: 8px;
-      background-color: var(--youyu-body-background2);
 
-      .user-avatar-nickname {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      .user-avatar {
+        width: 90px;
+        height: 90px;
+        position: relative;
+        cursor: pointer;
 
-        .user-avatar {
-          width: 90px;
-          height: 90px;
-          position: relative;
-          cursor: pointer;
-
-          img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50px;
-            border: 6px solid var(--youyu-border-color);
-            overflow: hidden;
-          }
-
-          .user-gender {
-            height: 22px;
-            width: 22px;
-            position: absolute;
-            top: 3px;
-            right: 3px;
-            border: 3px solid var(--youyu-border-color);
-            border-radius: 50%;
-            text-align: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: var(--youyu-body-background2);
-          }
-        }
-
-        .user-nickname {
-          width: 120px;
+        img {
+          width: 100%;
           height: 100%;
-          margin-left: 20px;
-
-          .nickname {
-            width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            color: var(--youyu-text) !important;
-          }
-
-          .uid {
-            font-size: 12px;
-            color: var(--youyu-body-text1);
-          }
+          border-radius: 50px;
+          border: 6px solid var(--youyu-border-color);
+          overflow: hidden;
         }
-      }
 
-      .user-statistics {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        padding: 10px 0;
-
-        .statis-data {
-          flex: 1;
-          position: relative;
+        .user-gender {
+          height: 22px;
+          width: 22px;
+          position: absolute;
+          top: 3px;
+          right: 3px;
+          border: 3px solid var(--youyu-border-color);
+          border-radius: 50%;
           text-align: center;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: var(--youyu-body-background2);
+        }
+      }
+
+      .user-nickname {
+        width: 120px;
+        height: 100%;
+        margin-left: 20px;
+
+        .nickname {
+          width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-size: 16px;
+          font-weight: bold;
           cursor: pointer;
+          color: var(--youyu-text) !important;
+        }
 
-          &:nth-child(n+2) {
-            &:before {
-              position: absolute;
-              content: '';
-              border-left: 1px solid #ebebeb;
-              height: 20px;
-              top: calc(60% - 10px);
-              left: 0;
-            }
-          }
-
-          .data-value {
-            font-size: 20px;
-            font-weight: bold;
-          }
-
-          .data-label {
-            font-size: 14px;
-          }
+        .uid {
+          font-size: 12px;
+          color: var(--youyu-body-text1);
         }
       }
+    }
 
-      .user-signature {
-        width: 100%;
-        padding: 0 16px 10px 16px;
-        display: flex;
+    .user-statistics {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      padding: 10px 0;
 
-        .sign-title {
-          flex-shrink: 0;
+      .statis-data {
+        flex: 1;
+        position: relative;
+        text-align: center;
+        cursor: pointer;
+
+        &:nth-child(n+2) {
+          &:before {
+            position: absolute;
+            content: '';
+            border-left: 1px solid #ebebeb;
+            height: 20px;
+            top: calc(60% - 10px);
+            left: 0;
+          }
+        }
+
+        .data-value {
+          font-size: 20px;
+          font-weight: bold;
+        }
+
+        .data-label {
+          font-size: 14px;
         }
       }
+    }
 
-      .user-contact {
+    .user-signature {
+      width: 100%;
+      padding: 0 16px 10px 16px;
+      display: flex;
+
+      .sign-title {
+        flex-shrink: 0;
+      }
+    }
+
+    .user-contact {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 0 16px 10px 16px;
+
+      .contact-list {
         display: flex;
         align-items: center;
-        width: 100%;
-        padding: 0 16px;
 
-        .contact-list {
+        .contact-item {
+          cursor: pointer;
           display: flex;
           align-items: center;
-
-          .contact-item {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            height: 24px;
-          }
-        }
-      }
-
-      .user-operation {
-        width: 100%;
-        padding: 0 10px;
-        display: flex;
-        justify-content: space-around;
-
-        button {
-          flex: 1;
-          margin: 0 3px;
+          height: 24px;
         }
       }
     }
 
-    .column-list {
-      ::v-deep(.ant-card-body) {
-        padding: 16px !important;
-      }
+    .user-operation {
+      width: 100%;
+      padding: 0 10px;
+      display: flex;
+      justify-content: space-around;
 
-      ::v-deep(.column-item-mini) {
-        &:nth-child(n+2) {
-          margin-top: 8px;
-        }
-      }
-    }
-
-    .hot-posts {
-      margin-top: 8px;
-    }
-
-    .new-posts {
-      margin-top: 8px;
-    }
-
-
-    .post-list {
-      ul {
-        list-style: none;
-        padding-left: 0 !important;
-        margin: 0;
-
-        li {
-          margin-bottom: 6px;
-          cursor: pointer;
-          transition: .3s;
-
-          a {
-            font-weight: normal !important;
-            color: var(--youyu-body-text) !important;
-
-            &:hover {
-              color: #1980ff !important;
-            }
-          }
-        }
-      }
-    }
-
-    ::v-deep(.ant-card) {
-      .ant-card-head {
-        /*position: sticky;*/
-        /*top: 60px;*/
-        /*background: var(--antd-background);*/
-        /*box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);*/
-      }
-
-      .ant-card-body {
-        padding: 16px 24px;
+      button {
+        flex: 1;
+        margin: 0 3px;
       }
     }
   }
+
+  .column-list {
+    ::v-deep(.ant-card-body) {
+      padding: 16px !important;
+    }
+
+    ::v-deep(.column-item-mini) {
+      &:nth-child(n+2) {
+        margin-top: 8px;
+      }
+    }
+  }
+
+  .hot-posts {
+    margin-top: 8px;
+  }
+
+  .new-posts {
+    margin-top: 8px;
+  }
+
+
+  .post-list {
+    ul {
+      list-style: none;
+      padding-left: 0 !important;
+      margin: 0;
+
+      li {
+        margin-bottom: 6px;
+        cursor: pointer;
+        transition: .3s;
+
+        a {
+          font-weight: normal !important;
+          color: var(--youyu-body-text) !important;
+
+          &:hover {
+            color: #1980ff !important;
+          }
+        }
+      }
+    }
+  }
+
+  ::v-deep(.ant-card) {
+    .ant-card-head {
+      /*position: sticky;*/
+      /*top: 60px;*/
+      /*background: var(--antd-background);*/
+      /*box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);*/
+    }
+
+    .ant-card-body {
+      padding: 16px 24px;
+    }
+  }
+}
 </style>

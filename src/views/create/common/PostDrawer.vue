@@ -33,7 +33,7 @@
             v-if="state.inputVisible"
             ref="inputRef"
             v-model:value="state.inputValue"
-            :maxlength="10"
+            :maxlength="15"
             type="text"
             :style="{ width: '78px' }"
             @blur="handleInputConfirm"

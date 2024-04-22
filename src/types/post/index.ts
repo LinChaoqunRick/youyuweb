@@ -10,4 +10,5 @@ export interface postData {
   originalLink: string,
   userId: number | null,
   columnIds: string | string[] | number[] | null,
+  user: object
 }

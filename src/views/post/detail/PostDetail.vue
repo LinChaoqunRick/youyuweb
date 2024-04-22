@@ -2,7 +2,7 @@
   <div class="post-detail">
     <div class="post-aside">
       <div v-aside3 class="post-aside-body">
-        <UserInfoPanel :id="post.userId" />
+        <UserInfoPanel :id="post.userId"/>
       </div>
     </div>
     <div class="post-body" id="aside-right">
@@ -10,50 +10,38 @@
         <div class="post-title" v-html="post.title"></div>
         <div class="post-info">
           <div class="post-info-detail">
-            <div class="create-type">
-              <div v-if="post.createType === '0'" style="color: #67bb55">
-                {{ post.createTypeDesc }}
-              </div>
-              <div v-if="post.createType === '1'" style="color: #fc5531">
-                {{ post.createTypeDesc }}
-              </div>
-              <div v-if="post.createType === '2'" style="color: #6a87f1">
-                {{ post.createTypeDesc }}
+            <div class="post-category">
+              <div class="category-name cp" v-if="post.categoryName">
+                {{ post.categoryName }}
               </div>
             </div>
-            <div class="post-info-data-category">
-              <div class="post-info-data">
-                <div class="post-info-data-item">
-                  <i-calendar theme="outline" size="13" fill="currentColor" />
-                  <a-tooltip placement="top">
-                    <template #title>
-                      <div>首次发布：{{ post.createTime }}</div>
-                      <div>最近更新：{{ post.updateTime }}</div>
-                    </template>
-                    <span>{{ post.createTime }}</span>
-                  </a-tooltip>
-                </div>
-                <div class="post-info-data-item">
-                  <i-preview-open theme="outline" size="14" fill="currentColor" />
-                  <span>{{ post.viewCount }}</span
-                  >Views
-                </div>
-              </div>
-              <div class="post-info-category">
-                <span class="category-label">分类专栏：</span>
-                <div class="category-name" v-if="post.categoryName">
-                  {{ post.categoryName }}
-                </div>
-                <span class="tag-label" v-if="tags.length">标签：</span>
-                <div class="tag-name" v-for="item in tags">{{ item }}</div>
-              </div>
+            <div class="author-info">
+              <RouterLink :to="`/user/${post.user.id}`">
+                <i-user theme="outline" size="15" fill="currentColor"/>
+                <span>{{ post.user.nickname }}</span>
+              </RouterLink>
             </div>
-            <div class="post-operation">
-              <span class="operation-item hide" v-if="userInfo.id && userInfo.id === post.userId">隐藏</span>
-              <span class="operation-item edit" v-if="userInfo.id && userInfo.id === post.userId" @click="handleEdit"
-                >编辑</span
-              >
-              <span class="operation-item fold" @click="handleFold">{{ fold ? '展开' : '收起' }}</span>
+            <div class="view-count">
+              <i-preview-open theme="outline" size="18" fill="currentColor"/>
+              <span>{{ post.viewCount }} 次查看</span>
+            </div>
+            <div class="create-time">
+              <a-tooltip placement="top">
+                <template #title>
+                  <div>首次发布：{{ post.createTime }}</div>
+                  <div>最近更新：{{ post.updateTime }}</div>
+                </template>
+                <i-time theme="outline" size="15" fill="currentColor"/>
+                <span>发布于 {{ post.createTime?.substring(0, 16) }}</span>
+              </a-tooltip>
+            </div>
+            <div class="text-amount">
+              <i-add-text-two theme="outline" size="16" fill="currentColor"/>
+              <span>{{ post.content.length }} 字</span>
+            </div>
+            <div class="operation-btns">
+              <!--<span class="operation-item hide" v-if="userInfo.id && userInfo.id === post.userId">隐藏</span>-->
+              <span class="operation-item edit cp" v-if="userInfo.id === post.userId" @click="handleEdit">编辑</span>
             </div>
           </div>
           <div class="post-info-copyright" :class="{ unfold: !fold }">
@@ -77,9 +65,12 @@
               </div>
             </div>
           </div>
+          <div class="expand-btn" :class="{'btn-expand': !fold}" @click="handleFold">
+            <i-down theme="outline" size="14" fill="currentColor"/>
+          </div>
         </div>
         <div class="post-main-content">
-          <Spin v-if="!post.id" height="500px" />
+          <Spin v-if="!post.id" height="500px"/>
           <div class="post-summary" v-if="false">
             <div class="post-summary-title">摘要</div>
             <div class="post-summary-summary" v-html="post.summary"></div>
@@ -87,39 +78,46 @@
           <div class="post-content">
             <MdPreview editorId="post-content" :text="post.content" @onHtmlChanged="onHtmlChanged"/>
           </div>
+          <a-divider>End Line</a-divider>
+          <div class="post-tags" v-if="tags?.length">
+            <div class="tag-name cp" v-for="item in tags">
+              <i-tag-one theme="outline" size="16" fill="currentColor"/>
+              {{ item }}
+            </div>
+          </div>
           <div class="post-column-list" v-if="post.columns?.length">
             <div class="include-text">本文已收录至：</div>
-            <PostColumn v-for="item in post.columns" :data="item" />
+            <PostColumn v-for="item in post.columns" :data="item"/>
           </div>
         </div>
       </div>
       <div class="post-right">
         <div class="post-category">
-          <MdCatalogPanel editorId="post-content" />
+          <MdCatalogPanel editorId="post-content"/>
         </div>
         <div class="post-operation">
-          <PostOperation v-if="post" @scrollToComment="scrollToComment" />
+          <PostOperation v-if="post" @scrollToComment="scrollToComment"/>
         </div>
       </div>
       <div class="post-comment">
         <div class="post-comment-list" ref="commentRef">
-          <PostComment ref="postComment" />
+          <PostComment ref="postComment"/>
         </div>
       </div>
     </div>
     <Teleport to="#header">
-      <PercentCounter />
+      <PercentCounter/>
     </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, provide, readonly, watch, inject, nextTick } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useStore } from 'vuex';
-import { debounce } from 'lodash';
-import { scrollToTop, scrollToAnchor } from '@/assets/utils/utils';
-import type { postData } from '@/types/post';
+import {ref, computed, provide, readonly, watch, inject, nextTick} from 'vue';
+import {RouterLink, useRoute, useRouter} from 'vue-router';
+import {useStore} from 'vuex';
+import {debounce} from 'lodash';
+import {scrollToTop, scrollToAnchor} from '@/assets/utils/utils';
+import type {postData} from '@/types/post';
 
 import PercentCounter from '@/components/common/utils/percentCounter/PercentCounter.vue';
 import MdPreview from '@/components/content/mdEditor/MdPreview.vue';
@@ -134,7 +132,7 @@ const reload = inject('reload');
 
 const route = useRoute();
 const router = useRouter();
-const { state, dispatch, getters } = useStore();
+const {state, dispatch, getters} = useStore();
 const post = ref<postData>({
   id: null,
   title: '',
@@ -147,6 +145,7 @@ const post = ref<postData>({
   originalLink: '',
   userId: null,
   columnIds: [],
+  user: {}
 });
 const fold = ref(true);
 const userInfo = computed(() => getters['userInfo']);
@@ -156,7 +155,7 @@ const postComment = ref(null);
 const isLogin = computed(() => getters['isLogin']);
 
 function getPostDetail() {
-  dispatch('getPostDetail', { postId: route.params.postId }).then(res => {
+  dispatch('getPostDetail', {postId: route.params.postId}).then(res => {
     post.value = res.data;
     document.title = res.data.title;
   });
@@ -176,7 +175,7 @@ watch(
 );
 
 function handleEdit() {
-  router.push({ path: '/editPost', query: { postId: post.value.id } });
+  router.push({path: '/editPost', query: {postId: post.value.id}});
 }
 
 function handleFold() {
@@ -220,7 +219,7 @@ provide('setPostAttribute', setPostAttribute);
     margin-left: 8px;
 
     .post-main {
-      border-radius: 8px;
+      border-radius: 4px;
       overflow: hidden;
       background-color: var(--post-detail-background);
 
@@ -228,138 +227,62 @@ provide('setPostAttribute', setPostAttribute);
         min-height: 35px;
         text-align: left;
         font-size: 24px;
-        font-weight: 700;
+        font-weight: 500;
         overflow: hidden;
-        padding: 6px 16px;
+        padding: 12px 24px 6px 24px;
       }
 
       .post-info {
+        position: relative;
+        padding: 8px 0 0 0;
+        margin: 0 24px;
+        border-bottom: 1px solid var(--youyu-border-color);
+
         .post-info-detail {
-          position: relative;
-          width: 100%;
-          min-height: 44px;
-          background-color: var(--post-info-background);
+          display: flex;
+          align-items: center;
+          margin-bottom: 12px;
 
-          .create-type {
-            line-height: 22px;
-            text-align: center;
-            height: 20px;
-            width: 50px;
-            font-size: 14px;
-            float: left;
-            padding: 0 8px;
+          .post-category {
+            .category-name {
+              background-color: #e1eeff;
+              color: #61abed;
+              border-radius: 2px;
+              padding: 0 12px;
+              margin-right: 12px;
+            }
           }
 
-          .post-info-data-category {
-            margin-left: 50px;
+          .author-info, .view-count, .create-time, .text-amount {
+            color: var(--youyu-body-text1) !important;
+            margin-right: 12px;
+            transition: .3s;
+            cursor: pointer;
 
-            .post-info-data {
-              height: 22px;
-              display: flex;
-              align-items: center;
-
-              .post-info-data-item {
-                display: flex;
-                font-size: 13px;
-                align-items: center;
-                margin-right: 10px;
-                color: var(--youyu-text1);
-                cursor: pointer;
-
-                .i-icon {
-                  position: relative;
-                  left: -2px;
-                }
-
-                span {
-                  margin-left: 2px;
-                }
-              }
+            a {
+              color: var(--youyu-body-text1) !important;
             }
 
-            .post-info-category {
-              height: 24px;
-              display: flex;
-              align-items: center;
+            .i-icon {
+              margin-right: 6px;
 
-              .category-label {
+              &.i-icon-preview-open {
                 position: relative;
-                width: 65px;
-                height: 20px;
-                line-height: 20px;
-                font-size: 13px;
-              }
-
-              .category-name {
-                position: relative;
-                height: 20px;
-                line-height: 18px;
-                font-size: 13px;
-                margin-right: 5px;
-                padding: 0 5px;
-                background-color: var(--youyu-body-background3);
-                color: #4a88c4;
-                border: 1px solid var(--youyu-border-color);
-                border-radius: 4px;
-                cursor: pointer;
-              }
-
-              .tag-label {
-                position: relative;
-                height: 20px;
-                line-height: 20px;
-                font-size: 13px;
-                margin-left: 8px;
-              }
-
-              .tag-name {
-                position: relative;
-                height: 20px;
-                line-height: 18px;
-                font-size: 13px;
-                margin-right: 5px;
-                padding: 0 5px;
-                background-color: var(--youyu-body-background3);
-                color: #4a88c4;
-                border: 1px solid var(--youyu-border-color);
-                border-radius: 4px;
-                cursor: pointer;
+                top: 2px;
               }
             }
           }
 
-          .post-operation {
-            position: absolute;
-            height: 22px;
-            right: 10px;
-            top: 0;
+          .author-info {
+            &:hover {
+              a {
+                color: #1890ff !important;
+              }
+            }
+          }
+
+          .operation-btns {
             color: #1890ff;
-            display: flex;
-            align-items: center;
-
-            .operation-item {
-              position: relative;
-              height: 10px;
-              font-size: 12px;
-              font-weight: 500;
-              cursor: pointer;
-              user-select: none;
-              display: flex;
-              align-items: center;
-              margin-left: 6px;
-
-              &.hide {
-                color: #f56c6c;
-              }
-
-              &.fold {
-                color: #409eff;
-              }
-
-              &.edit {
-                color: #e6a23c;
-              }
-            }
           }
         }
 
@@ -370,11 +293,10 @@ provide('setPostAttribute', setPostAttribute);
           padding-left: 10px;
           overflow: hidden;
           max-height: 0;
-          transition: 0.3s ease-out;
-          border-bottom: 2px solid var(--youyu-border-color);
+          transition: 0.3s;
 
           .copyright-original {
-            padding: 6px 0;
+            padding-bottom: 6px;
           }
 
           .copyright-reprint {
@@ -382,13 +304,37 @@ provide('setPostAttribute', setPostAttribute);
           }
         }
 
+        .expand-btn {
+          position: absolute;
+          right: 0;
+          bottom: -18px;
+          color: var(--youyu-body-text1);
+          border: 1px solid var(--youyu-border-color);
+          padding: 0 12px;
+          border-radius: 0 0 4px 4px;
+          height: 18px;
+          cursor: pointer;
+
+          .i-icon {
+            display: block;
+            height: 100%;
+            transition: .3s;
+          }
+
+          &.btn-expand {
+            .i-icon {
+              transform: rotate(-180deg);
+            }
+          }
+        }
+
         .post-info-copyright.unfold {
-          max-height: 60px;
+          max-height: 48px;
         }
       }
 
       .post-main-content {
-        padding: 16px 36px 36px 36px;
+        padding: 30px 36px 36px 36px;
 
         .post-summary {
           padding: 12px;
@@ -411,8 +357,21 @@ provide('setPostAttribute', setPostAttribute);
           }
         }
 
+        .post-tags {
+          display: flex;
+          align-items: center;
+          margin-top: 12px;
+
+          .tag-name {
+            background-color: #e1eeff;
+            color: #61abed;
+            padding: 0 8px;
+            border-radius: 2px;
+            margin-right: 6px;
+          }
+        }
+
         .post-column-list {
-          border-top: 1px solid var(--youyu-border-color);
 
           .include-text {
             color: var(--youyu-text1);
@@ -421,6 +380,7 @@ provide('setPostAttribute', setPostAttribute);
           }
 
           ::v-deep(.post-column) {
+            padding: 4px 0;
             margin-top: 12px;
           }
         }

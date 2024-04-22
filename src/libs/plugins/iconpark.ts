@@ -90,7 +90,9 @@ import {
   Triangle,
   SendOne,
   DocDetail,
-  ReverseLens
+  ReverseLens,
+  AddTextTwo,
+  TagOne
 } from '@icon-park/vue-next'
 
 const IconPark = (app) => {
@@ -186,6 +188,8 @@ const IconPark = (app) => {
   app.component('ISendOne', SendOne);
   app.component('IDocDetail', DocDetail);
   app.component('IReverseLens', ReverseLens);
+  app.component('IAddTextTwo', AddTextTwo);
+  app.component('ITagOne', TagOne);
 }
 
 export default IconPark;

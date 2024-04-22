@@ -100,8 +100,8 @@ function onCollect() {
 <style lang="scss" scoped>
 .post-operation {
   .ope-item {
-    height: 3.8rem;
-    width: 3.8rem;
+    height: 48px;
+    width: 48px;
     background-color: var(--youyu-body-background3);
     border-radius: 50%;
     display: flex;
@@ -132,8 +132,8 @@ function onCollect() {
     position: relative;
     top: 0;
     left: 0;
-    height: 3.8rem;
-    width: 3.8rem;
+    height: 48px;
+    width: 48px;
     background-color: var(--youyu-body-background3) !important;
     border-radius: 50%;
 
