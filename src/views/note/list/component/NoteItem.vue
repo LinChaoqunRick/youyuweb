@@ -30,6 +30,7 @@
     </div>
     <div class="note-caption">
       <div class="note-user-info">
+        <div class="user-title">作者:</div>
         <RouterLink :to="{name:'userNote', params: {userId: data.user.id, page: 1}}">
           <img class="user-avatar" :src="data.user.avatar" alt="头像"/>
           <div class="user-nickname">{{ data.user.nickname }}</div>
@@ -198,10 +199,11 @@ const onDelete = (e: Event) => {
   .note-caption {
     flex: 1;
     padding: 0 8px;
-    background-color: var(--youyu-body-background6);
-    border-bottom: 4px solid #40baee;;
+    border-bottom: 4px solid #40baee;
 
     .note-user-info {
+      display: flex;
+      align-items: center;
       padding: 6px 0;
       border-bottom: var(--youyu-navigation-border);
 
@@ -231,21 +233,22 @@ const onDelete = (e: Event) => {
       overflow: hidden;
       line-height: 24px;
 
-      .introduce-title {
-        background-color: #1890ff;
-        color: white;
-        float: left;
-        padding: 0 6px;
-        border-radius: 2px;
-        margin-right: 6px;
-        line-height: 22px;
-      }
-
       .introduce-content {
         position: relative;
-        top: -1px;
+        top: -2px;
       }
     }
+  }
+
+  .introduce-title, .user-title {
+    background-image: linear-gradient(90deg, #3ca5f6 0%, #1890ff 100%);
+    color: white;
+    float: left;
+    padding: 0 6px;
+    border-radius: 2px;
+    margin-right: 6px;
+    line-height: 20px;
+    font-size: 13px;
   }
 
   &:hover {
