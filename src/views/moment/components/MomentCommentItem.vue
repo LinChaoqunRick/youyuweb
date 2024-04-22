@@ -34,7 +34,7 @@
         <div
           class="comment-content"
           :class="{ 'content-expand': expand }"
-          :style="{ 'max-height': maxRow * 2 + 'rem' }"
+          :style="{ 'max-height': maxRow * 1 + 'rem' }"
           v-row="{ set: set }"
           v-html="transformTagToHTML(data.content)"
         ></div>
@@ -325,10 +325,10 @@ const onUserVisibleChange = (visible: boolean) => {
       }
 
       ::v-deep(.comment-content) {
-        margin: 8px 0 0 0;
+        margin: 6px 0;
         white-space: pre-wrap;
-        line-height: 2rem;
         overflow: hidden;
+        font-size: 14px;
 
         &.content-expand {
           max-height: none !important;

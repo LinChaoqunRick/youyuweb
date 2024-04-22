@@ -13,7 +13,7 @@
         @mouseup="onMouseup"
         @input="onInput"
         @paste="onPaste"
-        :style="{ 'min-height': 2 * props.row + 'rem' }"
+        :style="{ 'min-height': props.row + 'rem' }"
       ></div>
     </div>
     <div class="editor-bottom">

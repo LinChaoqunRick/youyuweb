@@ -34,7 +34,7 @@
           </div>
         </div>
         <div class="item-content" :class="{ 'content-expand': expand }"
-          :style="{ 'max-height': maxRow * 2 + 0.4 + 'rem' }" v-row="{ set: set }">
+          :style="{ 'max-height': maxRow * 1 + 0.4 + 'rem' }" v-row="{ set: set }">
           <div class="user-to-info" v-if="data.userTo">@{{ data.userTo.nickname }}</div>
           <p class="reply-content" v-html="transformTagToHTML(data.content)"></p>
         </div>
@@ -71,8 +71,8 @@
     </div>
     <div v-if="active" class="moment-reply">
       <div class="user-avatar">
-        <img v-if="isLogin" :src="userInfo.avatar" />
-        <img v-else src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png" />
+        <img v-if="isLogin" :src="userInfo.avatar" alt="用户头像"/>
+        <img v-else src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png" alt="默认头像"/>
       </div>
       <div class="reply-box-wrapper">
         <MomentReplyEditor
@@ -300,8 +300,8 @@ const onUserToVisibleChange = (visible: boolean) => {
 
       .item-content {
         display: inline-block;
-        line-height: 2rem;
         overflow: hidden;
+        font-size: 14px;
 
         &.content-expand {
           max-height: none !important;
@@ -309,12 +309,9 @@ const onUserToVisibleChange = (visible: boolean) => {
 
         .user-to-info {
           position: relative;
-          top: 5.6px;
+          top: 6.8px;
           float: left;
           margin-right: 5px;
-          padding: 0 4px;
-          border: 2px solid var(--youyu-border-color3);
-          border-radius: 4px;
           font-weight: bold;
           color: #1890ff;
         }
