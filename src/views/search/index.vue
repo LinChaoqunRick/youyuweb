@@ -64,7 +64,7 @@
       top: 60px;
       height: 48px;
       background-color: var(--youyu-navigation);
-      z-index: 10;
+      z-index: 9;
 
       .sort-banner {
         display: flex;

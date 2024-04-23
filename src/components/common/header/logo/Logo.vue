@@ -10,13 +10,14 @@
 
 <style lang="scss" scoped>
   .main-logo {
-    width: 100px;
-    height: 50px;
-    background-color: skyblue;
+    width: 98px;
+    height: 46px;
+    background-color: #1890ff;
     display: flex;
     justify-content: center;
     align-items: center;
     color: white;
     font-size: 20px;
+    border-radius: 4px;
   }
 </style>

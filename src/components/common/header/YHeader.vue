@@ -33,7 +33,7 @@
     align-items: center;
     justify-content: space-between;
     padding-left: 16px;
-    background-image: radial-gradient(transparent 1px,var(--youyu-background1) 1px);
+    //background-image: radial-gradient(transparent 1px,var(--youyu-background1) 1px);
     background-size: 4px 4px;
     backdrop-filter: saturate(50%) blur(4px);
 
