@@ -92,7 +92,8 @@ import {
   DocDetail,
   ReverseLens,
   AddTextTwo,
-  TagOne
+  TagOne,
+  DoubleRight
 } from '@icon-park/vue-next'
 
 const IconPark = (app) => {
@@ -190,6 +191,7 @@ const IconPark = (app) => {
   app.component('IReverseLens', ReverseLens);
   app.component('IAddTextTwo', AddTextTwo);
   app.component('ITagOne', TagOne);
+  app.component('IDoubleRight', DoubleRight);
 }
 
 export default IconPark;
