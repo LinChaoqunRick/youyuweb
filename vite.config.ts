@@ -22,15 +22,15 @@ export default defineConfig({
     port: 3000, //端口号
     open: false, //启动后是否自动打开浏览器,
     proxy: {
-      /*'/plat': {
+      '/plat': {
         target: "http://localhost:8080",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/plat/, '')
-      },*/
-      '/plat': {
+      },
+      /*'/plat': {
         target: "https://v2.youyul.com/",
         changeOrigin: true,
-      },
+      },*/
       /*'/api': {
         target: "https://116.62.114.102:8081",
         changeOrigin: true,
