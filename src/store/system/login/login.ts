@@ -29,6 +29,9 @@ export default {
     isAuthor(state: any) {
       return state.user.id === state.authorId;
     },
+    getAuthorId(state: any) {
+      return state.authorId;
+    }
   },
   mutations: {
     changeLogin(state: any, status: any) {

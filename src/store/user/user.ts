@@ -26,7 +26,8 @@ import {
   GET_USER_DYNAMICS,
   CREATE_MESSAGE,
   DELETE_MESSAGE,
-  LIST_MESSAGE
+  LIST_MESSAGE,
+  GET_USER_DETAIL_BASIC
 } from "@/network/apis";
 
 export default {
@@ -111,6 +112,9 @@ export default {
     },
     listMessage(context: any, params: object) {
       return http.post(LIST_MESSAGE, params);
+    },
+    getUserDetailBasic(context: any, params: object) {
+      return http.post(GET_USER_DETAIL_BASIC, params);
     },
   },
 };
