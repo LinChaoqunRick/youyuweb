@@ -1,0 +1,16 @@
+@keyframes bounceInUpMe {
+  0% {
+    opacity: 0;
+    transform: translateY(160%);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-30%);
+  }
+  80% {
+    transform: translateY(10%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

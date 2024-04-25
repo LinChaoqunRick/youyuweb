@@ -4,14 +4,16 @@
       <div class="welcome-lead">
         <div class="home-content">
           <div class="author-info">
-            <img class="author-avatar cp" :src="authorInfo.avatar" alt="站长头像" />
+            <img class="author-avatar cp" :src="authorInfo.avatar" alt="站长头像"/>
             <span class="author-nickname cp">{{ authorInfo.nickname }}</span>
           </div>
-          <div class="text_first animate__animated animate__bounceInUp">
+
+          <div class="text_first">
             <div>Hello! 这里是</div>
             <div class="site-name">有语</div>
           </div>
-          <div class="text-second animate__animated animate__bounceInUp">
+
+          <div class="text-second">
             有语是一个博客及记录类的网站，在这里你可以浏览
             <RouterLink to="/post">技术文章</RouterLink>
             、分享
@@ -23,82 +25,162 @@
           <div class="text-three">
             <a href="https://github.com/LinChaoqunRick" target="_blank">
               <div class="text-btn" title="访问github">
-                <img src="/static/images/logo/github.svg" alt="github_logo" />
+                <img src="/static/images/logo/github.svg" alt="github_logo"/>
                 <div class="text-content">
-                  <i-double-right theme="outline" size="32" fill="#ffffff" />
+                  <i-double-right theme="outline" size="32" fill="#ffffff"/>
                 </div>
               </div>
             </a>
           </div>
         </div>
-        <img class="welcome-image" src="/static/images/background/home-image.svg" alt="" />
+        <img class="welcome-image" src="/static/images/background/home-image.svg" alt=""/>
       </div>
       <div>
         <div></div>
       </div>
     </div>
+
     <div class="next-introduce">
       <div class="features-container">
         <div class="introduce-title">功能介绍</div>
-        <div v-for="item in featureList" class="feature-item">
-          <div class="feature-introduce">
-            <div class="feature-name">{{ item.name }}</div>
-            <div class="feature-introduction">{{ item.introduction }}</div>
+        <RouterLink v-for="item in featureList" :to="item.path" class="feature-item"
+                    @mouseenter="onLottieAnimate(item, 'play')" @mouseleave="onLottieAnimate(item, 'pause')">
+          <div class="feature-item-wrapper">
+            <div class="feature-introduce">
+              <div class="feature-name">{{ item.name }}</div>
+              <div class="feature-introduction">{{ item.introduction }}</div>
+            </div>
+            <div class="feature-lottie" :class="[item.lottieClass]" :ref="item.ref"></div>
           </div>
-          <div class="feature-lottie">123</div>
-        </div>
+        </RouterLink>
       </div>
 
       <div class="technology-container">
         <div class="introduce-title">技术栈</div>
+        <div class="list-wrapper">
+          <TechnologyList/>
+        </div>
+      </div>
+
+      <div class="about-container">
+        <div class="introduce-title">关于本站</div>
+        <div>
+          构思中...
+        </div>
+      </div>
+
+      <div class="more-container">
+        <div class="introduce-title">更多</div>
+        <div class="list-wrapper">
+          <MoreList/>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useStore } from 'vuex';
-import { computed, ref } from 'vue';
+import {useStore} from 'vuex';
+import {computed, onMounted, reactive, ref} from 'vue';
+import lottie from 'lottie-web';
+import TechnologyList from "@/views/home/components/TechnologyList.vue";
+import MoreList from "@/views/home/components/MoreList.vue";
 
-const { getters, dispatch } = useStore();
+import postLottieData from '/static/lottie/post.json';
+import momentLottieData from '/static/lottie/travel.json';
+import noteLottieData from '/static/lottie/draw.json';
+import albumLottieData from '/static/lottie/album.json';
+import labLottieData from '/static/lottie/lab.json';
+
+const {getters, dispatch} = useStore();
 const authorId = computed(() => getters['getAuthorId']);
+const postLottie = ref(null);
+const momentLottie = ref(null);
+const noteLottie = ref(null);
+const albumLottie = ref(null);
+const labLottie = ref(null);
 
 const authorInfo = ref({});
 const featureList = [
   {
-    name: '文章',
+    name: '文章✍️',
     introduction: '日常的学习记录，包括新知识的分享，旧知识的巩固、一些实用资源的分享以及BUG记录等',
-    lottieName: '',
+    path: '/post',
+    lottieClass: 'post-lottie',
+    lottieData: postLottieData,
+    ref: postLottie,
+    animation: null
   },
   {
-    name: '时刻',
+    name: '时刻🧭',
     introduction: '用于记录日常生活，旅游见闻，在此可以发布动态，这里有很多很多有趣的内容，就像一个朋友圈',
-    lottieName: '',
+    path: '/moment',
+    lottieClass: 'moment-lottie',
+    lottieData: momentLottieData,
+    ref: momentLottie,
+    animation: null
   },
   {
-    name: '笔记',
+    name: '笔记🎯',
     introduction: '用于记录所学习的新知识的的内容，按章节划分，持续更新中...',
-    lottieName: '',
+    path: '/note',
+    lottieClass: 'note-lottie',
+    lottieData: noteLottieData,
+    ref: noteLottie,
+    animation: null
   },
   {
-    name: '相册',
+    name: '相册📷',
     introduction: '爱好摄影？哦不！是终于以可清空手机相册啦！！！',
-    lottieName: '',
+    path: '/album',
+    lottieClass: 'album-lottie',
+    lottieData: albumLottieData,
+    ref: albumLottie,
+    animation: null
   },
   {
-    name: '实验室',
-    introduction: '千奇百怪的内容，这里都是一些练手的内容，来看看有没有你感兴趣的内容吧！',
-    lottieName: '',
+    name: '实验室🔎',
+    introduction: '千奇百怪的内容，这里都是一些练手的内容，来看看站长平时都在学些什么！',
+    path: '/lab',
+    lottieClass: 'lab-lottie',
+    lottieData: labLottieData,
+    ref: labLottie,
+    animation: null
   },
 ];
 
 const getAuthorInfo = () => {
-  dispatch('getUserDetailBasic', { userId: authorId.value }).then(res => {
+  dispatch('getUserDetailBasic', {userId: authorId.value}).then(res => {
     authorInfo.value = res.data;
   });
 };
-
 getAuthorInfo();
+
+const initLottie = () => {
+  featureList.forEach(item => {
+    if (item.lottieData) {
+      item.animation = lottie.loadAnimation({
+        container: item.ref.value[0],
+        renderer: 'canvas', // 或者 'canvas'
+        loop: true,
+        autoplay: false,
+        animationData: item.lottieData // 导入的动画 JSON 数据
+      });
+    }
+  })
+}
+
+const onLottieAnimate = (item: object, type: string) => {
+  if (type === 'play') {
+    item.animation?.play();
+  } else {
+    item.animation?.stop();
+  }
+}
+
+onMounted(() => {
+  initLottie();
+})
 </script>
 
 <style lang="scss" scoped>
@@ -132,6 +214,7 @@ getAuthorInfo();
           display: flex;
           align-items: center;
           height: 50px;
+          animation: bounceInUpMe 0.8s ease-in-out;
 
           img {
             height: 42px;
@@ -155,6 +238,7 @@ getAuthorInfo();
           font-family: Roboto, Verdana, 'Raleway', 'PingFang SC', 'Microsoft Yahei', sans-serif;
           color: var(--youyu-text5);
           margin: 20px 0;
+          animation: bounceInUpMe 0.8s ease-in-out .2s backwards;
 
           .site-name {
             color: #1890ff;
@@ -165,7 +249,7 @@ getAuthorInfo();
         .text-second {
           font-size: 20px;
           color: var(--youyu-text5);
-          --animate-delay: 0.5s;
+          animation: bounceInUpMe 0.8s ease-in-out .4s backwards;
 
           a {
             font-weight: bold;
@@ -217,7 +301,8 @@ getAuthorInfo();
 
       .welcome-image {
         display: inline-block;
-        max-height: 357px;
+        height: 357px;
+        width: 540px;
         filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0));
         transition: 0.3s;
 
@@ -238,41 +323,119 @@ getAuthorInfo();
       align-items: center;
 
       .feature-item {
-        display: flex;
-        justify-content: space-between;
-        height: 260px;
+        position: relative;
+        height: 300px;
         width: 80%;
-        border: 1px solid var(--youyu-border-color);
-        margin-bottom: 20px;
-        border-radius: 16px;
-        box-shadow: var(--youyu-shadow2);
+        margin-bottom: 40px;
         transition: 0.3s;
+        border: 1px solid var(--youyu-border-color);
+        border-radius: 16px;
         cursor: pointer;
-        padding: 18px 26px;
+        overflow: hidden;
 
-        .feature-introduce {
-          max-width: 420px;
-          text-align: left;
+        &:before {
+          position: absolute;
+          left: -40px;
+          top: -130px;
+          content: '';
+          height: 300px;
+          width: 300px;
+          border-radius: 50%;
+          background: linear-gradient(270deg, #30b6ec, #0692ef 95%);
+          transition: .4s;
+          transform: translate(-300px, -300px);
+          z-index: 0;
+        }
 
-          .feature-name {
-            font-size: 26px;
-            font-weight: bold;
-            color: var(--youyu-text5);
+        .feature-item-wrapper {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background-color: rgba(255, 255, 255, 0.2) !important;
+          backdrop-filter: blur(4px) !important;
+          padding: 18px 36px;
+          width: 100%;
+          height: 100%;
+          border-radius: 16px;
+
+          .feature-introduce {
+            height: 100%;
+            max-width: 440px;
+            text-align: left;
+
+            .feature-name {
+              font-size: 26px;
+              font-weight: bold;
+              color: var(--youyu-text5);
+            }
+
+            .feature-introduction {
+              padding-top: 8px;
+              font-size: 20px;
+              color: var(--youyu-text);
+            }
           }
 
-          .feature-introduction{
-            padding-top: 8px;
-            font-size: 18px;
+          .feature-lottie {
+            position: relative;
+            width: 262px;
+            height: 262px;
+
+            &.moment-lottie {
+              height: 320px;
+              width: 320px;
+            }
+
+            &.album-lottie {
+              top: -20px;
+              height: 330px;
+              width: 330px;
+            }
+
+            &.lab-lottie {
+              height: 360px;
+              width: 360px;
+            }
           }
         }
 
         &:hover {
-          box-shadow: var(--youyu-shadow1);
+          box-shadow: var(--youyu-shadow2);
+          //background-color: #1890ff;
+
+          &:before {
+            transform: translate(0, 0) !important;
+          }
         }
 
         &:nth-child(odd) {
-          display: flex;
-          flex-direction: row-reverse;
+          .feature-item-wrapper {
+            display: flex;
+            flex-direction: row-reverse;
+
+            .feature-introduce {
+              text-align: right;
+            }
+          }
+
+          &:before {
+            left: auto;
+            right: -40px;
+            transform: translate(300px, -300px);
+          }
+        }
+      }
+    }
+
+    .technology-container {
+
+      .list-wrapper {
+        margin: 30px 0;
+        display: flex;
+        justify-content: center;
+
+        > div {
+          width: 80%;
         }
       }
     }
@@ -285,7 +448,7 @@ getAuthorInfo();
     font-size: 22px;
     color: var(--youyu-text5);
     font-weight: bold;
-    padding: 30px 0;
+    padding: 50px 0;
 
     &:before,
     &:after {
