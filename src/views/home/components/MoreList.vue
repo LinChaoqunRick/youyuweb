@@ -22,7 +22,7 @@ const moreList = [
   {
     name: '汇报Bug',
     image: 'report.png',
-    path: ''
+    path: 'https://github.com/LinChaoqunRick/youyuweb/issues'
   },
   {
     name: '更多内容，敬请期待',

@@ -1,30 +1,22 @@
 <template>
-  <div class="custom-calendar">
-    <div class="calender-header">嗨!</div>
+  <a-card title="日历" style="width: 100%">
     <a-calendar :fullscreen="false"/>
-  </div>
+  </a-card>
 </template>
 
 <script setup lang="ts"></script>
 
 <style lang="scss" scoped>
-.custom-calendar {
-  background-color: var(--youyu-background1);
-  border-radius: 8px;
-  padding: 12px 24px;
-  width: 300px;
+::v-deep(.ant-card-body) {
+  padding: 8px 24px;
+}
 
-  .calender-header {
-    text-align: right;
-  }
+::v-deep(.ant-picker-calendar) {
+  padding: 0;
+  background: transparent;
 
-  ::v-deep(.ant-picker-calendar) {
-    padding: 0;
-    background: transparent;
-
-    .ant-picker-panel {
-      background-color: transparent;
-    }
+  .ant-picker-panel {
+    background-color: transparent;
   }
 }
 </style>
