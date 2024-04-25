@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {onUnmounted, ref} from "vue";
 import {useRouter} from "vue-router";
 
 const router = useRouter();
@@ -21,7 +21,11 @@ const interval = setInterval(() => {
     clearInterval(interval);
     router.replace("/");
   }
-}, 1000)
+}, 1000);
+
+onUnmounted(() => {
+  clearInterval(interval);
+})
 </script>
 
 <style lang="scss" scoped>
