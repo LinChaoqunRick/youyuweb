@@ -67,6 +67,11 @@ const technologyList = [
     color: '#ffffff',
   },
   {
+    name: 'springboot',
+    link: '',
+    color: '#6cb52d',
+  },
+  {
     name: 'nacos',
     link: '',
     color: '#ffffff',
@@ -75,6 +80,11 @@ const technologyList = [
     name: 'aliyun',
     link: '',
     color: '#ff6a00',
+  },
+  {
+    name: 'nginx',
+    link: '',
+    color: '#009900',
   },
   {
     name: 'mybatis',
@@ -129,8 +139,12 @@ const technologyList = [
 <style scoped lang="scss">
 .technology-list {
   display: grid;
-  grid-template-columns: repeat(11, 1fr);
+  grid-template-columns: repeat(12, 1fr);
   grid-gap: 16px;
+
+  @media screen and (max-width: 1600px) {
+    grid-template-columns: repeat(8, 1fr);
+  }
 
   .tech-item {
     display: flex;
@@ -149,11 +163,12 @@ const technologyList = [
     }
   }
 
-  .aliyun, .javascript, .typescript, .threejs, .redis, .amap, .postman {
+  .aliyun, .javascript, .typescript, .threejs, .redis, .amap, .postman, .nginx {
     img {
       height: 56px;
       width: 56px;
     }
   }
 }
+
 </style>

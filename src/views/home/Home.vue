@@ -63,9 +63,9 @@
       </div>
 
       <div class="about-container">
-        <div class="introduce-title">关于本站</div>
-        <div>
-          构思中...
+        <div class="introduce-title">关于</div>
+        <div class="about-wrapper">
+          <AboutSiteHome/>
         </div>
       </div>
 
@@ -85,6 +85,7 @@ import {computed, onMounted, reactive, ref} from 'vue';
 import lottie from 'lottie-web';
 import TechnologyList from "@/views/home/components/TechnologyList.vue";
 import MoreList from "@/views/home/components/MoreList.vue";
+import AboutSiteHome from "@/views/home/components/AboutSiteHome.vue";
 
 import postLottieData from '/static/lottie/post.json';
 import momentLottieData from '/static/lottie/travel.json';
@@ -433,9 +434,16 @@ onMounted(() => {
         margin: 30px 0;
         display: flex;
         justify-content: center;
+      }
+    }
+
+    .about-container {
+      .about-wrapper {
+        display: flex;
+        justify-content: center;
 
         > div {
-          width: 80%;
+          width: 70%;
         }
       }
     }
