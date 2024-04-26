@@ -55,6 +55,7 @@
         </div>
       </div>
     </slot>
+    <Announcement class="mt-8"/>
     <div class="column-list mt-8">
       <a-card title="Ta的专栏" style="width: 100%">
         <template #extra>
@@ -102,6 +103,7 @@ import {useRoute, useRouter, RouterLink} from 'vue-router';
 import {message, Modal} from 'ant-design-vue';
 import type {statType, userType} from "@/types/user";
 import ColumnItemMini from '@/components/content/user/column/ColumnItemMini.vue';
+import Announcement from "@/components/common/share/announcement/index.vue";
 
 const route = useRoute();
 const router = useRouter();

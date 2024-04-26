@@ -298,7 +298,7 @@
               .nickname {
                 position: relative;
                 font-size: 24px;
-                top: -61px;
+                top: -70px;
                 left: 30px;
               }
 
