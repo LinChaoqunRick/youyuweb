@@ -318,7 +318,7 @@
 
       .user-content {
         display: flex;
-        max-width: 850px;
+        max-width: 950px;
         width: 60%;
         margin-left: 8px;
         padding-top: 90px;

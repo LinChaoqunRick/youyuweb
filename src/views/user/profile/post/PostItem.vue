@@ -60,7 +60,7 @@
     .post-left {
       height: 100%;
       width: 200px;
-      padding: 12px;
+      padding: 12px 12px 12px 0;
 
       img {
         height: 100%;
@@ -73,7 +73,7 @@
     .post-right {
       flex: 1;
       width: 0;
-      padding: 10px 10px 10px 0;
+      padding: 10px 0;
       overflow: hidden;
 
       .post-title {
