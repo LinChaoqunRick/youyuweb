@@ -1,6 +1,5 @@
 <template>
   <div class="user-panel-moment">
-    <Announcement class="mb-8"/>
     <div class="user-info">
       <div v-if="!isLogin" class="no-login-panel">
         <div class="basic-info">
@@ -53,6 +52,7 @@
         </div>
       </div>
     </div>
+    <Announcement class="mt-8"/>
   </div>
 </template>
 
