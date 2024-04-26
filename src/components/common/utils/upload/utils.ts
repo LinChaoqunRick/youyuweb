@@ -1,6 +1,6 @@
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 import store from "@/store";
-import { message } from "ant-design-vue";
+import {message} from "ant-design-vue";
 import dayjs from "dayjs";
 
 export const isImageFile = (file: File) => {
@@ -82,11 +82,11 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
   // 上传步骤1： 获取oss临时凭证
   let data: ossType = {};
   let hide;
-  let progressList = Array.from({ length: files.length }).map((item) => 0);
+  let progressList = Array.from({length: files.length}).map((item) => 0);
   if (config.needTip) {
     hide = message.loading("上传中...", 0);
   }
-  await store.dispatch("getOssPolicy", { base: config.base }).then((res) => {
+  await store.dispatch("getOssPolicy", {base: config.base}).then((res) => {
     data = res.data;
   });
 
@@ -117,7 +117,7 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
             config?.progress?.(progressList);
           },
         });
-        return { url: `${data.host}/${data.dir}${file_name}` };
+        return {url: `${data.host}/${data.dir}${file_name}`};
       } catch (error) {
         return error;
       } finally {
@@ -125,16 +125,23 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
       }
     })
   ).then((res) => {
+    const failedNumber = res.filter(item => item instanceof AxiosError).length;
+    const successNumber = res.length - failedNumber;
     if (config.needTip) {
-      const successNumber = res.filter((item) => !!item.url).length;
-      const failedNumber = res.filter((item) => !item.url).length;
       const resultMessage = `共${res.length}个文件：成功 ${successNumber} 个，失败 ${failedNumber} 个`;
-      if (successNumber) {
-        message.success(resultMessage);
-      } else {
-        message.error(resultMessage);
-      }
+      message.info(resultMessage);
     }
-    return res.filter((item) => item.url && item);
+    return res;
   });
+}
+
+const parseXml = (xml: string) => {
+  const parser = new DOMParser();
+  return parser.parseFromString(xml, 'text/xml');
+}
+
+export const getXmlTextContent = (xml: string, tag: string) => {
+  const xmlDoc = parseXml(xml);
+  const tagElement = xmlDoc.getElementsByTagName(tag)[0];
+  return tagElement?.textContent;
 }

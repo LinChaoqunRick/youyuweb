@@ -4,11 +4,11 @@
       <div class="login-mask" @click="toLogin" v-if="!isLogin"></div>
       <div class="editor-content-wrapper">
         <ContentEditableDiv
-            v-model="form.content"
-            showLimit
-            placeholder="此刻在想什么？快来分享一些新鲜事或发表一些看法吧！"
-            @onPasteImage="onPasteImage"
-            ref="richEditor"
+          v-model="form.content"
+          showLimit
+          placeholder="此刻在想什么？快来分享一些新鲜事或发表一些看法吧！"
+          @onPasteImage="onPasteImage"
+          ref="richEditor"
         >
           <template #bottom>
             <div class="topic-wrapper">
@@ -29,16 +29,16 @@
     </div>
     <div class="image-wrapper" v-if="form.images?.length">
       <draggable
-          class="list-group"
-          :component-data="{
+        class="list-group"
+        :component-data="{
           type: 'transition-group',
           name: !drag ? 'flip-list' : null,
         }"
-          v-model="form.images"
-          v-bind="dragOptions"
-          @start="drag = true"
-          @end="drag = false"
-          :item-key="element => element"
+        v-model="form.images"
+        v-bind="dragOptions"
+        @start="drag = true"
+        @end="drag = false"
+        :item-key="element => element"
       >
         <template #item="{ element, index }">
           <div class="image-item">
@@ -56,10 +56,10 @@
     <div class="editor-bottom">
       <div class="tool-items">
         <a-popover
-            placement="bottomLeft"
-            overlayClassName="emoji-picker-popover"
-            :getPopupContainer="triggerNode => triggerNode.parentNode"
-            :open="emojiVisible"
+          placement="bottomLeft"
+          overlayClassName="emoji-picker-popover"
+          :getPopupContainer="triggerNode => triggerNode.parentNode"
+          :open="emojiVisible"
         >
           <template #content>
             <EmojiPicker @onImagePick="onImagePick" @onEmojiPick="onEmojiPick" v-on-click-outside="onEmojiClose"/>
@@ -70,14 +70,14 @@
           </div>
         </a-popover>
         <UploadFile
-            v-model="form.images"
-            accept=".jpg, .jpeg, .png, .JPG, .PNG"
-            :max-size="maxFileSize"
-            :max-num="maxFileNum"
-            :disabled="uploadDisabled"
-            multiple
-            :data="{ base: 'moment/images' }"
-            ref="UploadFileRef"
+          v-model="form.images"
+          accept=".jpg, .jpeg, .png, .JPG, .PNG"
+          :max-size="maxFileSize"
+          :max-num="maxFileNum"
+          :disabled="uploadDisabled"
+          multiple
+          :data="{ base: 'moment/images' }"
+          ref="UploadFileRef"
         >
           <div class="tool-item item-upload-image" v-login>
             <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
@@ -90,10 +90,10 @@
         </div>-->
       </div>
       <a-button
-          type="primary"
-          :disabled="!isLogin || !currentLength || contentLengthExceed"
-          :loading="submitLoading"
-          @click="onSubmit"
+        type="primary"
+        :disabled="!isLogin || !currentLength || contentLengthExceed"
+        :loading="submitLoading"
+        @click="onSubmit"
       >
         发布
       </a-button>
@@ -117,6 +117,8 @@ import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
 import EmojiPicker from '@/components/common/utils/emoji/EmojiPicker.vue';
 import ContentEditableDiv from '@/components/common/utils/contenteditable/ContentEditableDiv.vue';
 import LocationSelector from '@/components/common/utils/aMap/LocationSelector.vue';
+import {AxiosError} from "axios";
+import {getXmlTextContent} from "@/components/common/utils/upload/utils";
 
 const props = defineProps({
   form: {
@@ -178,6 +180,14 @@ const onSubmit = async () => {
 
   const imagesListRes = await UploadFileRef.value.upload();
 
+  if (imagesListRes?.length) {
+    const firstErrorItem = imagesListRes.find(item => item instanceof AxiosError);
+    if (firstErrorItem) {
+      submitLoading.value = false;
+      return message.error(`发布失败：${firstErrorItem.response ? getXmlTextContent(firstErrorItem.response.data, "Message") : firstErrorItem.message}`)
+    }
+  }
+
   if (form.images?.length) {
     if (props.isEdit) {
       // 如果是编辑，添加新上传图片
@@ -196,20 +206,20 @@ const onSubmit = async () => {
 
   form.content = transformHTMLToTag(form.content);
   dispatch(isEdit ? 'updateMoment' : 'createMoment', form)
-      .then(res => {
-        message.success(isEdit ? '修改成功' : '发布成功');
-        resetEditor();
-        emit('saveSuccess', res.data);
-        if (isEdit) {
-          router.replace({
-            name: 'MomentDetail',
-            params: {momentId: props.form.id},
-          });
-        }
-      })
-      .finally(() => {
-        submitLoading.value = false;
-      });
+    .then(res => {
+      message.success(isEdit ? '修改成功' : '发布成功');
+      resetEditor();
+      emit('saveSuccess', res.data);
+      if (isEdit) {
+        router.replace({
+          name: 'MomentDetail',
+          params: {momentId: props.form.id},
+        });
+      }
+    })
+    .finally(() => {
+      submitLoading.value = false;
+    });
 };
 
 const resetEditor = () => {
@@ -252,12 +262,12 @@ const onAddPosition = () => {
     centered: true,
     wrapClassName: 'select-position-modal-wrapper',
   })
-      .then(res => {
-        props.form.location = res.name;
-        props.form.longitude = res.longitude;
-        props.form.latitude = res.latitude;
-      })
-      .catch(console.log);
+    .then(res => {
+      props.form.location = res.name;
+      props.form.longitude = res.longitude;
+      props.form.latitude = res.latitude;
+    })
+    .catch(console.log);
 };
 
 const onClearLocation = () => {

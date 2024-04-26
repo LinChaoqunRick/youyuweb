@@ -34,6 +34,7 @@ import type {UploadChangeParam} from 'ant-design-vue';
 import {useStore} from 'vuex';
 import {merge} from 'lodash';
 import {uploadToOss} from '@/components/common/utils/upload/utils';
+import {AxiosError} from "axios";
 
 const uploadRef = ref(null);
 
@@ -131,8 +132,11 @@ const upload = async () => {
   };
   const mergedConfig = merge(defaultConfig, props.data);
   const res = await uploadToOss(originalFiles, mergedConfig);
-  uploadFiles.value = [];
-  files.value = [];
+  const firstErrorItem = res?.find(item => item instanceof AxiosError);
+  if (!firstErrorItem) {
+    uploadFiles.value = [];
+    files.value = [];
+  }
   emit('uploadSuccess', res);
   return res;
 };
