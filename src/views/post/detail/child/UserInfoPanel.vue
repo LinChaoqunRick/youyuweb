@@ -5,11 +5,11 @@
         <div class="user-avatar-nickname">
           <div class="user-avatar">
             <RouterLink :to="`/user/${user.id}`">
-              <img :src="user.avatar"/>
+              <img :src="user.avatar" />
             </RouterLink>
-            <div class="user-gender" v-if="user.sex!==undefined">
-              <i-female v-if="user.sex == 1" theme="outline" size="14" fill="#ffc0cb"/>
-              <i-male v-else theme="outline" size="14" fill="#00CFF3"/>
+            <div class="user-gender" v-if="user.sex !== undefined">
+              <i-female v-if="user.sex == 1" theme="outline" size="14" fill="#ffc0cb" />
+              <i-male v-else theme="outline" size="14" fill="#00CFF3" />
             </div>
           </div>
           <div class="user-nickname">
@@ -33,7 +33,7 @@
           <div class="contact-title">社交：</div>
           <div class="contact-list">
             <div class="contact-item">
-              <i-github theme="outline" size="20" fill="#909090"/>
+              <!--<i-github theme="outline" size="20" fill="#909090"/>-->
             </div>
           </div>
         </div>
@@ -55,16 +55,14 @@
         </div>
       </div>
     </slot>
-    <Announcement class="mt-8"/>
+    <Announcement class="mt-8" />
     <div class="column-list mt-8">
       <a-card title="Ta的专栏" style="width: 100%">
         <template #extra>
-          <RouterLink :to="`/user/${user.id}/column`">
-            更多
-          </RouterLink>
+          <RouterLink :to="`/user/${user.id}/column`"> 更多 </RouterLink>
         </template>
         <div class="column-list" v-if="columnList.length">
-          <ColumnItemMini v-for="item in columnList" :data="item"/>
+          <ColumnItemMini v-for="item in columnList" :data="item" />
         </div>
         <div v-else class="no-data">暂无数据</div>
       </a-card>
@@ -74,7 +72,7 @@
         <div class="post-list">
           <ul v-if="hotPosts.length">
             <li v-for="item in hotPosts">
-              <router-link :to="{name:'PostDetail',params:{postId:item.id}}" v-html="item.title"></router-link>
+              <router-link :to="{ name: 'PostDetail', params: { postId: item.id } }" v-html="item.title"></router-link>
             </li>
           </ul>
           <div v-else class="no-data">暂无数据</div>
@@ -86,7 +84,7 @@
         <div class="post-list">
           <ul v-if="newPosts.length">
             <li v-for="item in newPosts">
-              <router-link :to="{name:'PostDetail',params:{postId:item.id}}" v-html="item.title"></router-link>
+              <router-link :to="{ name: 'PostDetail', params: { postId: item.id } }" v-html="item.title"></router-link>
             </li>
           </ul>
           <div v-else class="no-data">暂无数据</div>
@@ -97,29 +95,29 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, inject, ref, watch} from 'vue';
-import {useStore} from 'vuex';
-import {useRoute, useRouter, RouterLink} from 'vue-router';
-import {message, Modal} from 'ant-design-vue';
-import type {statType, userType} from "@/types/user";
+import { computed, inject, ref, watch } from 'vue';
+import { useStore } from 'vuex';
+import { useRoute, useRouter, RouterLink } from 'vue-router';
+import { message, Modal } from 'ant-design-vue';
+import type { statType, userType } from '@/types/user';
 import ColumnItemMini from '@/components/content/user/column/ColumnItemMini.vue';
-import Announcement from "@/components/common/share/announcement/index.vue";
+import Announcement from '@/components/common/share/announcement/index.vue';
 
 const route = useRoute();
 const router = useRouter();
 
-const {getters, commit, dispatch} = useStore();
+const { getters, commit, dispatch } = useStore();
 
 const props = defineProps({
   id: {
     type: [String, Number],
     // required: true
-  }
+  },
 });
 
 const userInfo = computed(() => getters['userInfo']);
 const isLogin = computed(() => getters['isLogin']);
-const emit = defineEmits(['onLoaded'])
+const emit = defineEmits(['onLoaded']);
 
 const dataItems = [
   {
@@ -128,17 +126,17 @@ const dataItems = [
   },
   {
     value: 'viewCount',
-    label: '阅读'
+    label: '阅读',
   },
   {
     value: 'likeCount',
-    label: '点赞'
+    label: '点赞',
   },
   {
     value: 'fansCount',
-    label: '粉丝'
-  }
-]
+    label: '粉丝',
+  },
+];
 
 const isOwn = ref(true);
 const user = ref<userType | object>({});
@@ -147,7 +145,7 @@ const hotPosts = ref([]);
 const newPosts = ref([]);
 
 function handleClickStat(item: statType) {
-  const {value} = item;
+  const { value } = item;
   if (value === 'viewCount') {
     Modal.info({
       content: `Ta的文章已被阅读${user.value.extraInfo[item.value]}次`,
@@ -157,61 +155,65 @@ function handleClickStat(item: statType) {
       content: `Ta共收获了${user.value.extraInfo[item.value]}个点赞`,
     });
   } else if (value === 'postCount') {
-    router.push(`/user/${props.id}/post`)
+    router.push(`/user/${props.id}/post`);
   }
-};
+}
 
 function handleMessage() {
   if (!isLogin.value) {
-    commit("changeLogin", true);
+    commit('changeLogin', true);
     return;
   }
 }
 
 function handleFollow() {
   const isFollow = user.value.follow;
-  dispatch(isFollow ? "cancelUserFollow" : "setUserFollow", {
+  dispatch(isFollow ? 'cancelUserFollow' : 'setUserFollow', {
     userId: userInfo.value.id,
-    userIdTo: user.value.id
+    userIdTo: user.value.id,
   }).then(res => {
     if (isFollow) {
       user.value.follow = false;
-      message.success("已取消关注");
+      message.success('已取消关注');
     } else {
       user.value.follow = true;
-      message.success("已添加关注")
+      message.success('已添加关注');
     }
-  })
+  });
 }
 
-watch(() => props.id, (val) => {
-  if (!props.id) return;
-  dispatch("getPostUserById", {userId: val}).then(res => {
-    if (!res.data) {
-      router.replace("/404")
-      return;
-    }
-    user.value = res.data;
-    isOwn.value = user.value.id === userInfo.value.id;
-    emit('onLoaded', user.value);
-  });
+watch(
+  () => props.id,
+  val => {
+    if (!props.id) return;
+    dispatch('getPostUserById', { userId: val }).then(res => {
+      if (!res.data) {
+        router.replace('/404');
+        return;
+      }
+      user.value = res.data;
+      isOwn.value = user.value.id === userInfo.value.id;
+      emit('onLoaded', user.value);
+    });
 
-  dispatch("getLimitPost", {userId: val, orderBy: 'view_count', orderType: 'desc'}).then(res => {
-    hotPosts.value = res.data;
-  })
+    dispatch('getLimitPost', { userId: val, orderBy: 'view_count', orderType: 'desc' }).then(res => {
+      hotPosts.value = res.data;
+    });
 
-  dispatch("getLimitPost", {userId: val, orderBy: 'create_time', orderType: 'desc'}).then(res => {
-    newPosts.value = res.data;
-  })
+    dispatch('getLimitPost', { userId: val, orderBy: 'create_time', orderType: 'desc' }).then(res => {
+      newPosts.value = res.data;
+    });
 
-  dispatch('getColumnList', {userId: val, count: 5}).then(res => {
-    columnList.value = res.data;
-  })
-}, {immediate: true});
+    dispatch('getColumnList', { userId: val, count: 5 }).then(res => {
+      columnList.value = res.data;
+    });
+  },
+  { immediate: true }
+);
 
 defineExpose({
-  user
-})
+  user,
+});
 </script>
 
 <style lang="scss" scoped>
@@ -297,7 +299,7 @@ defineExpose({
         text-align: center;
         cursor: pointer;
 
-        &:nth-child(n+2) {
+        &:nth-child(n + 2) {
           &:before {
             position: absolute;
             content: '';
@@ -367,7 +369,7 @@ defineExpose({
     }
 
     ::v-deep(.column-item-mini) {
-      &:nth-child(n+2) {
+      &:nth-child(n + 2) {
         margin-top: 8px;
       }
     }
@@ -381,7 +383,6 @@ defineExpose({
     margin-top: 8px;
   }
 
-
   .post-list {
     ul {
       list-style: none;
@@ -391,7 +392,7 @@ defineExpose({
       li {
         margin-bottom: 6px;
         cursor: pointer;
-        transition: .3s;
+        transition: 0.3s;
 
         a {
           font-weight: normal !important;

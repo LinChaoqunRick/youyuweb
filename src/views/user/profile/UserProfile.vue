@@ -74,7 +74,7 @@
       userPost: 'showPost',
       userNote: 'showNote',
       userColumn: 'showColumn',
-      userCollection: 'showCollect',
+      userFavorites: 'userFavorites',
       userFollow: 'showFollow',
       userFans: 'showFans',
     }
@@ -94,7 +94,7 @@
       {title: "文章", path: `/user/${user.value.id}/post`, value: 'showPost'},
       {title: "笔记", path: `/user/${user.value.id}/note`, value: 'showNote'},
       {title: "专栏", path: `/user/${user.value.id}/column`, value: 'showColumn'},
-      {title: "收藏", path: `/user/${user.value.id}/collection`, value: 'showCollect'},
+      {title: "收藏", path: `/user/${user.value.id}/collection`, value: 'userFavorites'},
       {title: "关注", path: `/user/${user.value.id}/follow`, value: 'showFollow'},
       {title: "粉丝", path: `/user/${user.value.id}/fans`, value: 'showFans'},
     ]

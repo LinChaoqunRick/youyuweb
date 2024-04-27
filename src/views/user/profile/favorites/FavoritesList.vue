@@ -14,9 +14,9 @@ import {inject} from "vue";
 
 const user = inject('user');
 const menuList = [
-  {name: "收藏夹", path: {name: 'userCollectionFolder', params: {userId: user.value.id}}},
-  {name: "专栏", path: {name: 'userCollectionColumn', params: {userId: user.value.id}}},
-  {name: "笔记", path: {name: 'userCollectionNote', params: {userId: user.value.id}}},
+  {name: "收藏夹", path: {name: 'userFavoritesFolder', params: {userId: user.value.id}}},
+  {name: "专栏", path: {name: 'userFavoritesColumn', params: {userId: user.value.id}}},
+  {name: "笔记", path: {name: 'userFavoritesNote', params: {userId: user.value.id}}},
 ]
 </script>
 

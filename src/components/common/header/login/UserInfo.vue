@@ -130,7 +130,7 @@ const menuList = [
   {
     label: "我的收藏",
     icon: "i-star",
-    path: `/user/${userInfo.value.id}/collection`,
+    path: `/user/${userInfo.value.id}/favorites`,
   },
   {
     label: "个人中心",

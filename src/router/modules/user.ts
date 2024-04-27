@@ -84,16 +84,16 @@ const route = [
             ]
           },
           {
-            path: "collection",
+            path: "favorites",
             redirect: to => {
-              return {name: 'userCollectionFolder', params: {userId: to.params.userId, page: 1}}
+              return {name: 'userFavoritesFolder', params: {userId: to.params.userId, page: 1}}
             },
-            component: () => import("@/views/user/profile/collection/CollectionList.vue"),
+            component: () => import("@/views/user/profile/favorites/FavoritesList.vue"),
             children: [
               {
                 path: 'folder',
                 redirect: to => {
-                  return {name: 'userCollectionFolder', params: {userId: to.params.userId, page: 1}}
+                  return {name: 'userFavoritesFolder', params: {userId: to.params.userId, page: 1}}
                 },
                 meta: {
                   title: "Ta的收藏夹",
@@ -102,19 +102,19 @@ const route = [
                 children: [
                   {
                     path: ':page(\\d+)',
-                    name: 'userCollectionFolder',
+                    name: 'userFavoritesFolder',
                     meta: {
                       title: "Ta的收藏夹",
                       keepAlive: true
                     },
-                    component: () => import("@/views/user/profile/collection/CollectListFolder.vue"),
+                    component: () => import("@/views/user/profile/favorites/FavoritesFolder.vue"),
                   }
                 ],
               },
               {
                 path: 'column',
                 redirect: to => {
-                  return {name: 'userCollectionColumn', params: {userId: to.params.userId, page: 1}}
+                  return {name: 'userFavoritesColumn', params: {userId: to.params.userId, page: 1}}
                 },
                 meta: {
                   title: "Ta收藏的专栏",
@@ -123,19 +123,19 @@ const route = [
                 children: [
                   {
                     path: ':page(\\d+)',
-                    name: 'userCollectionColumn',
+                    name: 'userFavoritesColumn',
                     meta: {
                       title: "Ta收藏的专栏",
                       keepAlive: true
                     },
-                    component: () => import("@/views/user/profile/collection/CollectListColumn.vue"),
+                    component: () => import("@/views/user/profile/favorites/FavoritesColumn.vue"),
                   }
                 ],
               },
               {
                 path: 'note',
                 redirect: to => {
-                  return {name: 'userCollectionNote', params: {userId: to.params.userId, page: 1}}
+                  return {name: 'userFavoritesNote', params: {userId: to.params.userId, page: 1}}
                 },
                 meta: {
                   title: "Ta收藏的笔记",
@@ -144,12 +144,12 @@ const route = [
                 children: [
                   {
                     path: ':page(\\d+)',
-                    name: 'userCollectionNote',
+                    name: 'userFavoritesNote',
                     meta: {
                       title: "Ta收藏的笔记",
                       keepAlive: true
                     },
-                    component: () => import("@/views/user/profile/collection/CollectListNote.vue"),
+                    component: () => import("@/views/user/profile/favorites/FavoritesNote.vue"),
                   }
                 ],
               }
