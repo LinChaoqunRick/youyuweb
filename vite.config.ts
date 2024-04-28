@@ -95,7 +95,6 @@ export default defineConfig({
           name: 'ant-design-vue',
           var: 'antd',
           path: 'dist/antd.min.js',
-          css: ['dist/antd.min.css', 'dist/antd.dark.min.css']
         },
         {
           name: 'md-editor-v3',
