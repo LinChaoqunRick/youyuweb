@@ -4,27 +4,37 @@
                 placement="bottom" overlayClassName="route-dropdown">
       <div class="route-dropdown-trigger">
         <RouterLink :to="route.path" custom v-slot="{isActive, isExactActive, navigate}">
-          <a :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}">
+          <div :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}">
             <span>{{ route.title }}</span>
             <i-down theme="outline" size="14" fill="currentColor"/>
-          </a>
+          </div>
         </RouterLink>
       </div>
       <template #overlay>
         <a-menu>
           <a-menu-item v-for="item in route.children">
-            <RouterLink :to="item.path" class="route-dropdown-item">{{ item.title }}</RouterLink>
+            <RouterLink :to="item.path" custom v-slot="{isActive, isExactActive, navigate}">
+              <a :href="item.path" :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}"
+                 @click="onRouteClick($event, isActive, isExactActive, navigate)">
+                <span>{{ item.title }}</span>
+              </a>
+            </RouterLink>
           </a-menu-item>
         </a-menu>
       </template>
     </a-dropdown>
   </div>
   <div class="nav-link nav-link-single" v-else>
-    <RouterLink :to="route.path">{{ route.title }}</RouterLink>
+    <RouterLink :to="route.path" custom v-slot="{isActive, isExactActive, navigate}">
+      <a :href="route.path" :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}"
+         @click="onRouteClick($event, isActive, isExactActive, navigate)">
+        <span>{{ route.title }}</span>
+      </a>
+    </RouterLink>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {RouterLink} from 'vue-router';
 
 const prop = defineProps({
@@ -33,6 +43,13 @@ const prop = defineProps({
     required: true
   }
 })
+
+const onRouteClick = (e: Event, isActive, isExactActive, navigate) => {
+  e.preventDefault();
+  if (!isActive) {
+    navigate();
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -42,7 +59,8 @@ const prop = defineProps({
   justify-content: center;
   align-items: center;
 
-  a, .i-icon {
+  a, .i-icon, div {
+    transition: .3s;
     color: var(--youyu-text2);
   }
 
@@ -61,7 +79,7 @@ const prop = defineProps({
 
     .route-dropdown-trigger {
 
-      a, .i-icon {
+      a, .i-icon, div {
         color: #1890ff !important;
       }
     }
