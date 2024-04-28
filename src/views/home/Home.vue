@@ -87,11 +87,11 @@ import TechnologyList from "@/views/home/components/TechnologyList.vue";
 import MoreList from "@/views/home/components/MoreList.vue";
 import AboutSiteHome from "@/views/home/components/AboutSiteHome.vue";
 
-import postLottieData from '/static/lottie/post.json';
-import momentLottieData from '/static/lottie/travel.json';
-import noteLottieData from '/static/lottie/draw.json';
-import albumLottieData from '/static/lottie/album.json';
-import labLottieData from '/static/lottie/lab.json';
+import postLottieData from '@/assets/lottie/post.json';
+import momentLottieData from '@/assets/lottie/travel.json';
+import noteLottieData from '@/assets/lottie/draw.json';
+import albumLottieData from '@/assets/lottie/album.json';
+import labLottieData from '@/assets/lottie/lab.json';
 
 const {getters, dispatch} = useStore();
 const authorId = computed(() => getters['getAuthorId']);

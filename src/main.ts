@@ -24,7 +24,7 @@ import row from "@/libs/directives/row";
 import focus from "@/libs/directives/focus";
 import zhcn from 'dayjs/locale/zh-cn';
 
-import './assets/main.scss';
+import './assets/css/main.scss';
 import './assets/css/theme/dark.scss';
 import './assets/css/theme/light.scss';
 import '@icon-park/vue-next/styles/index.css'; //icon-park

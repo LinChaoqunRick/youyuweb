@@ -1,6 +1,6 @@
-@import "base";
-@import "./css/aside/aside.scss";
-@import "./css/animate";
+@import "./base.scss";
+@import "aside/aside";
+@import "animate/index";
 
 $headerHeight: 60px;
 
