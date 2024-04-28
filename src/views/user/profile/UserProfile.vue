@@ -24,7 +24,7 @@
             </div>
           </div>
           <div class="content-component">
-            <EmptyPage v-if="user && isPermit($route.name)"/>
+            <EmptyPage v-if="user && isPermit()"/>
           </div>
         </div>
       </div>
@@ -66,7 +66,8 @@
     })
   }
 
-  function isPermit(name) { // 判读该用户是否开通了这个目录
+  const isPermit = () => { // 判读该用户是否开通了这个目录
+    const name = route.matched[2].name;
     if (isOwn.value) return true;
     const nameMap = {
       userHome: 'showHome',
@@ -78,9 +79,11 @@
       userFollow: 'showFollow',
       userFans: 'showFans',
     }
-    const isPermit = !!menuPermit.value[nameMap[name]];
+    const isPermit = Object.keys(menuPermit).length && menuPermit.value[nameMap[name]];
     if (!isPermit) {
-      message.error("无权访问！")
+      // console.log(123123);
+      // message.error("无权访问！");
+      alert("无权访问")
     }
     return isPermit;
   }
@@ -94,7 +97,7 @@
       {title: "文章", path: `/user/${user.value.id}/post`, value: 'showPost'},
       {title: "笔记", path: `/user/${user.value.id}/note`, value: 'showNote'},
       {title: "专栏", path: `/user/${user.value.id}/column`, value: 'showColumn'},
-      {title: "收藏", path: `/user/${user.value.id}/collection`, value: 'userFavorites'},
+      {title: "收藏", path: `/user/${user.value.id}/favorites`, value: 'userFavorites'},
       {title: "关注", path: `/user/${user.value.id}/follow`, value: 'showFollow'},
       {title: "粉丝", path: `/user/${user.value.id}/fans`, value: 'showFans'},
     ]

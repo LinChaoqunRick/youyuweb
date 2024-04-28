@@ -5,12 +5,13 @@
         {{ item.name }}
       </RouterLink>
     </div>
-    <router-view/>
+    <EmptyPage/>
   </div>
 </template>
 
 <script setup>
 import {inject} from "vue";
+import EmptyPage from "@/components/common/system/EmptyPage.vue";
 
 const user = inject('user');
 const menuList = [

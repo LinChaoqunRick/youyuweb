@@ -11,7 +11,6 @@ const route = [
     children: [
       {
         path: ":userId(\\d+)",
-        // redirect: to => {return {name: 'userMoment'}},
         name: "userProfile",
         meta: {
           title: "用户主页",
@@ -39,8 +38,9 @@ const route = [
           },
           {
             path: "post",
+            name: 'userPost',
             redirect: to => {
-              return {name: 'userPost', params: {userId: to.params.userId, page: 1}}
+              return {name: 'userPostList', params: {userId: to.params.userId, page: 1}}
             },
             meta: {
               title: "Ta的文章",
@@ -49,7 +49,7 @@ const route = [
             children: [
               {
                 path: ':page(\\d+)',
-                name: "userPost",
+                name: "userPostList",
                 meta: {
                   title: "Ta的文章",
                 },
@@ -68,13 +68,14 @@ const route = [
           },
           {
             path: "note",
+            name: 'userNote',
             redirect: to => {
-              return {name: 'userNote', params: {userId: to.params.userId, page: 1}}
+              return {name: 'userNoteList', params: {userId: to.params.userId, page: 1}}
             },
             children: [
               {
                 path: ':page(\\d+)',
-                name: 'userNote',
+                name: 'userNoteList',
                 meta: {
                   title: "Ta的笔记",
                   keepAlive: true
@@ -85,6 +86,7 @@ const route = [
           },
           {
             path: "favorites",
+            name: 'userFavorites',
             redirect: to => {
               return {name: 'userFavoritesFolder', params: {userId: to.params.userId, page: 1}}
             },
@@ -92,8 +94,9 @@ const route = [
             children: [
               {
                 path: 'folder',
+                name: 'userFavoritesFolder',
                 redirect: to => {
-                  return {name: 'userFavoritesFolder', params: {userId: to.params.userId, page: 1}}
+                  return {name: 'FavoritesFolder', params: {userId: to.params.userId, page: 1}}
                 },
                 meta: {
                   title: "Ta的收藏夹",
@@ -102,10 +105,9 @@ const route = [
                 children: [
                   {
                     path: ':page(\\d+)',
-                    name: 'userFavoritesFolder',
+                    name: 'FavoritesFolder',
                     meta: {
                       title: "Ta的收藏夹",
-                      keepAlive: true
                     },
                     component: () => import("@/views/user/profile/favorites/FavoritesFolder.vue"),
                   }
@@ -113,8 +115,9 @@ const route = [
               },
               {
                 path: 'column',
+                name: 'userFavoritesColumn',
                 redirect: to => {
-                  return {name: 'userFavoritesColumn', params: {userId: to.params.userId, page: 1}}
+                  return {name: 'FavoritesColumn', params: {userId: to.params.userId, page: 1}}
                 },
                 meta: {
                   title: "Ta收藏的专栏",
@@ -123,10 +126,9 @@ const route = [
                 children: [
                   {
                     path: ':page(\\d+)',
-                    name: 'userFavoritesColumn',
+                    name: 'FavoritesColumn',
                     meta: {
                       title: "Ta收藏的专栏",
-                      keepAlive: true
                     },
                     component: () => import("@/views/user/profile/favorites/FavoritesColumn.vue"),
                   }
@@ -134,8 +136,9 @@ const route = [
               },
               {
                 path: 'note',
+                name: 'userFavoritesNote',
                 redirect: to => {
-                  return {name: 'userFavoritesNote', params: {userId: to.params.userId, page: 1}}
+                  return {name: 'FavoritesNote', params: {userId: to.params.userId, page: 1}}
                 },
                 meta: {
                   title: "Ta收藏的笔记",
@@ -144,10 +147,9 @@ const route = [
                 children: [
                   {
                     path: ':page(\\d+)',
-                    name: 'userFavoritesNote',
+                    name: 'FavoritesNote',
                     meta: {
                       title: "Ta收藏的笔记",
-                      keepAlive: true
                     },
                     component: () => import("@/views/user/profile/favorites/FavoritesNote.vue"),
                   }
@@ -157,13 +159,14 @@ const route = [
           },
           {
             path: "follow",
+            name: 'userFollow',
             redirect: to => {
-              return {name: 'userFollow', params: {userId: to.params.userId, page: 1}}
+              return {name: 'userFollowList', params: {userId: to.params.userId, page: 1}}
             },
             children: [
               {
                 path: ':page(\\d+)',
-                name: "userFollow",
+                name: "userFollowList",
                 meta: {
                   title: "Ta的关注",
                   keepAlive: true
@@ -174,13 +177,14 @@ const route = [
           },
           {
             path: "fans",
+            name: 'userFans',
             redirect: to => {
-              return {name: 'userFans', params: {userId: to.params.userId, page: 1}}
+              return {name: 'userFansList', params: {userId: to.params.userId, page: 1}}
             },
             children: [
               {
                 path: ':page(\\d+)',
-                name: "userFans",
+                name: "userFansList",
                 meta: {
                   title: "Ta的关注",
                   keepAlive: true
