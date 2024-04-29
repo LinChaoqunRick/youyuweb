@@ -27,7 +27,12 @@ import {
   CREATE_MESSAGE,
   DELETE_MESSAGE,
   LIST_MESSAGE,
-  GET_USER_DETAIL_BASIC
+  GET_USER_DETAIL_BASIC,
+  CREATE_FAVORITES,
+  UPDATE_FAVORITES,
+  DELETE_FAVORITES,
+  LIST_FAVORITES,
+  FAVORITES_POST_PAGE,
 } from "@/network/apis";
 
 export default {
@@ -115,6 +120,21 @@ export default {
     },
     getUserDetailBasic(context: any, params: object) {
       return http.post(GET_USER_DETAIL_BASIC, params);
+    },
+    createFavorites(context: any, params: object) {
+      return http.post(CREATE_FAVORITES, params);
+    },
+    updateFavorites(context: any, params: object) {
+      return http.post(UPDATE_FAVORITES, params);
+    },
+    deleteFavorites(context: any, params: object) {
+      return http.post(DELETE_FAVORITES, params);
+    },
+    listFavorites(context: any, params: object) {
+      return http.post(LIST_FAVORITES, params);
+    },
+    favoritesPostPage(context: any, params: object) {
+      return http.post(FAVORITES_POST_PAGE, params);
     },
   },
 };

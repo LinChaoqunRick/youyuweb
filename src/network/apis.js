@@ -68,6 +68,11 @@ export const GET_USER_DETAIL_BASIC = ApiBase + "/user/open/getUserBasicById"; //
 export const CREATE_MESSAGE = ApiBase + "/message/open/create"; // 发布留言
 export const DELETE_MESSAGE = ApiBase + "/message/open/delete"; // 删除留言
 export const LIST_MESSAGE = ApiBase + "/message/open/list"; // 留言分页
+export const CREATE_FAVORITES = ApiBase + "/favorites/create"; // 创建收藏夹
+export const UPDATE_FAVORITES = ApiBase + "/favorites/update"; // 更新收藏夹
+export const DELETE_FAVORITES = ApiBase + "/favorites/delete"; // 删除收藏夹
+export const LIST_FAVORITES = ApiBase + "/favorites/open/list"; // 收藏夹列表
+export const FAVORITES_POST_PAGE = ApiBase + "/favorites/open/postPage"; // 收藏夹文章列表
 
 // 时刻
 export const MOMENT_CREATE = ApiBase + "/moment/create"; // 创建时刻
