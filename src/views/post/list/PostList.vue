@@ -26,9 +26,7 @@
 </script>
 
 <script setup lang="ts">
-  import {ref, onMounted, onBeforeUnmount} from "vue";
-  import {useIntersectionObserver} from '@vueuse/core';
-  import {addClass} from "@/assets/utils/utils.ts"
+  import {ref} from "vue";
 
   import YTable from "@/components/common/table/YTable.vue";
   import PostItem from "@/components/content/post/PostItem.vue";

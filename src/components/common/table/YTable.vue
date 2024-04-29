@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref, watch} from 'vue';
+import {computed, onDeactivated, ref, watch} from 'vue';
 import {useStore} from "vuex";
 import {useRoute, useRouter} from "vue-router";
 
@@ -65,9 +65,10 @@ const props = defineProps({
     default: () => ({})
   }
 });
-const page = Number(route.params.page);
 
-const current = ref(page || 1);
+const initPage = Number(route.params.page);
+
+const current = ref(initPage || 1);
 const size = ref(props.params.pageSize);
 const total = ref(0);
 const dataList = ref([]);
@@ -94,9 +95,8 @@ const initData = async () => {
   })).then(res => {
     dataList.value = [];
     document.documentElement.scrollTop = 0;
-    if (route.params.page != res.data.current) {
-      route.params.page = res.data.current;
-      router.push(route);
+    if (route.params.page && (route.params.page != res.data.current)) {
+      updateRoutePageParam(res.data.current);
     }
     total.value = res.data.total;
     dataList.value = res.data.list;
@@ -130,8 +130,25 @@ const handleChange = (page: number, pageSize: number) => {
   initData();
 };
 
+const updateRoutePageParam = (page: number) => {
+  const fullPath = route.fullPath;
+  const [path, query] = fullPath.split("?");
+  const pathItems = path.split("/");
+  pathItems[pathItems.length - 1] = String(page);
+  const combinePath = query ? [pathItems.join("/"), query].join("?") : pathItems.join("/");
+  history.pushState(null, "", combinePath);
+}
+
+// const paramsPageWatcher = watch(() => route.params.page, (newVal) => {
+//   console.log(newVal);
+// })
+
+onDeactivated(() => {
+  // paramsPageWatcher();
+})
+
 defineExpose({
-  page,
+  page: initPage,
   initData,
   refreshData
 })
