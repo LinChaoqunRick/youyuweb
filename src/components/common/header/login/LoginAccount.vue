@@ -46,21 +46,21 @@
     </div>
     <div class="social-account-title">社交账号登录</div>
     <div class="social-account-tag mt-10">
-<!--      <div class="tag-item tag-wechat" title="微信">
-        <img src="/static/images/logo/wechat.png" alt="" @click="onSocialConnect('wechat')"/>
-      </div>-->
+      <!--      <div class="tag-item tag-wechat" title="微信">
+              <img src="/static/images/logo/wechat.png" alt="" @click="onSocialConnect('wechat')"/>
+            </div>-->
       <div class="tag-item tag-qq" title="QQ">
         <img src="/static/images/logo/qq.png" alt="" @click="onSocialConnect('qq')"/>
       </div>
       <div class="tag-item tag-github" title="Github">
         <img src="/static/images/logo/github.png" alt="" @click="onSocialConnect('github')"/>
       </div>
-<!--      <div class="tag-item tag-alipay" title="支付宝">
-        <img src="/static/images/logo/alipay.png" alt="" @click="onSocialConnect('alipay')"/>
-      </div>-->
-<!--      <div class="tag-item tag-weibo" title="微博">
-        <img src="/static/images/logo/weibo.png" alt="" @click="onSocialConnect('weibo')"/>
-      </div>-->
+      <!--      <div class="tag-item tag-alipay" title="支付宝">
+              <img src="/static/images/logo/alipay.png" alt="" @click="onSocialConnect('alipay')"/>
+            </div>-->
+      <!--      <div class="tag-item tag-weibo" title="微博">
+              <img src="/static/images/logo/weibo.png" alt="" @click="onSocialConnect('weibo')"/>
+            </div>-->
     </div>
   </div>
 </template>
@@ -76,9 +76,16 @@ const {commit, dispatch} = useStore();
 import {Form} from 'ant-design-vue';
 
 const useForm = Form.useForm;
-const handleSwitch = inject('handleSwitch')
+const handleSwitch = inject('handleSwitch');
 
-const formState = reactive({
+interface LoginForm {
+  username: string,
+  password: string,
+  grant_type: string,
+  authType: string,
+}
+
+const formState = reactive<LoginForm>({
   username: '',
   password: '',
   grant_type: 'password', // oauth认证方式
@@ -109,7 +116,7 @@ const onSubmit = () => {
   });
 };
 
-const handleLogin = (form) => {
+const handleLogin = (form: LoginForm) => {
   dispatch('token', form).then(res => {
     const {userInfo, access_token, refresh_token} = res.data;
     message.success(`欢迎回来，${userInfo.nickname}`);
@@ -122,7 +129,7 @@ const handleLogin = (form) => {
   }).catch(e => {
     tip.showTip = true;
     tip.message = e.message;
-  }).finally(_ => {
+  }).finally(() => {
     loading.value = false;
   })
 }

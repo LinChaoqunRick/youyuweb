@@ -62,7 +62,16 @@
     disabled: boolean,
   }
 
-  const formState = reactive({
+  interface LoginForm {
+    username: string,
+    smsCode: string,
+    client_id: string,
+    client_secret: string,
+    grant_type: string,
+    authType: string,
+  }
+
+  const formState = reactive<LoginForm>({
     username: '',
     smsCode: '',
     client_id: 'web', // oauth客户端id
@@ -105,7 +114,7 @@
     });
   };
 
-  function handleLogin(form) {
+  function handleLogin(form: LoginForm) {
     dispatch('token', formState).then(res => {
       const {userInfo, access_token, refresh_token} = res.data;
       message.success(`欢迎回来，${userInfo.nickname}`);
@@ -125,7 +134,7 @@
         tip.showTip = true;
         tip.message = e.message;
       }
-    }).finally(_ => {
+    }).finally(() => {
       loading.value = false;
     })
   }

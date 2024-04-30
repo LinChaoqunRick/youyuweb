@@ -104,13 +104,13 @@
 <script setup lang="ts">
   import {ref, reactive, toRaw, inject, nextTick} from 'vue';
   import {useStore} from 'vuex';
-  import {message} from 'ant-design-vue';
+  import {message, Form} from 'ant-design-vue';
   import {checkPassword, checkTelephone} from "@/libs/validate/validate";
   import smsCode from "@/enums/sms/smsCode";
 
   const {commit, dispatch} = useStore();
 
-  const handleSwitch = inject('handleSwitch')
+  const handleSwitch = inject<Function | null>('handleSwitch')
 
   const formState = reactive({
     type: 0,
@@ -133,7 +133,7 @@
   })
 
   const loading = ref(false);
-  const formRef = ref(null);
+  const formRef = ref<typeof Form | null>(null);
 
   const rulesRef = reactive({
     username: [
@@ -155,11 +155,11 @@
 
   const onSubmit = () => {
     tip.show = false;
-    formRef.value.validate().then(() => {
+    formRef.value?.validate().then(() => {
       loading.value = true;
       dispatch('register', toRaw(formState)).then(res => {
         message.success("注册成功!");
-        handleSwitch()
+        handleSwitch && handleSwitch()
       }).catch(e => {
         tip.message = e.message;
         tip.show = true;
@@ -172,7 +172,7 @@
   function handleSendCode() {
     tip.show = false;
     if (formState.type) { // 如果是邮箱登录
-      formRef.value.validateFields('email').then(res => {
+      formRef.value?.validateFields('email').then(res => {
         codeBtnProp.loading = true;
         dispatch("sendEmailCode", {target: formState.email, repeat: true}).then(res => {
           disableTimer();
