@@ -2,38 +2,39 @@
   <div class="column-detail">
     <div class="column-item">
       <div class="column-cover">
-        <img :src="column.cover"/>
+        <img :src="column.cover" />
       </div>
       <div class="column-data">
         <div class="column-title">
           <div class="title-text" :title="column.title">{{ column.title }}</div>
           <span class="column-operation">
-          <div v-if="isOwn">
-            <a-popover placement="bottom" trigger="click" overlayClassName="column-operation-tooltip">
-            <template #content>
-              <a-button type="text" @click="onEdit">编辑专栏</a-button>
-              <a-button type="text"
-                        class="top-btn"><span>{{ column.isTop === '1' ? '取消置顶' : '置顶' }}</span></a-button>
-              <a-button type="text" class="delete-btn" @click="onDelete">删除</a-button>
-            </template>
-            <i-more theme="outline" size="22" fill="currentColor"/>
-          </a-popover>
-          </div>
-          <div v-else class="subscribe-button">
-            <a-button type="primary" size="small" @click="handleSubscribe">
-              <i-plus theme="outline" size="14" fill="currentColor"/>
-              订阅
-            </a-button>
-          </div>
-        </span>
+            <div v-if="isOwn">
+              <a-popover placement="bottom" trigger="click" overlayClassName="column-operation-tooltip">
+                <template #content>
+                  <a-button type="text" @click="onEdit">编辑专栏</a-button>
+                  <a-button type="text" class="top-btn"
+                    ><span>{{ column.isTop === '1' ? '取消置顶' : '置顶' }}</span></a-button
+                  >
+                  <a-button type="text" class="delete-btn" @click="onDelete">删除</a-button>
+                </template>
+                <i-more theme="outline" size="22" fill="currentColor" />
+              </a-popover>
+            </div>
+            <div v-else class="subscribe-button">
+              <a-button type="primary" size="small" @click="handleSubscribe">
+                <i-plus theme="outline" size="14" fill="currentColor" />
+                订阅
+              </a-button>
+            </div>
+          </span>
         </div>
         <div class="column-content" :title="column.content">{{ column.content }}</div>
         <div class="column-info" v-if="column.user">
           <RouterLink :to="`/user/${column.user.id}`">
             <span class="info-item">
-            <img class="user-avatar" :src="column.user.avatar"/>
-            <span class="user-nickname">{{ column.user.nickname }}</span>
-          </span>
+              <img class="user-avatar" :src="column.user.avatar" />
+              <span class="user-nickname">{{ column.user.nickname }}</span>
+            </span>
           </RouterLink>
           <span class="info-item">创建于{{ column.createTime }}</span>
           <span class="info-item">{{ column.postNum }}篇文章</span>
@@ -45,15 +46,11 @@
       <a-tab-pane key="postList" tab="收录文章">
         <div class="post-list">
           <YTable listUrl="getColumnPosts" :params="listParams">
-            <template #default="{dataList}">
+            <template #default="{ dataList }">
               <div v-for="(item, index) in dataList" class="article-item" :key="item.postId">
                 <PostItem :data="item" :index="index">
                   <template v-slot:footer>
-                    <a-popconfirm
-                      title="是否移除本文?"
-                      ok-text="是"
-                      cancel-text="否"
-                      @confirm="onRemoveConfirm(item)">
+                    <a-popconfirm title="是否移除本文?" ok-text="是" cancel-text="否" @confirm="onRemoveConfirm(item)">
                       <a-button v-if="isOwn" size="small" type="primary" danger>移除</a-button>
                     </a-popconfirm>
                   </template>
@@ -68,70 +65,79 @@
 </template>
 
 <script setup lang="ts">
-import {ref, computed} from "vue";
-import {useStore} from "vuex";
-import {useRoute} from "vue-router";
-import YTable from "@/components/common/table/YTable.vue";
-import PostItem from "@/views/user/profile/post/PostItem.vue";
-import openModal from "@/libs/tools/openModal";
-import ColumnEdit from "@/views/user/profile/column/list/ColumnEdit.vue";
-import {message, Modal} from "ant-design-vue";
-import {cloneDeep} from "lodash";
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRoute } from 'vue-router';
+import YTable from '@/components/common/table/YTable.vue';
+import PostItem from '@/views/user/profile/post/PostItem.vue';
+import openModal from '@/libs/tools/openModal';
+import ColumnEdit from '@/views/user/profile/column/list/ColumnEdit.vue';
+import { message, Modal } from 'ant-design-vue';
+import { cloneDeep } from 'lodash';
+import type { userType } from '@/types/user';
 
-const {getters, dispatch} = useStore();
+interface Column {
+  id: number;
+  title: string;
+  content: string;
+  cover: string;
+  user?: userType;
+}
+
+const { getters, dispatch } = useStore();
 const route = useRoute();
 
 const activeKey = ref('postList');
 const columnId = route.params.columnId;
 const userInfo = computed(() => getters['userInfo']);
 const isOwn = computed(() => column.value.user?.id === userInfo.value.id);
-const column = ref({});
+const column = ref<Column>({});
 const listParams = computed(() => ({
   columnId,
-  pageSize: 20
-}))
+  pageSize: 20,
+}));
 
 const getColumnDetail = () => {
-  dispatch('getColumnDetail', {columnId}).then(res => {
+  dispatch('getColumnDetail', { columnId }).then(res => {
     column.value = res.data;
-  })
-}
+  });
+};
 
 getColumnDetail();
 
-function handleSubscribe() {
-
-}
+function handleSubscribe() {}
 
 const onEdit = () => {
   openModal({
     component: ColumnEdit,
-    componentProps: {columnId: column.value.id}
+    componentProps: { columnId: column.value.id },
   }).then(res => {
     column.value.title = res.title;
     column.value.content = res.content;
     column.value.cover = res.cover;
-  })
-}
+  });
+};
 
 const onDelete = () => {
   Modal.confirm({
     title: '删除时刻',
     icon: '', // <help theme="outline" size="24" fill="#1890ff"/>
     content: '确定删除此专栏？',
-    onOk() {
-      return dispatch('deleteColumn', {columnId: column.value.id}).then(res => {
-        message.success('删除成功');
-      })
+    async onOk() {
+      const res = await dispatch('deleteColumn', { columnId: column.value.id });
+      message.success('删除成功');
     },
   });
-}
+};
 
-const onRemoveConfirm = (item) => {
+const onRemoveConfirm = item => {
   const post = cloneDeep(item);
-  post.columnIds = post.columnIds.split(",").filter(id => id != columnId).join(",");
+  post.columnIds = post.columnIds
+    .split(',')
+    .filter(id => id != columnId)
+    .join(',');
   // dispatch("")
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -257,7 +263,7 @@ const onRemoveConfirm = (item) => {
             color: #1890ff;
           }
 
-          &:nth-child(n+2) {
+          &:nth-child(n + 2) {
             &:before {
               content: '/';
               color: #e1e1e1;
@@ -274,7 +280,6 @@ const onRemoveConfirm = (item) => {
   }
 
   ::v-deep(.y-table) {
-
     .ant-pagination {
       margin-top: 8px;
     }
