@@ -5,6 +5,7 @@
       :data="data"
       :accept="accept"
       :show-upload-list="false"
+      :max-count="maxNum"
       :disabled="disabled"
       :capture="null"
       :customRequest="customRequest"
@@ -53,9 +54,6 @@ const props = defineProps({
     type: Number,
     default: 10,
   },
-  query: {
-    type: String,
-  },
   accept: {
     type: String,
     default: '.jpg, .jpeg, .png, .JPG, .PNG',
@@ -85,7 +83,7 @@ let tempCount = 0; // 用于handleChange计算文件数目
 const handleChange = (info: UploadChangeParam) => {
   const {file, fileList} = info;
   return new Promise((resolve, reject) => {
-    if (files.value.length + fileList.length > props.maxNum) {
+    if (files.value.length > props.maxNum - 1) {
       message.error(`最多可上传${props.maxNum}个文件`);
       return reject(false);
     }
