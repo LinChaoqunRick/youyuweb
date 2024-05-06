@@ -155,14 +155,14 @@ const contentLengthExceed = computed(() => richEditor.value?.contentLengthExceed
 const uploadDisabled = computed(() => props.form.images?.length >= maxFileNum || !isLogin.value);
 
 const richEditor = ref(null);
-const UploadFileRef = ref(null);
+const UploadFileRef = ref<typeof UploadFile | null>(null);
 const active = computed(() => richEditor.value?.active);
 const emojiVisible = ref(false);
 const submitLoading = ref(false);
 const drag = ref(false);
 
 const onAddImage = () => {
-  UploadFileRef.value?.$el?.querySelector('input')?.click();
+  UploadFileRef.value?.triggerInput?.();
 };
 
 const toLogin = () => {

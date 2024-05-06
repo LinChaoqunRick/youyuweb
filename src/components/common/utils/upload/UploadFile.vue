@@ -1,20 +1,8 @@
 <template>
   <div class="upload-file" :class="{ disabled: disabled }">
-    <a-upload
-      v-model:file-list="uploadFiles"
-      :data="data"
-      :accept="accept"
-      :show-upload-list="false"
-      :max-count="maxNum"
-      :disabled="disabled"
-      :capture="null"
-      :customRequest="customRequest"
-      :multiple="multiple"
-      @change="handleChange"
-      v-bind="$attrs"
-      class="avatar-uploader"
-      ref="uploadRef"
-    >
+    <input type="file" multiple v-bind="$attrs" :accept="accept" :disabled="disabled" :capture="null"
+           v-if="visible" style="display: none" @change="handleChange" ref="inputRef"/>
+    <div class="input-trigger" @click="onTriggerInput">
       <slot :progress="progress">
         <div class="upload-box">
           <div class="progress-box" :style="{ width: `${totalProgress}%` }"></div>
@@ -24,20 +12,19 @@
           </div>
         </div>
       </slot>
-    </a-upload>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue';
+import {ref, nextTick} from 'vue';
 import {message} from 'ant-design-vue';
-import type {UploadChangeParam} from 'ant-design-vue';
 import {useStore} from 'vuex';
 import {merge} from 'lodash';
 import {uploadToOss} from '@/components/common/utils/upload/utils';
 import {AxiosError} from "axios";
 
-const uploadRef = ref(null);
+const inputRef = ref<HTMLInputElement | null>(null);
 
 const {dispatch} = useStore();
 const files = defineModel({default: []}); // v-model双向绑定
@@ -66,59 +53,57 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
-  multiple: {
-    type: Boolean,
-    default: false
-  }
 });
 
-const uploadFiles = ref([]); // 临时的文件列表，仅用于上传，上传成功后清空
 const data = ref<object>({});
 const progress = ref<number[]>([]);
 const totalProgress = ref<number>(100);
+const visible = ref(true);
 
 const emit = defineEmits(['change', 'uploadSuccess']);
 
-let tempCount = 0; // 用于handleChange计算文件数目
-const handleChange = (info: UploadChangeParam) => {
-  const {file, fileList} = info;
-  return new Promise((resolve, reject) => {
+const handleChange = (event: Event) => {
+  const inputElement = event.target as HTMLInputElement;
+  const originFiles = Object.values(inputElement.files);
+  for (const file of originFiles) {
     if (files.value.length > props.maxNum - 1) {
       message.error(`最多可上传${props.maxNum}个文件`);
-      return reject(false);
+      break;
     }
     // 校验文件
     const fileNameArr = file.name.split('.');
     const suffix = fileNameArr[fileNameArr.length - 1];
     const nameLegal = props.accept.indexOf(suffix) > -1;
     if (!nameLegal) {
-      message.error(`只能上传${props.accept}类型的文件`);
-      return reject(false);
+      return message.error(`只能上传${props.accept}类型的文件`);
     }
     const sizeExceed = file.size / 1024 / 1024 < props.maxSize;
     if (!sizeExceed) {
-      message.error(`文件大小不能大于${props.maxSize}MB`);
-      return reject(false);
+      return message.error(`文件大小不能大于${props.maxSize}MB`);
     }
 
     // 校验成功处理文件
-    file.thumb = URL.createObjectURL(file.originFileObj);
+    file.thumb = URL.createObjectURL(file);
     files.value.push(file);
     emit('change', file);
-    tempCount++;
-    if (tempCount === fileList.length && props.autoUpload) {
-      upload();
-    }
-    return resolve(true);
-  });
+  }
+  if (props.autoUpload) {
+    upload();
+  }
+  visible.value = false;
 };
 
-const customRequest = () => {
-};
+const onTriggerInput = () => {
+  visible.value = true;
+  nextTick(() => {
+    inputRef.value?.click();
+  })
+}
 
 const upload = async () => {
-  const originalFiles = files.value.map(item => item?.originFileObj).filter(item => item);
-  if (!originalFiles.length) {
+  const uploadFiles = files.value.filter(item => item.thumb);
+  // console.log(uploadFiles);
+  if (!uploadFiles.length) {
     return;
   }
   const defaultConfig = {
@@ -129,10 +114,9 @@ const upload = async () => {
     maxSize: props.maxSize,
   };
   const mergedConfig = merge(defaultConfig, props.data);
-  const res = await uploadToOss(originalFiles, mergedConfig);
+  const res = await uploadToOss(uploadFiles, mergedConfig);
   const firstErrorItem = res?.find(item => item instanceof AxiosError);
   if (!firstErrorItem) {
-    uploadFiles.value = [];
     files.value = [];
   }
   emit('uploadSuccess', res);
@@ -153,6 +137,7 @@ const uploadProgress = (progressList: number[]) => {
 defineExpose({
   files,
   upload,
+  triggerInput: onTriggerInput
 });
 </script>
 

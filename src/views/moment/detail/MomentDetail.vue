@@ -3,25 +3,15 @@
     <div class="moment-detail-middle">
       <div v-if="moment">
         <div class="moment-detail-item">
-          <MomentItem
-            v-if="!isEdit"
-            :data="moment"
-            :show-detail="false"
-            @deleteSuccess="onMomentDeleteSuccess"
-            @onCommentDeleteSuccess="onCommentDeleteSuccess"
-            @onEdit="onEdit"
-            ref="MomentRef"
-          />
-          <MomentEditor
-            v-else
-            isEdit
-            :form="formData"
-            @saveSuccess="saveSuccess"
-            ref="MomentEditor"
-          >
+          <MomentItem v-if="!isEdit" :data="moment" :show-detail="false"
+                      @deleteSuccess="onMomentDeleteSuccess"
+                      @onCommentDeleteSuccess="onCommentDeleteSuccess"
+                      @onEdit="onEdit"
+                      ref="MomentRef"/>
+          <MomentEditor v-else isEdit :form="formData" @saveSuccess="saveSuccess">
             <template v-slot:bottom>
-              <a-button type="link" class="cancel-btn" @click="onEditCancel"
-              >取消
+              <a-button type="link" class="cancel-btn" @click="onEditCancel">
+                取消
               </a-button>
             </template>
           </MomentEditor>
@@ -48,23 +38,11 @@
             </div>
           </div>
           <div class="comment-list">
-            <ContentList
-              url="listMomentCommentPage"
-              :params="listParams"
-              :total="moment.commentCount"
-              auto-load
-              load-trigger
-              ref="ContentListRef"
-            >
+            <ContentList url="listMomentCommentPage" :params="listParams" :total="moment.commentCount"
+                         auto-load load-trigger ref="ContentListRef">
               <template v-slot="{ list }">
-                <MomentCommentItem
-                  v-for="item in list"
-                  :key="item.id"
-                  class="comment-item"
-                  :data="item"
-                  :moment="moment"
-                  @deleteSuccess="MomentRef?.deleteSuccess"
-                />
+                <MomentCommentItem v-for="item in list" :key="item.id" class="comment-item" :data="item"
+                                   :moment="moment" @deleteSuccess="MomentRef?.deleteSuccess"/>
               </template>
               <template #loadMoreBox="{ loading, total }">
                 <span class="mr-8">查看全部<span class="comment-count">
@@ -81,7 +59,7 @@
   </div>
 </template>
 
-<script name="MomentDetail1" lang="ts" setup>
+<script lang="ts" setup>
 import {computed, ref, nextTick} from "vue";
 import type {PropType} from "vue";
 import {useStore} from "vuex";
