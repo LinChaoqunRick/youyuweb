@@ -1,10 +1,9 @@
 <template>
   <div class="collect-list">
+    <a-button class="add-btn" type="text">ÐÂÔö</a-button>
     <div class="list-body">
       <ContentData url="listFavorites" :params="listParams" v-slot="{data}" ref="ContentDataRef">
-        <div v-for="(item, index) in data" class="article-item" :key="item.id">
-          {{ item }}
-        </div>
+        <FavoritesItem v-for="item in data" :data="item" :key="item.id"/>
       </ContentData>
     </div>
   </div>
@@ -13,6 +12,7 @@
 <script setup lang="ts">
 import {computed, inject} from "vue";
 import ContentData from "@/components/common/system/ContentData.vue";
+import FavoritesItem from '@/views/user/profile/favorites/components/FavoritesItem.vue';
 
 const user = inject('user');
 const listParams = computed(() => ({
