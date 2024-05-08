@@ -11,7 +11,9 @@
       <div class="favorites-name">{{ data.name }}</div>
       <div class="favorites-data-bottom">
         <span>创建于：{{ data.createTime.slice(0, 10) }}</span>
-        <span>类型：{{ open ? '公开' : '私密' }}</span>
+        <span
+          >类型：<span :class="[open ? 'open' : 'private']">{{ open ? '公开' : '私密' }}</span></span
+        >
       </div>
     </div>
   </div>
@@ -98,6 +100,14 @@ const getFavoriteCover = computed(() => {
 
       span {
         margin-right: 10px;
+      }
+
+      .open {
+        color: #00bc00
+      }
+
+      .private {
+        color: red;
       }
     }
   }
