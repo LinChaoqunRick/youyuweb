@@ -1,9 +1,9 @@
 <template>
   <div class="favorites-item cp">
     <div class="favorites-preview">
-      <img :src="getFavoriteCover" alt="" />
+      <img :src="getFavoriteCover" alt=""/>
       <div class="post-count">
-        <i-star theme="outline" size="12" fill="currentColor" />
+        <i-star theme="outline" size="12" fill="currentColor"/>
         {{ data.count }}
       </div>
     </div>
@@ -11,31 +11,16 @@
       <div class="favorites-name">{{ data.name }}</div>
       <div class="favorites-data-bottom">
         <span>创建于：{{ data.createTime.slice(0, 10) }}</span>
-        <span
-          >类型：<span :class="[open ? 'open' : 'private']">{{ open ? '公开' : '私密' }}</span></span
-        >
+        <span>类型：<span :class="[data.open ? 'open' : 'private']">{{ data.open ? '公开' : '私密' }}</span></span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import type { PropType } from 'vue';
-
-interface FavoritesType {
-  id?: string;
-  userId?: number;
-  name?: string;
-  postIds?: string;
-  cover?: string;
-  open?: number;
-  isTop?: number;
-  likeCount?: number;
-  createTime?: string;
-  updateTime?: string;
-  previewPosts?: [];
-}
+import {computed} from 'vue';
+import type {PropType} from 'vue';
+import type {FavoritesType} from "@/views/user/profile/favorites/type";
 
 const props = defineProps({
   data: {
@@ -46,7 +31,7 @@ const props = defineProps({
 
 const getFavoriteCover = computed(() => {
   const firstPost = props.data?.previewPosts?.[0];
-  return firstPost ? firstPost.cover : props.data?.cover;
+  return firstPost ? firstPost.thumbnail : props.data?.cover;
 });
 </script>
 
@@ -64,7 +49,9 @@ const getFavoriteCover = computed(() => {
 
     img {
       height: 100%;
+      width: 110px;
       border-radius: 2px;
+      object-fit: cover;
     }
 
     .post-count {
