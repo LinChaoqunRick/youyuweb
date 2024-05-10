@@ -122,10 +122,14 @@ export default {
       return http.post(GET_USER_DETAIL_BASIC, params);
     },
     createFavorites(context: any, params: object) {
-      return http.post(CREATE_FAVORITES, params);
+      return http.post(CREATE_FAVORITES, params, {
+        headers: {"Content-Type": "application/json"},
+      });
     },
     updateFavorites(context: any, params: object) {
-      return http.post(UPDATE_FAVORITES, params);
+      return http.post(UPDATE_FAVORITES, params, {
+        headers: {"Content-Type": "application/json"},
+      });
     },
     deleteFavorites(context: any, params: object) {
       return http.post(DELETE_FAVORITES, params);

@@ -17,7 +17,7 @@ import FavoritesItem from '@/views/user/profile/favorites/components/FavoritesIt
 import FavoritesAdd from "@/views/user/profile/favorites/components/FavoritesAdd.vue";
 
 const user = inject('user');
-const ContentDataRef = ref();
+const ContentDataRef = ref<typeof ContentData>();
 const listParams = computed(() => ({
   userId: user.value.id,
 }));
@@ -30,7 +30,7 @@ const onAdd = async () => {
     maskClosable: false,
     width: '620px'
   }).catch(console.log);
-  // ContentDataRef.value.refreshData();
+  ContentDataRef.value?.initData();
 }
 </script>
 

@@ -18,13 +18,12 @@ const formValidate = ref<FavoritesType>({
   open: 1
 })
 
-
 async function beforeConfirm(done: Function) {
   const form = await editor.value.getFormData();
   if (form) {
     formValidate.value.userId = userInfo.value.id;
     modal.confirmLoading = true;
-    dispatch("createNote", formValidate.value).then(res => {
+    dispatch("createFavorites", formValidate.value).then(res => {
       done();
       message.success("保存成功");
     }).finally(() => {
