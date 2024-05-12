@@ -20,7 +20,7 @@ import {
   SET_POST_COMMENT_LIKE,
   CANCEL_POST_COMMENT_LIKE,
   SET_POST_COLLECT,
-  IS_POST_COLLECT,
+  GET_POST_COLLECT_INFO,
   CANCEL_POST_COLLECT,
   OSS_POLICY,
   OSS_STS,
@@ -93,8 +93,8 @@ export default {
     setPostCollect(context: any, params: any) {
       return http.post(SET_POST_COLLECT, params);
     },
-    isPostCollect(context: any, params: any) {
-      return http.post(IS_POST_COLLECT, params);
+    getPostCollectInfo(context: any, params: any) {
+      return http.post(GET_POST_COLLECT_INFO, params);
     },
     cancelPostCollect(context: any, params: any) {
       return http.post(CANCEL_POST_COLLECT, params);
