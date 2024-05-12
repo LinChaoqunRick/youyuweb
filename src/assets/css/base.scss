@@ -172,3 +172,17 @@ a {
 .ant-card {
   border-radius: 4px !important;
 }
+
+.filled-input {
+  outline: none !important;
+  background-color: var(--youyu-background5) !important;
+  border-color: var(--youyu-background5) !important;
+  border-radius: 4px !important;
+  color: var(--youyu-text7) !important;
+  font-size: 14px !important;
+  box-shadow: none !important;
+
+  .ant-input {
+    background-color: transparent !important;
+  }
+}

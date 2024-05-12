@@ -38,8 +38,7 @@
           :total="post.commentCount"
           load-trigger
           v-if="post.id"
-          ref="ContentListRef"
-        >
+          ref="ContentListRef">
           <template v-slot="{ list }">
             <CommentItem v-for="item in list" :data="item" :key="item.id" @deleteSuccess="deleteSuccess" />
           </template>
@@ -146,6 +145,9 @@ defineExpose({
 <style lang="scss" scoped>
 .post-comment-container {
   .write-comment-card {
+    border-bottom-right-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+
     ::v-deep(.ant-card-body) {
       padding: 0 24px 10px 24px;
     }
@@ -164,6 +166,9 @@ defineExpose({
   }
 
   .comment-list-card {
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+
     .title-container {
       display: flex;
       justify-content: space-between;
