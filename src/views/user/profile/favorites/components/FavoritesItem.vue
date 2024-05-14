@@ -11,18 +11,34 @@
       <div class="favorites-name">{{ data.name }}</div>
       <div class="favorites-data-bottom">
         <span>创建于：{{ data.createTime.slice(0, 10) }}</span>
-        <span
-          >类型：<span :class="[data.open ? 'open' : 'private']">{{ data.open ? '公开' : '私密' }}</span></span
-        >
+        <span>类型：<span :class="[data.open ? 'open' : 'private']">{{ data.open ? '公开' : '私密' }}</span></span>
+        <a-popover
+          v-model:open="visible"
+          placement="bottomRight"
+          overlayClassName="moment-item-top-popover"
+          :getPopupContainer="triggerNode => triggerNode.parentNode">
+          <div class="operation-btn" v-if="data.userId == userInfo.id"><i-more theme="outline" size="24" fill="currentColor"/></div>
+          <template #content>
+            <div class="operation-items">
+              <div class="operation-item edit-moment">
+                <i-editor theme="outline" size="14" fill="currentColor" />
+                编辑
+              </div>
+            </div>
+          </template>
+        </a-popover>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import type { PropType } from 'vue';
+import {useStore} from 'vuex';
 import type { FavoritesType } from '@/views/user/profile/favorites/type';
+
+const {getters} = useStore();
 
 const props = defineProps({
   data: {
@@ -30,6 +46,9 @@ const props = defineProps({
     require: true,
   },
 });
+
+const visible = ref<boolean>(false);
+const userInfo = computed(() => getters['userInfo']);
 
 const getFavoriteCover = computed(() => {
   const firstPost = props.data?.previewPosts?.[0];
@@ -71,6 +90,7 @@ const getFavoriteCover = computed(() => {
       border-radius: 2px;
       color: white;
       background-color: rgba(0, 0, 0, 0.7);
+      z-index: 10;
 
       .i-icon {
         margin-right: 2px;
@@ -90,6 +110,8 @@ const getFavoriteCover = computed(() => {
     }
 
     .favorites-data-bottom {
+      display: flex;
+      align-items: center;
       color: var(--youyu-text1);
 
       span {
@@ -102,6 +124,10 @@ const getFavoriteCover = computed(() => {
 
       .private {
         color: red;
+      }
+
+      .operation-btn{
+        margin-left: auto;
       }
     }
   }

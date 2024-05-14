@@ -36,6 +36,7 @@
 
   function handleMenuItems() {
     const disabledMenus = ["动态", "时刻", "文章", "笔记", "专栏"];
+    console.log(props.menuItems);
     menuItems.value = cloneDeep(props.menuItems);
     menuItems.value.map(item => {
       item.disabled = disabledMenus.includes(item.title);
@@ -60,6 +61,7 @@
 
   function beforeConfirm(done) {
     const menuResult = toRaw(menuPermit.value);
+    console.log(menuResult);
     Object.keys(menuResult).forEach(key => {
       if (key.startsWith("show")) {
         menuResult[key] = menuResult[key] ? 1 : 0;

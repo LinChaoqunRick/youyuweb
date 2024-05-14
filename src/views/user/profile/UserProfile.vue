@@ -75,7 +75,7 @@
       userPost: 'showPost',
       userNote: 'showNote',
       userColumn: 'showColumn',
-      userFavorites: 'userFavorites',
+      userFavorites: 'showFavorites',
       userFollow: 'showFollow',
       userFans: 'showFans',
     }
@@ -97,7 +97,7 @@
       {title: "文章", path: `/user/${user.value.id}/post`, value: 'showPost'},
       {title: "笔记", path: `/user/${user.value.id}/note`, value: 'showNote'},
       {title: "专栏", path: `/user/${user.value.id}/column`, value: 'showColumn'},
-      {title: "收藏", path: `/user/${user.value.id}/favorites`, value: 'userFavorites'},
+      {title: "收藏", path: `/user/${user.value.id}/favorites`, value: 'showFavorites'},
       {title: "关注", path: `/user/${user.value.id}/follow`, value: 'showFollow'},
       {title: "粉丝", path: `/user/${user.value.id}/fans`, value: 'showFans'},
     ]
@@ -112,7 +112,9 @@
         return item;
       })
     } else {
-      showMenuItems.value = menuItems.value.filter(item => !!menuPermit.value[item.value])
+      console.log(menuItems.value, menuPermit.value);
+      showMenuItems.value = menuItems.value.filter(item => !!menuPermit.value[item.value]);
+      console.log(showMenuItems.value);
     }
   }
 
