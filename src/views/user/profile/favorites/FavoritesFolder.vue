@@ -4,7 +4,7 @@
     <transition name="fade" mode="out-in">
       <div v-if="view === 'list'" class="list-body">
         <ContentData url="listFavorites" :params="listParams" v-slot="{ data }" ref="ContentDataRef">
-          <FavoritesItem v-for="item in data" :data="item" :key="item.id" @click="onDetail(item)" />
+          <FavoritesItem v-for="item in data" :data="item" :key="item.id" @onDetail="onDetail(item)" />
         </ContentData>
       </div>
       <div v-else class="detail-body">

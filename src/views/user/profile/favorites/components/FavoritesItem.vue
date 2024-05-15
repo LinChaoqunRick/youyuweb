@@ -1,6 +1,6 @@
 <template>
   <div class="favorites-item cp" :class="[data.count > 2 ? 'count-3' : data.count > 1 ? 'count-2' : 'count-1']">
-    <div class="favorites-preview">
+    <div class="favorites-preview" @click="onDetail">
       <img :src="getFavoriteCover" alt="" />
       <div class="post-count">
         <i-star theme="outline" size="12" fill="currentColor" />
@@ -8,26 +8,31 @@
       </div>
     </div>
     <div class="favorites-data">
-      <div class="favorites-name">{{ data.name }}</div>
+      <div class="favorites-name" @click="onDetail">{{ data.name }}</div>
       <div class="favorites-data-bottom">
         <span>创建于：{{ data.createTime.slice(0, 10) }}</span>
-        <span>类型：<span :class="[data.open ? 'open' : 'private']">{{ data.open ? '公开' : '私密' }}</span></span>
-        <a-popover
-          v-model:open="visible"
-          placement="bottomRight"
-          overlayClassName="moment-item-top-popover"
-          :getPopupContainer="triggerNode => triggerNode.parentNode">
-          <div class="operation-btn" v-if="data.userId == userInfo.id"><i-more theme="outline" size="24" fill="currentColor"/></div>
-          <template #content>
-            <div class="operation-items">
-              <div class="operation-item edit-moment">
-                <i-editor theme="outline" size="14" fill="currentColor" />
-                编辑
-              </div>
-            </div>
-          </template>
-        </a-popover>
+        <span
+          >类型：
+          <span :class="[data.open ? 'open' : 'private']">{{ data.open ? '公开' : '私密' }}</span>
+        </span>
       </div>
+      <a-popover
+        v-model:open="visible"
+        placement="bottomRight"
+        overlayClassName="favorites-item-top-popover"
+      >
+        <div class="operation-btn" v-if="data.userId == userInfo.id">
+          <i-more theme="outline" size="24" fill="currentColor" />
+        </div>
+        <template #content>
+          <div class="operation-items">
+            <div class="operation-item edit-favorites">
+              <i-editor theme="outline" size="14" fill="currentColor" />
+              编辑
+            </div>
+          </div>
+        </template>
+      </a-popover>
     </div>
   </div>
 </template>
@@ -35,10 +40,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import type { PropType } from 'vue';
-import {useStore} from 'vuex';
+import { useStore } from 'vuex';
 import type { FavoritesType } from '@/views/user/profile/favorites/type';
 
-const {getters} = useStore();
+const { getters } = useStore();
 
 const props = defineProps({
   data: {
@@ -47,6 +52,8 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(['onDetail']);
+
 const visible = ref<boolean>(false);
 const userInfo = computed(() => getters['userInfo']);
 
@@ -54,6 +61,8 @@ const getFavoriteCover = computed(() => {
   const firstPost = props.data?.previewPosts?.[0];
   return firstPost ? firstPost.thumbnail : props.data?.cover;
 });
+
+const onDetail = () => emit('onDetail');
 </script>
 
 <style scoped lang="scss">
@@ -104,6 +113,7 @@ const getFavoriteCover = computed(() => {
     flex-direction: column;
     justify-content: space-between;
     overflow: hidden;
+    position: relative;
 
     .favorites-name {
       font-size: 16px;
@@ -125,16 +135,11 @@ const getFavoriteCover = computed(() => {
       .private {
         color: red;
       }
-
-      .operation-btn{
-        margin-left: auto;
-      }
     }
   }
 
   &.count-3 {
     .favorites-preview {
-
       img {
         height: 90%;
         z-index: 10;
@@ -167,7 +172,6 @@ const getFavoriteCover = computed(() => {
 
   &.count-2 {
     .favorites-preview {
-
       img {
         height: 95%;
         z-index: 10;
@@ -183,6 +187,49 @@ const getFavoriteCover = computed(() => {
         background-color: #afb3b8;
         border-radius: 2px 2px 0 0;
         z-index: 5;
+      }
+    }
+  }
+}
+
+.operation-btn {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+</style>
+
+<style lang="scss">
+.favorites-item-top-popover {
+  position: absolute;
+
+  padding-top: 4px;
+
+  .ant-popover-inner {
+    padding: 0;
+
+    .ant-popover-inner-content {
+      padding: 6px !important;
+
+      .operation-items {
+        .operation-item {
+          width: 70px;
+          cursor: pointer;
+          padding: 3px 8px;
+          border-radius: 4px;
+
+          &:hover {
+            background-color: var(--youyu-background2);
+          }
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+
+        .edit-favorites {
+          color: #1890ff;
+        }
       }
     }
   }
