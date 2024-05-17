@@ -415,6 +415,7 @@ const onUserToVisibleChange = (visible: boolean) => {
 
     .reply-box-wrapper {
       flex: 1;
+      overflow: hidden;
     }
 
     ::v-deep(.editable-div) {

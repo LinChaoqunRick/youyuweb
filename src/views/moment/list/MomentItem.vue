@@ -679,6 +679,7 @@ defineExpose({
 
       .reply-box-wrapper {
         flex: 1;
+        overflow: hidden;
       }
 
       ::v-deep(.editable-div) {
