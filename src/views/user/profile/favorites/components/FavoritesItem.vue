@@ -42,6 +42,7 @@ import { computed, ref } from 'vue';
 import type { PropType } from 'vue';
 import { useStore } from 'vuex';
 import type { FavoritesType } from '@/views/user/profile/favorites/type';
+import openModal from '@/libs/tools/openModal';
 
 const { getters } = useStore();
 
