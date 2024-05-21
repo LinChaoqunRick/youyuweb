@@ -16,17 +16,13 @@
           <span :class="[data.open ? 'open' : 'private']">{{ data.open ? '公开' : '私密' }}</span>
         </span>
       </div>
-      <a-popover
-        v-model:open="visible"
-        placement="bottomRight"
-        overlayClassName="favorites-item-top-popover"
-      >
+      <a-popover v-model:open="visible" placement="bottomRight" overlayClassName="favorites-item-top-popover">
         <div class="operation-btn" v-if="data.userId == userInfo.id">
           <i-more theme="outline" size="24" fill="currentColor" />
         </div>
         <template #content>
           <div class="operation-items">
-            <div class="operation-item edit-favorites">
+            <div class="operation-item edit-favorites" @click="onEdit">
               <i-editor theme="outline" size="14" fill="currentColor" />
               编辑
             </div>
@@ -43,6 +39,7 @@ import type { PropType } from 'vue';
 import { useStore } from 'vuex';
 import type { FavoritesType } from '@/views/user/profile/favorites/type';
 import openModal from '@/libs/tools/openModal';
+import FavoritesEdit from '@/views/user/profile/favorites/components/FavoritesEdit.vue';
 
 const { getters } = useStore();
 
@@ -64,6 +61,16 @@ const getFavoriteCover = computed(() => {
 });
 
 const onDetail = () => emit('onDetail');
+
+const onEdit = () => {
+  openModal({
+    component: FavoritesEdit,
+    componentProps: {
+      formValidate: props.data
+    },
+    title: '编辑收藏夹'
+  })
+};
 </script>
 
 <style scoped lang="scss">
