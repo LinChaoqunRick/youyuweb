@@ -16,19 +16,21 @@
           <span :class="[data.open ? 'open' : 'private']">{{ data.open ? '公开' : '私密' }}</span>
         </span>
       </div>
-      <a-popover v-model:open="visible" placement="bottomRight" overlayClassName="favorites-item-top-popover">
-        <div class="operation-btn" v-if="data.userId == userInfo.id">
-          <i-more theme="outline" size="24" fill="currentColor" />
-        </div>
-        <template #content>
-          <div class="operation-items">
-            <div class="operation-item edit-favorites" @click="onEdit">
-              <i-editor theme="outline" size="14" fill="currentColor" />
-              编辑
-            </div>
+      <div v-if="showMoreBtn">
+        <a-popover v-model:open="visible" placement="bottomRight" overlayClassName="favorites-item-top-popover">
+          <div class="operation-btn" v-if="data.userId == userInfo.id">
+            <i-more theme="outline" size="24" fill="currentColor" />
           </div>
-        </template>
-      </a-popover>
+          <template #content>
+            <div class="operation-items">
+              <div class="operation-item edit-favorites" @click="onEdit">
+                <i-editor theme="outline" size="14" fill="currentColor" />
+                编辑
+              </div>
+            </div>
+          </template>
+        </a-popover>
+      </div>
     </div>
   </div>
 </template>
@@ -48,6 +50,10 @@ const props = defineProps({
     type: Object as PropType<FavoritesType>,
     require: true,
   },
+  showMoreBtn: {
+    type: Boolean,
+    default: true
+  }
 });
 
 const emit = defineEmits(['onDetail']);

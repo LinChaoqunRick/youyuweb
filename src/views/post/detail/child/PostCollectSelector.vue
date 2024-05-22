@@ -1,7 +1,7 @@
 <template>
   <div class="post-select-collect">
     <a-checkbox v-for="item in favoritesList" :checked="form.favoritesId == item.id" @click="onCheck(item)">
-      <FavoritesItem :data="item" />
+      <FavoritesItem :data="item" :show-more-btn="false"/>
     </a-checkbox>
   </div>
 </template>

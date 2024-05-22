@@ -1,6 +1,6 @@
 <template>
   <div class="collect-list" :class="[`view-${view}`]">
-    <a-button class="add-btn" type="primary" size="small" @click="onAdd">新增</a-button>
+    <a-button v-if="isOwn" class="add-btn" type="primary" size="small" @click="onAdd">新增</a-button>
     <transition name="fade" mode="out-in">
       <div v-if="view === 'list'" class="list-body">
         <ContentData url="listFavorites" :params="listParams" v-slot="{ data }" ref="ContentDataRef">
