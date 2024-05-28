@@ -1,10 +1,10 @@
 <template>
   <div class="search" :class="{'unfold': active}">
     <div class="search-stuff" @click="onOpen">
-      <div class="placeholder">输入搜索关键词</div>
+      <div class="placeholder">{{ placeholderText }}</div>
       <i-search theme="outline" size="20" fill="currentColor" :strokeWidth="3"/>
     </div>
-    <div class="search-container" v-show="active" v-on-click-outside="onClose">
+    <div class="search-container" v-if="active" v-on-click-outside="onClose">
       <div class="search-header">
         <div class="search-menu">
           <span v-for="(item, index) in menus" class="menu-item"
@@ -23,6 +23,7 @@
           <div class="input-wrapper">
             <a-input
               v-model:value="text"
+              v-focus
               placeholder="输入搜索关键词"
               enter-button
               :maxlength="50"
@@ -74,6 +75,13 @@ const active = ref(false);
 const menus = ['全部', '用户'];
 const activeIndex = ref(0);
 const searchHistory = computed(() => getters['getSearchHistory']);
+const placeholderText = computed(()=>{
+  if (route.name === 'search') {
+    return route.query.q;
+  } else {
+    return '请输入搜素关键词';
+  }
+});
 const searchDiscovery = ref([]);
 
 const handleSearch = () => {
