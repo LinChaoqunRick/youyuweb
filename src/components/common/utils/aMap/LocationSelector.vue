@@ -2,10 +2,10 @@
   <div class="position-selector">
     <AMap v-model="location"/>
     <div class="location-data">
-      <div class="data-label">标记点位置：</div>
-      <div class="data-value">{{ location?.address || '- - -'}}</div>
-      <div class="data-label">位置信息：</div>
+      <div class="data-label">位置名称：</div>
       <div class="data-value">{{ location?.name || '- - -'}}</div>
+      <div class="data-label">位置详情：</div>
+      <div class="data-value">{{ location?.address || '- - -'}}</div>
     </div>
   </div>
 </template>

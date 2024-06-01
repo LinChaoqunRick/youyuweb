@@ -161,9 +161,10 @@ const initMap = () => {
           // 选择使用哪个API取决于你的应用需求，如果你需要快速的用户输入建议，那么AutoComplete是一个不错的选择；
           // 如果你需要获取更多地点详细信息，那么PlaceSearch更适合。
 
+          console.log(currentLocation.value);
           // 输入提示与POI搜索
           auto = new AMap.AutoComplete({
-            city: currentLocation.value.adcode,
+            city: currentLocation.value.addressComponent.adcode,
             datatype: "all",
           });
 
