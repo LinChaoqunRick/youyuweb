@@ -207,7 +207,8 @@ const initMap = () => {
           // 执行回调函数
           AMapObj.Event.addListener(geolocation, 'complete', function (data) {
             currentLocation.value = data;
-            createMarkerByLngLat(...data.position);
+            const {lng, lat} = data.position;
+            createMarkerByLngLat(lng, lat);
             initAutoAndPlaceSearch();
           });
 
@@ -224,7 +225,7 @@ const initMap = () => {
 
 // 搜索地图
 const handleSearch = debounce((queryString) => {
-  // 1.使用:入提示，提供了根据关键字获得提示信息的功能
+  // 1.使用:输入提示，提供了根据关键字获得提示信息的功能
   auto.search(queryString, (info, result) => {
     if (result && typeof result === 'object' && result.tips) {
       result.tips.forEach(item => {
