@@ -79,7 +79,7 @@ const placeholderText = computed(()=>{
   if (route.name === 'search') {
     return route.query.q;
   } else {
-    return '请输入搜素关键词';
+    return '请输入搜索关键词';
   }
 });
 const searchDiscovery = ref([]);
