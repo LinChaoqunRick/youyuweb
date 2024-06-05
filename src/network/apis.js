@@ -124,4 +124,17 @@ export const GET_MICRO_CAPACITY_UBIT = ApiBase + "/category/open/list";
 export const GET_MICRO_CAPACITY_COOLING = ApiBase + "/category/open/list";
 export const GET_MICRO_CAPACITY_POWER = ApiBase + "/category/open/list";
 
+// 相册
+export const GET_ALBUM_LIST = ApiBase + "/album/open/list";
+export const GET_ALBUM_DETAIL = ApiBase + "/album/detail";
+export const CREATE_ALBUM = ApiBase + "/album/create";
+export const UPDATE_ALBUM = ApiBase + "/album/update";
+export const REMOVE_ALBUM = ApiBase + "/album/remove";
+
+// 相册照片
+export const GET_ALBUM_IMAGE_LIST = ApiBase + "/albumImage/open/list";
+export const GET_ALBUM_IMAGE_DETAIL = ApiBase + "/albumImage/detail";
+export const CREATE_ALBUM_IMAGE = ApiBase + "/albumImage/create";
+export const UPDATE_ALBUM_IMAGE = ApiBase + "/albumImage/update";
+export const REMOVE_ALBUM_IMAGE = ApiBase + "/albumImage/remove";
 
