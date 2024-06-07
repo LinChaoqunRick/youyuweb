@@ -10,7 +10,10 @@
       <div class="ope-icon next-icon" v-if="current!==props.list?.length-1" @click="handleChange('next')">
         <i-left theme="outline" size="30" fill="#fff" style="transform: scale3d(-1,1,1)"/>
       </div>
-      <img :src="currentOriginUrl" @load="onLoad" id="preview-image" v-show="!loading"/>
+      <div id="preview-image">
+        <img :src="currentOriginUrl" @load="onLoad" v-show="!loading" alt="photo"/>
+        <div class="drag-mask"></div>
+      </div>
     </div>
     <spin size="large" class="a-spin" v-show="loading"/>
     <div class="image-preview-operations">
@@ -75,18 +78,18 @@ interface resultData {
 }
 
 let image: HTMLElement | null,
-  result: resultData,
-  x: number = 0,
-  y: number = 0,
-  minScale: number = 0.2,
-  maxScale: number = 8,
-  flipX: boolean = false,
-  flipY: boolean = false,
-  rotate: number = 0,
-  scaleRatio: number = 1.2,
-  isPointerdown = false, // 按下标识;
-  moveDiff = {x: 0, y: 0}, // 相对于上一次pointermove移动差值
-  lastPointermove = {x: 0, y: 0}; // 用于计算diff;
+    result: resultData,
+    x: number = 0,
+    y: number = 0,
+    minScale: number = 0.2,
+    maxScale: number = 8,
+    flipX: boolean = false,
+    flipY: boolean = false,
+    rotate: number = 0,
+    scaleRatio: number = 1.2,
+    isPointerdown = false, // 按下标识;
+    moveDiff = {x: 0, y: 0}, // 相对于上一次pointermove移动差值
+    lastPointermove = {x: 0, y: 0}; // 用于计算diff;
 
 const loading = ref<boolean>(true);
 const scale = ref<number>(1);
@@ -318,15 +321,27 @@ $icon-hover-background: rgba(89, 82, 82, 0.8);
     justify-content: center;
     align-items: center;
 
-    img {
-      max-width: 100%;
-      max-height: 100%;
+    #preview-image {
+      position: relative;
       vertical-align: middle;
       transform: scale3d(1, 1, 1);
       cursor: grab;
       transition: transform .3s cubic-bezier(.215, .61, .355, 1) 0s;
       user-select: none;
       touch-action: none;
+
+      img {
+        max-width: 100vw;
+        max-height: 100vh;
+      }
+
+      .drag-mask {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+      }
     }
 
     .ope-icon {
