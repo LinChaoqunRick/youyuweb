@@ -4,22 +4,22 @@
       <div class="login-mask" @click="toLogin" v-if="!isLogin"></div>
       <div class="editor-content-wrapper">
         <ContentEditableDiv
-            v-model="form.content"
-            showLimit
-            placeholder="此刻在想什么？快来分享一些新鲜事或发表一些看法吧！"
-            @onPasteImage="onPasteImage"
-            ref="richEditor">
+          v-model="form.content"
+          showLimit
+          placeholder="此刻在想什么？快来分享一些新鲜事或发表一些看法吧！"
+          @onPasteImage="onPasteImage"
+          ref="richEditor">
           <template #bottom>
             <div class="topic-wrapper">
               <div class="add-position" @click="onAddPosition">
                 <div class="icon-wrapper">
-                  <i-local-two theme="multi-color" size="12" :fill="['#ffffff', '#ffffff', '#3b8fff', '#3b8fff']"/>
+                  <i-local-two theme="multi-color" size="12" :fill="['#ffffff', '#ffffff', '#3b8fff', '#3b8fff']" />
                 </div>
                 <span class="position-text">{{ form.location || '添加位置' }}</span>
                 <div class="icon-wrapper-close" v-if="form.location" @click.stop="onClearLocation">
-                  <i-close-small theme="outline" size="13" fill="#fff" :strokeWidth="3"/>
+                  <i-close-small theme="outline" size="13" fill="#fff" :strokeWidth="3" />
                 </div>
-                <i-right v-else theme="outline" size="13" fill="currentColor"/>
+                <i-right v-else theme="outline" size="13" fill="currentColor" />
               </div>
             </div>
           </template>
@@ -28,27 +28,28 @@
     </div>
     <div class="image-wrapper" v-if="form.images?.length">
       <draggable
-          class="list-group"
-          :component-data="{
+        class="list-group"
+        :component-data="{
           type: 'transition-group',
           name: !drag ? 'flip-list' : null,
         }"
-          v-model="form.images"
-          v-bind="dragOptions"
-          @start="drag = true"
-          @end="drag = false"
-          :item-key="element => element">
+        v-model="form.images"
+        v-bind="dragOptions"
+        @start="drag = true"
+        @end="drag = false"
+        :item-key="element => element">
         <template #item="{ element, index }">
           <div class="image-item">
-            <img :src="element.thumb || element" alt=""/>
+            <img :src="element.thumb || element" alt="" />
             <div class="image-delete" @click="onImageDelete(index)">
-              <i-close theme="outline" size="10" fill="currentColor" :strokeWidth="2"/>
+              <i-close theme="outline" size="10" fill="currentColor" :strokeWidth="2" />
             </div>
             <div class="progress-wrapper" v-if="submitLoading">
               <Transition name="fade" mode="out-in">
-                <i-check-one v-if="!element.thumb || form.images[index].progress==100" theme="filled" size="36" fill="#52C41ACC"/>
-                <CircleProgress v-else :value="form.images[index].progress" :size="36" :stroke-width="3.8">
-                  <i-up-small theme="outline" size="24" fill="#FFFFFF"/>
+                <i-check-one v-if="!element.thumb || progressList[index]==100" theme="filled" size="36"
+                             fill="#52C41ACC" />
+                <CircleProgress v-else :value="progressList[index] ?? 0" :size="36" :stroke-width="3.8">
+                  <i-up-small theme="outline" size="24" fill="#FFFFFF" />
                 </CircleProgress>
               </Transition>
             </div>
@@ -56,35 +57,36 @@
         </template>
       </draggable>
       <div class="upload-image" @click="onAddImage" v-if="!uploadDisabled">
-        <i-plus theme="outline" size="40" fill="currentColor" :strokeWidth="1"/>
+        <i-plus theme="outline" size="40" fill="currentColor" :strokeWidth="1" />
       </div>
     </div>
     <div class="editor-bottom">
       <div class="tool-items">
         <a-popover
-            placement="bottomLeft"
-            overlayClassName="emoji-picker-popover"
-            :getPopupContainer="triggerNode => triggerNode.parentNode"
-            :open="emojiVisible">
+          placement="bottomLeft"
+          overlayClassName="emoji-picker-popover"
+          :getPopupContainer="triggerNode => triggerNode.parentNode"
+          :open="emojiVisible">
           <template #content>
-            <EmojiPicker @onImagePick="onImagePick" @onEmojiPick="onEmojiPick" v-on-click-outside="onEmojiClose"/>
+            <EmojiPicker @onImagePick="onImagePick" @onEmojiPick="onEmojiPick" v-on-click-outside="onEmojiClose" />
           </template>
           <div class="tool-item" v-login="onClickEmoji">
-            <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
+            <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3" />
             <span class="tool-title">表情</span>
           </div>
         </a-popover>
         <UploadFile
-            v-model="form.images"
-            accept=".jpg, .jpeg, .png, .JPG, .PNG"
-            :max-size="maxFileSize"
-            :max-num="maxFileNum"
-            :disabled="uploadDisabled"
-            multiple
-            :data="{ base: 'moment/images' }"
-            ref="UploadFileRef">
+          v-model="form.images"
+          accept=".jpg, .jpeg, .png, .JPG, .PNG"
+          :max-size="maxFileSize"
+          :max-num="maxFileNum"
+          :disabled="uploadDisabled"
+          multiple
+          :data="{ base: 'moment/images' }"
+          @onProgress="onUploadProgress"
+          ref="UploadFileRef">
           <div class="tool-item item-upload-image" v-login>
-            <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
+            <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3" />
             <span class="tool-title">图片</span>
           </div>
         </UploadFile>
@@ -94,10 +96,10 @@
         </div>-->
       </div>
       <a-button
-          type="primary"
-          :disabled="!isLogin || !currentLength || contentLengthExceed"
-          :loading="submitLoading"
-          @click="onSubmit">
+        type="primary"
+        :disabled="!isLogin || !currentLength || contentLengthExceed"
+        :loading="submitLoading"
+        @click="onSubmit">
         发布
       </a-button>
       <slot name="bottom"></slot>
@@ -106,23 +108,23 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, computed, toRefs} from 'vue';
-import {useRouter} from 'vue-router';
-import {useStore} from 'vuex';
-import {message} from 'ant-design-vue';
-import {cloneDeep} from 'lodash';
-import {vOnClickOutside} from '@vueuse/components';
-import {onCheckLogin} from '@/assets/utils/utils';
+import { ref, reactive, computed, toRefs } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+import { message } from 'ant-design-vue';
+import { cloneDeep } from 'lodash';
+import { vOnClickOutside } from '@vueuse/components';
+import { onCheckLogin } from '@/assets/utils/utils';
 import draggable from 'vuedraggable';
 import openModal from '@/libs/tools/openModal';
-import {transformHTMLToTag} from '@/components/common/utils/emoji/youyu_emoji';
+import { transformHTMLToTag } from '@/components/common/utils/emoji/youyu_emoji';
 import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
 import EmojiPicker from '@/components/common/utils/emoji/EmojiPicker.vue';
 import ContentEditableDiv from '@/components/common/utils/contenteditable/ContentEditableDiv.vue';
 import LocationSelector from '@/components/common/utils/aMap/LocationSelector.vue';
-import {AxiosError} from "axios";
-import {getXmlTextContent} from "@/components/common/utils/upload/utils";
-import CircleProgress from "@/components/common/share/upload/CircleProgress.vue";
+import { AxiosError } from 'axios';
+import { getXmlTextContent } from '@/components/common/utils/upload/utils';
+import CircleProgress from '@/components/common/share/upload/CircleProgress.vue';
 
 const props = defineProps({
   form: {
@@ -130,14 +132,14 @@ const props = defineProps({
     default() {
       return reactive({
         content: '',
-        images: [],
+        images: []
       });
-    },
+    }
   },
   isEdit: {
     type: Boolean,
-    default: false,
-  },
+    default: false
+  }
 });
 
 const emit = defineEmits(['saveSuccess']);
@@ -145,14 +147,13 @@ const dragOptions = reactive({
   animation: 200,
   group: 'description',
   disabled: false,
-  ghostClass: 'ghost',
+  ghostClass: 'ghost'
 });
 
 const maxFileNum = 9;
 const maxFileSize = 20;
-const {getters, commit, dispatch} = useStore();
+const { getters, commit, dispatch } = useStore();
 const router = useRouter();
-const userInfo = computed(() => getters['userInfo']);
 const isLogin = computed(() => getters['isLogin']);
 const currentLength = computed(() => richEditor.value?.totalStrLength);
 const contentLengthExceed = computed(() => richEditor.value?.contentLengthExceed);
@@ -164,6 +165,7 @@ const active = computed(() => richEditor.value?.active);
 const emojiVisible = ref(false);
 const submitLoading = ref(false);
 const drag = ref(false);
+const progressList = ref<number[]>([]);
 
 const onAddImage = () => {
   UploadFileRef.value?.triggerInput?.();
@@ -182,13 +184,15 @@ const onSubmit = async () => {
   const isEdit = props.isEdit;
   const form = cloneDeep(props.form);
 
-  const imagesListRes = await UploadFileRef.value.upload();
+  const imagesListRes = await UploadFileRef.value.upload().finally(() => {
+    progressList.value = [];
+  });
 
   if (imagesListRes?.length) {
     const firstErrorItem = imagesListRes.find(item => item instanceof AxiosError);
     if (firstErrorItem) {
       submitLoading.value = false;
-      return message.error(`发布失败：${firstErrorItem.response ? getXmlTextContent(firstErrorItem.response.data, "Message") : firstErrorItem.message}`)
+      return message.error(`发布失败：${firstErrorItem.response ? getXmlTextContent(firstErrorItem.response.data, 'Message') : firstErrorItem.message}`);
     }
   }
 
@@ -210,20 +214,20 @@ const onSubmit = async () => {
 
   form.content = transformHTMLToTag(form.content);
   dispatch(isEdit ? 'updateMoment' : 'createMoment', form)
-      .then(res => {
-        message.success(isEdit ? '修改成功' : '发布成功');
-        resetEditor();
-        emit('saveSuccess', res.data);
-        if (isEdit) {
-          router.replace({
-            name: 'MomentDetail',
-            params: {momentId: props.form.id},
-          });
-        }
-      })
-      .finally(() => {
-        submitLoading.value = false;
-      });
+    .then(res => {
+      message.success(isEdit ? '修改成功' : '发布成功');
+      resetEditor();
+      emit('saveSuccess', res.data);
+      if (isEdit) {
+        router.replace({
+          name: 'MomentDetail',
+          params: { momentId: props.form.id }
+        });
+      }
+    })
+    .finally(() => {
+      submitLoading.value = false;
+    });
 };
 
 const resetEditor = () => {
@@ -257,21 +261,21 @@ const onAddPosition = () => {
   openModal({
     component: LocationSelector,
     componentProps: {
-      data: props.form,
+      data: props.form
     },
     title: '添加位置',
     width: '88vw',
     maskClosable: false,
     keyboard: false,
     centered: true,
-    wrapClassName: 'select-position-modal-wrapper',
+    wrapClassName: 'select-position-modal-wrapper'
   })
-      .then(res => {
-        props.form.location = res.name;
-        props.form.longitude = res.longitude;
-        props.form.latitude = res.latitude;
-      })
-      .catch(console.log);
+    .then(res => {
+      props.form.location = res.name;
+      props.form.longitude = res.longitude;
+      props.form.latitude = res.latitude;
+    })
+    .catch(console.log);
 };
 
 const onClearLocation = () => {
@@ -297,11 +301,16 @@ const onPasteImage = (files: File[]) => {
         name: file.name,
         size: file.size,
         type: file.type,
-        originFileObj: file,
-      })
+        originFileObj: file
+      });
     }
   }
   props.form?.images.push(...validFiles);
+};
+
+const onUploadProgress = (progress: number[]) => {
+  console.log(progress);
+  progressList.value = progress;
 };
 </script>
 
@@ -409,7 +418,7 @@ const onPasteImage = (files: File[]) => {
       justify-content: center;
       align-items: center;
       position: relative;
-      margin: 8px 8px 0 0;
+      margin-right: 8px;
 
       img {
         height: 80px;
@@ -425,8 +434,8 @@ const onPasteImage = (files: File[]) => {
         width: 18px;
         height: 18px;
         position: absolute;
-        top: 4px;
-        right: 4px;
+        top: 10px;
+        right: 2px;
         border-radius: 50%;
         border: 1px solid #c5c5c5;
         background: rgba(0, 0, 0, 0.4);

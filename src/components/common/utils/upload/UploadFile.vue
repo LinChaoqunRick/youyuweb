@@ -1,13 +1,13 @@
 <template>
   <div class="upload-file" :class="{ disabled: disabled }">
     <input type="file" multiple v-bind="$attrs" :accept="accept" :disabled="disabled" :capture="null"
-           v-if="visible" style="display: none" @change="handleChange" ref="inputRef"/>
+           v-if="visible" style="display: none" @change="handleChange" ref="inputRef" />
     <div class="input-trigger" @click="onTriggerInput">
       <slot :progress="progress">
         <div class="upload-box">
           <div class="progress-box" :style="{ width: `${totalProgress}%` }"></div>
           <div class="upload-button">
-            <i-upload-one theme="outline" size="18" fill="currentColor"/>
+            <i-upload-one theme="outline" size="18" fill="currentColor" />
             <div class="ant-upload-text">点击上传</div>
           </div>
         </div>
@@ -17,42 +17,43 @@
 </template>
 
 <script setup lang="ts">
-import {ref, nextTick} from 'vue';
-import {message} from 'ant-design-vue';
-import {useStore} from 'vuex';
-import {merge} from 'lodash';
-import {uploadToOss} from '@/components/common/utils/upload/utils';
-import {AxiosError} from "axios";
+import { ref, nextTick } from 'vue';
+import { message } from 'ant-design-vue';
+import { useStore } from 'vuex';
+import { merge } from 'lodash';
+import { uploadToOss } from '@/components/common/utils/upload/utils';
+import { AxiosError } from 'axios';
+import { cloneDeep } from 'lodash';
 
 const inputRef = ref<HTMLInputElement | null>(null);
 
-const {dispatch} = useStore();
-const files = defineModel({default: []}); // v-model双向绑定
+const { dispatch } = useStore();
+const files = defineModel({ default: [] }); // v-model双向绑定
 const props = defineProps({
   disabled: {
     type: Boolean,
-    default: false,
+    default: false
   },
   maxSize: {
     type: Number,
-    default: 20,
+    default: 20
   },
   maxNum: {
     type: Number,
-    default: 10,
+    default: 10
   },
   accept: {
     type: String,
-    default: '.jpg, .jpeg, .png, .JPG, .PNG',
+    default: '.jpg, .jpeg, .png, .JPG, .PNG'
   },
   autoUpload: {
     type: Boolean,
-    default: false,
+    default: false
   },
   data: {
     type: Object,
-    default: () => ({}),
-  },
+    default: () => ({})
+  }
 });
 
 const data = ref<object>({});
@@ -60,7 +61,7 @@ const progress = ref<number[]>([]);
 const totalProgress = ref<number>(100);
 const visible = ref(true);
 
-const emit = defineEmits(['change', 'uploadSuccess']);
+const emit = defineEmits(['change', 'uploadSuccess', 'onProgress']);
 
 const handleChange = (event: Event) => {
   const inputElement = event.target as HTMLInputElement;
@@ -84,6 +85,7 @@ const handleChange = (event: Event) => {
 
     // 校验成功处理文件
     file.thumb = URL.createObjectURL(file);
+    file.progress = 0;
     files.value.push(file);
     emit('change', file);
   }
@@ -97,8 +99,8 @@ const onTriggerInput = () => {
   visible.value = true;
   nextTick(() => {
     inputRef.value?.click();
-  })
-}
+  });
+};
 
 const upload = async () => {
   const uploadFiles = files.value.filter(item => item.thumb);
@@ -111,7 +113,7 @@ const upload = async () => {
     needTip: false, // 不需要提示
     progress: uploadProgress,
     accept: props.accept,
-    maxSize: props.maxSize,
+    maxSize: props.maxSize
   };
   const mergedConfig = merge(defaultConfig, props.data);
   const res = await uploadToOss(uploadFiles, mergedConfig);
@@ -124,19 +126,24 @@ const upload = async () => {
 };
 
 const uploadProgress = (progressList: number[]) => {
-  progress.value = progressList;
-  files.value.forEach((file, index) => (typeof file === 'object' && (file.progress = progressList[index])));
+  // progress.value = progressList;
+  let count = 0;
+  progress.value = files.value.map((item, index) => (typeof item === 'object') ? progressList[count++] : 100);
+
   if (progress.value.length) {
     const total = progress.value.reduce((pre, n) => pre + n, 0);
     totalProgress.value = parseFloat(((total / (progress.value.length * 100)) * 100).toFixed(2));
   } else {
     totalProgress.value = 100;
   }
+  // TODO.. 为什么这里需要cloneDeep，外层才能正确响应式？？
+  emit('onProgress', progress.value);
 };
 
 defineExpose({
   files,
   upload,
+  progress,
   triggerInput: onTriggerInput
 });
 </script>
