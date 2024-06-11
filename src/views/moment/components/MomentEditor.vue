@@ -4,12 +4,11 @@
       <div class="login-mask" @click="toLogin" v-if="!isLogin"></div>
       <div class="editor-content-wrapper">
         <ContentEditableDiv
-          v-model="form.content"
-          showLimit
-          placeholder="此刻在想什么？快来分享一些新鲜事或发表一些看法吧！"
-          @onPasteImage="onPasteImage"
-          ref="richEditor"
-        >
+            v-model="form.content"
+            showLimit
+            placeholder="此刻在想什么？快来分享一些新鲜事或发表一些看法吧！"
+            @onPasteImage="onPasteImage"
+            ref="richEditor">
           <template #bottom>
             <div class="topic-wrapper">
               <div class="add-position" @click="onAddPosition">
@@ -29,22 +28,29 @@
     </div>
     <div class="image-wrapper" v-if="form.images?.length">
       <draggable
-        class="list-group"
-        :component-data="{
+          class="list-group"
+          :component-data="{
           type: 'transition-group',
           name: !drag ? 'flip-list' : null,
         }"
-        v-model="form.images"
-        v-bind="dragOptions"
-        @start="drag = true"
-        @end="drag = false"
-        :item-key="element => element"
-      >
+          v-model="form.images"
+          v-bind="dragOptions"
+          @start="drag = true"
+          @end="drag = false"
+          :item-key="element => element">
         <template #item="{ element, index }">
           <div class="image-item">
             <img :src="element.thumb || element" alt=""/>
             <div class="image-delete" @click="onImageDelete(index)">
               <i-close theme="outline" size="10" fill="currentColor" :strokeWidth="2"/>
+            </div>
+            <div class="progress-wrapper" v-if="submitLoading">
+              <Transition name="fade" mode="out-in">
+                <i-check-one v-if="!element.thumb || form.images[index].progress==100" theme="filled" size="36" fill="#52C41ACC"/>
+                <CircleProgress v-else :value="form.images[index].progress" :size="36" :stroke-width="3.8">
+                  <i-up-small theme="outline" size="24" fill="#FFFFFF"/>
+                </CircleProgress>
+              </Transition>
             </div>
           </div>
         </template>
@@ -56,11 +62,10 @@
     <div class="editor-bottom">
       <div class="tool-items">
         <a-popover
-          placement="bottomLeft"
-          overlayClassName="emoji-picker-popover"
-          :getPopupContainer="triggerNode => triggerNode.parentNode"
-          :open="emojiVisible"
-        >
+            placement="bottomLeft"
+            overlayClassName="emoji-picker-popover"
+            :getPopupContainer="triggerNode => triggerNode.parentNode"
+            :open="emojiVisible">
           <template #content>
             <EmojiPicker @onImagePick="onImagePick" @onEmojiPick="onEmojiPick" v-on-click-outside="onEmojiClose"/>
           </template>
@@ -70,15 +75,14 @@
           </div>
         </a-popover>
         <UploadFile
-          v-model="form.images"
-          accept=".jpg, .jpeg, .png, .JPG, .PNG"
-          :max-size="maxFileSize"
-          :max-num="maxFileNum"
-          :disabled="uploadDisabled"
-          multiple
-          :data="{ base: 'moment/images' }"
-          ref="UploadFileRef"
-        >
+            v-model="form.images"
+            accept=".jpg, .jpeg, .png, .JPG, .PNG"
+            :max-size="maxFileSize"
+            :max-num="maxFileNum"
+            :disabled="uploadDisabled"
+            multiple
+            :data="{ base: 'moment/images' }"
+            ref="UploadFileRef">
           <div class="tool-item item-upload-image" v-login>
             <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
             <span class="tool-title">图片</span>
@@ -90,11 +94,10 @@
         </div>-->
       </div>
       <a-button
-        type="primary"
-        :disabled="!isLogin || !currentLength || contentLengthExceed"
-        :loading="submitLoading"
-        @click="onSubmit"
-      >
+          type="primary"
+          :disabled="!isLogin || !currentLength || contentLengthExceed"
+          :loading="submitLoading"
+          @click="onSubmit">
         发布
       </a-button>
       <slot name="bottom"></slot>
@@ -119,6 +122,7 @@ import ContentEditableDiv from '@/components/common/utils/contenteditable/Conten
 import LocationSelector from '@/components/common/utils/aMap/LocationSelector.vue';
 import {AxiosError} from "axios";
 import {getXmlTextContent} from "@/components/common/utils/upload/utils";
+import CircleProgress from "@/components/common/share/upload/CircleProgress.vue";
 
 const props = defineProps({
   form: {
@@ -206,20 +210,20 @@ const onSubmit = async () => {
 
   form.content = transformHTMLToTag(form.content);
   dispatch(isEdit ? 'updateMoment' : 'createMoment', form)
-    .then(res => {
-      message.success(isEdit ? '修改成功' : '发布成功');
-      resetEditor();
-      emit('saveSuccess', res.data);
-      if (isEdit) {
-        router.replace({
-          name: 'MomentDetail',
-          params: {momentId: props.form.id},
-        });
-      }
-    })
-    .finally(() => {
-      submitLoading.value = false;
-    });
+      .then(res => {
+        message.success(isEdit ? '修改成功' : '发布成功');
+        resetEditor();
+        emit('saveSuccess', res.data);
+        if (isEdit) {
+          router.replace({
+            name: 'MomentDetail',
+            params: {momentId: props.form.id},
+          });
+        }
+      })
+      .finally(() => {
+        submitLoading.value = false;
+      });
 };
 
 const resetEditor = () => {
@@ -262,12 +266,12 @@ const onAddPosition = () => {
     centered: true,
     wrapClassName: 'select-position-modal-wrapper',
   })
-    .then(res => {
-      props.form.location = res.name;
-      props.form.longitude = res.longitude;
-      props.form.latitude = res.latitude;
-    })
-    .catch(console.log);
+      .then(res => {
+        props.form.location = res.name;
+        props.form.longitude = res.longitude;
+        props.form.latitude = res.latitude;
+      })
+      .catch(console.log);
 };
 
 const onClearLocation = () => {
@@ -401,6 +405,9 @@ const onPasteImage = (files: File[]) => {
     }
 
     .image-item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
       position: relative;
       margin: 8px 8px 0 0;
 
@@ -431,6 +438,10 @@ const onPasteImage = (files: File[]) => {
         .i-icon {
           color: white;
         }
+      }
+
+      .progress-wrapper {
+        position: absolute;
       }
     }
 
