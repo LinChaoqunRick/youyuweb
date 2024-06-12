@@ -215,7 +215,7 @@ const saveSuccess = (data: momentListType) => {
             align-items: center;
             padding: 2px 12px;
             line-height: 22px;
-            font-size: 1.167rem;
+            font-size: 14px;
             color: #8a919f;
 
             ::v-deep(svg) {

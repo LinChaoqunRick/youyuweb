@@ -431,11 +431,11 @@ const onUploadProgress = (progress: number[]) => {
         justify-content: center;
         align-items: center;
         cursor: pointer;
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
         position: absolute;
-        top: 10px;
-        right: 2px;
+        top: 12px;
+        right: 4px;
         border-radius: 50%;
         border: 1px solid #c5c5c5;
         background: rgba(0, 0, 0, 0.4);

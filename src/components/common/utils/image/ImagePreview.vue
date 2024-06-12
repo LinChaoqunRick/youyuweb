@@ -1,5 +1,5 @@
 <template>
-  <div class="image-preview">
+  <div class="image-preview" :class="{'single-image': isSingleImage}">
     <div class="image-preview-close" @click="onClose">
       <i-close theme="outline" size="20" fill="currentColor"/>
     </div>
@@ -16,61 +16,64 @@
       </div>
     </div>
     <spin size="large" class="a-spin" v-show="loading"/>
-    <div class="image-preview-operations">
-      <div class="operation-item">
-        <i-left :class="{'disabled': current===0}" theme="outline" size="22" fill="currentColor"
-                @click="handleChange('last')"/>
-        <div class="image-preview-progress">{{ current + 1 }} / {{ props.list.length }}</div>
-        <i-right :class="{'disabled': current===props.list?.length-1}" class="separator" theme="outline" size="22"
-                 fill="currentColor" @click="handleChange('next')"/>
+    <Transition name="fade">
+      <div class="image-preview-operations" v-if="!idle">
+        <div class="operation-item">
+          <i-left :class="{'disabled': current===0}" theme="outline" size="22" fill="currentColor"
+                  @click="handleChange('last')"/>
+          <div class="image-preview-progress">{{ current + 1 }} / {{ props.list.length }}</div>
+          <i-right :class="{'disabled': current===props.list?.length-1}" class="separator" theme="outline" size="22"
+                   fill="currentColor" @click="handleChange('next')"/>
+        </div>
+        <div class="operation-item">
+          <i-zoom-in :class="{'disabled': scale >= maxScale}" theme="outline" size="19" fill="currentColor"
+                     @click="handleScale('large')"/>
+          <div class="image-preview-scale">{{ (scale * 100).toFixed(0) }}%</div>
+          <i-zoom-out :class="{'disabled': scale <= minScale}" theme="outline" size="19" fill="currentColor"
+                      @click="handleScale('small')"/>
+          <i-one-to-one theme="outline" size="19" fill="currentColor" @click="handleScale('reset')"/>
+        </div>
+        <div class="operation-item" v-if="false">
+          <i-sort-two theme="outline" size="17" fill="currentColor" @click="handleFlip('x')"/>
+          <i-switch theme="outline" size="17" fill="currentColor" @click="handleFlip('y')"/>
+        </div>
+        <div class="operation-item">
+          <i-rotate class="icon-rotate-left" theme="outline" size="18" fill="currentColor" @click="handleRotate('c')"/>
+          <i-rotate class="icon-rotate-right" theme="outline" size="18" fill="currentColor" @click="handleRotate('ac')"
+                    style="transform: scale3d(-1,1,1)"/>
+          <!--        <i-more theme="outline" size="19"/>-->
+        </div>
       </div>
-      <div class="operation-item">
-        <i-zoom-in :class="{'disabled': scale >= maxScale}" theme="outline" size="19" fill="currentColor"
-                   @click="handleScale('large')"/>
-        <div class="image-preview-scale">{{ (scale * 100).toFixed(0) }}%</div>
-        <i-zoom-out :class="{'disabled': scale <= minScale}" theme="outline" size="19" fill="currentColor"
-                    @click="handleScale('small')"/>
-        <i-one-to-one theme="outline" size="19" fill="currentColor" @click="handleScale('reset')"/>
+    </Transition>
+    <div class="image-preview-footer" v-if="!isSingleImage">
+      <div class="image-thumbnails">
+        <div v-for="(item, index) in props.list"
+             class="image-item-thumbnail"
+             :class="{'active': index === current}"
+             @click="onClickThumbnail(index)">
+          <img :src="item" alt=""/>
+        </div>
       </div>
-      <div class="operation-item" v-if="false">
-        <i-sort-two theme="outline" size="17" fill="currentColor" @click="handleFlip('x')"/>
-        <i-switch theme="outline" size="17" fill="currentColor" @click="handleFlip('y')"/>
-      </div>
-      <div class="operation-item">
-        <i-rotate class="icon-rotate-left" theme="outline" size="18" fill="currentColor" @click="handleRotate('c')"/>
-        <i-rotate class="icon-rotate-right" theme="outline" size="18" fill="currentColor" @click="handleRotate('ac')"
-                  style="transform: scale3d(-1,1,1)"/>
-        <!--        <i-more theme="outline" size="19"/>-->
-      </div>
-    </div>
-    <div class="image-preview-footer">
-      <!--<div class="image-thumbnails">
-            <div v-for="(item, index) in props.list" class="image-item-thumbnail" :class="{'active': index === current}">
-              <img :src="item"/>
-            </div>
-      </div>-->
-
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {ref, computed, watch, onMounted, onUnmounted} from 'vue';
+import {ref, computed, watch, onMounted, onUnmounted, defineModel} from 'vue';
 import {getImgSize} from "@/components/common/utils/image/utils";
 import {disabledBodyScroll, enabledBodyScroll} from "@/assets/utils/utils.ts";
 import {Spin} from "ant-design-vue";
+import {useIdle} from '@vueuse/core'
 
 const props = defineProps({
   list: {
     type: Array,
     required: true
   },
-  current: {
-    type: Number,
-    default: 0
-  },
 });
 const emit = defineEmits(['onClose']);
+const current = defineModel('current', {type: Number, default: 0});
+const {idle} = useIdle(2 * 1000);
 
 interface resultData {
   width: number,
@@ -86,15 +89,15 @@ let image: HTMLElement | null,
     flipX: boolean = false,
     flipY: boolean = false,
     rotate: number = 0,
-    scaleRatio: number = 1.2,
+    scaleRatio: number = 1.1,
     isPointerdown = false, // 按下标识;
     moveDiff = {x: 0, y: 0}, // 相对于上一次pointermove移动差值
     lastPointermove = {x: 0, y: 0}; // 用于计算diff;
 
 const loading = ref<boolean>(true);
 const scale = ref<number>(1);
-const current = ref<number>(props.current);
 const currentOriginUrl = computed(() => props.list[current.value].split("?")[0]);
+const isSingleImage = computed(() => props.list?.length === 1);
 
 watch(() => current.value, () => {
   loading.value = true;
@@ -271,6 +274,10 @@ function onClose() {
   emit('onClose');
 }
 
+const onClickThumbnail = (index: number) => {
+  current.value = index;
+}
+
 disabledBodyScroll();
 
 onUnmounted(() => {
@@ -281,6 +288,7 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 $icon-hover-background: rgba(89, 82, 82, 0.8);
+$footerHeight: 80px;
 
 .image-preview {
   position: fixed;
@@ -323,16 +331,17 @@ $icon-hover-background: rgba(89, 82, 82, 0.8);
 
     #preview-image {
       position: relative;
-      vertical-align: middle;
+      top: calc(-#{$footerHeight} / 2);
       transform: scale3d(1, 1, 1);
       cursor: grab;
       transition: transform .3s cubic-bezier(.215, .61, .355, 1) 0s;
       user-select: none;
       touch-action: none;
+      line-height: 0;
 
       img {
         max-width: 100vw;
-        max-height: 100vh;
+        max-height: calc(100vh - $footerHeight);
       }
 
       .drag-mask {
@@ -391,7 +400,7 @@ $icon-hover-background: rgba(89, 82, 82, 0.8);
     justify-content: flex-end;
     align-items: center;
     position: absolute;
-    bottom: 30px;
+    bottom: 85px;
     height: 46px;
     background: rgba(0, 0, 0, .7);
     z-index: 1;
@@ -447,12 +456,12 @@ $icon-hover-background: rgba(89, 82, 82, 0.8);
     }
   }
 
-  /*.image-preview-footer {
+  .image-preview-footer {
     position: absolute;
     left: 0;
     right: 0;
     bottom: 0;
-    //height: 80px;
+    height: $footerHeight;
     background-color: rgba(0, 0, 0, .6);
 
     .image-thumbnails {
@@ -462,12 +471,13 @@ $icon-hover-background: rgba(89, 82, 82, 0.8);
       height: 100%;
 
       .image-item-thumbnail {
+        height: 98%;
         filter: brightness(60%);
         border: 2px solid transparent;
 
         img {
           box-sizing: border-box;
-          height: 70px;
+          height: 100%;
           width: 105px;
           cursor: pointer;
           object-fit: cover;
@@ -479,6 +489,16 @@ $icon-hover-background: rgba(89, 82, 82, 0.8);
         }
       }
     }
-  }*/
+  }
+}
+
+.single-image {
+  #preview-image {
+    top: 0 !important;
+  }
+
+  .image-preview-operations {
+    bottom: 35px !important;
+  }
 }
 </style>
