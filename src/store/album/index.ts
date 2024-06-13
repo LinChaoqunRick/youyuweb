@@ -5,6 +5,7 @@ import {
   CREATE_ALBUM,
   UPDATE_ALBUM,
   REMOVE_ALBUM,
+  GET_ALBUM_OSS_POLICY,
   GET_ALBUM_IMAGE_LIST,
   GET_ALBUM_IMAGE_DETAIL,
   CREATE_ALBUM_IMAGE,
@@ -28,6 +29,9 @@ export default {
     },
     removeAlbum(context: any, params: object) {
       return http.post(REMOVE_ALBUM, params);
+    },
+    getAlbumOssPolicy(context: any, params: object) {
+      return http.post(GET_ALBUM_OSS_POLICY, params);
     },
     getAlbumImageList(context: any, params: object) {
       return http.get(GET_ALBUM_IMAGE_LIST, params);

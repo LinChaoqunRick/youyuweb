@@ -130,6 +130,7 @@ export const GET_ALBUM_DETAIL = ApiBase + "/album/detail";
 export const CREATE_ALBUM = ApiBase + "/album/create";
 export const UPDATE_ALBUM = ApiBase + "/album/update";
 export const REMOVE_ALBUM = ApiBase + "/album/remove";
+export const GET_ALBUM_OSS_POLICY = ApiBase + "/album/oss/policy";
 
 // 相册照片
 export const GET_ALBUM_IMAGE_LIST = ApiBase + "/albumImage/open/list";

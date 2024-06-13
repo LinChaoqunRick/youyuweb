@@ -3,15 +3,21 @@
     <div class="album-cover">
       <img :src="data.cover" alt="">
       <div class="detail-info">
+        <div class="album-info-data">
+          <div class="edit-btn" v-if="false">
+            编辑
+          </div>
+          <div class="album-info-data-item" v-if="!data.open">
+            <i-lock theme="outline" size="15" fill="currentColor" />
+          </div>
+          <div class="album-info-data-item">
+            <i-material-three theme="outline" size="16" fill="currentColor" />
+            <span class="data-image-count">{{ data.imageCount }}</span>
+          </div>
+        </div>
         <div class="detail-info-user">
           <img :src="data.userInfo?.avatar" alt="">
           <div class="user-nickname">{{ data.userInfo?.nickname }}</div>
-        </div>
-        <div class="album-info-data">
-          <div class="album-info-data-item">
-            <i-material-three theme="outline" size="16" fill="currentColor" />
-            <span>{{ data.imageCount }}</span>
-          </div>
         </div>
       </div>
       <div class="detail-mask">
@@ -78,20 +84,33 @@ const props = defineProps({
       }
 
       .album-info-data {
+        display: flex;
+        align-items: center;
         position: absolute;
         bottom: 4px;
         right: 8px;
+        height: 24px;
+
+        .edit-btn {
+          opacity: 0;
+          color: #1890ff;
+          font-size: 14px;
+          margin-right: 4px
+        }
 
         .album-info-data-item {
           display: flex;
           justify-items: center;
           align-items: center;
-          padding: 0 6px 0 3px;
+          padding: 0 6px;
           border-radius: 4px;
           background-color: rgba(102, 102, 102, 0.2);
+          color: var(--youyu-text2);
+          height: 100%;
+          margin-left: 3px;
 
-          span {
-            margin-left: 4px;
+          .data-image-count {
+            margin-left: 3px;
           }
         }
       }
@@ -134,6 +153,10 @@ const props = defineProps({
 
     .album-info-data-item {
       color: #FFFFFF !important;
+    }
+
+    .edit-btn{
+      opacity: 1 !important;
     }
   }
 }

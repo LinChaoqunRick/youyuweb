@@ -1,35 +1,53 @@
 <template>
   <div class="album-list">
-    <AlbumItem v-for="(item, index) in albumList" :key="index" :data="item" />
+    <YTable listUrl="getAlbumList" ref="YTableRef">
+      <template #default="{dataList}">
+        <div class="list-wrapper">
+          <div v-for="item in dataList" class="album-item-body" :key="item.id">
+            <AlbumItem :data="item" />
+          </div>
+        </div>
+      </template>
+    </YTable>
+    <a-button class="create-btn" type="primary" @click="onAdd">新增</a-button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useStore } from 'vuex';
-import { ref } from 'vue';
-import type { AlbumType } from '@/views/album/type';
 import AlbumItem from '@/views/album/list/AlbumItem.vue';
+import YTable from '@/components/common/table/YTable.vue';
 
 const { dispatch } = useStore();
 
-const albumList = ref<AlbumType[]>([]);
-
-const initData = () => {
-  dispatch('getAlbumList').then(res => {
-    albumList.value = res.data.list;
-    console.log(albumList.value);
+const onAdd = () => {
+  dispatch('getAlbumOssPolicy', {albumId: 1}).then(res => {
+    console.log(res);
   });
 };
 
-initData();
 </script>
 
 <style lang="scss" scoped>
 .album-list {
   padding: 16px;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  justify-items: center;
-  align-items: center;
+
+  .list-wrapper {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    justify-items: center;
+    align-items: center;
+  }
+
+  ::v-deep(.y-table) {
+    .table-pagination {
+      margin-top: 12px;
+    }
+  }
+
+  .create-btn {
+    position: absolute;
+    bottom: 12px;
+  }
 }
 </style>

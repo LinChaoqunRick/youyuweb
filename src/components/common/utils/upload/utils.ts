@@ -1,15 +1,15 @@
-import axios, {AxiosError} from "axios";
-import store from "@/store";
-import {message} from "ant-design-vue";
-import dayjs from "dayjs";
+import axios, { AxiosError } from 'axios';
+import store from '@/store';
+import { message } from 'ant-design-vue';
+import dayjs from 'dayjs';
 
 export const isImageFile = (file: File) => {
   // 检查图片类型
-  const isJPG = file.type === "image/jpeg";
-  const isPNG = file.type === "image/png";
-  const isBMP = file.type === "image/bmp";
-  const isGIF = file.type === "image/gif";
-  const isWEBP = file.type === "image/webp";
+  const isJPG = file.type === 'image/jpeg';
+  const isPNG = file.type === 'image/png';
+  const isBMP = file.type === 'image/bmp';
+  const isGIF = file.type === 'image/gif';
+  const isWEBP = file.type === 'image/webp';
   return isJPG || isPNG || isBMP || isGIF || isWEBP;
 };
 
@@ -45,27 +45,27 @@ interface uploadConfig {
  * @param fileName 文件名
  */
 export function createFileName(fileName: string) {
-  return dayjs(new Date()).format("YYYYMMDDHHmmss") + "_" + fileName;
+  return dayjs(new Date()).format('YYYYMMDDHHmmss') + '_' + fileName;
 }
 
 const defaultConfig = {
-  accept: ".jpg, .jpeg, .png, .JPG, .PNG",
+  accept: '.jpg, .jpeg, .png, .JPG, .PNG',
   maxSize: 20,
-  needTip: true,
+  needTip: true
 };
 
 export async function uploadToOss(files: File[], config?: uploadConfig) {
   config = Object.assign({}, defaultConfig, config);
 
   if (!files) {
-    throw new Error("parameter 'file' is required");
+    throw new Error('parameter \'files\' is required');
   }
   if (!Array.isArray(files)) {
     files = [files];
   }
   // 文件校验
   for (const file of files) {
-    const fileNameArr = file.name.split(".");
+    const fileNameArr = file.name.split('.');
     const suffix = fileNameArr[fileNameArr.length - 1];
     const nameLegal = config.accept.indexOf(suffix) > -1;
     if (!nameLegal) {
@@ -82,42 +82,49 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
   // 上传步骤1： 获取oss临时凭证
   let data: ossType = {};
   let hide;
-  let progressList = Array.from({length: files.length}).map((item) => 0);
+  let progressList = Array.from({ length: files.length }).map((item) => 0);
   if (config.needTip) {
-    hide = message.loading("上传中...", 0);
+    hide = message.loading('上传中...', 0);
   }
-  await store.dispatch("getOssPolicy", {base: config.base}).then((res) => {
-    data = res.data;
-  });
+
+  if (config.getPolicy) {
+    data = await config.gePolicy().catch(() => false);
+  } else {
+    const res = await store.dispatch('getOssPolicy', { base: config.base }).catch(() => false);
+    data = res?.data;
+  }
+
+  if (!data) {
+    throw new Error('签名信息获取失败')
+  }
 
   // 上传步骤2： 上传文件至oss
   return await Promise.all(
     files.map(async (file: File, index: number) => {
       const file_name = createFileName(file.name);
       const form = new FormData();
-      form.append("policy", data.policy);
-      form.append("signature", data.signature);
-      form.append("ossaccessKeyId", data.OSSAccessKeyId);
-      form.append("key", data.dir + file_name);
-      form.append("dir", data.dir);
-      form.append("host", data.host);
-      form.append("success_action_status", "200");
+      form.append('policy', data.policy);
+      form.append('signature', data.signature);
+      form.append('ossaccessKeyId', data.OSSAccessKeyId);
+      form.append('key', data.dir + file_name);
+      form.append('dir', data.dir);
+      form.append('host', data.host);
+      form.append('success_action_status', '200');
       // form.append('callback', '');
-      form.append("file", file);
+      form.append('file', file);
 
       try {
         const res = await axios.post(data.host, form, {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data'
           },
           onUploadProgress: (progressEvent) => {
             const progress = Number(((progressEvent.loaded / progressEvent.total) * 100 | 0).toFixed(2));
-            console.log(progress);
             progressList[index] = progress;
             config?.progress?.(progressList);
-          },
+          }
         });
-        return {url: `${data.host}/${data.dir}${file_name}`};
+        return { url: `${data.host}/${data.dir}${file_name}` };
       } catch (error) {
         return error;
       } finally {
@@ -138,10 +145,10 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
 const parseXml = (xml: string) => {
   const parser = new DOMParser();
   return parser.parseFromString(xml, 'text/xml');
-}
+};
 
 export const getXmlTextContent = (xml: string, tag: string) => {
   const xmlDoc = parseXml(xml);
   const tagElement = xmlDoc.getElementsByTagName(tag)[0];
   return tagElement?.textContent;
-}
+};
