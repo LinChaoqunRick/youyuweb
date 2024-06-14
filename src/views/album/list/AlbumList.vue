@@ -14,16 +14,24 @@
 </template>
 
 <script setup lang="ts">
-import { useStore } from 'vuex';
 import AlbumItem from '@/views/album/list/AlbumItem.vue';
 import YTable from '@/components/common/table/YTable.vue';
+import openModal from '@/libs/tools/openModal';
+import AlbumAdd from '@/views/album/list/AlbumAdd.vue';
+import { ref } from 'vue';
 
-const { dispatch } = useStore();
+const YTableRef = ref(null);
 
-const onAdd = () => {
-  dispatch('getAlbumOssPolicy', {albumId: 1}).then(res => {
-    console.log(res);
-  });
+const onAdd = async () => {
+  const res = await openModal({
+    component: AlbumAdd,
+    title: '创建相册',
+    maskClosable: false,
+    width: '580px'
+  }).catch(console.log);
+  if (res) {
+    YTableRef.value.refreshData();
+  }
 };
 
 </script>

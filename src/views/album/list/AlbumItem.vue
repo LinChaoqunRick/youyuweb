@@ -1,44 +1,47 @@
 <template>
-  <div class="album-item cp">
-    <div class="album-cover">
-      <img :src="data.cover" alt="">
-      <div class="detail-info">
-        <div class="album-info-data">
-          <div class="edit-btn" v-if="false">
-            编辑
+  <RouterLink :to="`/album/detail/${data.id}`">
+    <div class="album-item cp">
+      <div class="album-cover">
+        <img :src="data.cover ?? defaultImage" alt="">
+        <div class="detail-info">
+          <div class="album-info-data">
+            <div class="edit-btn" v-if="false">
+              编辑
+            </div>
+            <div class="album-info-data-item" v-if="!data.open">
+              <i-lock theme="outline" size="15" fill="currentColor" />
+            </div>
+            <div class="album-info-data-item">
+              <i-material-three theme="outline" size="16" fill="currentColor" />
+              <span class="data-image-count">{{ data.imageCount }}</span>
+            </div>
           </div>
-          <div class="album-info-data-item" v-if="!data.open">
-            <i-lock theme="outline" size="15" fill="currentColor" />
-          </div>
-          <div class="album-info-data-item">
-            <i-material-three theme="outline" size="16" fill="currentColor" />
-            <span class="data-image-count">{{ data.imageCount }}</span>
+          <div class="detail-info-user">
+            <img :src="data.userInfo?.avatar" alt="">
+            <div class="user-nickname">{{ data.userInfo?.nickname }}</div>
           </div>
         </div>
-        <div class="detail-info-user">
-          <img :src="data.userInfo?.avatar" alt="">
-          <div class="user-nickname">{{ data.userInfo?.nickname }}</div>
+        <div class="detail-mask">
+          <div class="detail-info-createTime">
+            创建于：{{ dayjs(data.createTime).format('YYYY-MM-DD') }}
+          </div>
+          <div class="detail-info-content">
+            简介：{{ data.content }}
+          </div>
         </div>
       </div>
-      <div class="detail-mask">
-        <div class="detail-info-createTime">
-          创建于：{{ dayjs(data.createTime).format('YYYY-MM-DD') }}
-        </div>
-        <div class="detail-info-content">
-          简介：{{ data.content }}
-        </div>
+      <div class="album-info">
+        <div class="album-info-name text-limit">{{ data.name }}</div>
       </div>
     </div>
-    <div class="album-info">
-      <div class="album-info-name text-limit">{{ data.name }}</div>
-    </div>
-  </div>
+  </RouterLink>
 </template>
 
 <script setup lang="ts">
 import type { AlbumType } from '@/views/album/type';
 import type { PropType } from 'vue';
 import dayjs from 'dayjs';
+import defaultImage from '@/assets/images/common/defaultImage.png';
 
 const props = defineProps({
   data: {
@@ -52,6 +55,8 @@ const props = defineProps({
 .album-item {
   width: 230px;
   background-color: var(--youyu-body-background3);
+  overflow: hidden;
+  color: var(--youyu-text);
 
   .album-cover {
     position: relative;
@@ -155,7 +160,7 @@ const props = defineProps({
       color: #FFFFFF !important;
     }
 
-    .edit-btn{
+    .edit-btn {
       opacity: 1 !important;
     }
   }
