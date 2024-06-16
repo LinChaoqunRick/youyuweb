@@ -2,6 +2,7 @@ import axios, { AxiosError } from 'axios';
 import store from '@/store';
 import { message } from 'ant-design-vue';
 import dayjs from 'dayjs';
+import { merge } from 'lodash';
 
 export const isImageFile = (file: File) => {
   // 检查图片类型
@@ -48,17 +49,20 @@ export function createFileName(fileName: string) {
   return dayjs(new Date()).format('YYYYMMDDHHmmss') + '_' + fileName;
 }
 
-const defaultConfig = {
-  accept: '.jpg, .jpeg, .png, .JPG, .PNG',
-  maxSize: 20,
-  needTip: true
-};
-
 export async function uploadToOss(files: File[], config?: uploadConfig) {
-  config = Object.assign({}, defaultConfig, config);
+  const defaultConfig = {
+    accept: '.jpg, .jpeg, .png, .JPG, .PNG',
+    maxSize: 20,
+    needTip: true,
+    policyPath: 'getOssPolicy'
+  };
+
+  const mergedConfig = merge({}, defaultConfig, config);
+
+  console.log(mergedConfig);
 
   if (!files) {
-    throw new Error('parameter \'files\' is required');
+    throw new Error('parameter files is required');
   }
   if (!Array.isArray(files)) {
     files = [files];
@@ -67,35 +71,29 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
   for (const file of files) {
     const fileNameArr = file.name.split('.');
     const suffix = fileNameArr[fileNameArr.length - 1];
-    const nameLegal = config.accept.indexOf(suffix) > -1;
+    const nameLegal = mergedConfig.accept.indexOf(suffix) > -1;
     if (!nameLegal) {
-      message.error(`只能上传${config.accept}类型的文件`);
+      message.error(`只能上传${mergedConfig.accept}类型的文件`);
       return;
     }
-    const sizeExceed = file.size / 1024 / 1024 < config.maxSize;
+    const sizeExceed = file.size / 1024 / 1024 < mergedConfig.maxSize;
     if (!sizeExceed) {
-      message.error(`文件大小不能大于${config.maxSize}MB`);
+      message.error(`文件大小不能大于${mergedConfig.maxSize}MB`);
       return;
     }
   }
 
   // 上传步骤1： 获取oss临时凭证
-  let data: ossType = {};
-  let hide;
+  let hide: Function;
   let progressList = Array.from({ length: files.length }).map((item) => 0);
-  if (config.needTip) {
+  if (mergedConfig.needTip) {
     hide = message.loading('上传中...', 0);
   }
 
-  if (config.getPolicy) {
-    data = await config.gePolicy().catch(() => false);
-  } else {
-    const res = await store.dispatch('getOssPolicy', { base: config.base }).catch(() => false);
-    data = res?.data;
-  }
-
+  const res = await store.dispatch(mergedConfig.policyPath, mergedConfig?.data).catch(console.error);
+  const data = res.data;
   if (!data) {
-    throw new Error('签名信息获取失败')
+    throw new Error('签名获取失败');
   }
 
   // 上传步骤2： 上传文件至oss
@@ -121,11 +119,13 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
           onUploadProgress: (progressEvent) => {
             const progress = Number(((progressEvent.loaded / progressEvent.total) * 100 | 0).toFixed(2));
             progressList[index] = progress;
-            config?.progress?.(progressList);
+            mergedConfig?.progress?.(progressList);
           }
         });
-        return { url: `${data.host}/${data.dir}${file_name}` };
+        return { url: `${data.host}/${data.dir}${file_name}`, path: `${data.dir}${file_name}`, file: file };
       } catch (error) {
+        progressList[index] = -1;
+        mergedConfig?.progress?.(progressList);
         return error;
       } finally {
         hide && hide();
@@ -134,11 +134,14 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
   ).then((res) => {
     const failedNumber = res.filter(item => item instanceof AxiosError).length;
     const successNumber = res.length - failedNumber;
-    if (config.needTip) {
+    if (mergedConfig.needTip) {
       const resultMessage = `共${res.length}个文件：成功 ${successNumber} 个，失败 ${failedNumber} 个`;
       message.info(resultMessage);
     }
     return res;
+  }).catch(e => {
+    console.error(e);
+    return [];
   });
 }
 

@@ -30,6 +30,10 @@ const inputRef = ref<HTMLInputElement | null>(null);
 const { dispatch } = useStore();
 const files = defineModel({ default: [] }); // v-model双向绑定
 const props = defineProps({
+  config: {
+    type: Object,
+    default: () => ({})
+  },
   disabled: {
     type: Boolean,
     default: false
@@ -50,13 +54,12 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  data: {
-    type: Object,
-    default: () => ({})
+  autoClear: {
+    type: Boolean,
+    default: true
   }
 });
 
-const data = ref<object>({});
 const progress = ref<number[]>([]);
 const totalProgress = ref<number>(100);
 const visible = ref(true);
@@ -103,25 +106,30 @@ const onTriggerInput = () => {
 };
 
 const upload = async () => {
-  const uploadFiles = files.value.filter(item => item.thumb);
-  // console.log(uploadFiles);
+  const uploadFiles = files.value.filter(item => item.thumb || item.progress < 0);
   if (!uploadFiles.length) {
     return;
   }
   const defaultConfig = {
-    base: 'post/images',
+    data: { base: 'post/images' },
     needTip: false, // 不需要提示
     progress: uploadProgress,
     accept: props.accept,
     maxSize: props.maxSize
   };
-  const mergedConfig = merge(defaultConfig, props.data);
+  const mergedConfig = merge(defaultConfig, props.config);
   const res = await uploadToOss(uploadFiles, mergedConfig);
-  const firstErrorItem = res?.find(item => item instanceof AxiosError);
-  if (!firstErrorItem) {
+  res.forEach((item: object, index: number) => {
+    if (item.url) {
+      files.value[index] = item.file.thumb;
+    }
+  });
+  const isError = res?.find(item => item instanceof AxiosError);
+  if (!isError && props.autoClear) {
     files.value = [];
   }
-  emit('uploadSuccess', res);
+  const successResult = res?.filter(item => !(item instanceof AxiosError));
+  emit('uploadSuccess', successResult);
   return res;
 };
 
@@ -136,7 +144,6 @@ const uploadProgress = (progressList: number[]) => {
   } else {
     totalProgress.value = 100;
   }
-  // TODO.. 为什么这里需要cloneDeep，外层才能正确响应式？？
   emit('onProgress', progress.value);
 };
 

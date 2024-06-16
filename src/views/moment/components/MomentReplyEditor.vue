@@ -38,7 +38,7 @@
                   :max-size="maxFileSize"
                   :max-num="maxFileNum"
                   :disabled="uploadDisabled"
-                  :data="{ base: 'moment/images' }"
+                  :config="{data: { base: 'moment/images' }}"
                   ref="UploadFileRef">
         <div class="tool-item item-upload-image" @click="onCheckLogin">
           <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>

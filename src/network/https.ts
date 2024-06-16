@@ -124,7 +124,7 @@ const refreshAuthLogic = async (failedRequest: any) => {
       cleanCookieLocalStorage();
       store.commit("changeUser", {});
       setTimeout(() => {
-        location.reload();
+        // location.reload();
       }, 1500);
     });
   const {access_token: res_access_token, refresh_token: res_refresh_token} = tokenRefreshResponse.data;

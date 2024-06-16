@@ -39,21 +39,7 @@
         @end="drag = false"
         :item-key="element => element">
         <template #item="{ element, index }">
-          <div class="image-item">
-            <img :src="element.thumb || element" alt="" />
-            <div class="image-delete" @click="onImageDelete(index)">
-              <i-close theme="outline" size="10" fill="currentColor" :strokeWidth="2" />
-            </div>
-            <div class="progress-wrapper" v-if="submitLoading">
-              <Transition name="fade" mode="out-in">
-                <i-check-one v-if="!element.thumb || progressList[index]==100" theme="filled" size="36"
-                             fill="#52C41ACC" />
-                <CircleProgress v-else :value="progressList[index] ?? 0" :size="36" :stroke-width="3.8">
-                  <i-up-small theme="outline" size="24" fill="#FFFFFF" />
-                </CircleProgress>
-              </Transition>
-            </div>
-          </div>
+          <ImageItem :data="element" :progress="progressList[index]" @on-image-delete="onImageDelete(index)" />
         </template>
       </draggable>
       <div class="upload-image" @click="onAddImage" v-if="!uploadDisabled">
@@ -82,7 +68,7 @@
           :max-num="maxFileNum"
           :disabled="uploadDisabled"
           multiple
-          :data="{ base: 'moment/images' }"
+          :config="{data: { base: 'moment/images' }}"
           @onProgress="onUploadProgress"
           ref="UploadFileRef">
           <div class="tool-item item-upload-image" v-login>
@@ -124,7 +110,7 @@ import ContentEditableDiv from '@/components/common/utils/contenteditable/Conten
 import LocationSelector from '@/components/common/utils/aMap/LocationSelector.vue';
 import { AxiosError } from 'axios';
 import { getXmlTextContent } from '@/components/common/utils/upload/utils';
-import CircleProgress from '@/components/common/share/upload/CircleProgress.vue';
+import ImageItem from '@/components/common/utils/upload/components/ImageItem.vue';
 
 const props = defineProps({
   form: {
@@ -175,7 +161,7 @@ const toLogin = () => {
   commit('changeLogin', true);
 };
 
-const onImageDelete = (index: string | number) => {
+const onImageDelete = (index: number) => {
   props.form.images.splice(index, 1);
 };
 

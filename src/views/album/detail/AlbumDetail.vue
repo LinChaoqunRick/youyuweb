@@ -1,27 +1,27 @@
 <template>
-  <div class="album-detail">
+  <div class="album-detail" :class="{'album-detail-collapse': collapse}">
     <div class="album-images-wrapper">
       <ContentList
         url="getAlbumImageList"
         :params="params"
         auto-load
-        data-text="照片"
+        data-text="张照片"
         class="album-content-list"
         ref="ContentListRef">
         <template v-slot="{ list }">
-          <div class="image-wrapper"><img v-for="item in list" :src="item.url" :alt="item.name" class="cp" /></div>
+          <div v-for="item in list" class="image-wrapper"><img :src="item.url" :alt="item.name" class="cp" /></div>
         </template>
       </ContentList>
     </div>
-    <div class="album-info-body" :class="{'album-info-collapse':collapse}">
+    <div class="album-info-body">
       <AlbumDetailInfo :albumId="albumId" />
       <div class="collapse-button" @click="onCollapse">
         <i-right theme="outline" size="16" fill="currentColor" />
       </div>
     </div>
-    <a-button class="upload-btn" type="primary" shape="round">
+    <a-button class="upload-btn" type="primary" shape="round" @click="onClickUpload">
       <template #icon>
-        <i-upload-one theme="outline" size="16" fill="currentColor"/>
+        <i-upload-one theme="outline" size="16" fill="currentColor" />
       </template>
       上传
     </a-button>
@@ -34,6 +34,8 @@ import { useStore } from 'vuex';
 import AlbumDetailInfo from '@/views/album/detail/AlbumDetailInfo.vue';
 import ContentList from '@/components/common/system/ContentList.vue';
 import { computed, ref } from 'vue';
+import openModal from '@/libs/tools/openModal';
+import UploadImageList from '@/views/album/detail/UploadImageList.vue';
 
 const { dispatch } = useStore();
 
@@ -48,9 +50,22 @@ const onCollapse = () => {
   collapse.value = !collapse.value;
 };
 
+const onClickUpload = async () => {
+  const res = await openModal({
+    component: UploadImageList,
+    componentProps: {
+      albumId: albumId
+    },
+    maskClosable: false,
+    title: '上传照片',
+    width: '1200px'
+  });
+};
 </script>
 
 <style lang="scss" scoped>
+$infoBodyWidth: 300px;
+
 .album-detail {
   display: flex;
   height: calc(100vh - 100px);
@@ -66,6 +81,7 @@ const onCollapse = () => {
         height: 180px;
         width: 180px;
         overflow: hidden;
+        margin: 0 12px 12px 0;
       }
 
       img {
@@ -78,13 +94,17 @@ const onCollapse = () => {
           transform: scale(1.05);
         }
       }
+
+      ::v-deep(.data-list) {
+        display: flex;
+      }
     }
   }
 
   .album-info-body {
     position: relative;
     height: 100%;
-    width: 300px;
+    width: $infoBodyWidth;
     overflow: visible;
     border-right: var(--youyu-navigation-border);
     transform: translateX(0);
@@ -110,23 +130,13 @@ const onCollapse = () => {
         color: var(--youyu-text2);
       }
     }
-
-    &.album-info-collapse {
-      margin-right: -300px;
-
-      .collapse-button {
-        .i-icon {
-          transform: rotateY(180deg);
-        }
-      }
-    }
   }
 
   .upload-btn {
     position: fixed;
     bottom: 55px;
     left: calc(50%);
-    transform: translateX(-50%);
+    transform: translateX(calc(-50% - #{$infoBodyWidth / 2}));
     opacity: 1;
     transition: 0.3s;
 
@@ -134,6 +144,22 @@ const onCollapse = () => {
       position: relative;
       top: 1px;
       margin-right: 3px;
+    }
+  }
+}
+
+.album-detail-collapse {
+  .upload-btn {
+    transform: translateX(-50%);
+  }
+
+  .album-info-body {
+    margin-right: -$infoBodyWidth !important;
+
+    .collapse-button {
+      .i-icon {
+        transform: rotateY(180deg) !important;
+      }
     }
   }
 }
