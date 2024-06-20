@@ -127,6 +127,7 @@ export const GET_MICRO_CAPACITY_POWER = ApiBase + "/category/open/list";
 // 相册
 export const GET_ALBUM_LIST = ApiBase + "/album/open/list";
 export const GET_ALBUM_DETAIL = ApiBase + "/album/open/detail";
+export const GET_ALBUM_ACCESSIBLE = ApiBase + "/album/open/accessible";
 export const CREATE_ALBUM = ApiBase + "/album/create";
 export const UPDATE_ALBUM = ApiBase + "/album/update";
 export const REMOVE_ALBUM = ApiBase + "/album/remove";

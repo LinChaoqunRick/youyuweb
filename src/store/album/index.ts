@@ -2,6 +2,7 @@ import http from '@/network/https';
 import {
   GET_ALBUM_LIST,
   GET_ALBUM_DETAIL,
+  GET_ALBUM_ACCESSIBLE,
   CREATE_ALBUM,
   UPDATE_ALBUM,
   REMOVE_ALBUM,
@@ -20,6 +21,9 @@ export default {
     },
     getAlbumDetail(context: any, params: object) {
       return http.get(GET_ALBUM_DETAIL, params);
+    },
+    getAlbumAccessible(context: any, params: object) {
+      return http.get(GET_ALBUM_ACCESSIBLE, params);
     },
     createAlbum(context: any, params: object) {
       return http.post(CREATE_ALBUM, params);

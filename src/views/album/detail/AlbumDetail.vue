@@ -1,41 +1,52 @@
 <template>
-  <div class="album-detail" :class="{'album-detail-collapse': collapse}">
-    <div class="album-images-wrapper">
-      <ContentList
-        url="getAlbumImageList"
-        :params="params"
-        auto-load
-        data-text="张照片"
-        class="album-content-list"
-        ref="ContentListRef">
-        <template v-slot="{ list }">
-          <div v-for="item in list" class="image-wrapper"><img :src="item.url" :alt="item.name" class="cp" /></div>
-        </template>
-      </ContentList>
-    </div>
-    <div class="album-info-body">
-      <AlbumDetailInfo :albumId="albumId" />
-      <div class="collapse-button" @click="onCollapse">
-        <i-right theme="outline" size="16" fill="currentColor" />
+  <ContentData url="getAlbumAccessible" :params="{id: albumId}" v-slot="{ data }" class="content-data-container">
+    <div class="album-detail-container">
+      <div v-if="data" class="album-detail" :class="{'album-detail-collapse': collapse}">
+        <div class="album-images-wrapper">
+          <ContentList
+            url="getAlbumImageList"
+            :params="params"
+            auto-load
+            data-text="张照片"
+            class="album-content-list"
+            ref="ContentListRef">
+            <template v-slot="{ list }">
+              <div v-for="(item, index) in list" class="image-wrapper" @click="onImageClick(item, index)"><img
+                :src="item.url" :alt="item.name" class="cp" /></div>
+            </template>
+          </ContentList>
+        </div>
+        <div class="album-info-body">
+          <AlbumDetailInfo :albumId="albumId" />
+          <div class="collapse-button" @click="onCollapse">
+            <i-right theme="outline" size="16" fill="currentColor" />
+          </div>
+        </div>
+        <a-button class="upload-btn" type="primary" shape="round" @click="onClickUpload">
+          <template #icon>
+            <i-upload-one theme="outline" size="16" fill="currentColor" />
+          </template>
+          上传
+        </a-button>
+      </div>
+      <div v-else-if="data === false" class="inaccessible-wrapper gf">
+        <div class="tip-text">您没有权限访问该相册</div>
+        <a-button type="primary" v-login="onApply">申请访问</a-button>
       </div>
     </div>
-    <a-button class="upload-btn" type="primary" shape="round" @click="onClickUpload">
-      <template #icon>
-        <i-upload-one theme="outline" size="16" fill="currentColor" />
-      </template>
-      上传
-    </a-button>
-  </div>
+  </ContentData>
 </template>
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
+import ContentData from '@/components/common/system/ContentData.vue';
 import AlbumDetailInfo from '@/views/album/detail/AlbumDetailInfo.vue';
 import ContentList from '@/components/common/system/ContentList.vue';
 import { computed, ref } from 'vue';
 import openModal from '@/libs/tools/openModal';
 import UploadImageList from '@/views/album/detail/UploadImageList.vue';
+import openImage from '@/libs/tools/openImage';
 
 const { dispatch } = useStore();
 
@@ -43,6 +54,8 @@ const route = useRoute();
 
 const collapse = ref<boolean>(false);
 const albumId = route.params.albumId;
+const ContentListRef = ref(null);
+const imageList = computed(() => ContentListRef.value?.list);
 
 const params = computed(() => ({ id: albumId }));
 
@@ -61,104 +74,148 @@ const onClickUpload = async () => {
     width: '1200px'
   });
 };
+
+const onApply = () => {
+  console.log('onApply');
+};
+
+const onImageClick = (item: object, index: object) => {
+  openImage({
+    componentProps: {
+      list: imageList.value.map((item) => item.url),
+      current: index,
+      originTransfer: (index: number) => {
+        console.log(imageList.value[index]);
+        return imageList.value[index].originUrl;
+      }
+    }
+  });
+};
 </script>
 
 <style lang="scss" scoped>
 $infoBodyWidth: 300px;
 
-.album-detail {
-  display: flex;
+.content-data-container {
   height: calc(100vh - 100px);
-  width: 100%;
 
-  .album-images-wrapper {
-    padding: 8px 16px;
-    flex: 1;
-    overflow: hidden;
+  .album-detail-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 100px);
 
-    .album-content-list {
-      .image-wrapper {
-        height: 180px;
-        width: 180px;
+    .album-detail {
+      display: flex;
+      height: 100%;
+      width: 100%;
+
+      .album-images-wrapper {
+        padding: 8px 16px;
+        flex: 1;
         overflow: hidden;
-        margin: 0 12px 12px 0;
-      }
 
-      img {
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
-        transition: .3s;
+        .album-content-list {
+          .image-wrapper {
+            height: 180px;
+            width: 180px;
+            overflow: hidden;
+            margin: 0 12px 12px 0;
+          }
 
-        &:hover {
-          transform: scale(1.05);
+          img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            transition: .3s;
+
+            &:hover {
+              transform: scale(1.05);
+            }
+          }
+
+          ::v-deep(.data-list) {
+            display: flex;
+          }
         }
       }
 
-      ::v-deep(.data-list) {
-        display: flex;
+      .album-info-body {
+        position: relative;
+        height: 100%;
+        width: $infoBodyWidth;
+        overflow: visible;
+        border-right: var(--youyu-navigation-border);
+        transform: translateX(0);
+        transition: .3s;
+        z-index: 1;
+
+        .collapse-button {
+          display: flex;
+          align-items: center;
+          position: absolute;
+          top: calc(50% - 33px);
+          left: -16px;
+          width: 0;
+          height: 66px;
+          border: 8px solid transparent;
+          border-left: 0;
+          border-right: 16px solid var(--youyu-background2);
+          cursor: pointer;
+          transition: all .3s ease-in-out;
+          color: #bebebe;
+
+          &:hover {
+            color: var(--youyu-text2);
+          }
+        }
+      }
+
+      .upload-btn {
+        position: fixed;
+        bottom: 55px;
+        left: calc(50%);
+        transform: translateX(calc(-50% - #{$infoBodyWidth} / 2));
+        opacity: 1;
+        transition: 0.3s;
+
+        ::v-deep(.i-icon) {
+          position: relative;
+          top: 1px;
+          margin-right: 3px;
+        }
+      }
+
+      &.album-detail-collapse {
+        .upload-btn {
+          transform: translateX(-50%);
+        }
+
+        .album-info-body {
+          margin-right: -$infoBodyWidth !important;
+
+          .collapse-button {
+            .i-icon {
+              transform: rotateY(180deg) !important;
+            }
+          }
+        }
       }
     }
-  }
 
-  .album-info-body {
-    position: relative;
-    height: 100%;
-    width: $infoBodyWidth;
-    overflow: visible;
-    border-right: var(--youyu-navigation-border);
-    transform: translateX(0);
-    transition: .3s;
-    z-index: 1;
-
-    .collapse-button {
+    .inaccessible-wrapper {
+      height: 260px;
+      width: 400px;
+      border-radius: 8px;
       display: flex;
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      position: absolute;
-      top: calc(50% - 33px);
-      left: -16px;
-      width: 0;
-      height: 66px;
-      border: 8px solid transparent;
-      border-left: 0;
-      border-right: 16px solid var(--youyu-background2);
-      cursor: pointer;
-      transition: all .3s ease-in-out;
-      color: #bebebe;
+      font-size: 18px;
+      font-weight: bold;
 
-      &:hover {
-        color: var(--youyu-text2);
-      }
-    }
-  }
-
-  .upload-btn {
-    position: fixed;
-    bottom: 55px;
-    left: calc(50%);
-    transform: translateX(calc(-50% - #{$infoBodyWidth / 2}));
-    opacity: 1;
-    transition: 0.3s;
-
-    ::v-deep(.i-icon) {
-      position: relative;
-      top: 1px;
-      margin-right: 3px;
-    }
-  }
-}
-
-.album-detail-collapse {
-  .upload-btn {
-    transform: translateX(-50%);
-  }
-
-  .album-info-body {
-    margin-right: -$infoBodyWidth !important;
-
-    .collapse-button {
-      .i-icon {
-        transform: rotateY(180deg) !important;
+      .tip-text {
+        margin-bottom: 12px;
       }
     }
   }

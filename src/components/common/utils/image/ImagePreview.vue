@@ -1,46 +1,46 @@
 <template>
   <div class="image-preview" :class="{'single-image': isSingleImage}">
     <div class="image-preview-close" @click="onClose">
-      <i-close theme="outline" size="20" fill="currentColor"/>
+      <i-close theme="outline" size="20" fill="currentColor" />
     </div>
     <div class="image-preview-body">
       <div class="ope-icon last-icon" v-if="current!==0" @click="handleChange('last')">
-        <i-left theme="outline" size="30" fill="#fff"/>
+        <i-left theme="outline" size="30" fill="#fff" />
       </div>
       <div class="ope-icon next-icon" v-if="current!==props.list?.length-1" @click="handleChange('next')">
-        <i-left theme="outline" size="30" fill="#fff" style="transform: scale3d(-1,1,1)"/>
+        <i-left theme="outline" size="30" fill="#fff" style="transform: scale3d(-1,1,1)" />
       </div>
       <div id="preview-image">
-        <img :src="currentOriginUrl" @load="onLoad" v-show="!loading" alt="photo"/>
+        <img :src="currentOriginUrl" @load="onLoad" v-show="!loading" alt="photo" />
         <div class="drag-mask"></div>
       </div>
     </div>
-    <spin size="large" class="a-spin" v-show="loading"/>
+    <spin size="large" class="a-spin" v-show="loading" />
     <Transition name="fade">
       <div class="image-preview-operations" v-if="!idle">
         <div class="operation-item">
           <i-left :class="{'disabled': current===0}" theme="outline" size="22" fill="currentColor"
-                  @click="handleChange('last')"/>
+                  @click="handleChange('last')" />
           <div class="image-preview-progress">{{ current + 1 }} / {{ props.list.length }}</div>
           <i-right :class="{'disabled': current===props.list?.length-1}" class="separator" theme="outline" size="22"
-                   fill="currentColor" @click="handleChange('next')"/>
+                   fill="currentColor" @click="handleChange('next')" />
         </div>
         <div class="operation-item">
           <i-zoom-in :class="{'disabled': scale >= maxScale}" theme="outline" size="19" fill="currentColor"
-                     @click="handleScale('large')"/>
+                     @click="handleScale('large')" />
           <div class="image-preview-scale">{{ (scale * 100).toFixed(0) }}%</div>
           <i-zoom-out :class="{'disabled': scale <= minScale}" theme="outline" size="19" fill="currentColor"
-                      @click="handleScale('small')"/>
-          <i-one-to-one theme="outline" size="19" fill="currentColor" @click="handleScale('reset')"/>
+                      @click="handleScale('small')" />
+          <i-one-to-one theme="outline" size="19" fill="currentColor" @click="handleScale('reset')" />
         </div>
         <div class="operation-item" v-if="false">
-          <i-sort-two theme="outline" size="17" fill="currentColor" @click="handleFlip('x')"/>
-          <i-switch theme="outline" size="17" fill="currentColor" @click="handleFlip('y')"/>
+          <i-sort-two theme="outline" size="17" fill="currentColor" @click="handleFlip('x')" />
+          <i-switch theme="outline" size="17" fill="currentColor" @click="handleFlip('y')" />
         </div>
         <div class="operation-item">
-          <i-rotate class="icon-rotate-left" theme="outline" size="18" fill="currentColor" @click="handleRotate('c')"/>
+          <i-rotate class="icon-rotate-left" theme="outline" size="18" fill="currentColor" @click="handleRotate('c')" />
           <i-rotate class="icon-rotate-right" theme="outline" size="18" fill="currentColor" @click="handleRotate('ac')"
-                    style="transform: scale3d(-1,1,1)"/>
+                    style="transform: scale3d(-1,1,1)" />
           <!--        <i-more theme="outline" size="19"/>-->
         </div>
       </div>
@@ -51,7 +51,7 @@
              class="image-item-thumbnail"
              :class="{'active': index === current}"
              @click="onClickThumbnail(index)">
-          <img :src="item" alt=""/>
+          <img :src="item" alt="" />
         </div>
       </div>
     </div>
@@ -59,21 +59,24 @@
 </template>
 
 <script setup lang="ts">
-import {ref, computed, watch, onMounted, onUnmounted, defineModel} from 'vue';
-import {getImgSize} from "@/components/common/utils/image/utils";
-import {disabledBodyScroll, enabledBodyScroll} from "@/assets/utils/utils.ts";
-import {Spin} from "ant-design-vue";
-import {useIdle} from '@vueuse/core'
+import { ref, computed, watch, onMounted, onUnmounted, defineModel } from 'vue';
+import { getImgSize } from '@/components/common/utils/image/utils';
+import { disabledBodyScroll, enabledBodyScroll } from '@/assets/utils/utils.ts';
+import { Spin } from 'ant-design-vue';
+import { useIdle } from '@vueuse/core';
 
 const props = defineProps({
   list: {
     type: Array,
     required: true
   },
+  originTransfer: {
+    type: Function
+  }
 });
 const emit = defineEmits(['onClose']);
-const current = defineModel('current', {type: Number, default: 0});
-const {idle} = useIdle(2 * 1000);
+const current = defineModel('current', { type: Number, default: 0 });
+const { idle } = useIdle(2 * 1000);
 
 interface resultData {
   width: number,
@@ -81,27 +84,27 @@ interface resultData {
 }
 
 let image: HTMLElement | null,
-    result: resultData,
-    x: number = 0,
-    y: number = 0,
-    minScale: number = 0.2,
-    maxScale: number = 8,
-    flipX: boolean = false,
-    flipY: boolean = false,
-    rotate: number = 0,
-    scaleRatio: number = 1.1,
-    isPointerdown = false, // 按下标识;
-    moveDiff = {x: 0, y: 0}, // 相对于上一次pointermove移动差值
-    lastPointermove = {x: 0, y: 0}; // 用于计算diff;
+  result: resultData,
+  x: number = 0,
+  y: number = 0,
+  minScale: number = 0.2,
+  maxScale: number = 8,
+  flipX: boolean = false,
+  flipY: boolean = false,
+  rotate: number = 0,
+  scaleRatio: number = 1.1,
+  isPointerdown = false, // 按下标识;
+  moveDiff = { x: 0, y: 0 }, // 相对于上一次pointermove移动差值
+  lastPointermove = { x: 0, y: 0 }; // 用于计算diff;
 
 const loading = ref<boolean>(true);
 const scale = ref<number>(1);
-const currentOriginUrl = computed(() => props.list[current.value].split("?")[0]);
+const currentOriginUrl = computed(() => props.originTransfer ? props.originTransfer(current.value) : props.list[current.value].split('?')[0]);
 const isSingleImage = computed(() => props.list?.length === 1);
 
 watch(() => current.value, () => {
   loading.value = true;
-})
+});
 
 function initListen() {
   image = document.getElementById('preview-image');
@@ -141,47 +144,47 @@ function listenWheel() {
       const origin = {
         x: window.innerWidth * 0.5 + x,
         y: window.innerHeight * 0.5 + y
-      }
+      };
 
       // 滚动前的x长度，y长度
       const before = {
         x: e.clientX - origin.x,
         y: e.clientY - origin.y
-      }
+      };
 
       // 滚动后的x‘长度，y’长度
       const after = {
         x: before.x * ratio,
         y: before.y * ratio
-      }
+      };
 
       // 计算差值
       const diff = {
         x: after.x - before.x,
         y: after.y - before.y
-      }
+      };
 
       x -= diff.x;
       y -= diff.y;
     }
     refreshTransform();
-  })
+  });
 }
 
 function listenDrag() {
 // 绑定 pointerdown
-  image.addEventListener('pointerdown', function (e) {
+  image.addEventListener('pointerdown', function(e) {
     isPointerdown = true;
     image.setPointerCapture(e.pointerId);
-    lastPointermove = {x: e.clientX, y: e.clientY};
+    lastPointermove = { x: e.clientX, y: e.clientY };
   });
   // 绑定 pointermove
-  image.addEventListener('pointermove', function (e) {
+  image.addEventListener('pointermove', function(e) {
     if (isPointerdown) {
-      const current = {x: e.clientX, y: e.clientY};
+      const current = { x: e.clientX, y: e.clientY };
       moveDiff.x = current.x - lastPointermove.x;
       moveDiff.y = current.y - lastPointermove.y;
-      lastPointermove = {x: current.x, y: current.y};
+      lastPointermove = { x: current.x, y: current.y };
       x += moveDiff.x;
       y += moveDiff.y;
       refreshTransform();
@@ -189,13 +192,13 @@ function listenDrag() {
     e.preventDefault();
   });
   // 绑定 pointerup
-  image.addEventListener('pointerup', function (e) {
+  image.addEventListener('pointerup', function(e) {
     if (isPointerdown) {
       isPointerdown = false;
     }
   });
   // 绑定 pointercancel
-  image.addEventListener('pointercancel', function (e) {
+  image.addEventListener('pointercancel', function(e) {
     if (isPointerdown) {
       isPointerdown = false;
     }
@@ -263,8 +266,8 @@ function refreshData() {
   flipX = false;
   flipY = false;
   rotate = 0;
-  moveDiff = {x: 0, y: 0}; // 相对于上一次pointermove移动差值
-  lastPointermove = {x: 0, y: 0}; // 用于计算diff;
+  moveDiff = { x: 0, y: 0 }; // 相对于上一次pointermove移动差值
+  lastPointermove = { x: 0, y: 0 }; // 用于计算diff;
   scale.value = 1;
 
   refreshTransform();
@@ -276,13 +279,13 @@ function onClose() {
 
 const onClickThumbnail = (index: number) => {
   current.value = index;
-}
+};
 
 disabledBodyScroll();
 
 onUnmounted(() => {
   enabledBodyScroll();
-})
+});
 
 </script>
 
