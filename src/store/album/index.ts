@@ -11,7 +11,8 @@ import {
   GET_ALBUM_IMAGE_DETAIL,
   CREATE_ALBUM_IMAGE,
   UPDATE_ALBUM_IMAGE,
-  REMOVE_ALBUM_IMAGE
+  REMOVE_ALBUM_IMAGE,
+  GET_ALBUM_IMAGE_ORIGIN
 } from '@/network/apis';
 
 export default {
@@ -53,6 +54,9 @@ export default {
     },
     removeAlbumImage(context: any, params: object) {
       return http.post(REMOVE_ALBUM_IMAGE, params);
+    },
+    getAlbumImageOrigin(context: any, params: object) {
+      return http.post(GET_ALBUM_IMAGE_ORIGIN, params);
     }
   }
 };

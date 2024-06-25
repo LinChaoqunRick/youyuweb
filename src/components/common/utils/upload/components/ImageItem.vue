@@ -82,7 +82,7 @@ const onImageDelete = () => {
     width: 16px;
     height: 16px;
     position: absolute;
-    top: 12px;
+    top: 4px;
     right: 4px;
     border-radius: 50%;
     border: 1px solid #c5c5c5;

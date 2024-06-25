@@ -22,12 +22,7 @@
             <i-right theme="outline" size="16" fill="currentColor" />
           </div>
         </div>
-        <a-button class="upload-btn" type="primary" shape="round" @click="onClickUpload">
-          <template #icon>
-            <i-upload-one theme="outline" size="16" fill="currentColor" />
-          </template>
-          上传
-        </a-button>
+        <div id="albumUploadBtn" class="upload-btn" @click="onClickUpload"></div>
       </div>
       <div v-else-if="data === false" class="inaccessible-wrapper gf">
         <div class="tip-text">您没有权限访问该相册</div>
@@ -48,9 +43,10 @@ import openModal from '@/libs/tools/openModal';
 import UploadImageList from '@/views/album/detail/UploadImageList.vue';
 import openImage from '@/libs/tools/openImage';
 
-const { dispatch } = useStore();
+const { getters, dispatch } = useStore();
 
 const route = useRoute();
+const userInfo = computed(() => getters['userInfo']);
 
 const collapse = ref<boolean>(false);
 const albumId = route.params.albumId;
@@ -85,8 +81,15 @@ const onImageClick = (item: object, index: object) => {
       list: imageList.value.map((item) => item.url),
       current: index,
       originTransfer: (index: number) => {
-        console.log(imageList.value[index]);
-        return imageList.value[index].originUrl;
+        const originUrl = imageList.value[index].originUrl;
+        if (originUrl) {
+          return originUrl;
+        } else {
+          return dispatch('getAlbumImageOrigin', { id: imageList.value[index].id }).then(res => {
+            imageList.value[index].originUrl = res.data;
+            return res.data;
+          });
+        }
       }
     }
   });
@@ -113,7 +116,7 @@ $infoBodyWidth: 300px;
       .album-images-wrapper {
         padding: 8px 16px;
         flex: 1;
-        overflow: hidden;
+        overflow: auto;
 
         .album-content-list {
           .image-wrapper {
@@ -136,6 +139,7 @@ $infoBodyWidth: 300px;
 
           ::v-deep(.data-list) {
             display: flex;
+            flex-wrap: wrap;
           }
         }
       }

@@ -16,8 +16,8 @@
         </a-form-item>
         <a-form-item class="form-item-isOpen" label="" name="open">
           <a-radio-group v-model:value="formValidate.open">
-            <a-radio :style="radioStyle" :value="1">公开 <span class="subText">所有人都可以看到此收藏夹</span></a-radio>
-            <a-radio :style="radioStyle" :value="0">私密 <span class="subText">仅你自己可见</span></a-radio>
+            <a-radio :style="radioStyle" :value="1">公开<span class="subText">所有人都可以看到此收藏夹</span></a-radio>
+            <a-radio :style="radioStyle" :value="0">私密<span class="subText">仅你自己可见</span></a-radio>
           </a-radio-group>
         </a-form-item>
       </div>

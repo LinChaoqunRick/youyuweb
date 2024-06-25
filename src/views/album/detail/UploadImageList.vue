@@ -1,14 +1,14 @@
 <template>
   <div class="upload-image">
     <UploadFile v-model="images"
-                accept=".jpg, .jpeg, .png, .JPG, .PNG"
+                accept=".jpg, .jpeg, .png, .JPG, .PNG, .HEIC"
                 :max-size="maxFileSize"
-                :max-num="maxFileNum"
                 multiple
                 :auto-clear="false"
                 :config="{policyPath: 'getAlbumOssPolicy', data: {base: '', albumId: props.albumId}}"
                 @onProgress="onUploadProgress"
                 @uploadSuccess="uploadSuccess"
+                class="image-item-wrapper"
                 ref="UploadFileRef">
       <div class="upload-image-lead">
         <i-plus theme="outline" size="40" fill="currentColor" :strokeWidth="1" />
@@ -40,7 +40,6 @@ const props = defineProps({
 
 const { dispatch } = useStore();
 
-const maxFileNum = 9;
 const maxFileSize = 20;
 
 const images = ref<File[]>([]);
@@ -83,6 +82,7 @@ defineExpose({
 <style scoped lang="scss">
 .upload-image {
   display: flex;
+  flex-wrap: wrap;
   margin-top: 10px;
   height: 450px;
   overflow: auto;
@@ -95,7 +95,6 @@ defineExpose({
     height: 120px;
     width: 120px;
     border: 1px dashed #c5c5c5;
-    margin: 8px 0;
     background: rgba(248, 248, 249, 0.2);
     transition: 0.3s;
 

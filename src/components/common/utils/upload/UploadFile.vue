@@ -19,15 +19,12 @@
 <script setup lang="ts">
 import { ref, nextTick } from 'vue';
 import { message } from 'ant-design-vue';
-import { useStore } from 'vuex';
 import { merge } from 'lodash';
 import { uploadToOss } from '@/components/common/utils/upload/utils';
 import { AxiosError } from 'axios';
-import { cloneDeep } from 'lodash';
 
 const inputRef = ref<HTMLInputElement | null>(null);
 
-const { dispatch } = useStore();
 const files = defineModel({ default: [] }); // v-model双向绑定
 const props = defineProps({
   config: {
@@ -44,7 +41,7 @@ const props = defineProps({
   },
   maxNum: {
     type: Number,
-    default: 10
+    default: 0
   },
   accept: {
     type: String,
@@ -69,11 +66,11 @@ const emit = defineEmits(['change', 'uploadSuccess', 'onProgress']);
 const handleChange = (event: Event) => {
   const inputElement = event.target as HTMLInputElement;
   const originFiles = Object.values(inputElement.files);
+  if (props.maxNum !== 0 && files.value.length + originFiles.length > props.maxNum) {
+    message.error(`最多可上传${props.maxNum}个文件`);
+    return false;
+  }
   for (const file of originFiles) {
-    if (files.value.length > props.maxNum - 1) {
-      message.error(`最多可上传${props.maxNum}个文件`);
-      break;
-    }
     // 校验文件
     const fileNameArr = file.name.split('.');
     const suffix = fileNameArr[fileNameArr.length - 1];

@@ -139,4 +139,5 @@ export const GET_ALBUM_IMAGE_DETAIL = ApiBase + "/albumImage/detail";
 export const CREATE_ALBUM_IMAGE = ApiBase + "/albumImage/create";
 export const UPDATE_ALBUM_IMAGE = ApiBase + "/albumImage/update";
 export const REMOVE_ALBUM_IMAGE = ApiBase + "/albumImage/remove";
+export const GET_ALBUM_IMAGE_ORIGIN = ApiBase + "/albumImage/origin";
 

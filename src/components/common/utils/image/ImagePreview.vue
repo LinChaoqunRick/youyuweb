@@ -99,12 +99,13 @@ let image: HTMLElement | null,
 
 const loading = ref<boolean>(true);
 const scale = ref<number>(1);
-const currentOriginUrl = computed(() => props.originTransfer ? props.originTransfer(current.value) : props.list[current.value].split('?')[0]);
+const currentOriginUrl = ref<string>();
 const isSingleImage = computed(() => props.list?.length === 1);
 
-watch(() => current.value, () => {
+watch(() => current.value, async () => {
   loading.value = true;
-});
+  currentOriginUrl.value = props.originTransfer ? await props.originTransfer(current.value) : props.list[current.value].split('?')[0];
+}, { immediate: true });
 
 function initListen() {
   image = document.getElementById('preview-image');

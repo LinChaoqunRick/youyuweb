@@ -5,12 +5,20 @@
       <div class="album-name-isOpen" :class="{'private-album': !data.open}">{{ data.open ? '公开' : '私密' }}</div>
       <span class="operation-item edit cp" v-if="userInfo.id === data.userId" @click="onEdit">编辑</span>
     </div>
+    <Teleport to="#albumUploadBtn" v-if="userInfo.id === data.userId">
+      <a-button type="primary" shape="round">
+        <template #icon>
+          <i-upload-one theme="outline" size="16" fill="currentColor" />
+        </template>
+        上传
+      </a-button>
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useStore } from 'vuex';
-import { computed, ref, toRaw, unref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import openModal from '@/libs/tools/openModal';
 import AlbumEdit from '@/views/album/list/AlbumEdit.vue';
 import {cloneDeep} from 'lodash';
@@ -37,7 +45,7 @@ const onEdit = async () => {
   const res = await openModal({
     component: AlbumEdit,
     componentProps: {
-      formValidate: cloneDeep(data.value)
+      formValidate: reactive(cloneDeep(data.value))
     },
     title: '编辑相册',
     maskClosable: false,
@@ -58,8 +66,7 @@ const onEdit = async () => {
     align-items: center;
 
     .album-name-text {
-      font-size: 18px;
-      font-weight: bold;
+      font-size: 16px;
     }
 
     .album-name-isOpen {

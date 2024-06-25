@@ -394,6 +394,7 @@ const onUploadProgress = (progress: number[]) => {
   .image-wrapper {
     display: flex;
     flex-wrap: wrap;
+    margin-top: 8px;
 
     ::v-deep(.list-group) {
       display: flex;
@@ -448,7 +449,6 @@ const onUploadProgress = (progress: number[]) => {
       height: 80px;
       width: 80px;
       border: 1px dashed #c5c5c5;
-      margin: 8px 0;
       background: rgba(248, 248, 249, 0.2);
       transition: 0.3s;
 
