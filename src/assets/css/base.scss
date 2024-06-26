@@ -186,3 +186,8 @@ a {
     background-color: transparent !important;
   }
 }
+
+.fullscreen-mask {
+  background: rgba(0, 0, 0, .3) !important;
+  backdrop-filter: blur(12px) !important;
+}

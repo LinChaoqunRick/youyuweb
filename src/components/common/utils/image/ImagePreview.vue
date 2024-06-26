@@ -1,5 +1,5 @@
 <template>
-  <div class="image-preview" :class="{'single-image': isSingleImage}">
+  <div class="image-preview fullscreen-mask" :class="{'single-image': isSingleImage}">
     <div class="image-preview-close" @click="onClose">
       <i-close theme="outline" size="20" fill="currentColor" />
     </div>
@@ -301,7 +301,6 @@ $footerHeight: 80px;
   bottom: 0;
   left: 0;
   z-index: 1000;
-  background-color: var(--mask-background);
 
   .image-preview-close {
     position: absolute;
@@ -313,7 +312,7 @@ $footerHeight: 80px;
     height: 48px;
     width: 48px;
     border-radius: 50%;
-    background: rgba(0, 0, 0, .7);
+    background: rgba(0, 0, 0, .2);
     cursor: pointer;
     z-index: 1;
 
@@ -362,7 +361,7 @@ $footerHeight: 80px;
       width: 40px;
       position: absolute;
       top: 50%;
-      background: rgba(0, 0, 0, .7);
+      background: rgba(0, 0, 0, .2);
       border-radius: 50%;
       display: flex;
       justify-content: center;
@@ -406,7 +405,7 @@ $footerHeight: 80px;
     position: absolute;
     bottom: 85px;
     height: 46px;
-    background: rgba(0, 0, 0, .7);
+    background: rgba(0, 0, 0, .3);
     z-index: 1;
     color: #fff;
     border-radius: 6px;
@@ -466,7 +465,7 @@ $footerHeight: 80px;
     right: 0;
     bottom: 0;
     height: $footerHeight;
-    background-color: rgba(0, 0, 0, .6);
+    background-color: rgba(0, 0, 0, .2);
 
     .image-thumbnails {
       display: flex;

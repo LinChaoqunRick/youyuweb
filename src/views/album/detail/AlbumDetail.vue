@@ -107,6 +107,8 @@ $infoBodyWidth: 300px;
     justify-content: center;
     align-items: center;
     height: calc(100vh - 100px);
+    background: rgba(0, 0, 0, .15) !important;
+    backdrop-filter: blur(10px) !important;
 
     .album-detail {
       display: flex;
@@ -123,7 +125,6 @@ $infoBodyWidth: 300px;
             height: 180px;
             width: 180px;
             overflow: hidden;
-            margin: 0 12px 12px 0;
           }
 
           img {
@@ -138,8 +139,15 @@ $infoBodyWidth: 300px;
           }
 
           ::v-deep(.data-list) {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 180px);
+            grid-gap: 12px;
+          }
+
+          ::v-deep(.bottom-operation) {
+            > div {
+              color: var(--youyu-text) !important;
+            }
           }
         }
       }
@@ -177,7 +185,7 @@ $infoBodyWidth: 300px;
 
       .upload-btn {
         position: fixed;
-        bottom: 55px;
+        bottom: 30px;
         left: calc(50%);
         transform: translateX(calc(-50% - #{$infoBodyWidth} / 2));
         opacity: 1;

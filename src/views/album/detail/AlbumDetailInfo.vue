@@ -1,9 +1,23 @@
 <template>
   <div class="album-detail-info">
+    <div class="header-tip">
+      <a-alert type="info" show-icon>
+        <template #message>
+          此相册为
+          <span class="open-status" :class="{'private-album': !data.open}">{{ data.open ? '公开' : '私密' }}</span>
+          相册
+        </template>
+        <template #action v-if="userInfo.id === data.userId">
+          <a-button type="link" block @click="onEdit">编辑</a-button>
+        </template>
+      </a-alert>
+    </div>
     <div class="album-name">
       <div class="album-name-text">{{ data.name }}</div>
-      <div class="album-name-isOpen" :class="{'private-album': !data.open}">{{ data.open ? '公开' : '私密' }}</div>
-      <span class="operation-item edit cp" v-if="userInfo.id === data.userId" @click="onEdit">编辑</span>
+    </div>
+    <div class="owner-info">
+      <img :src="data.userInfo?.avatar" alt="" />
+      <div class="owner-info-nickname">{{ data.userInfo?.nickname }}</div>
     </div>
     <Teleport to="#albumUploadBtn" v-if="userInfo.id === data.userId">
       <a-button type="primary" shape="round">
@@ -21,7 +35,7 @@ import { useStore } from 'vuex';
 import { computed, reactive, ref } from 'vue';
 import openModal from '@/libs/tools/openModal';
 import AlbumEdit from '@/views/album/list/AlbumEdit.vue';
-import {cloneDeep} from 'lodash';
+import { cloneDeep } from 'lodash';
 
 const props = defineProps({
   albumId: {
@@ -51,6 +65,10 @@ const onEdit = async () => {
     maskClosable: false,
     width: '580px'
   }).catch(console.log);
+
+  if (res) {
+    initData();
+  }
 };
 </script>
 
@@ -59,7 +77,34 @@ const onEdit = async () => {
   background-color: var(--youyu-background1);
   height: 100%;
   margin-left: auto;
-  padding: 10px 16px;
+  padding: 36px 16px 10px 16px;
+
+  .header-tip {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 30px;
+
+    .open-status {
+      color: #52c41a;
+
+      &.private-album {
+        color: red;
+      }
+    }
+
+    ::v-deep(.ant-alert) {
+      padding: 2px 12px;
+      border-radius: 0;
+      border: none;
+
+      button {
+        padding: 0 !important;
+        height: fit-content !important;
+      }
+    }
+  }
 
   .album-name {
     display: flex;
@@ -67,25 +112,33 @@ const onEdit = async () => {
 
     .album-name-text {
       font-size: 16px;
-    }
-
-    .album-name-isOpen {
-      margin-left: 4px;
-      font-size: 13px;
-      padding: 0 6px;
-      background-color: rgba(103, 187, 85, 0.3);
-      color: #67bb55;
-      border-radius: 4px;
-
-      &.private-album {
-        color: #fc5531;
-        background-color: rgba(252, 85, 49, 0.3);
-      }
+      font-weight: bold;
     }
 
     .operation-item {
       color: #1890ff;
       margin-left: 4px;
+    }
+  }
+
+  .owner-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    border-bottom: var(--youyu-border);
+
+    img {
+      height: 120px;
+      width: 120px;
+      border-radius: 50%;
+      border: 4px solid var(--youyu-border-color);
+    }
+
+    .owner-info-nickname {
+      margin-top: 8px;
+      font-size: 16px;
+      font-weight: bold;
     }
   }
 }

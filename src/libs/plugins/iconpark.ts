@@ -95,7 +95,8 @@ import {
   TagOne,
   DoubleRight,
   UpSmall,
-  MaterialThree
+  MaterialThree,
+  Attention
 } from '@icon-park/vue-next'
 
 const IconPark = (app) => {
@@ -196,6 +197,7 @@ const IconPark = (app) => {
   app.component('IDoubleRight', DoubleRight);
   app.component('IUpSmall', UpSmall);
   app.component('IMaterialThree', MaterialThree);
+  app.component('IAttention', Attention);
 }
 
 export default IconPark;
