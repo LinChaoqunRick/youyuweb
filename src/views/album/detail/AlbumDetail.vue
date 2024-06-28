@@ -17,12 +17,26 @@
           </ContentList>
         </div>
         <div class="album-info-body">
-          <AlbumDetailInfo :albumId="albumId" />
+          <AlbumDetailInfo :albumId="albumId" ref="AlbumDetailInfoRef" />
           <div class="collapse-button" @click="onCollapse">
             <i-right theme="outline" size="16" fill="currentColor" />
           </div>
         </div>
-        <div id="albumUploadBtn" class="upload-btn" @click="onClickUpload"></div>
+        <div class="upload-btn" v-if="userInfo.id === albumDetailData?.userId">
+          <a-button type="primary" shape="round" @click="onClickUpload">
+            <template #icon>
+              <i-upload-one theme="outline" size="16" fill="currentColor" />
+            </template>
+            上传
+          </a-button>
+          <a-button type="primary" shape="round">
+            <template #icon>
+              <i-full-selection theme="outline" size="16" fill="currentColor" />
+            </template>
+            选择
+          </a-button>
+        </div>
+
       </div>
       <div v-else-if="data === false" class="inaccessible-wrapper gf">
         <div class="tip-text">您没有权限访问该相册</div>
@@ -51,9 +65,11 @@ const userInfo = computed(() => getters['userInfo']);
 const collapse = ref<boolean>(false);
 const albumId = route.params.albumId;
 const ContentListRef = ref(null);
+const AlbumDetailInfoRef = ref(null);
 const imageList = computed(() => ContentListRef.value?.list);
 
 const params = computed(() => ({ id: albumId }));
+const albumDetailData = computed(() => AlbumDetailInfoRef.value?.data);
 
 const onCollapse = () => {
   collapse.value = !collapse.value;
@@ -116,14 +132,14 @@ $infoBodyWidth: 300px;
       width: 100%;
 
       .album-images-wrapper {
-        padding: 8px 16px;
+        padding: 8px 10px;
         flex: 1;
         overflow: auto;
 
         .album-content-list {
           .image-wrapper {
-            height: 180px;
-            width: 180px;
+            height: 160px;
+            width: 160px;
             overflow: hidden;
           }
 
@@ -140,8 +156,8 @@ $infoBodyWidth: 300px;
 
           ::v-deep(.data-list) {
             display: grid;
-            grid-template-columns: repeat(auto-fill, 180px);
-            grid-gap: 12px;
+            grid-template-columns: repeat(auto-fill, 160px);
+            grid-gap: 10px;
           }
 
           ::v-deep(.bottom-operation) {
@@ -185,11 +201,17 @@ $infoBodyWidth: 300px;
 
       .upload-btn {
         position: fixed;
-        bottom: 30px;
+        bottom: 20px;
         left: calc(50%);
         transform: translateX(calc(-50% - #{$infoBodyWidth} / 2));
         opacity: 1;
         transition: 0.3s;
+
+        button {
+          &:nth-child(n+2) {
+            margin-left: 6px;
+          }
+        }
 
         ::v-deep(.i-icon) {
           position: relative;

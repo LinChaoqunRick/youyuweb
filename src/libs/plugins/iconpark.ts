@@ -96,7 +96,8 @@ import {
   DoubleRight,
   UpSmall,
   MaterialThree,
-  Attention
+  Attention,
+  FullSelection
 } from '@icon-park/vue-next'
 
 const IconPark = (app) => {
@@ -198,6 +199,7 @@ const IconPark = (app) => {
   app.component('IUpSmall', UpSmall);
   app.component('IMaterialThree', MaterialThree);
   app.component('IAttention', Attention);
+  app.component('IFullSelection', FullSelection);
 }
 
 export default IconPark;

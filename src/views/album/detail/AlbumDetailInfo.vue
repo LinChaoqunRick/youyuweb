@@ -19,14 +19,6 @@
       <img :src="data.userInfo?.avatar" alt="" />
       <div class="owner-info-nickname">{{ data.userInfo?.nickname }}</div>
     </div>
-    <Teleport to="#albumUploadBtn" v-if="userInfo.id === data.userId">
-      <a-button type="primary" shape="round">
-        <template #icon>
-          <i-upload-one theme="outline" size="16" fill="currentColor" />
-        </template>
-        上传
-      </a-button>
-    </Teleport>
   </div>
 </template>
 
@@ -70,6 +62,10 @@ const onEdit = async () => {
     initData();
   }
 };
+
+defineExpose({
+  data: data
+})
 </script>
 
 <style scoped lang="scss">

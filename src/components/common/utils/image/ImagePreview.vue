@@ -403,7 +403,7 @@ $footerHeight: 80px;
     justify-content: flex-end;
     align-items: center;
     position: absolute;
-    bottom: 85px;
+    bottom: 90px;
     height: 46px;
     background: rgba(0, 0, 0, .3);
     z-index: 1;
