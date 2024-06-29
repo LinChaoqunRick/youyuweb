@@ -360,7 +360,7 @@ $footerHeight: 80px;
       height: 40px;
       width: 40px;
       position: absolute;
-      top: 50%;
+      top: calc(50% - #{$footerHeight} / 2 - 20px);
       background: rgba(0, 0, 0, .2);
       border-radius: 50%;
       display: flex;

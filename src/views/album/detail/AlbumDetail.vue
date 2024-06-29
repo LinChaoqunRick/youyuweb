@@ -11,8 +11,12 @@
             class="album-content-list"
             ref="ContentListRef">
             <template v-slot="{ list }">
-              <div v-for="(item, index) in list" class="image-wrapper" @click="onImageClick(item, index)"><img
-                :src="item.url" :alt="item.name" class="cp" /></div>
+              <div v-for="(item, index) in list" class="image-wrapper" @click="onImageClick(item, index)">
+                <img :src="item.url" :alt="item.name" class="cp" />
+                <div class="item-check" v-if="item.checked">
+                  <i-check-one theme="filled" size="24" fill="#1677FF" />
+                </div>
+              </div>
             </template>
           </ContentList>
         </div>
@@ -29,11 +33,17 @@
             </template>
             上传
           </a-button>
-          <a-button type="primary" shape="round">
+          <a-button type="primary" shape="round" v-if="!selection" @click="selection = true;">
             <template #icon>
               <i-full-selection theme="outline" size="16" fill="currentColor" />
             </template>
             选择
+          </a-button>
+          <a-button type="primary" danger shape="round" v-else @click="selection = false;">
+            <template #icon>
+              <i-close theme="outline" size="16" fill="currentColor" />
+            </template>
+            取消
           </a-button>
         </div>
 
@@ -70,6 +80,7 @@ const imageList = computed(() => ContentListRef.value?.list);
 
 const params = computed(() => ({ id: albumId }));
 const albumDetailData = computed(() => AlbumDetailInfoRef.value?.data);
+const selection = ref(false);
 
 const onCollapse = () => {
   collapse.value = !collapse.value;
@@ -92,6 +103,10 @@ const onApply = () => {
 };
 
 const onImageClick = (item: object, index: object) => {
+  if (selection.value) {
+    item.checked = !item.checked;
+    return;
+  }
   openImage({
     componentProps: {
       list: imageList.value.map((item) => item.url),
@@ -132,7 +147,7 @@ $infoBodyWidth: 300px;
       width: 100%;
 
       .album-images-wrapper {
-        padding: 8px 10px;
+        padding: 10px;
         flex: 1;
         overflow: auto;
 
@@ -141,6 +156,13 @@ $infoBodyWidth: 300px;
             height: 160px;
             width: 160px;
             overflow: hidden;
+            position: relative;
+
+            .item-check {
+              position: absolute;
+              bottom: 4px;
+              right: 9px;
+            }
           }
 
           img {
@@ -154,10 +176,14 @@ $infoBodyWidth: 300px;
             }
           }
 
-          ::v-deep(.data-list) {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, 160px);
-            grid-gap: 10px;
+          ::v-deep(.data-list-wrapper) {
+            margin-top: 0;
+
+            .data-list {
+              display: grid;
+              grid-template-columns: repeat(auto-fill, 160px);
+              grid-gap: 10px;
+            }
           }
 
           ::v-deep(.bottom-operation) {
