@@ -3,7 +3,7 @@
     <div class="image-preview-close" @click="onClose">
       <i-close theme="outline" size="20" fill="currentColor" />
     </div>
-    <div class="image-preview-body">
+    <div class="image-preview-body" ref="imagePreviewBodyRef">
       <div class="ope-icon last-icon" v-if="current!==0" @click="handleChange('last')">
         <i-left theme="outline" size="30" fill="#fff" />
       </div>
@@ -46,7 +46,7 @@
       </div>
     </Transition>
     <div class="image-preview-footer" v-if="!isSingleImage">
-      <div class="image-thumbnails">
+      <div class="image-thumbnails" ref="imageThumbnailRef">
         <div v-for="(item, index) in props.list"
              class="image-item-thumbnail"
              :class="{'active': index === current}"
@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted, defineModel } from 'vue';
+import { computed, defineModel, onMounted, onUnmounted, ref, watch } from 'vue';
 import { getImgSize } from '@/components/common/utils/image/utils';
 import { disabledBodyScroll, enabledBodyScroll } from '@/assets/utils/utils.ts';
 import { Spin } from 'ant-design-vue';
@@ -101,11 +101,30 @@ const loading = ref<boolean>(true);
 const scale = ref<number>(1);
 const currentOriginUrl = ref<string>();
 const isSingleImage = computed(() => props.list?.length === 1);
+const imagePreviewBodyRef = ref<HTMLElement | null>(null);
+const imageThumbnailRef = ref<HTMLElement | null>(null);
+const documentClientWidth = document.body.clientWidth;
+let imageThumbnailWidth = 0;
+
+onMounted(() => {
+  imageThumbnailWidth = document.getElementsByClassName('image-item-thumbnail')[0].offsetWidth;
+});
 
 watch(() => current.value, async () => {
   loading.value = true;
   currentOriginUrl.value = props.originTransfer ? await props.originTransfer(current.value) : props.list[current.value].split('?')[0];
+  handleFooterScroll();
 }, { immediate: true });
+
+const handleFooterScroll = () => {
+  const halfDocumentClientWidth = documentClientWidth / 2;
+  const currentOffset = current.value * imageThumbnailWidth;
+  if (currentOffset > halfDocumentClientWidth) {
+    imageThumbnailRef!.value.scrollLeft = (currentOffset + imageThumbnailWidth / 2) - halfDocumentClientWidth;
+  } else {
+    imageThumbnailRef!.value.scrollLeft = 0;
+  }
+};
 
 function initListen() {
   image = document.getElementById('preview-image');
@@ -123,7 +142,7 @@ function onLoad() {
 }
 
 function listenWheel() {
-  document.addEventListener('wheel', (e: Event) => {
+  imagePreviewBodyRef.value.addEventListener('wheel', (e: Event) => {
     let ratio = scaleRatio;
     // 缩小
     if (e.deltaY > 0) {
@@ -449,10 +468,6 @@ $footerHeight: 80px;
       }
     }
 
-    .image-preview-progress {
-
-    }
-
     .image-preview-scale {
       width: 35px;
       text-align: center;
@@ -468,13 +483,19 @@ $footerHeight: 80px;
     background-color: rgba(0, 0, 0, .2);
 
     .image-thumbnails {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      white-space: nowrap;
       height: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
 
       .image-item-thumbnail {
-        height: 98%;
+        display: inline-block;
+        height: 80px;
         filter: brightness(60%);
         border: 2px solid transparent;
 

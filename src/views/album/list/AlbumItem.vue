@@ -2,7 +2,7 @@
   <RouterLink :to="`/album/detail/${data.id}`">
     <div class="album-item cp">
       <div class="album-cover">
-        <img :src="data.cover ?? defaultImage" alt="">
+        <img :src="data.cover || defaultImage" alt="">
         <div class="detail-info">
           <div class="album-info-data">
             <div class="edit-btn" v-if="false">

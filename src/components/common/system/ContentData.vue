@@ -4,7 +4,7 @@
       <slot :data="data">
         <div class="bottom-operation" v-if="!loading">
           <div v-if="failed" @click="initData" class="retry-load">
-            <i-refresh theme="outline" size="15" fill="#1890ff"/>
+            <i-refresh theme="outline" size="15" fill="#1890ff" />
             <span class="loading-text">加载失败，重新加载</span>
           </div>
           <div v-else-if="!loading && (!data || !data?.length)" class="no-data">暂无数据</div>
@@ -15,8 +15,8 @@
 </template>
 
 <script lang="ts" setup>
-import {ref} from 'vue'
-import {useStore} from "vuex";
+import { ref } from 'vue';
+import { useStore } from 'vuex';
 
 const props = defineProps({
   url: {
@@ -24,15 +24,15 @@ const props = defineProps({
     required: true
   },
   params: {
-    type: Object,
+    type: Object
   },
   showSpin: {
     type: Boolean,
     default: true
-  },
-})
+  }
+});
 
-const {dispatch} = useStore();
+const { dispatch } = useStore();
 
 const loading = ref<boolean>(false);
 const failed = ref<boolean>(false);
@@ -48,15 +48,19 @@ const initData = () => {
     failed.value = true;
   }).finally(() => {
     loading.value = false;
-  })
-}
+  });
+};
 
 initData();
+
+const updateData = () => {
+
+};
 
 defineExpose({
   data,
   initData
-})
+});
 </script>
 
 <style lang="scss" scoped>

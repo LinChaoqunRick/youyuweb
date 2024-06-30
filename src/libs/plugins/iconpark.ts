@@ -53,6 +53,7 @@ import {
   Left,
   Editor,
   DeleteFour,
+  DeleteFive,
   Female,
   Male,
   PreviewOpen,
@@ -97,7 +98,8 @@ import {
   UpSmall,
   MaterialThree,
   Attention,
-  FullSelection
+  FullSelection,
+  Pic
 } from '@icon-park/vue-next'
 
 const IconPark = (app) => {
@@ -155,6 +157,7 @@ const IconPark = (app) => {
   app.component('ILeft', Left);
   app.component('IEditor', Editor);
   app.component('IDeleteFour', DeleteFour);
+  app.component('IDeleteFive', DeleteFive);
   app.component('IFemale', Female);
   app.component('IMale', Male);
   app.component('IPreviewOpen', PreviewOpen);
@@ -200,6 +203,7 @@ const IconPark = (app) => {
   app.component('IMaterialThree', MaterialThree);
   app.component('IAttention', Attention);
   app.component('IFullSelection', FullSelection);
+  app.component('IPic', Pic);
 }
 
 export default IconPark;

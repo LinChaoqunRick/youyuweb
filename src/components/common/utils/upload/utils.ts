@@ -59,8 +59,6 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
 
   const mergedConfig = merge({}, defaultConfig, config);
 
-  console.log(mergedConfig);
-
   if (!files) {
     throw new Error('parameter files is required');
   }

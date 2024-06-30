@@ -58,7 +58,7 @@ const onImageDelete = (index: number) => {
 const beforeConfirm = async (done: Function) => {
   modal.confirmLoading = true;
   const res = await UploadFileRef.value.upload().catch(console.error);
-  if (!res) done();
+  done(res);
   modal.confirmLoading = false;
 };
 
@@ -84,7 +84,6 @@ defineExpose({
   display: flex;
   flex-wrap: wrap;
   margin-top: 10px;
-  height: 450px;
   overflow: auto;
 
   .upload-image-lead {

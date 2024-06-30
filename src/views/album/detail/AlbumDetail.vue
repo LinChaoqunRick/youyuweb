@@ -11,9 +11,9 @@
             class="album-content-list"
             ref="ContentListRef">
             <template v-slot="{ list }">
-              <div v-for="(item, index) in list" class="image-wrapper" @click="onImageClick(item, index)">
+              <div v-for="(item, index) in imageList" class="image-wrapper" @click="onImageClick(item, index)">
                 <img :src="item.url" :alt="item.name" class="cp" />
-                <div class="item-check" v-if="item.checked">
+                <div class="item-check" v-if="selection && checkedList.includes(item)">
                   <i-check-one theme="filled" size="24" fill="#1677FF" />
                 </div>
               </div>
@@ -33,17 +33,31 @@
             </template>
             上传
           </a-button>
-          <a-button type="primary" shape="round" v-if="!selection" @click="selection = true;">
+          <a-button type="primary" shape="round" v-if="!selection" @click="onSelection">
             <template #icon>
               <i-full-selection theme="outline" size="16" fill="currentColor" />
             </template>
             选择
           </a-button>
-          <a-button type="primary" danger shape="round" v-else @click="selection = false;">
+          <a-button type="primary" shape="round" v-if="selection" @click="onSelection">
             <template #icon>
               <i-close theme="outline" size="16" fill="currentColor" />
             </template>
             取消
+          </a-button>
+          <a-button type="primary" shape="round" v-if="selection" :disabled="!(checkedList.length === 1)"
+                    @click="onSetCover">
+            <template #icon>
+              <i-pic theme="outline" size="16" fill="currentColor" />
+            </template>
+            设为封面
+          </a-button>
+          <a-button type="primary" danger shape="round" v-if="selection" :disabled="!checkedList.length"
+                    @click="onDelete">
+            <template #icon>
+              <i-delete-five theme="outline" size="16" fill="currentColor" />
+            </template>
+            删除
           </a-button>
         </div>
 
@@ -66,6 +80,7 @@ import { computed, ref } from 'vue';
 import openModal from '@/libs/tools/openModal';
 import UploadImageList from '@/views/album/detail/UploadImageList.vue';
 import openImage from '@/libs/tools/openImage';
+import { message, Modal } from 'ant-design-vue';
 
 const { getters, dispatch } = useStore();
 
@@ -78,9 +93,10 @@ const ContentListRef = ref(null);
 const AlbumDetailInfoRef = ref(null);
 const imageList = computed(() => ContentListRef.value?.list);
 
-const params = computed(() => ({ id: albumId }));
+const params = computed(() => ({ id: albumId, pageSize: 25 }));
 const albumDetailData = computed(() => AlbumDetailInfoRef.value?.data);
 const selection = ref(false);
+const checkedList = ref([]);
 
 const onCollapse = () => {
   collapse.value = !collapse.value;
@@ -94,8 +110,22 @@ const onClickUpload = async () => {
     },
     maskClosable: false,
     title: '上传照片',
-    width: '1200px'
+    width: '1200px',
+    beforeConfirm: (done: Function, data: object[]) => {
+      if (!data) { // data为undefined表示都上传成功了
+        done();
+      } else {
+        const successData = data.map((item: object) => {
+          item.file.url = item.file.thumb;
+          return item.file;
+        });
+        console.log(successData);
+        imageList.value.unshift(...successData);
+      }
+    }
   });
+
+  console.log(res);
 };
 
 const onApply = () => {
@@ -104,7 +134,12 @@ const onApply = () => {
 
 const onImageClick = (item: object, index: object) => {
   if (selection.value) {
-    item.checked = !item.checked;
+    if (checkedList.value.includes(item)) {
+      const findIndex = checkedList.value.findIndex(i => i === item);
+      checkedList.value.splice(findIndex, 1);
+    } else {
+      checkedList.value.push(item);
+    }
     return;
   }
   openImage({
@@ -125,10 +160,45 @@ const onImageClick = (item: object, index: object) => {
     }
   });
 };
+
+const onSelection = () => {
+  selection.value = !selection.value;
+  if (!selection.value) {
+    checkedList.value = [];
+  }
+};
+
+const onSetCover = () => {
+  const newCover = checkedList.value[0].path;
+  dispatch('updateAlbum', { ...albumDetailData.value, cover: newCover }).then(res => {
+    message.success('保存成功');
+  });
+};
+
+const onDelete = () => {
+  Modal.confirm({
+    title: '删除照片',
+    content: '确定删除这些照片？',
+    okText: '确定',
+    okType: 'danger',
+    cancelText: '取消',
+    onOk() {
+      const ids = checkedList.value.map((item) => item.id).join(',');
+      dispatch('removeAlbumImage', { ids: ids }).then(res => {
+        message.success('删除成功');
+        ContentListRef.value.list = ContentListRef.value?.list.filter(item => !checkedList.value.includes(item));
+        checkedList.value = [];
+      });
+    }
+  });
+};
 </script>
 
 <style lang="scss" scoped>
 $infoBodyWidth: 300px;
+$imageWrapperPadding: 10px;
+$gridGap: 2px;
+$imageWidth: calc((100vw - ($imageWrapperPadding * 2) - ($gridGap * 9)) / 9);
 
 .content-data-container {
   height: calc(100vh - 100px);
@@ -145,16 +215,17 @@ $infoBodyWidth: 300px;
       display: flex;
       height: 100%;
       width: 100%;
+      overflow: hidden;
 
       .album-images-wrapper {
-        padding: 10px;
+        padding: $imageWrapperPadding;
         flex: 1;
-        overflow: auto;
+        overflow-y: auto;
 
         .album-content-list {
           .image-wrapper {
-            height: 160px;
-            width: 160px;
+            height: $imageWidth;
+            width: $imageWidth;
             overflow: hidden;
             position: relative;
 
@@ -181,8 +252,8 @@ $infoBodyWidth: 300px;
 
             .data-list {
               display: grid;
-              grid-template-columns: repeat(auto-fill, 160px);
-              grid-gap: 10px;
+              grid-template-columns: repeat(auto-fill, $imageWidth);
+              grid-gap: $gridGap;
             }
           }
 

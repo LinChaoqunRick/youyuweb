@@ -66,7 +66,6 @@ const onImageDelete = () => {
   justify-content: center;
   align-items: center;
   position: relative;
-  margin-right: 8px;
 
   img {
     height: 100%;

@@ -39,6 +39,8 @@ const onAdd = async () => {
 <style lang="scss" scoped>
 .album-list {
   padding: 40px 16px;
+  height: calc(100vh - 100px);
+  overflow: auto;
 
   .list-wrapper {
     display: grid;
@@ -48,8 +50,12 @@ const onAdd = async () => {
   }
 
   ::v-deep(.y-table) {
+    height: 100%;
+
     .table-pagination {
       margin-top: 18px;
+      position: sticky;
+      top: 95%;
     }
   }
 

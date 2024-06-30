@@ -19,6 +19,17 @@
       <img :src="data.userInfo?.avatar" alt="" />
       <div class="owner-info-nickname">{{ data.userInfo?.nickname }}</div>
     </div>
+    <div class="authorized-users" v-if="!data.open && (userInfo.id === data.userInfo?.id)">
+      <div>授权用户：</div>
+      <div class="authorized-users-list cp">
+        <div class="authorized-users-item" v-for="item in data.authorizedUserList">
+          <img :src="item.avatar" alt=""/>
+        </div>
+        <div class="authorized-users-item">
+          +{{ data.authorizedUsers ? data.authorizedUsers?.split(',').length - data.authorizedUserList?.length : ''}}
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -65,7 +76,7 @@ const onEdit = async () => {
 
 defineExpose({
   data: data
-})
+});
 </script>
 
 <style scoped lang="scss">
@@ -135,6 +146,44 @@ defineExpose({
       margin-top: 8px;
       font-size: 16px;
       font-weight: bold;
+    }
+  }
+
+  .authorized-users {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: var(--youyu-border);
+
+    .authorized-users-list {
+      display: flex;
+      align-items: center;
+    }
+
+    .authorized-users-item {
+      width: 18px;
+      display: flex;
+      margin-left: 2px;
+
+      &:last-child {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(200, 200, 200, 0.4);
+        color: var(--youyu-text2);
+        height: 24px;
+        width: 24px;
+        border-radius: 50%;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      img {
+        height: 24px;
+        width: 24px;
+        border-radius: 50%;
+        background-color: #fff;
+      }
     }
   }
 }
