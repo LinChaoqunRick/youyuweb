@@ -57,10 +57,13 @@ const props = defineProps({
   background-color: var(--youyu-body-background3);
   overflow: hidden;
   color: var(--youyu-text);
+  display: flex;
+  flex-direction: column;
 
   .album-cover {
     position: relative;
-    height: 160px;
+    flex: 1;
+    overflow: hidden;
 
     img {
       height: 100%;

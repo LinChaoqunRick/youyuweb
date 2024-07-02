@@ -47,6 +47,12 @@ const onAdd = async () => {
     grid-template-columns: repeat(5, 1fr);
     justify-items: center;
     align-items: center;
+    grid-gap: 50px 0;
+
+    ::v-deep(.album-item) {
+      width: 270px;
+      height: 220px;
+    }
   }
 
   ::v-deep(.y-table) {

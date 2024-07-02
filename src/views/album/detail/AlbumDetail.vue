@@ -198,7 +198,7 @@ const onDelete = () => {
 $infoBodyWidth: 300px;
 $imageWrapperPadding: 10px;
 $gridGap: 2px;
-$imageWidth: calc((100vw - ($imageWrapperPadding * 2) - ($gridGap * 9)) / 9);
+$imageWidth: 164px;
 
 .content-data-container {
   height: calc(100vh - 100px);

@@ -85,7 +85,7 @@ const handleChange = (event: Event) => {
 
     // 校验成功处理文件
     file.thumb = URL.createObjectURL(file);
-    file.progress = 0;
+    file.progress = -1;
     files.value.push(file);
     emit('change', file);
   }
@@ -103,7 +103,8 @@ const onTriggerInput = () => {
 };
 
 const upload = async () => {
-  const uploadFiles = files.value.filter(item => item.thumb || item.progress < 0);
+  const uploadFiles = files.value.filter(item => item.progress < 0);
+  console.log(files.value);
   if (!uploadFiles.length) {
     return;
   }
@@ -116,9 +117,10 @@ const upload = async () => {
   };
   const mergedConfig = merge(defaultConfig, props.config);
   const res = await uploadToOss(uploadFiles, mergedConfig);
-  res.forEach((item: object, index: number) => {
+  res?.forEach((item: object, index: number) => {
     if (item.url) {
-      files.value[index] = item.file.thumb;
+      const findIndex = files.value.findIndex(file => file === item.file);
+      files.value[findIndex] = item.file.thumb;
     }
   });
   const isError = res?.find(item => item instanceof AxiosError);
@@ -131,7 +133,7 @@ const upload = async () => {
 };
 
 const uploadProgress = (progressList: number[]) => {
-  // progress.value = progressList;
+  console.log(files.value);
   let count = 0;
   progress.value = files.value.map((item, index) => (typeof item === 'object') ? progressList[count++] : 100);
 
