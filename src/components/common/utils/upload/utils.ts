@@ -3,6 +3,7 @@ import store from '@/store';
 import { message } from 'ant-design-vue';
 import dayjs from 'dayjs';
 import { merge } from 'lodash';
+import heic2any from 'heic2any';
 
 export const isImageFile = (file: File) => {
   // 检查图片类型
@@ -152,4 +153,35 @@ export const getXmlTextContent = (xml: string, tag: string) => {
   const xmlDoc = parseXml(xml);
   const tagElement = xmlDoc.getElementsByTagName(tag)[0];
   return tagElement?.textContent;
+};
+
+export const convertHEICFileToBlob = async (heicFile) => {
+  const blob = await heic2any({
+    blob: heicFile,
+    toType: 'image/jpeg'
+  });
+  return URL.createObjectURL(blob);
+};
+
+export const convertHEICUrlToBlob = async (url: string) => {
+  try {
+    const response = await fetch(url);
+    const HEICBlob = await response.blob();
+
+    const convertedBlob = await heic2any({
+      blob: HEICBlob,
+      toType: 'image/jpeg', // 你也可以选择 'image/png' 等其他格式
+      quality: 0.35
+    });
+
+    return URL.createObjectURL(convertedBlob);
+  } catch (error) {
+    console.error('Error converting HEIC file:', error);
+  }
+};
+
+export const getUrlImageFormat = (rawUrl: string) => {
+  const url = new URL(rawUrl);
+  const pathname = url.pathname;
+  return pathname.substring(pathname.lastIndexOf('.') + 1).toUpperCase();
 };

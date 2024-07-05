@@ -1,6 +1,6 @@
 <template>
   <div class="image-item" :style="computedRootStyle">
-    <img :src="data.thumb || data" alt=""/>
+    <img :src="data.thumb || data" alt="" />
     <div class="image-delete" @click="onImageDelete">
       <i-close theme="outline" size="10" fill="currentColor" :strokeWidth="2" />
     </div>
@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import CircleProgress from '@/components/common/share/upload/CircleProgress.vue';
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 
 const emit = defineEmits(['onImageDelete']);
 
@@ -44,6 +44,11 @@ const props = defineProps({
 });
 
 const computedRootStyle = computed(() => `height: ${props.height}px;width: ${props.width}px;`);
+
+// watch(() => props.data, (value) => {
+//   // TODO... heic转化？
+//   console.log(value);
+// });
 
 const computedProgress = computed(() => {
   if (props.progress < 0) {

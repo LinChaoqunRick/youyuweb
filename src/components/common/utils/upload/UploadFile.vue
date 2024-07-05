@@ -20,7 +20,7 @@
 import { ref, nextTick } from 'vue';
 import { message } from 'ant-design-vue';
 import { merge } from 'lodash';
-import { uploadToOss } from '@/components/common/utils/upload/utils';
+import { convertHEICFileToBlob, uploadToOss } from '@/components/common/utils/upload/utils';
 import { AxiosError } from 'axios';
 
 const inputRef = ref<HTMLInputElement | null>(null);
@@ -63,7 +63,7 @@ const visible = ref(true);
 
 const emit = defineEmits(['change', 'uploadSuccess', 'onProgress']);
 
-const handleChange = (event: Event) => {
+const handleChange = async (event: Event) => {
   const inputElement = event.target as HTMLInputElement;
   const originFiles = Object.values(inputElement.files);
   if (props.maxNum !== 0 && files.value.length + originFiles.length > props.maxNum) {
@@ -84,7 +84,11 @@ const handleChange = (event: Event) => {
     }
 
     // 校验成功处理文件
-    file.thumb = URL.createObjectURL(file);
+    if (suffix.toLowerCase() === 'heic') {
+      file.thumb = await convertHEICFileToBlob(file);
+    } else {
+      file.thumb = URL.createObjectURL(file);
+    }
     file.progress = -1;
     files.value.push(file);
     emit('change', file);
@@ -104,7 +108,6 @@ const onTriggerInput = () => {
 
 const upload = async () => {
   const uploadFiles = files.value.filter(item => item.progress < 0);
-  console.log(files.value);
   if (!uploadFiles.length) {
     return;
   }

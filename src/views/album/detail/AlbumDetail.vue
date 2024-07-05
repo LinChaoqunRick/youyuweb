@@ -81,6 +81,7 @@ import openModal from '@/libs/tools/openModal';
 import UploadImageList from '@/views/album/detail/UploadImageList.vue';
 import openImage from '@/libs/tools/openImage';
 import { message, Modal } from 'ant-design-vue';
+import { convertHEICUrlToBlob, getUrlImageFormat } from '@/components/common/utils/upload/utils';
 
 const { getters, dispatch } = useStore();
 
@@ -152,8 +153,13 @@ const onImageClick = (item: object, index: object) => {
           return originUrl;
         } else {
           return dispatch('getAlbumImageOrigin', { id: imageList.value[index].id }).then(res => {
-            imageList.value[index].originUrl = res.data;
-            return res.data;
+            const format = getUrlImageFormat(res.data);
+            if (format.toLowerCase() === 'heic') {
+              imageList.value[index].originUrl = convertHEICUrlToBlob(res.data);
+            } else {
+              imageList.value[index].originUrl = res.data;
+            }
+            return imageList.value[index].originUrl;
           });
         }
       }
