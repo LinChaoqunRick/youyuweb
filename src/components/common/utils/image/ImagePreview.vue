@@ -83,7 +83,7 @@ interface resultData {
   height: number
 }
 
-let image: HTMLElement | null,
+let image: HTMLElement,
   result: resultData,
   x: number = 0,
   y: number = 0,
@@ -142,7 +142,7 @@ function onLoad() {
 }
 
 function listenWheel() {
-  imagePreviewBodyRef.value.addEventListener('wheel', (e: Event) => {
+  imagePreviewBodyRef.value?.addEventListener('wheel', (e: MouseEvent) => {
     let ratio = scaleRatio;
     // 缩小
     if (e.deltaY > 0) {
@@ -159,11 +159,11 @@ function listenWheel() {
       scale.value = _scale;
     }
 
-    if (e.target.tagName === 'IMG') {
+    if (e?.target.className.includes('drag-mask')) {
       // 图片的中心坐标
       const origin = {
         x: window.innerWidth * 0.5 + x,
-        y: window.innerHeight * 0.5 + y
+        y: (window.innerHeight - 80) * 0.5 + y
       };
 
       // 滚动前的x长度，y长度
@@ -355,7 +355,7 @@ $footerHeight: 80px;
       position: relative;
       top: calc(-#{$footerHeight} / 2);
       transform: scale3d(1, 1, 1);
-      cursor: grab;
+      //cursor: grab;
       transition: transform .3s cubic-bezier(.215, .61, .355, 1) 0s;
       user-select: none;
       touch-action: none;
