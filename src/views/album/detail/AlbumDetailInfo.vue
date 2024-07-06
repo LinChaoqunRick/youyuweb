@@ -23,10 +23,10 @@
       <div>授权用户：</div>
       <div class="authorized-users-list cp">
         <div class="authorized-users-item" v-for="item in data.authorizedUserList">
-          <img :src="item.avatar" alt=""/>
+          <img :src="item.avatar" alt="" />
         </div>
-        <div class="authorized-users-item">
-          +{{ data.authorizedUsers ? data.authorizedUsers?.split(',').length - data.authorizedUserList?.length : ''}}
+        <div class="authorized-users-item" v-if="restAuthUserNumber">
+          +{{ restAuthUserNumber }}
         </div>
       </div>
     </div>
@@ -50,6 +50,7 @@ const props = defineProps({
 const { getters, dispatch } = useStore();
 const data = ref({});
 const userInfo = computed(() => getters['userInfo']);
+const restAuthUserNumber = computed(() => data.value.authorizedUsers ? data.value.authorizedUsers?.split(',').length - data.value.authorizedUserList?.length : 0);
 
 const initData = () => {
   dispatch('getAlbumDetail', { id: props.albumId }).then(res => {
