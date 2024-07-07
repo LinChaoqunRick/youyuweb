@@ -23,10 +23,10 @@
       <div>授权用户：</div>
       <div class="authorized-users-list cp">
         <div class="authorized-users-item" v-for="item in data.authorizedUserList">
-          <img :src="item.avatar" alt="" />
+          <img :src="item.avatar" :title="item.nickname" alt="" />
         </div>
-        <div class="authorized-users-item" v-if="restAuthUserNumber">
-          +{{ restAuthUserNumber }}
+        <div class="authorized-users-item" title="添加用户">
+          +{{ restAuthUserNumber ? restAuthUserNumber : '' }}
         </div>
       </div>
     </div>
