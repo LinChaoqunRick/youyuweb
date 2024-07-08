@@ -99,10 +99,11 @@ import {
   MaterialThree,
   Attention,
   FullSelection,
-  Pic
-} from '@icon-park/vue-next'
+  Pic,
+  LinkCloud,
+} from '@icon-park/vue-next';
 
-const IconPark = (app) => {
+const IconPark = app => {
   app.component('IToTop', ToTop);
   app.component('IMore', More);
   app.component('IPlus', Plus);
@@ -204,6 +205,7 @@ const IconPark = (app) => {
   app.component('IAttention', Attention);
   app.component('IFullSelection', FullSelection);
   app.component('IPic', Pic);
-}
+  app.component('ILinkCloud', LinkCloud);
+};
 
 export default IconPark;

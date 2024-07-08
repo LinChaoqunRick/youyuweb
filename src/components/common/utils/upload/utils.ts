@@ -55,7 +55,7 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
     accept: '.jpg, .jpeg, .png, .JPG, .PNG',
     maxSize: 20,
     needTip: true,
-    policyPath: 'getOssPolicy'
+    policyPath: 'getOssPolicy',
   };
 
   const mergedConfig = merge({}, defaultConfig, config);
@@ -84,7 +84,7 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
 
   // 上传步骤1： 获取oss临时凭证
   let hide: Function;
-  let progressList = Array.from({ length: files.length }).map((item) => 0);
+  const progressList = Array.from({ length: files.length }).map(item => 0);
   if (mergedConfig.needTip) {
     hide = message.loading('上传中...', 0);
   }
@@ -113,13 +113,13 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
       try {
         const res = await axios.post(data.host, form, {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'multipart/form-data',
           },
-          onUploadProgress: (progressEvent) => {
-            const progress = Number(((progressEvent.loaded / progressEvent.total) * 100 | 0).toFixed(2));
+          onUploadProgress: progressEvent => {
+            const progress = Number((((progressEvent.loaded / progressEvent.total) * 100) | 0).toFixed(2));
             progressList[index] = progress;
             mergedConfig?.progress?.(progressList);
-          }
+          },
         });
         return { url: `${data.host}/${data.dir}${file_name}`, path: `${data.dir}${file_name}`, file: file };
       } catch (error) {
@@ -130,18 +130,20 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
         hide && hide();
       }
     })
-  ).then((res) => {
-    const failedNumber = res.filter(item => item instanceof AxiosError).length;
-    const successNumber = res.length - failedNumber;
-    if (mergedConfig.needTip) {
-      const resultMessage = `共${res.length}个文件：成功 ${successNumber} 个，失败 ${failedNumber} 个`;
-      message.info(resultMessage);
-    }
-    return res;
-  }).catch(e => {
-    console.error(e);
-    return [];
-  });
+  )
+    .then(res => {
+      const failedNumber = res.filter(item => item instanceof AxiosError).length;
+      const successNumber = res.length - failedNumber;
+      if (mergedConfig.needTip) {
+        const resultMessage = `共${res.length}个文件：成功 ${successNumber} 个，失败 ${failedNumber} 个`;
+        message.info(resultMessage);
+      }
+      return res;
+    })
+    .catch(e => {
+      console.error(e);
+      return [];
+    });
 }
 
 const parseXml = (xml: string) => {
@@ -155,10 +157,10 @@ export const getXmlTextContent = (xml: string, tag: string) => {
   return tagElement?.textContent;
 };
 
-export const convertHEICFileToBlob = async (heicFile) => {
+export const convertHEICFileToBlob = async heicFile => {
   const blob = await heic2any({
     blob: heicFile,
-    toType: 'image/jpeg'
+    toType: 'image/jpeg',
   });
   return URL.createObjectURL(blob);
 };
@@ -171,7 +173,7 @@ export const convertHEICUrlToBlob = async (url: string) => {
     const convertedBlob = await heic2any({
       blob: HEICBlob,
       toType: 'image/jpeg', // 你也可以选择 'image/png' 等其他格式
-      quality: 0.35
+      quality: 0.35,
     });
 
     return URL.createObjectURL(convertedBlob);
@@ -184,4 +186,16 @@ export const getUrlImageFormat = (rawUrl: string) => {
   const url = new URL(rawUrl);
   const pathname = url.pathname;
   return pathname.substring(pathname.lastIndexOf('.') + 1).toUpperCase();
+};
+
+export const formatSize = (bytes: number, decimals: number = 2) => {
+  if (bytes === 0) return '0B';
+
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + sizes[i];
 };

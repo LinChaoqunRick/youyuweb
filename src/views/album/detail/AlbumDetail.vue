@@ -1,7 +1,7 @@
 <template>
-  <ContentData url="getAlbumAccessible" :params="{id: albumId}" v-slot="{ data }" class="content-data-container">
+  <ContentData url="getAlbumAccessible" :params="{ id: albumId }" v-slot="{ data }" class="content-data-container">
     <div class="album-detail-container">
-      <div v-if="data" class="album-detail" :class="{'album-detail-collapse': collapse}">
+      <div v-if="data" class="album-detail" :class="{ 'album-detail-collapse': collapse }">
         <div class="album-images-wrapper">
           <ContentList
             url="getAlbumImageList"
@@ -9,12 +9,28 @@
             auto-load
             data-text="张照片"
             class="album-content-list"
-            ref="ContentListRef">
+            ref="ContentListRef"
+          >
             <template v-slot="{ list }">
-              <div v-for="(item, index) in imageList" class="image-wrapper" @click="onImageClick(item, index)">
+              <div
+                v-for="(item, index) in imageList"
+                :key="item.id"
+                class="image-wrapper"
+                @click="onImageClick(item, index)"
+              >
                 <img :src="item.url" :alt="item.name" class="cp" />
                 <div class="item-check" v-if="selection && checkedList.includes(item)">
                   <i-check-one theme="filled" size="24" fill="#1677FF" />
+                </div>
+                <div class="image-info-box gf">
+                  <div class="info-data-item">
+                    <i-time theme="outline" size="14" fill="currentColor" />
+                    <div class="info-create-time">{{ dayjs(item.createTime).format('YYYY-MM-DD') }}</div>
+                  </div>
+                  <div class="info-data-item">
+                    <i-link-cloud theme="outline" size="14" fill="currentColor" />
+                    <div class="info-create-time">{{ formatSize(item.size) }}</div>
+                  </div>
                 </div>
               </div>
             </template>
@@ -45,22 +61,25 @@
             </template>
             取消
           </a-button>
-          <a-button type="primary" shape="round" v-if="selection" :disabled="!(checkedList.length === 1)"
-                    @click="onSetCover">
+          <a-button
+            type="primary"
+            shape="round"
+            v-if="selection"
+            :disabled="!(checkedList.length === 1)"
+            @click="onSetCover"
+          >
             <template #icon>
               <i-pic theme="outline" size="16" fill="currentColor" />
             </template>
             设为封面
           </a-button>
-          <a-button type="primary" danger shape="round" v-if="selection" :disabled="!checkedList.length"
-                    @click="onDelete">
+          <a-button type="primary" danger shape="round" v-if="selection" :disabled="!checkedList.length" @click="onDelete">
             <template #icon>
               <i-delete-five theme="outline" size="16" fill="currentColor" />
             </template>
             删除
           </a-button>
         </div>
-
       </div>
       <div v-else-if="data === false" class="inaccessible-wrapper gf">
         <div class="tip-text">您没有权限访问该相册</div>
@@ -81,7 +100,8 @@ import openModal from '@/libs/tools/openModal';
 import UploadImageList from '@/views/album/detail/UploadImageList.vue';
 import openImage from '@/libs/tools/openImage';
 import { message, Modal } from 'ant-design-vue';
-import { convertHEICUrlToBlob, getUrlImageFormat } from '@/components/common/utils/upload/utils';
+import { convertHEICUrlToBlob, getUrlImageFormat, formatSize } from '@/components/common/utils/upload/utils';
+import dayjs from 'dayjs';
 
 const { getters, dispatch } = useStore();
 
@@ -107,13 +127,14 @@ const onClickUpload = async () => {
   const res = await openModal({
     component: UploadImageList,
     componentProps: {
-      albumId: albumId
+      albumId: albumId,
     },
     maskClosable: false,
     title: '上传照片',
     width: '1200px',
     beforeConfirm: (done: Function, data: object[]) => {
-      if (!data) { // data为undefined表示都上传成功了
+      if (!data) {
+        // data为undefined表示都上传成功了
         done();
       } else {
         const successData = data.map((item: object) => {
@@ -123,10 +144,8 @@ const onClickUpload = async () => {
         console.log(successData);
         imageList.value.unshift(...successData);
       }
-    }
+    },
   });
-
-  console.log(res);
 };
 
 const onApply = () => {
@@ -145,7 +164,7 @@ const onImageClick = (item: object, index: object) => {
   }
   openImage({
     componentProps: {
-      list: imageList.value.map((item) => item.url),
+      list: imageList.value.map(item => item.url),
       current: index,
       originTransfer: (index: number) => {
         const originUrl = imageList.value[index].originUrl;
@@ -162,8 +181,8 @@ const onImageClick = (item: object, index: object) => {
             return imageList.value[index].originUrl;
           });
         }
-      }
-    }
+      },
+    },
   });
 };
 
@@ -189,13 +208,13 @@ const onDelete = () => {
     okType: 'danger',
     cancelText: '取消',
     onOk() {
-      const ids = checkedList.value.map((item) => item.id).join(',');
+      const ids = checkedList.value.map(item => item.id).join(',');
       dispatch('removeAlbumImage', { ids: ids }).then(res => {
         message.success('删除成功');
         ContentListRef.value.list = ContentListRef.value?.list.filter(item => !checkedList.value.includes(item));
         checkedList.value = [];
       });
-    }
+    },
   });
 };
 </script>
@@ -214,7 +233,7 @@ $imageWidth: 164px;
     justify-content: center;
     align-items: center;
     height: calc(100vh - 100px);
-    background: rgba(0, 0, 0, .15) !important;
+    background: rgba(0, 0, 0, 0.15) !important;
     backdrop-filter: blur(10px) !important;
 
     .album-detail {
@@ -234,11 +253,43 @@ $imageWidth: 164px;
             width: $imageWidth;
             overflow: hidden;
             position: relative;
+            background-color: rgba(192, 192, 192, 0.8);
+
+            &:hover {
+              .image-info-box {
+                transform: translateY(0);
+              }
+            }
 
             .item-check {
               position: absolute;
               bottom: 4px;
               right: 9px;
+            }
+
+            .image-info-box {
+              display: flex;
+              justify-content: space-between;
+              position: absolute;
+              bottom: 0;
+              left: 0;
+              right: 0;
+              background-color: rgba(0, 0, 0, 0.6);
+              color: var(--youyu-body-text2);
+              padding: 2px 6px;
+              font-size: 12px;
+              cursor: pointer;
+              transform: translateY(100%);
+              transition: 0.3s;
+
+              .info-data-item {
+                display: flex;
+                align-items: center;
+
+                ::v-deep(.i-icon) {
+                  margin-right: 2px;
+                }
+              }
             }
           }
 
@@ -246,7 +297,7 @@ $imageWidth: 164px;
             height: 100%;
             width: 100%;
             object-fit: cover;
-            transition: .3s;
+            transition: 0.3s;
 
             &:hover {
               transform: scale(1.05);
@@ -278,7 +329,7 @@ $imageWidth: 164px;
         overflow: visible;
         border-right: var(--youyu-navigation-border);
         transform: translateX(0);
-        transition: .3s;
+        transition: 0.3s;
         z-index: 1;
 
         .collapse-button {
@@ -293,7 +344,7 @@ $imageWidth: 164px;
           border-left: 0;
           border-right: 16px solid var(--youyu-background2);
           cursor: pointer;
-          transition: all .3s ease-in-out;
+          transition: all 0.3s ease-in-out;
           color: #bebebe;
 
           &:hover {
@@ -311,7 +362,7 @@ $imageWidth: 164px;
         transition: 0.3s;
 
         button {
-          &:nth-child(n+2) {
+          &:nth-child(n + 2) {
             margin-left: 6px;
           }
         }
