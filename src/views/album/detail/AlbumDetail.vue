@@ -24,11 +24,11 @@
                 </div>
                 <div class="image-info-box gf">
                   <div class="info-data-item">
-                    <i-time theme="outline" size="14" fill="currentColor" />
+                    <i-time theme="outline" size="13" fill="currentColor" />
                     <div class="info-create-time">{{ dayjs(item.createTime).format('YYYY-MM-DD') }}</div>
                   </div>
                   <div class="info-data-item">
-                    <i-link-cloud theme="outline" size="14" fill="currentColor" />
+                    <i-link-cloud theme="outline" size="13" fill="currentColor" />
                     <div class="info-create-time">{{ formatSize(item.size) }}</div>
                   </div>
                 </div>
@@ -275,9 +275,9 @@ $imageWidth: 164px;
               left: 0;
               right: 0;
               background-color: rgba(0, 0, 0, 0.6);
-              color: var(--youyu-body-text2);
-              padding: 2px 6px;
-              font-size: 12px;
+              color: white;
+              padding: 2px;
+              font-size: 11px;
               cursor: pointer;
               transform: translateY(100%);
               transition: 0.3s;

@@ -73,7 +73,7 @@
       </div>
     </Transition>
     <div class="image-preview-footer" v-if="!isSingleImage">
-      <div class="image-thumbnails" ref="imageThumbnailRef">
+      <div class="image-thumbnails" :class="{'flex-box': isThumbsOverScreen}" ref="imageThumbnailRef">
         <div
           v-for="(item, index) in props.list"
           :key="item.id"
@@ -97,11 +97,11 @@ import { useIdle } from '@vueuse/core';
 const props = defineProps({
   list: {
     type: Array,
-    required: true,
+    required: true
   },
   originTransfer: {
-    type: Function,
-  },
+    type: Function
+  }
 });
 const emit = defineEmits(['onClose']);
 const current = defineModel('current', { type: Number, default: 0 });
@@ -127,10 +127,13 @@ const isSingleImage = computed(() => props.list?.length === 1);
 const imagePreviewBodyRef = ref<HTMLElement | null>(null);
 const imageThumbnailRef = ref<HTMLElement | null>(null);
 const documentClientWidth = document.body.clientWidth;
-let imageThumbnailWidth = 0;
+let imageThumbnailWidth = ref(0);
+const isThumbsOverScreen = computed(() => {
+  return props.list?.length * imageThumbnailWidth.value < documentClientWidth;
+});
 
 onMounted(() => {
-  imageThumbnailWidth = document.getElementsByClassName('image-item-thumbnail')[0].offsetWidth;
+  imageThumbnailWidth.value = document.getElementsByClassName('image-item-thumbnail')[0].offsetWidth;
 });
 
 watch(
@@ -147,11 +150,11 @@ watch(
 
 const handleFooterScroll = () => {
   const halfDocumentClientWidth = documentClientWidth / 2;
-  const currentOffset = current.value * imageThumbnailWidth;
+  const currentOffset = current.value * imageThumbnailWidth.value;
   if (currentOffset > halfDocumentClientWidth) {
-    imageThumbnailRef!.value.scrollLeft = currentOffset + imageThumbnailWidth / 2 - halfDocumentClientWidth;
+    imageThumbnailRef.value.scrollLeft = currentOffset + imageThumbnailWidth.value / 2 - halfDocumentClientWidth;
   } else {
-    imageThumbnailRef!.value.scrollLeft = 0;
+    imageThumbnailRef.value.scrollLeft = 0;
   }
 };
 
@@ -191,25 +194,25 @@ function listenWheel() {
       // 图片的中心坐标
       const origin = {
         x: window.innerWidth * 0.5 + x,
-        y: (window.innerHeight - 80) * 0.5 + y,
+        y: (window.innerHeight - 80) * 0.5 + y
       };
 
       // 滚动前的x长度，y长度
       const before = {
         x: e.clientX - origin.x,
-        y: e.clientY - origin.y,
+        y: e.clientY - origin.y
       };
 
       // 滚动后的x‘长度，y’长度
       const after = {
         x: before.x * ratio,
-        y: before.y * ratio,
+        y: before.y * ratio
       };
 
       // 计算差值
       const diff = {
         x: after.x - before.x,
-        y: after.y - before.y,
+        y: after.y - before.y
       };
 
       x -= diff.x;
@@ -221,13 +224,13 @@ function listenWheel() {
 
 function listenDrag() {
   // 绑定 pointerdown
-  image.addEventListener('pointerdown', function (e) {
+  image.addEventListener('pointerdown', function(e) {
     isPointerdown = true;
     image.setPointerCapture(e.pointerId);
     lastPointermove = { x: e.clientX, y: e.clientY };
   });
   // 绑定 pointermove
-  image.addEventListener('pointermove', function (e) {
+  image.addEventListener('pointermove', function(e) {
     if (isPointerdown) {
       const current = { x: e.clientX, y: e.clientY };
       moveDiff.x = current.x - lastPointermove.x;
@@ -240,13 +243,13 @@ function listenDrag() {
     e.preventDefault();
   });
   // 绑定 pointerup
-  image.addEventListener('pointerup', function (e) {
+  image.addEventListener('pointerup', function(e) {
     if (isPointerdown) {
       isPointerdown = false;
     }
   });
   // 绑定 pointercancel
-  image.addEventListener('pointercancel', function (e) {
+  image.addEventListener('pointercancel', function(e) {
     if (isPointerdown) {
       isPointerdown = false;
     }
@@ -519,6 +522,11 @@ $footerHeight: 80px;
       overflow-x: auto;
       overflow-y: hidden;
       scroll-behavior: smooth;
+
+      &.flex-box {
+        display: flex;
+        justify-content: center;
+      }
 
       &::-webkit-scrollbar {
         display: none;
