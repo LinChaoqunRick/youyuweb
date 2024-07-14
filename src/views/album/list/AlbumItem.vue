@@ -3,6 +3,14 @@
     <div class="album-item cp">
       <div class="album-cover">
         <img :src="data.cover || defaultImage" alt="">
+        <div class="detail-mask">
+          <div class="detail-info-createTime">
+            创建于：{{ dayjs(data.createTime).format('YYYY-MM-DD') }}
+          </div>
+          <div class="detail-info-content">
+            简介：{{ data.content }}
+          </div>
+        </div>
         <div class="detail-info">
           <div class="album-info-data">
             <div class="edit-btn" v-if="false">
@@ -19,14 +27,6 @@
           <div class="detail-info-user">
             <img :src="data.userInfo?.avatar" alt="">
             <div class="user-nickname">{{ data.userInfo?.nickname }}</div>
-          </div>
-        </div>
-        <div class="detail-mask">
-          <div class="detail-info-createTime">
-            创建于：{{ dayjs(data.createTime).format('YYYY-MM-DD') }}
-          </div>
-          <div class="detail-info-content">
-            简介：{{ data.content }}
           </div>
         </div>
       </div>
@@ -72,7 +72,6 @@ const props = defineProps({
     }
 
     .detail-info {
-      z-index: 10;
 
       .detail-info-user {
         display: flex;

@@ -4,7 +4,7 @@
       <div class="welcome-lead">
         <div class="home-content">
           <div class="author-info">
-            <img class="author-avatar cp" :src="authorInfo.avatar" alt="站长头像"/>
+            <img class="author-avatar cp" :src="authorInfo.avatar" alt="站长头像" />
             <span class="author-nickname cp">{{ authorInfo.nickname }}</span>
           </div>
 
@@ -25,15 +25,15 @@
           <div class="text-three">
             <a href="https://github.com/LinChaoqunRick" target="_blank">
               <div class="text-btn" title="访问github">
-                <img src="/static/images/logo/github.svg" alt="github_logo"/>
+                <img src="/static/images/logo/github.svg" alt="github_logo" />
                 <div class="text-content">
-                  <i-double-right theme="outline" size="32" fill="#ffffff"/>
+                  <i-double-right theme="outline" size="32" fill="#ffffff" />
                 </div>
               </div>
             </a>
           </div>
         </div>
-        <img class="welcome-image" src="/static/images/background/home-image.svg" alt=""/>
+        <img class="welcome-image" src="/static/images/background/home-image.svg" alt="" />
       </div>
       <div>
         <div></div>
@@ -58,21 +58,21 @@
       <div class="technology-container">
         <div class="introduce-title">技术栈</div>
         <div class="list-wrapper">
-          <TechnologyList/>
+          <TechnologyList />
         </div>
       </div>
 
       <div class="about-container">
         <div class="introduce-title">关于</div>
         <div class="about-wrapper">
-          <AboutSiteHome/>
+          <AboutSiteHome />
         </div>
       </div>
 
       <div class="more-container">
         <div class="introduce-title">更多</div>
         <div class="list-wrapper">
-          <MoreList/>
+          <MoreList />
         </div>
       </div>
     </div>
@@ -80,20 +80,14 @@
 </template>
 
 <script setup lang="ts">
-import {useStore} from 'vuex';
-import {computed, onMounted, reactive, ref} from 'vue';
+import { useStore } from 'vuex';
+import { computed, onMounted, reactive, ref } from 'vue';
 import lottie from 'lottie-web';
-import TechnologyList from "@/views/home/components/TechnologyList.vue";
-import MoreList from "@/views/home/components/MoreList.vue";
-import AboutSiteHome from "@/views/home/components/AboutSiteHome.vue";
+import TechnologyList from '@/views/home/components/TechnologyList.vue';
+import MoreList from '@/views/home/components/MoreList.vue';
+import AboutSiteHome from '@/views/home/components/AboutSiteHome.vue';
 
-import postLottieData from '@/assets/lottie/post.json';
-import momentLottieData from '@/assets/lottie/travel.json';
-import noteLottieData from '@/assets/lottie/draw.json';
-import albumLottieData from '@/assets/lottie/album.json';
-import labLottieData from '@/assets/lottie/lab.json';
-
-const {getters, dispatch} = useStore();
+const { getters, dispatch } = useStore();
 const authorId = computed(() => getters['getAuthorId']);
 const postLottie = ref(null);
 const momentLottie = ref(null);
@@ -108,7 +102,7 @@ const featureList = [
     introduction: '日常的学习记录，包括新知识的分享，旧知识的巩固、一些实用资源的分享以及BUG记录等',
     path: '/post',
     lottieClass: 'post-lottie',
-    lottieData: postLottieData,
+    lottieData: ' https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/lottie/post.json',
     ref: postLottie,
     animation: null
   },
@@ -117,7 +111,7 @@ const featureList = [
     introduction: '用于记录日常生活，旅游见闻，在此可以发布动态，这里有很多很多有趣的内容，就像一个朋友圈',
     path: '/moment',
     lottieClass: 'moment-lottie',
-    lottieData: momentLottieData,
+    lottieData: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/lottie/travel.json',
     ref: momentLottie,
     animation: null
   },
@@ -126,7 +120,7 @@ const featureList = [
     introduction: '用于记录所学习的新知识的的内容，按章节划分，持续更新中...',
     path: '/note',
     lottieClass: 'note-lottie',
-    lottieData: noteLottieData,
+    lottieData: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/lottie/draw.json',
     ref: noteLottie,
     animation: null
   },
@@ -135,7 +129,7 @@ const featureList = [
     introduction: '爱好摄影？哦不！是终于以可清空手机相册啦！！！',
     path: '/album',
     lottieClass: 'album-lottie',
-    lottieData: albumLottieData,
+    lottieData: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/lottie/album.json',
     ref: albumLottie,
     animation: null
   },
@@ -144,14 +138,14 @@ const featureList = [
     introduction: '千奇百怪的内容，这里都是一些练手的内容，来看看站长平时都在学些什么！',
     path: '/lab',
     lottieClass: 'lab-lottie',
-    lottieData: labLottieData,
+    lottieData: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/lottie/lab.json',
     ref: labLottie,
     animation: null
-  },
+  }
 ];
 
 const getAuthorInfo = () => {
-  dispatch('getUserDetailBasic', {userId: authorId.value}).then(res => {
+  dispatch('getUserDetailBasic', { userId: authorId.value }).then(res => {
     authorInfo.value = res.data;
   });
 };
@@ -160,16 +154,18 @@ getAuthorInfo();
 const initLottie = () => {
   featureList.forEach(item => {
     if (item.lottieData) {
-      item.animation = lottie.loadAnimation({
-        container: item.ref.value[0],
-        renderer: 'canvas', // 或者 'canvas'
-        loop: true,
-        autoplay: false,
-        animationData: item.lottieData // 导入的动画 JSON 数据
+      fetch(item.lottieData).then(res => res.json()).then(data => {
+        item.animation = lottie.loadAnimation({
+          container: item.ref.value[0],
+          renderer: 'canvas', // 或者 'canvas'
+          loop: true,
+          autoplay: false,
+          animationData: data // 导入的动画 JSON 数据
+        });
       });
     }
-  })
-}
+  });
+};
 
 const onLottieAnimate = (item: object, type: string) => {
   if (type === 'play') {
@@ -177,11 +173,11 @@ const onLottieAnimate = (item: object, type: string) => {
   } else {
     item.animation?.stop();
   }
-}
+};
 
 onMounted(() => {
   initLottie();
-})
+});
 </script>
 
 <style lang="scss" scoped>
