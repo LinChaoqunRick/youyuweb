@@ -133,8 +133,19 @@ const isThumbsOverScreen = computed(() => {
 });
 
 onMounted(() => {
-  imageThumbnailWidth.value = document.getElementsByClassName('image-item-thumbnail')[0].offsetWidth;
+  imageThumbnailWidth.value = document.getElementsByClassName('image-item-thumbnail')[0]?.offsetWidth ?? 0;
 });
+
+const handleFooterScroll = () => {
+  if (props.list?.length <= 1) return;
+  const halfDocumentClientWidth = documentClientWidth / 2;
+  const currentOffset = current.value * imageThumbnailWidth.value;
+  if (currentOffset > halfDocumentClientWidth) {
+    imageThumbnailRef.value.scrollLeft = currentOffset + imageThumbnailWidth.value / 2 - halfDocumentClientWidth;
+  } else {
+    imageThumbnailRef.value.scrollLeft = 0;
+  }
+};
 
 watch(
   () => current.value,
@@ -147,16 +158,6 @@ watch(
   },
   { immediate: true }
 );
-
-const handleFooterScroll = () => {
-  const halfDocumentClientWidth = documentClientWidth / 2;
-  const currentOffset = current.value * imageThumbnailWidth.value;
-  if (currentOffset > halfDocumentClientWidth) {
-    imageThumbnailRef.value.scrollLeft = currentOffset + imageThumbnailWidth.value / 2 - halfDocumentClientWidth;
-  } else {
-    imageThumbnailRef.value.scrollLeft = 0;
-  }
-};
 
 function initListen() {
   image = document.getElementById('preview-image');
