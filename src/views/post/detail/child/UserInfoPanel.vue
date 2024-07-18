@@ -67,7 +67,7 @@
         <div v-else class="no-data">暂无数据</div>
       </a-card>
     </div>
-    <div class="hot-posts">
+<!--    <div class="hot-posts">
       <a-card title="热门文章" style="width: 100%">
         <div class="post-list">
           <ul v-if="hotPosts.length">
@@ -78,7 +78,7 @@
           <div v-else class="no-data">暂无数据</div>
         </div>
       </a-card>
-    </div>
+    </div>-->
     <div class="new-posts">
       <a-card title="最新文章" style="width: 100%">
         <div class="post-list">
@@ -196,9 +196,9 @@ watch(
       emit('onLoaded', user.value);
     });
 
-    dispatch('getLimitPost', { userId: val, orderBy: 'view_count', orderType: 'desc' }).then(res => {
-      hotPosts.value = res.data;
-    });
+    // dispatch('getLimitPost', { userId: val, orderBy: 'view_count', orderType: 'desc' }).then(res => {
+    //   hotPosts.value = res.data;
+    // });
 
     dispatch('getLimitPost', { userId: val, orderBy: 'create_time', orderType: 'desc' }).then(res => {
       newPosts.value = res.data;

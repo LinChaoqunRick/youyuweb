@@ -1,5 +1,5 @@
 <template>
-  <a-card title="日历" style="width: 100%">
+  <a-card title="创作日历" style="width: 100%">
     <a-calendar :fullscreen="false"/>
   </a-card>
 </template>
