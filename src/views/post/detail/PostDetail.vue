@@ -2,7 +2,7 @@
   <div class="post-detail">
     <div class="post-aside">
       <div v-aside3 class="post-aside-body">
-        <UserInfoPanel :id="post.userId"/>
+        <UserInfoPanel :id="post.userId" />
       </div>
     </div>
     <div class="post-body" id="aside-right">
@@ -17,12 +17,12 @@
             </div>
             <div class="author-info">
               <RouterLink :to="`/user/${post.user.id}`">
-                <i-user theme="outline" size="15" fill="currentColor"/>
+                <i-user theme="outline" size="15" fill="currentColor" />
                 <span>{{ post.user.nickname }}</span>
               </RouterLink>
             </div>
             <div class="view-count">
-              <i-preview-open theme="outline" size="18" fill="currentColor"/>
+              <i-preview-open theme="outline" size="18" fill="currentColor" />
               <span>{{ post.viewCount }} 次查看</span>
             </div>
             <div class="create-time">
@@ -31,17 +31,20 @@
                   <div>首次发布：{{ post.createTime }}</div>
                   <div>最近更新：{{ post.updateTime }}</div>
                 </template>
-                <i-time theme="outline" size="15" fill="currentColor"/>
+                <i-time theme="outline" size="15" fill="currentColor" />
                 <span>发布于 {{ post.createTime?.substring(0, 16) }}</span>
               </a-tooltip>
             </div>
             <div class="text-amount">
-              <i-add-text-two theme="outline" size="16" fill="currentColor"/>
+              <i-add-text-two theme="outline" size="16" fill="currentColor" />
               <span>{{ post.content.length }} 字</span>
             </div>
             <div class="operation-btns">
-              <!--<span class="operation-item hide" v-if="userInfo.id && userInfo.id === post.userId">隐藏</span>-->
               <span class="operation-item edit cp" v-if="userInfo.id === post.userId" @click="handleEdit">编辑</span>
+              <span class="operation-item hide cp" v-if="userInfo.id === post.userId" :class="{'danger': !post.status}"
+                    @click="handleHide">
+                {{ post.status ? '设为公开' : '设为私密' }}
+              </span>
             </div>
           </div>
           <div class="post-info-copyright" :class="{ unfold: !fold }">
@@ -66,58 +69,59 @@
             </div>
           </div>
           <div class="expand-btn" :class="{'btn-expand': !fold}" @click="handleFold">
-            <i-down theme="outline" size="14" fill="currentColor"/>
+            <i-down theme="outline" size="14" fill="currentColor" />
           </div>
         </div>
         <div class="post-main-content">
-          <Spin v-if="!post.id" height="500px"/>
+          <Spin v-if="!post.id" height="500px" />
           <div class="post-summary" v-if="false">
             <div class="post-summary-title">摘要</div>
             <div class="post-summary-summary" v-html="post.summary"></div>
           </div>
           <div class="post-content">
-            <MdPreview editorId="post-content" :text="post.content" @onHtmlChanged="onHtmlChanged"/>
+            <MdPreview editorId="post-content" :text="post.content" @onHtmlChanged="onHtmlChanged" />
           </div>
           <a-divider>End Line</a-divider>
           <div class="post-tags" v-if="tags?.length">
             <div class="tag-name cp" v-for="item in tags">
-              <i-tag-one theme="outline" size="16" fill="currentColor"/>
+              <i-tag-one theme="outline" size="16" fill="currentColor" />
               {{ item }}
             </div>
           </div>
           <div class="post-column-list" v-if="post.columns?.length">
             <div class="include-text">本文已收录至：</div>
-            <PostColumn v-for="item in post.columns" :data="item"/>
+            <PostColumn v-for="item in post.columns" :data="item" />
           </div>
         </div>
       </div>
       <div class="post-right">
         <div class="post-category">
-          <MdCatalogPanel editorId="post-content"/>
+          <MdCatalogPanel editorId="post-content" />
         </div>
         <div class="post-operation">
-          <PostOperation v-if="post" @scrollToComment="scrollToComment"/>
+          <PostOperation v-if="post" @scrollToComment="scrollToComment" />
         </div>
       </div>
       <div class="post-comment">
         <div class="post-comment-list" ref="commentRef">
-          <PostComment ref="postComment"/>
+          <PostComment ref="postComment" />
         </div>
       </div>
     </div>
     <Teleport to="#header">
-      <PercentCounter/>
+      <PercentCounter />
     </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import {ref, computed, provide, readonly, watch, inject, nextTick} from 'vue';
-import {RouterLink, useRoute, useRouter} from 'vue-router';
-import {useStore} from 'vuex';
-import {debounce} from 'lodash';
-import {scrollToTop, scrollToAnchor} from '@/assets/utils/utils';
-import type {postData} from '@/types/post';
+import { ref, computed, provide, readonly, watch, inject, nextTick } from 'vue';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
+import { Modal, message } from 'ant-design-vue';
+import { useStore } from 'vuex';
+import { debounce } from 'lodash';
+import { scrollToTop, scrollToAnchor } from '@/assets/utils/utils';
+import type { postData } from '@/types/post';
 
 import PercentCounter from '@/components/common/utils/percentCounter/PercentCounter.vue';
 import MdPreview from '@/components/content/mdEditor/MdPreview.vue';
@@ -132,7 +136,7 @@ const reload = inject('reload');
 
 const route = useRoute();
 const router = useRouter();
-const {state, dispatch, getters} = useStore();
+const { state, dispatch, getters } = useStore();
 const post = ref<postData>({
   id: null,
   title: '',
@@ -155,7 +159,7 @@ const postComment = ref(null);
 const isLogin = computed(() => getters['isLogin']);
 
 function getPostDetail() {
-  dispatch('getPostDetail', {postId: route.params.postId}).then(res => {
+  dispatch('getPostDetail', { postId: route.params.postId }).then(res => {
     post.value = res.data;
     document.title = res.data.title;
   });
@@ -175,8 +179,22 @@ watch(
 );
 
 function handleEdit() {
-  router.push({path: '/editPost', query: {postId: post.value.id}});
+  router.push({ path: '/editPost', query: { postId: post.value.id } });
 }
+
+const handleHide = () => {
+  const status = post.value.status;
+  Modal.confirm({
+    title: status ? '公开文章' : '隐藏文章',
+    content: status ? `确定将本文设置为公开?` : '确定将本文设置为私密？',
+    onOk() {
+      dispatch('hidePost', { postId: post.value.id, status: status ? 0 : 1 }).then(res => {
+        message.success('设置成功');
+        post.value.status = status ? 0 : 1;
+      });
+    }
+  });
+};
 
 function handleFold() {
   fold.value = !fold.value;
@@ -283,6 +301,15 @@ provide('setPostAttribute', setPostAttribute);
 
           .operation-btns {
             color: #1890ff;
+            user-select: none;
+
+            .operation-item {
+              margin-right: 8px;
+
+              &.danger {
+                color: #ff4d4f;
+              }
+            }
           }
         }
 
@@ -380,7 +407,6 @@ provide('setPostAttribute', setPostAttribute);
           }
 
           ::v-deep(.post-column) {
-            padding: 4px 0;
             margin-top: 12px;
           }
         }

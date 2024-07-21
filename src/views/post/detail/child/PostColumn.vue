@@ -75,22 +75,22 @@ const onSubscribe = () => {
   display: flex;
   position: relative;
   background-color: var(--youyu-background1);
-  border-radius: 4px;
+  border-radius: 12px;
   cursor: pointer;
   box-shadow: var(--youyu-shadow2);
   z-index: 2;
   overflow: hidden;
+  padding: 8px;
 
   .column-left {
-    height: 70px;
-    width: 110px;
-    margin: 8px;
+    height: 80px;
+    width: 120px;
 
     img {
       height: 100%;
       width: 100%;
       object-fit: cover;
-      border-radius: 4px;
+      border-radius: 8px;
     }
   }
 
@@ -99,7 +99,7 @@ const onSubscribe = () => {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    margin: 4px 8px 4px 4px;
+    margin: 0 8px;
     overflow: hidden;
 
     .column-top {

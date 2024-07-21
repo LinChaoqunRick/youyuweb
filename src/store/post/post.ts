@@ -23,8 +23,8 @@ import {
   GET_POST_COLLECT_INFO,
   CANCEL_POST_COLLECT,
   OSS_POLICY,
-  OSS_STS,
-} from "@/network/apis";
+  OSS_STS, HIDE_POST
+} from '@/network/apis';
 
 export default {
   actions: {
@@ -98,6 +98,9 @@ export default {
     },
     cancelPostCollect(context: any, params: any) {
       return http.post(CANCEL_POST_COLLECT, params);
+    },
+    hidePost(context: any, params: any) {
+      return http.get(HIDE_POST, params);
     },
 
     getOssPolicy(context: any, params: any) {

@@ -24,6 +24,7 @@ export const GET_POST_COLLECT_INFO = ApiBase + "/post/getPostCollectInfo";
 export const CANCEL_POST_COLLECT = ApiBase + "/post/cancelPostCollect";
 export const GET_POST_COLLECT_LIST = ApiBase + "/post/collectList"; // 获取收藏列表
 export const GET_LIMIT_POST = ApiBase + "/post/open/getLimitPost"; // 获取指定数量条帖子记录
+export const HIDE_POST = ApiBase + "/post/hide"; // 隐藏文章
 
 // 文章-评论
 export const GET_POST_COMMENTS_PAGE = ApiBase + "/comment/open/getCommentsPage";
