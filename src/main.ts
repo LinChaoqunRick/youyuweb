@@ -71,7 +71,8 @@ config({
     highlight: {
       css: {
         atom: {
-          light: 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css',
+          light:
+            'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css',
           dark: 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css'
         }
       }
@@ -80,7 +81,7 @@ config({
 });
 
 window._AMapSecurityConfig = {
-  securityJsCode: '83d845d2136fd513f1339450c2203b75',
+  securityJsCode: '77d3241f7557a36fc3a1f64f967277b3',
 };
 
 app.mount('#app');
