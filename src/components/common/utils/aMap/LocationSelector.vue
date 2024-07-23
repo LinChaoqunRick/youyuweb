@@ -51,9 +51,6 @@ defineExpose({
   height: 100%;
   width: 100%;
 
-  ::v-deep(.map-wrapper) {
-  }
-
   .location-data {
     position: absolute;
     left: 8px;

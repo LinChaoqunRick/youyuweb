@@ -371,7 +371,7 @@ const onLocationPreview = () => {
     componentProps: {
       data: location,
     },
-    title: `位置详情（${location.name}）`,
+    title: `位置详情`,
     width: '80vw',
     maskClosable: false,
     keyboard: false,
