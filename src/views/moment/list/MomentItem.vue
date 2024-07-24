@@ -362,9 +362,9 @@ const onUserVisibleChange = (visible: boolean) => {
 
 const onLocationPreview = () => {
   const location = {
-    longitude: props.data.longitude,
-    latitude: props.data.latitude,
-    name: props.data.location,
+    longitude: props.data?.longitude,
+    latitude: props.data?.latitude,
+    name: props.data?.location,
   };
   openModal({
     component: LocationPreview,
