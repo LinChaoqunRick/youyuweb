@@ -1,4 +1,4 @@
-import type {userType} from "@/types/user";
+import type { userType } from '@/types/user';
 
 export interface momentType {
   id: number,
@@ -6,12 +6,20 @@ export interface momentType {
   content: string,
   mood: number,
   topicId: number,
-  images: string,
+  images: string | null,
   createTime: string,
   updateTime: string,
   userInfo: userType
 }
 
-export interface momentListType {
-
+export interface momentListType extends momentType {
+  momentLike: object | null,
+  user: userType,
+  commentCount: number,
+  supportCount: number,
+  likeUsers: userType[],
+  longitude: string,
+  latitude: string,
+  location: string,
+  adname: string,
 }

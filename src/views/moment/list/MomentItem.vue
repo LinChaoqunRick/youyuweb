@@ -202,6 +202,7 @@ const router = useRouter();
 const props = defineProps({
   data: {
     type: Object as PropType<momentListType>,
+    required: true
   },
   showDetail: {
     type: Boolean,
@@ -244,7 +245,7 @@ const listParams = computed(() => ({
   pageSize: 5,
   orderBy: order.value,
 }));
-const replyEditorPlaceholder = computed(() => (props.data ? '回复@' + props.data?.user?.nickname : null));
+const replyEditorPlaceholder = computed(() => (props.data ? '回复@' + props.data.user.nickname : ''));
 const replyParams = computed(() => {
   return {
     momentId: props.data.id,
@@ -266,7 +267,7 @@ const onClose = () => {
 };
 
 const onCommentSuccess = (data: object) => {
-  ContentDataRef.value.data.list.unshift(data);
+  ContentDataRef.value?.data.list.unshift(data);
   props.data.commentCount += 1;
 };
 
@@ -277,16 +278,16 @@ const onClickReply = () => {
   }
 };
 
-const deleteSuccess = comment => {
+const deleteSuccess = (comment: any) => {
   if (ContentDataRef.value) {
-    ContentDataRef.value.data.list = ContentDataRef.value.data.list.filter(item => item.id !== comment.id);
+    ContentDataRef.value.data.list = ContentDataRef.value.data.list.filter((item: any) => item.id !== comment.id);
   }
   props.data.commentCount -= 1 + comment.replyCount;
   emit('onCommentDeleteSuccess', comment);
 };
 
 const onChange = (value: boolean) => {
-  nextTick(() => ContentDataRef.value.initData());
+  nextTick(() => ContentDataRef.value?.initData());
 };
 
 const onDetail = () => {
@@ -362,9 +363,9 @@ const onUserVisibleChange = (visible: boolean) => {
 
 const onLocationPreview = () => {
   const location = {
-    longitude: props.data?.longitude,
-    latitude: props.data?.latitude,
-    name: props.data?.location,
+    longitude: props.data.longitude,
+    latitude: props.data.latitude,
+    name: props.data.location,
   };
   openModal({
     component: LocationPreview,
@@ -378,10 +379,6 @@ const onLocationPreview = () => {
     centered: true,
     wrapClassName: 'select-position-modal-wrapper',
   })
-    .then(res => {
-      location.value = res;
-    })
-    .catch(console.log);
 };
 
 defineExpose({
