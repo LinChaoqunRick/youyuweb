@@ -10,13 +10,22 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {ref} from "vue";
+import type {PropType} from 'vue';
 import AMap from "@/components/common/utils/aMap/AMap.vue";
+
+interface LocationInfo {
+  longitude: '',
+  latitude: '',
+  address: '',
+  zone: '',
+  name: ''
+}
 
 const props = defineProps({
   data: {
-    type: Object,
+    type: Object as PropType<LocationInfo>,
     default: () => ({
       longitude: '',
       latitude: '',
@@ -26,6 +35,7 @@ const props = defineProps({
     })
   }
 })
+
 
 const location = ref({
   longitude: '',
@@ -37,7 +47,7 @@ const location = ref({
 
 location.value = props.data;
 
-const beforeConfirm = (done) => {
+const beforeConfirm = (done: Function) => {
   done(location.value);
 }
 
