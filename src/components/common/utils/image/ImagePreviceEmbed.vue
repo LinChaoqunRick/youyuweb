@@ -36,7 +36,7 @@
     </div>
     <div class="preview-bottom">
       <div class="nav-list">
-        <img v-for="(item,index) in list" :src="item" :class="{'active':index===current}" @click="onClick(index)"/>
+        <img v-for="(item, index) in list" :src="item" :class="{'active':index===current}" @click="onClick(index)"/>
       </div>
     </div>
   </div>
@@ -49,7 +49,7 @@
 
   const props = defineProps({
     list: {
-      type: Array,
+      type: Array<String>,
       required: true
     },
     current: {
@@ -64,7 +64,7 @@
   const currentImage = computed(() => props.list[current.value].split("?")[0] + '?x-oss-process=style/detailThumb');
   const loading = ref<boolean>(false);
   const fail = ref<boolean>(false);
-  const image = ref<HTMLElement | null>(null);
+  const image = ref<HTMLImageElement | null>(null);
   const previewBody = ref<HTMLElement | null>(null);
   let rotate: number = 0, tx: number, ty: number;
 
@@ -138,12 +138,13 @@
   }
 
   function refreshTransform() {
+    if (!image.value || !previewBody.value) return;
     const is180Multiple = Math.abs(rotate % 180) === 0;
     let result;
     if (is180Multiple) {
       result = getImgSizeByMaxWidth(image.value.naturalWidth, image.value.naturalHeight, previewBody.value.clientWidth);
     } else {
-      result = getImgSizeByMaxHeight(image.value.naturalWidth, image.value.naturalHeight, previewBody.value.clientWidth);
+      result = getImgSizeByMaxHeight(image.value?.naturalWidth, image.value?.naturalHeight, previewBody.value.clientWidth);
     }
     image.value.style.transform = `rotate(${rotate}deg) translate3d(${tx}%, ${ty}%, 0px)`;
     image.value.style.height = `${result.height}px`;

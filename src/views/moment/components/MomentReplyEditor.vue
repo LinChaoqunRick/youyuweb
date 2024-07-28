@@ -99,8 +99,8 @@ const isLogin = computed(() => getters['isLogin']);
 const maxFileNum = 1;
 const maxFileSize = 20;
 const emojiVisible = ref(false);
-const richEditorRef = ref(null);
-const UploadFileRef = ref(null);
+const richEditorRef = ref<InstanceType<typeof ContentEditableDiv> | null>(null);
+const UploadFileRef = ref<InstanceType<typeof UploadFile> | null>(null);
 const reply = reactive({
   userId: userInfo.value.id,
   content: '',
@@ -121,11 +121,11 @@ const onEmojiClose = () => {
 }
 
 const onImagePick = (value: HTMLElement | string) => {
-  richEditorRef.value.insertHtml(value)
+  richEditorRef.value?.insertHtml(value)
 }
 
 const onEmojiPick = (value: string) => {
-  richEditorRef.value.insertText(value)
+  richEditorRef.value?.insertText(value)
 }
 
 const onImageDelete = (index: number) => {
@@ -139,10 +139,9 @@ const toLogin = () => {
 const onSubmit = async () => {
   // 上传图片
   const form = cloneDeep(reply);
-  const imagesListRes = await UploadFileRef.value.upload();
-  console.log(imagesListRes);
+  const imagesListRes = await UploadFileRef.value?.upload();
   if (form.images?.length) {
-    form.images = imagesListRes.map(item => item.url + '?x-oss-process=style/smallThumb');
+    form.images = (imagesListRes as Object[]).map(item => item.url + '?x-oss-process=style/smallThumb');
     form.images = form.images.length ? form.images.join(',') : null;
   } else {
     form.images = '';
@@ -153,7 +152,7 @@ const onSubmit = async () => {
 
   dispatch("createMomentComment", Object.assign({}, form, props.params)).then((res) => {
     message.success("发布成功");
-    richEditorRef.value.clearContent();
+    richEditorRef.value?.clearContent();
     emit("saveSuccess", res.data)
   }).finally(() => {
     loading.value = false;

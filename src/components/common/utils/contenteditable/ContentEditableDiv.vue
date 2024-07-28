@@ -252,6 +252,7 @@ const dispatchInputEvent = () => {
 
 defineExpose({
   totalStrLength,
+  contentLengthExceed,
   active,
   insertHtml,
   insertText,
