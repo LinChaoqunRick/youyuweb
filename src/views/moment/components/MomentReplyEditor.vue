@@ -96,12 +96,26 @@ const emit = defineEmits(['saveSuccess']);
 const userInfo = computed(() => getters['userInfo']);
 const isLogin = computed(() => getters['isLogin']);
 
+interface UploadFile {
+  thumb: string,
+  name: string,
+  size: number,
+  type: string,
+  originFileObj: File,
+}
+
+interface MomentReply {
+  userId: number,
+  content: string,
+  images: Array<UploadFile>
+}
+
 const maxFileNum = 1;
 const maxFileSize = 20;
 const emojiVisible = ref(false);
 const richEditorRef = ref<InstanceType<typeof ContentEditableDiv> | null>(null);
 const UploadFileRef = ref<InstanceType<typeof UploadFile> | null>(null);
-const reply = reactive({
+const reply: MomentReply = reactive({
   userId: userInfo.value.id,
   content: '',
   images: []
@@ -166,7 +180,7 @@ const onPasteImage = (files: File[]) => {
   }
   // 验证单个文件大小
   const maxFileByteSize = maxFileSize * 1024 * 1024;
-  const validFiles: File[] = [];
+  const validFiles: UploadFile[] = [];
   for (const file of files) {
     if (file.size > maxFileByteSize) { // 一个文件超过，全部退回
       return message.error(`文件大小不能大于${maxFileSize}MB`);
