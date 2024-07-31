@@ -1,7 +1,5 @@
-import axios from 'axios';
-import type { AxiosRequestConfig } from 'axios';
+import axios, { type InternalAxiosRequestConfig } from 'axios';
 import { message } from 'ant-design-vue';
-import Cookies from 'js-cookie';
 import store from '@/store';
 import router from '@/router';
 import qs from 'qs';
@@ -30,8 +28,8 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use(
-  (config: AxiosRequestConfig) => {
-    const access_token = Cookies.get('access_token') || '';
+  (config: InternalAxiosRequestConfig) => {
+    const access_token = localStorage.getItem('access_token') || '';
     if (!!access_token && config.headers) {
       config.headers.Authorization = 'Bearer ' + access_token; //  如果要求携带在请求头中
     }
@@ -112,7 +110,7 @@ function post(url: string, data = {}, config: any = null) {
 
 // Function that will be called to refresh authorization
 const refreshAuthLogic = async (failedRequest: any) => {
-  const refresh_token = Cookies.get('refresh_token');
+  const refresh_token = localStorage.getItem('refresh_token');
   const tokenRefreshResponse = await store
     .dispatch('token', {
       client_id: 'web', // oauth客户端id
@@ -129,8 +127,8 @@ const refreshAuthLogic = async (failedRequest: any) => {
       }, 1500);
     });
   const { access_token: res_access_token, refresh_token: res_refresh_token } = tokenRefreshResponse.data;
-  Cookies.set('access_token', res_access_token, { expires: 7 });
-  Cookies.set('refresh_token', res_refresh_token, { expires: 30 });
+  localStorage.setItem("access_token", res_access_token);
+  localStorage.setItem("refresh_token", res_refresh_token);
   failedRequest.response.config.headers['Authorization'] = 'Bearer ' + res_access_token;
   return await Promise.resolve();
 };

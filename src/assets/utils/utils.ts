@@ -1,6 +1,5 @@
 import { nextTick } from 'vue';
 import store from '@/store/index';
-import Cookies from 'js-cookie';
 
 export function getElementLeft(element: HTMLElement) {
   let actualLeft: number = element.offsetLeft;
@@ -172,8 +171,6 @@ export const colorReverse = (color: string) => {
 };
 
 export const cleanCookieLocalStorage = () => {
-  Cookies.remove('access_token');
-  Cookies.remove('refresh_token');
   localStorage.clear();
 };
 

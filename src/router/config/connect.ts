@@ -41,8 +41,8 @@ const connect = async (type: string, code: string, state: string) => {
       message.success(`欢迎回来，${userInfo.nickname}`);
       store.commit("changeLogin", false);
       store.commit("changeUser", userInfo);
-      Cookies.set("access_token", access_token, {expires: 7});
-      Cookies.set("refresh_token", refresh_token, {expires: 30});
+      localStorage.setItem("access_token", access_token);
+      localStorage.setItem("refresh_token", refresh_token);
     }).catch(e => {
       message.error("授权失败请重试！");
     })

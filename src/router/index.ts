@@ -1,6 +1,5 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import whiteList from "./whiteList";
-import Cookies from "js-cookie";
 import store from "@/store";
 import {computed} from "vue";
 import {message} from "ant-design-vue";
@@ -18,7 +17,7 @@ const isLogin = computed(() => store.getters['isLogin']);
  *   2.2 如果用户数据不存在，用户信息设置为初始值
  */
 const checkTokenValid = async () => {
-  const access_token = Cookies.get("access_token");
+  const access_token = localStorage.getItem("access_token");
   if (access_token) {
     store.dispatch('getCurrentUser').then(res => {
       store.commit("changeUser", res.data);

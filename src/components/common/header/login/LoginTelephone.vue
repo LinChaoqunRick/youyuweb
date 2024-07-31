@@ -46,7 +46,6 @@
   import {ref, reactive, toRaw, inject} from 'vue';
   import {useStore} from 'vuex';
   import {message} from 'ant-design-vue';
-  import Cookies from "js-cookie";
   import {generateAuthRoutes} from "@/router/config/useGenerateRoutes";
   import {checkTelephone} from "@/libs/validate/validate";
   import smsCode from "@/enums/sms/smsCode";
@@ -120,8 +119,8 @@
       message.success(`欢迎回来，${userInfo.nickname}`);
       commit("changeLogin", false);
       commit("changeUser", userInfo);
-      Cookies.set("access_token", access_token, {expires: 7});
-      Cookies.set("refresh_token", refresh_token, {expires: 30});
+      localStorage.setItem("access_token", access_token);
+      localStorage.setItem("refresh_token", refresh_token);
       // 生成权限路由
       generateAuthRoutes();
     }).catch(e => {

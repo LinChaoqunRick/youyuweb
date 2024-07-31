@@ -92,8 +92,6 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useStore } from "vuex";
-import Cookies from "js-cookie";
-import store from "@/store";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 import { createVNode } from "vue";
 import { Modal, message } from "ant-design-vue";
