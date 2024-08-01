@@ -4,6 +4,11 @@
 
 $headerHeight: 60px;
 
+* {
+  margin: 0;
+  padding: 0;
+}
+
 .fixed {
   position: fixed !important;
 }

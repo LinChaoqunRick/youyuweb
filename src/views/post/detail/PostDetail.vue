@@ -81,7 +81,7 @@
           <div class="post-content">
             <MdPreview editorId="post-content" :text="post.content" @onHtmlChanged="onHtmlChanged" />
           </div>
-          <a-divider>End Line</a-divider>
+<!--          <a-divider>感谢观看</a-divider>-->
           <div class="post-tags" v-if="tags?.length">
             <div class="tag-name cp" v-for="item in tags">
               <i-tag-one theme="outline" size="16" fill="currentColor" />
