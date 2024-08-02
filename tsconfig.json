@@ -1,6 +1,14 @@
 {
   "extends": "@vue/tsconfig/tsconfig.web.json",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "types/**/*.d.ts",
+    "types/**/*.ts",
+    "vite.config.ts"
+  ],
   "compilerOptions": {
     "baseUrl": ".",
     "allowJs": true,  //编译时允许有js
@@ -9,7 +17,6 @@
     },
     "lib": ["es2015", "es2016", "dom", "es2018.promise"]
   },
-
   "references": [
     {
       "path": "./tsconfig.config.json"
