@@ -3,11 +3,11 @@ import store from '@/store/index';
 
 export function getElementLeft(element: HTMLElement) {
   let actualLeft: number = element.offsetLeft;
-  let current: HTMLElement | null = element.offsetParent;
+  let current: HTMLElement = element.offsetParent as HTMLElement;
 
   while (current !== null) {
     actualLeft += current.offsetLeft;
-    current = current.offsetParent;
+    current = current.offsetParent as HTMLElement;
   }
 
   return actualLeft;
@@ -15,11 +15,11 @@ export function getElementLeft(element: HTMLElement) {
 
 export function getElementTop(element: HTMLElement) {
   let actualTop: number = element.offsetTop;
-  let current: HTMLElement | null = element.offsetParent;
+  let current: HTMLElement = element.offsetParent as HTMLElement;
 
   while (current !== null) {
     actualTop += current.offsetTop;
-    current = current.offsetParent;
+    current = current.offsetParent as HTMLElement;
   }
 
   return actualTop;
@@ -29,7 +29,7 @@ export function scrollToTop(top: number, behavior: ScrollBehavior = 'smooth') {
   window.scrollTo({ top, behavior });
 }
 
-export function scrollToEle(element: Element, offset: number = 0, behavior: ScrollBehavior = 'smooth') {
+export function scrollToEle(element: HTMLElement, offset: number = 0, behavior: ScrollBehavior = 'smooth') {
   window.scrollTo({ top: getElementTop(element) - offset, behavior });
 }
 
@@ -161,11 +161,11 @@ export const randomColor = () => {
 
 /**
  * 16进制色值获取反色设置方法
- * @param  {String} oldColor 为16进制色值的字符串（例：'#000000'）
  * @return {String} 返回反色的色值（例：'#ffffff'）
+ * @param color 需要反转的颜色
  */
-export const colorReverse = (color: string) => {
-  const reverseColor: string = '0x' + color.replace(/#/g, '');
+export const colorReverse = (color: string): string => {
+  const reverseColor: number = Number('0x' + color.replace(/#/g, ''));
   let str = '000000' + (0xffffff - reverseColor).toString(16);
   return '#' + str.substring(str.length - 6, str.length);
 };
@@ -199,7 +199,7 @@ export function enabledBodyScroll() {
 
 /**
  * 检查是否登录，如果没登录，弹出登录框
- * @param e: Event
+ * @param e
  */
 export const onCheckLogin = (e: Event) => {
   if (!store.getters.isLogin) {
@@ -207,13 +207,13 @@ export const onCheckLogin = (e: Event) => {
     if (e && e.stopPropagation) {
       e.stopPropagation();
     } else {
-      window.event.cancelBubble = true;
+      window.event && (window.event.cancelBubble = true);
     }
 
     if (e && e.preventDefault) {
       e.preventDefault();
     } else {
-      window.event.returnValue = false;
+      window.event && (window.event.returnValue = false);
     }
   }
 };
@@ -225,9 +225,10 @@ export const scrollToAnchor = () => {
   let anchor = window.location.hash.slice(1); // 获取URL中的锚点
   if (anchor) {
     anchor = decodeURIComponent(anchor);
-    nextTick(() => {const anchorElement = document.getElementById(anchor);
+    nextTick(() => {
+      const anchorElement = document.getElementById(anchor);
       if (anchorElement) {
-        scrollToEle(anchorElement, 58, 'smooth')
+        scrollToEle(anchorElement, 58, 'smooth');
       }
     });
   }

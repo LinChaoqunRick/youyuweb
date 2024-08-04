@@ -1,5 +1,4 @@
 import {message} from "ant-design-vue";
-import Cookies from "js-cookie";
 import store from "@/store";
 import {computed} from "vue";
 import openSpin from "@/libs/tools/openSpin";

@@ -1,6 +1,5 @@
 {
   "extends": "@vue/tsconfig/tsconfig.web.json",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
   "compilerOptions": {
     "baseUrl": ".",
     "allowJs": true,  //编译时允许有js
@@ -9,10 +8,5 @@
     },
     "lib": ["es2015", "es2016", "dom", "es2018.promise"]
   },
-
-  "references": [
-    {
-      "path": "./tsconfig.config.json"
-    }
-  ]
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
 }
