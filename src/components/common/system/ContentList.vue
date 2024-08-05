@@ -138,7 +138,7 @@ const initData = () => {
   dataList.value = [];
   totalPageNum.value = 1;
   pageNum.value = 1;
-  totalNum.value = props.total;
+  totalNum.value = props.total ?? 0;
   getListData();
 };
 

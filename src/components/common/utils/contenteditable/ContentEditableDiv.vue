@@ -146,8 +146,8 @@ const updateModelValue = () => {
   emit("update:modelValue", box.value?.innerHTML);
 };
 
-const insertHtml = (html) => {
-  box.value.focus();
+const insertHtml = (html: string) => {
+  box.value?.focus();
   // 创建一个新的选区
   const selection = window.getSelection();
   // 如果光标位置原来就存在，就用原来的。
@@ -163,6 +163,7 @@ const insertHtml = (html) => {
   selection.addRange(range);
   dispatchInputEvent();
 };
+
 const insertText = (text) => {
   box.value.focus();
   const selection = window.getSelection();

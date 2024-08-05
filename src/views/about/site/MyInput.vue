@@ -15,10 +15,14 @@ const inputProps = ref({})
 
 onMounted(() => {
   for (const key in aInputRef.value) {
-    inputProps[key] = aInputRef.value[key];
+    inputProps.value[key] = aInputRef.value[key];
   }
+
+  console.log(inputProps.value);
 });
 
-defineExpose(aInputRef.value);
+defineExpose({
+  ...inputProps.value
+});
 </script>
 

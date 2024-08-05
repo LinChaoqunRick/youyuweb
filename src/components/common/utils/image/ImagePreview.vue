@@ -76,7 +76,7 @@
       <div class="image-thumbnails" :class="{'flex-box': isThumbsOverScreen}" ref="imageThumbnailRef">
         <div
           v-for="(item, index) in props.list"
-          :key="item.id"
+          :key="item"
           class="image-item-thumbnail"
           :class="{ active: index === current }"
           @click="onClickThumbnail(index)"
@@ -96,7 +96,7 @@ import { useIdle } from '@vueuse/core';
 
 const props = defineProps({
   list: {
-    type: Array,
+    type: Array<string>,
     required: true
   },
   originTransfer: {
@@ -133,7 +133,8 @@ const isThumbsOverScreen = computed(() => {
 });
 
 onMounted(() => {
-  imageThumbnailWidth.value = document.getElementsByClassName('image-item-thumbnail')[0]?.offsetWidth ?? 0;
+  const firstItem = document.getElementsByClassName('image-item-thumbnail')[0] as HTMLImageElement;
+  imageThumbnailWidth.value = firstItem?.offsetWidth ?? 0;
 });
 
 const handleFooterScroll = () => {
@@ -141,9 +142,9 @@ const handleFooterScroll = () => {
   const halfDocumentClientWidth = documentClientWidth / 2;
   const currentOffset = current.value * imageThumbnailWidth.value;
   if (currentOffset > halfDocumentClientWidth) {
-    imageThumbnailRef.value.scrollLeft = currentOffset + imageThumbnailWidth.value / 2 - halfDocumentClientWidth;
+    imageThumbnailRef.value && (imageThumbnailRef.value.scrollLeft = currentOffset + imageThumbnailWidth.value / 2 - halfDocumentClientWidth);
   } else {
-    imageThumbnailRef.value.scrollLeft = 0;
+    imageThumbnailRef.value && (imageThumbnailRef.value.scrollLeft = 0);
   }
 };
 
@@ -191,7 +192,7 @@ function listenWheel() {
       scale.value = _scale;
     }
 
-    if (e?.target.className.includes('drag-mask')) {
+    if ((e.target as HTMLElement)?.className.includes('drag-mask')) {
       // 图片的中心坐标
       const origin = {
         x: window.innerWidth * 0.5 + x,

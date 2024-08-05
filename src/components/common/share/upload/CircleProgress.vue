@@ -31,14 +31,6 @@
 <script setup lang="ts">
 import {ref, computed, onMounted, watch, defineProps} from 'vue';
 
-interface Props {
-  value: number;
-  size?: number;
-  strokeWidth?: number;
-  backColor?: string;
-  frontColor?: string;
-}
-
 const props = defineProps({
   value: {
     type: Number,

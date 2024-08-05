@@ -20,7 +20,7 @@
                     v-model:pageSize="size"
                     v-bind="paginationConfig"
                     :total="total"
-                    :show-total="total => `共${total}条`"
+                    :show-total="() => `共${total}条`"
                     @change="handleChange">
         <template #itemRender="{ type, originalElement }">
           <a v-if="type === 'prev'">上一页</a>
