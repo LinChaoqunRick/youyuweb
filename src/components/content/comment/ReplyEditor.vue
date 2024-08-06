@@ -61,7 +61,7 @@
     }
   }
 
-  function emojiHandler(emoji) {
+  function emojiHandler(emoji: string) {
     const textarea = document.querySelector(".reply-editor")?.querySelector("textarea");
     if (textarea) {
       value.value = insert(textarea, emoji, {});
