@@ -102,6 +102,8 @@ import openImage from '@/libs/tools/openImage';
 import { message, Modal } from 'ant-design-vue';
 import { convertHEICUrlToBlob, getUrlImageFormat, formatSize } from '@/components/common/utils/upload/utils';
 import dayjs from 'dayjs';
+import type { UploadResult } from '@/components/common/utils/upload/types';
+import type { AlbumImageItem } from '@/views/album/detail/types';
 
 const { getters, dispatch } = useStore();
 
@@ -112,12 +114,12 @@ const collapse = ref<boolean>(false);
 const albumId = route.params.albumId;
 const ContentListRef = ref<InstanceType<typeof ContentList>>(null);
 const AlbumDetailInfoRef = ref<InstanceType<typeof AlbumDetailInfo>>(null);
-const imageList = computed(() => ContentListRef.value?.list);
+const imageList = computed<Array<AlbumImageItem>>(() => ContentListRef.value?.list);
 
 const params = computed(() => ({ id: albumId, pageSize: 25 }));
 const albumDetailData = computed(() => AlbumDetailInfoRef.value?.data);
 const selection = ref(false);
-const checkedList = ref([]);
+const checkedList = ref<Array<AlbumImageItem>>([]);
 
 const onCollapse = () => {
   collapse.value = !collapse.value;
@@ -132,12 +134,12 @@ const onClickUpload = async () => {
     maskClosable: false,
     title: '上传照片',
     width: '1200px',
-    beforeConfirm: (done: Function, data: object[]) => {
+    beforeConfirm: (done: Function, data: UploadResult[]) => {
       if (!data) {
         // data为undefined表示都上传成功了
         done();
       } else {
-        const successData = data.map((item: object) => {
+        const successData = data.map(item => {
           item.file.url = item.file.thumb;
           return item.file;
         });
@@ -151,7 +153,7 @@ const onApply = () => {
   console.log('onApply');
 };
 
-const onImageClick = (item: object, index: object) => {
+const onImageClick = (item: AlbumImageItem, index: number) => {
   if (selection.value) {
     if (checkedList.value.includes(item)) {
       const findIndex = checkedList.value.findIndex(i => i === item);

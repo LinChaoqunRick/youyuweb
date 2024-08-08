@@ -1,5 +1,7 @@
 interface ComponentProps {
-  list: [];
+  list: string[];
+  current: number;
+  originTransfer: (index: number) => string;
 }
 
 export interface ImageModalConfig {

@@ -1,6 +1,7 @@
 export interface FileExtend extends File {
   thumb?: string;
   progress: number;
+  url?: string;
 }
 
 export interface UploadResult {

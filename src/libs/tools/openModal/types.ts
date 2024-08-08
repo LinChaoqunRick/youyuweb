@@ -5,5 +5,8 @@ export interface ModalConfig {
   cancelText?: string;
   okText?: string;
   componentProps?: object;
-  beforeConfirm?: (done: Function, params: any) => void;
+  maskClosable?: boolean;
+  title: string;
+  width?: number | string;
+  beforeConfirm?: (done: (params?: any) => void, params: any) => void;
 }
