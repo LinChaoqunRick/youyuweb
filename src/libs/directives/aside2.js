@@ -1,4 +1,4 @@
-import {getElementTop} from "@/assets/utils/utils";
+import { getElementTop } from '@/assets/utils/utils';
 
 /**
  *  参照元素id必须为`aside-right`
@@ -22,52 +22,58 @@ function handleScroll() {
 
     // 如果aside高度比较小，直接sticky
     if (aside.clientHeight < document.documentElement.clientHeight - footer.clientHeight - header.clientHeight) {
-      aside.style.cssText = `position: sticky;top: ${elInitTop}px`
+      aside.style.cssText = `position: sticky;top: ${elInitTop}px`;
       return;
     }
 
     parent.style.cssText = `min-height:${aside.clientHeight}px;`;
 
-    if (dir && windowScrollBottom > asideBottom) { // 如果向下滚动且超过了下限
+    if (dir && windowScrollBottom > asideBottom) {
+      // 如果向下滚动且超过了下限
       if (youyuApp.clientHeight < document.body.clientHeight) {
         aside.style.cssText = `position: relative;`;
       } else {
         cacheTop = getElementTop(aside);
-        aside.style.cssText = `position: absolute;bottom: ${(footerTop - windowScrollBottom) > 0 ? footerTop - windowScrollBottom : 0}px`;
+        aside.style.cssText = `position: absolute;bottom: ${
+          footerTop - windowScrollBottom > 0 ? footerTop - windowScrollBottom : 0
+        }px`;
       }
-    } else if (!dir) { // 向上滚动
-      if (windowScrollTop < elInitTop - 68) { // 如果超过了header + 初始位置
+    } else if (!dir) {
+      // 向上滚动
+      if (windowScrollTop < elInitTop - 68) {
+        // 如果超过了header + 初始位置
         cacheTop = elInitTop;
         aside.style.cssText = `position: relative;top: 0px`;
-      } else if (windowScrollTop < getElementTop(aside) - header.clientHeight) { // 如果超过了上限
+      } else if (windowScrollTop < getElementTop(aside) - header.clientHeight) {
+        // 如果超过了上限
         cacheTop = getElementTop(aside);
         aside.style.cssText = `position: sticky;top: 68px`;
       }
     } else {
       aside.style.cssText = `position: relative;top: ${cacheTop - elInitTop}px`;
     }
-  }
+  };
 }
 
 const onScroll = handleScroll();
 
 export default {
   mounted(el, binding) {
-    youyuApp = document.getElementById("youyu-app");
-    header = document.getElementById("header");
-    footer = document.getElementById("footer");
-    asideRight = document.getElementById("aside-right");
+    youyuApp = document.getElementById('youyu-app');
+    header = document.getElementById('header');
+    footer = document.getElementById('footer');
+    asideRight = document.getElementById('aside-right');
     aside = el;
     elInitTop = getElementTop(aside);
     cacheTop = elInitTop;
     parent = el.parentNode;
-    document.addEventListener("scroll", onScroll, false);
+    document.addEventListener('scroll', onScroll, false);
   },
 
   unmounted() {
-    document.removeEventListener("scroll", onScroll, false);
-  }
-}
+    document.removeEventListener('scroll', onScroll, false);
+  },
+};
 
 // const observer = new MutationObserver((mutationList) => {
 //   // if (height !== contentRef.current?.clientHeight) {

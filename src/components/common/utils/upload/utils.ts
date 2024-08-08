@@ -1,9 +1,10 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, type AxiosProgressEvent } from 'axios';
 import store from '@/store';
 import { message } from 'ant-design-vue';
 import dayjs from 'dayjs';
 import { merge } from 'lodash';
 import heic2any from 'heic2any';
+import type { UploadConfig, UploadResult } from './types';
 
 export const isImageFile = (file: File) => {
   // 检查图片类型
@@ -15,32 +16,6 @@ export const isImageFile = (file: File) => {
   return isJPG || isPNG || isBMP || isGIF || isWEBP;
 };
 
-export interface ossType {
-  policy?: string;
-  signature?: string;
-  OSSAccessKeyId?: string;
-  dir?: string;
-  host?: string;
-}
-
-interface policy {
-  policy: string;
-  signature: string;
-  accessKeyId: string;
-  key: string;
-  dir: string;
-  host: string;
-  success_action_status: string;
-}
-
-interface uploadConfig {
-  accept?: string;
-  maxSize?: number;
-  needTip?: boolean;
-  base?: string;
-  progress?: Function;
-}
-
 /**
  * 创建文件存储路径
  * @param rootDir bucket的根目录
@@ -50,7 +25,7 @@ export function createFileName(fileName: string) {
   return dayjs(new Date()).format('YYYYMMDDHHmmss') + '_' + fileName;
 }
 
-export async function uploadToOss(files: File[], config?: uploadConfig) {
+export async function uploadToOss(files: File[], config?: UploadConfig): Promise<UploadResult[]> {
   const defaultConfig = {
     accept: '.jpg, .jpeg, .png, .JPG, .PNG',
     maxSize: 20,
@@ -97,7 +72,7 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
 
   // 上传步骤2： 上传文件至oss
   return await Promise.all(
-    files.map(async (file: File, index: number) => {
+    files.map(async (file: File, index: number): Promise<UploadResult> => {
       const file_name = createFileName(file.name);
       const form = new FormData();
       form.append('policy', data.policy);
@@ -115,8 +90,8 @@ export async function uploadToOss(files: File[], config?: uploadConfig) {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
-          onUploadProgress: progressEvent => {
-            const progress = Number((((progressEvent.loaded / progressEvent.total) * 100) | 0).toFixed(2));
+          onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+            const progress = Number((((progressEvent.loaded / (progressEvent?.total || 1)) * 100) | 0).toFixed(2));
             progressList[index] = progress;
             mergedConfig?.progress?.(progressList);
           },
@@ -157,7 +132,7 @@ export const getXmlTextContent = (xml: string, tag: string) => {
   return tagElement?.textContent;
 };
 
-export const convertHEICFileToBlob = async heicFile => {
+export const convertHEICFileToBlob = async (heicFile: File) => {
   const blob = await heic2any({
     blob: heicFile,
     toType: 'image/jpeg',

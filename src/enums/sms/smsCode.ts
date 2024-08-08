@@ -5,4 +5,4 @@ export default {
   LOGIN: 3,
   CHANGE_TELEPHONE_PREV: 4,
   CHANGE_TELEPHONE_NEXT: 5,
-}
+};

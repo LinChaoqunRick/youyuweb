@@ -3,24 +3,28 @@
  * 案例：
  * <div v-login="onSetLike">点赞</div>
  */
-import type {DirectiveBinding, ref} from 'vue';
-import store from "@/store";
+import type { DirectiveBinding, ref } from 'vue';
+import store from '@/store';
 
 export default {
   created(el: HTMLElement, binding: DirectiveBinding) {
     const callback = binding.value;
-    el.addEventListener('click', (e: Event) => {
-      /*const event = e || window.event;
+    el.addEventListener(
+      'click',
+      (e: Event) => {
+        /*const event = e || window.event;
       if (event.stopPropagation){
         event.stopPropagation();
       } else {
         event.cancelBubble = true;
       }*/
-      if (!store.getters.isLogin) {
-        store.commit('changeLogin', true);
-      } else {
-        callback && callback();
-      }
-    }, false);
-  }
-}
+        if (!store.getters.isLogin) {
+          store.commit('changeLogin', true);
+        } else {
+          callback && callback();
+        }
+      },
+      false
+    );
+  },
+};

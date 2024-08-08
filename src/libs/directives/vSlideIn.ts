@@ -11,7 +11,7 @@ const ob = new IntersectionObserver(entries => {
       ob.unobserve(entry.target);
     }
   }
-})
+});
 
 function isBelowViewPoint(el: HTMLElement) {
   const rect = el.getBoundingClientRect();
@@ -23,19 +23,22 @@ export default {
     if (!isBelowViewPoint(el)) {
       return;
     }
-    const animation = el.animate([
+    const animation = el.animate(
+      [
+        {
+          transform: `translateY(${DISTANCE}px)`,
+          opacity: 0.5,
+        },
+        {
+          transform: 'translateY(0)',
+          opacity: 1,
+        },
+      ],
       {
-        transform: `translateY(${DISTANCE}px)`,
-        opacity: 0.5
-      },
-      {
-        transform: 'translateY(0)',
-        opacity: 1
+        duration: DURATION,
+        easing: 'ease',
       }
-    ], {
-      duration: DURATION,
-      easing: 'ease'
-    });
+    );
     animation.pause();
     animationMap.set(el, animation);
     ob.observe(el);
@@ -43,5 +46,5 @@ export default {
 
   unmounted(el: HTMLElement) {
     ob.unobserve(el);
-  }
-}
+  },
+};

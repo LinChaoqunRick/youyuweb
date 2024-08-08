@@ -1,4 +1,4 @@
-import {getElementTop} from "@/assets/utils/utils";
+import { getElementTop } from '@/assets/utils/utils';
 
 const handleScroll = (el, callback) => {
   return () => {
@@ -6,16 +6,15 @@ const handleScroll = (el, callback) => {
     if (windowScrollTop >= getElementTop(el)) {
       console.log(getElementTop(el));
     }
-  }
+  };
 };
 
 export default {
   mounted(el, binding) {
-
-    document.addEventListener("scroll", handleScroll(el, binding.value), false);
+    document.addEventListener('scroll', handleScroll(el, binding.value), false);
   },
 
   unmounted(el, binding) {
-    document.removeEventListener("scroll", handleScroll(el, binding.value), false);
-  }
+    document.removeEventListener('scroll', handleScroll(el, binding.value), false);
+  },
 };

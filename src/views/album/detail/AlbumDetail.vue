@@ -110,8 +110,8 @@ const userInfo = computed(() => getters['userInfo']);
 
 const collapse = ref<boolean>(false);
 const albumId = route.params.albumId;
-const ContentListRef = ref(null);
-const AlbumDetailInfoRef = ref(null);
+const ContentListRef = ref<InstanceType<typeof ContentList>>(null);
+const AlbumDetailInfoRef = ref<InstanceType<typeof AlbumDetailInfo>>(null);
 const imageList = computed(() => ContentListRef.value?.list);
 
 const params = computed(() => ({ id: albumId, pageSize: 25 }));
@@ -124,7 +124,7 @@ const onCollapse = () => {
 };
 
 const onClickUpload = async () => {
-  const res = await openModal({
+  await openModal({
     component: UploadImageList,
     componentProps: {
       albumId: albumId,
@@ -141,7 +141,6 @@ const onClickUpload = async () => {
           item.file.url = item.file.thumb;
           return item.file;
         });
-        console.log(successData);
         imageList.value.unshift(...successData);
       }
     },

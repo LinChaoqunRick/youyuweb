@@ -102,8 +102,9 @@ import {
   Pic,
   LinkCloud,
 } from '@icon-park/vue-next';
+import type { App } from 'vue';
 
-const IconPark = app => {
+const IconPark = (app: App<Element>) => {
   app.component('IToTop', ToTop);
   app.component('IMore', More);
   app.component('IPlus', Plus);

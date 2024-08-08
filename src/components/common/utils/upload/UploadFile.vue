@@ -1,7 +1,17 @@
 <template>
   <div class="upload-file" :class="{ disabled: disabled }">
-    <input type="file" multiple v-bind="$attrs" :accept="accept" :disabled="disabled" :capture="null"
-           v-if="visible" style="display: none" @change="handleChange" ref="inputRef" />
+    <input
+      type="file"
+      multiple
+      v-bind="$attrs"
+      :accept="accept"
+      :disabled="disabled"
+      :capture="null"
+      v-if="visible"
+      style="display: none"
+      @change="handleChange"
+      ref="inputRef"
+    />
     <div class="input-trigger" @click="onTriggerInput">
       <slot :progress="progress">
         <div class="upload-box">
@@ -22,39 +32,40 @@ import { message } from 'ant-design-vue';
 import { merge } from 'lodash';
 import { convertHEICFileToBlob, uploadToOss } from '@/components/common/utils/upload/utils';
 import { AxiosError } from 'axios';
+import type { FileExtend, UploadResult } from './types';
 
 const inputRef = ref<HTMLInputElement | null>(null);
 
-const files = defineModel({ default: [] }); // v-model双向绑定
+const files = defineModel<Array<FileExtend | string>>({ default: [] }); // v-model双向绑定
 const props = defineProps({
   config: {
     type: Object,
-    default: () => ({})
+    default: () => ({}),
   },
   disabled: {
     type: Boolean,
-    default: false
+    default: false,
   },
   maxSize: {
     type: Number,
-    default: 20
+    default: 20,
   },
   maxNum: {
     type: Number,
-    default: 0
+    default: 0,
   },
   accept: {
     type: String,
-    default: '.jpg, .jpeg, .png, .JPG, .PNG'
+    default: '.jpg, .jpeg, .png, .JPG, .PNG',
   },
   autoUpload: {
     type: Boolean,
-    default: false
+    default: false,
   },
   autoClear: {
     type: Boolean,
-    default: true
-  }
+    default: true,
+  },
 });
 
 const progress = ref<number[]>([]);
@@ -65,7 +76,7 @@ const emit = defineEmits(['change', 'uploadSuccess', 'onProgress']);
 
 const handleChange = async (event: Event) => {
   const inputElement = event.target as HTMLInputElement;
-  const originFiles = Object.values(inputElement.files);
+  const originFiles: Array<FileExtend> = Object.values(inputElement.files);
   if (props.maxNum !== 0 && files.value.length + originFiles.length > props.maxNum) {
     message.error(`最多可上传${props.maxNum}个文件`);
     return false;
@@ -107,7 +118,7 @@ const onTriggerInput = () => {
 };
 
 const upload = async () => {
-  const uploadFiles = files.value.filter(item => item.progress < 0);
+  const uploadFiles = files.value.filter(item => (item as FileExtend).progress < 0);
   if (!uploadFiles.length) {
     return;
   }
@@ -116,14 +127,14 @@ const upload = async () => {
     needTip: false, // 不需要提示
     progress: uploadProgress,
     accept: props.accept,
-    maxSize: props.maxSize
+    maxSize: props.maxSize,
   };
   const mergedConfig = merge(defaultConfig, props.config);
-  const res = await uploadToOss(uploadFiles, mergedConfig);
-  res?.forEach((item: object, index: number) => {
+  const res: UploadResult[] = await uploadToOss(uploadFiles as File[], mergedConfig);
+  res?.forEach((item: UploadResult) => {
     if (item.url) {
       const findIndex = files.value.findIndex(file => file === item.file);
-      files.value[findIndex] = item.file.thumb;
+      files.value[findIndex] = item.file.thumb as string;
     }
   });
   const isError = res?.find(item => item instanceof AxiosError);
@@ -138,7 +149,7 @@ const upload = async () => {
 const uploadProgress = (progressList: number[]) => {
   console.log(files.value);
   let count = 0;
-  progress.value = files.value.map((item, index) => (typeof item === 'object') ? progressList[count++] : 100);
+  progress.value = files.value.map((item, index) => (typeof item === 'object' ? progressList[count++] : 100));
 
   if (progress.value.length) {
     const total = progress.value.reduce((pre, n) => pre + n, 0);
@@ -153,7 +164,7 @@ defineExpose({
   files,
   upload,
   progress,
-  triggerInput: onTriggerInput
+  triggerInput: onTriggerInput,
 });
 </script>
 
