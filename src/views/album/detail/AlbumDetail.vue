@@ -73,7 +73,8 @@
             </template>
             设为封面
           </a-button>
-          <a-button type="primary" danger shape="round" v-if="selection" :disabled="!checkedList.length" @click="onDelete">
+          <a-button type="primary" danger shape="round" v-if="selection" :disabled="!checkedList.length"
+                    @click="onDelete">
             <template #icon>
               <i-delete-five theme="outline" size="16" fill="currentColor" />
             </template>
@@ -111,10 +112,10 @@ const route = useRoute();
 const userInfo = computed(() => getters['userInfo']);
 
 const collapse = ref<boolean>(false);
-const albumId = route.params.albumId;
-const ContentListRef = ref<InstanceType<typeof ContentList>>(null);
-const AlbumDetailInfoRef = ref<InstanceType<typeof AlbumDetailInfo>>(null);
-const imageList = computed<Array<AlbumImageItem>>(() => ContentListRef.value?.list);
+const albumId: string = route.params.albumId as string;
+const ContentListRef = ref<InstanceType<typeof ContentList> | null>(null);
+const AlbumDetailInfoRef = ref<InstanceType<typeof AlbumDetailInfo> | null>(null);
+const imageList = computed<Array<AlbumImageItem>>(() => ContentListRef.value?.list as Array<AlbumImageItem>);
 
 const params = computed(() => ({ id: albumId, pageSize: 25 }));
 const albumDetailData = computed(() => AlbumDetailInfoRef.value?.data);
@@ -129,7 +130,7 @@ const onClickUpload = async () => {
   await openModal({
     component: UploadImageList,
     componentProps: {
-      albumId: albumId,
+      albumId: albumId
     },
     maskClosable: false,
     title: '上传照片',
@@ -145,7 +146,7 @@ const onClickUpload = async () => {
         });
         imageList.value.unshift(...successData);
       }
-    },
+    }
   });
 };
 
@@ -172,18 +173,18 @@ const onImageClick = (item: AlbumImageItem, index: number) => {
         if (originUrl) {
           return originUrl;
         } else {
-          return dispatch('getAlbumImageOrigin', { id: imageList.value[index].id }).then(res => {
+          return dispatch('getAlbumImageOrigin', { id: imageList.value[index].id }).then(async res => {
             const format = getUrlImageFormat(res.data);
             if (format.toLowerCase() === 'heic') {
-              imageList.value[index].originUrl = convertHEICUrlToBlob(res.data);
+              imageList.value[index].originUrl = await convertHEICUrlToBlob(res.data);
             } else {
               imageList.value[index].originUrl = res.data;
             }
             return imageList.value[index].originUrl;
           });
         }
-      },
-    },
+      }
+    }
   });
 };
 
@@ -212,10 +213,10 @@ const onDelete = () => {
       const ids = checkedList.value.map(item => item.id).join(',');
       dispatch('removeAlbumImage', { ids: ids }).then(res => {
         message.success('删除成功');
-        ContentListRef.value.list = ContentListRef.value?.list.filter(item => !checkedList.value.includes(item));
+        ContentListRef.value!.list = ContentListRef.value?.list.filter(item => !checkedList.value.includes(item));
         checkedList.value = [];
       });
-    },
+    }
   });
 };
 </script>

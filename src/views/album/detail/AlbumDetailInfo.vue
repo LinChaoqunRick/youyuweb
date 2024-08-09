@@ -39,6 +39,7 @@ import { computed, reactive, ref } from 'vue';
 import openModal from '@/libs/tools/openModal';
 import AlbumEdit from '@/views/album/list/AlbumEdit.vue';
 import { cloneDeep } from 'lodash';
+import type { AlbumDetailData } from './types';
 
 const props = defineProps({
   albumId: {
@@ -48,9 +49,9 @@ const props = defineProps({
 });
 
 const { getters, dispatch } = useStore();
-const data = ref({});
+const data = ref<AlbumDetailData | null>(null);
 const userInfo = computed(() => getters['userInfo']);
-const restAuthUserNumber = computed(() => data.value.authorizedUsers ? data.value.authorizedUsers?.split(',').length - data.value.authorizedUserList?.length : 0);
+const restAuthUserNumber = computed(() => data.value?.authorizedUsers ? data.value.authorizedUsers?.split(',').length - (data.value?.authorizedUserList?.length ?? 0) : 0);
 
 const initData = () => {
   dispatch('getAlbumDetail', { id: props.albumId }).then(res => {

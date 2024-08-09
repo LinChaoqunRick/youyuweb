@@ -91,7 +91,7 @@ const totalPageNum = ref<number>(0);
 const totalNum = ref<number>(props.total ?? 0);
 const restLoading = ref<boolean>(false);
 const failed = ref<boolean>(false);
-const dataList = ref<Array<any>>([]);
+const dataList = ref<Array<unknown>>([]);
 const fold = ref<boolean>(false);
 const restNum = computed(() => (props.total ?? totalNum.value) - dataList.value.length);
 

@@ -33,22 +33,24 @@ import { useStore } from 'vuex';
 import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
 import { inject, ref } from 'vue';
 import ImageItem from '@/components/common/utils/upload/components/ImageItem.vue';
+import type { FileExtend, UploadResult } from '@/components/common/utils/upload/types';
+import type { OpenModal } from '@/libs/tools/openModal/types';
 
 const props = defineProps({
   albumId: {
     type: [String, Number],
-    required: true,
-  },
+    required: true
+  }
 });
 
 const { dispatch } = useStore();
 
 const maxFileSize = 20;
 
-const images = ref<File[]>([]);
+const images = ref<Array<FileExtend | string>>([]);
 const progressList = ref<number[]>([]);
-const modal = inject('modal');
-const UploadFileRef = ref<InstanceType<typeof UploadFile>>(null);
+const modal = inject<OpenModal>('modal');
+const UploadFileRef = ref<InstanceType<typeof UploadFile> | null>(null);
 
 const onUploadProgress = (progress: number[]) => {
   progressList.value = progress;
@@ -59,17 +61,17 @@ const onImageDelete = (index: number) => {
 };
 
 const beforeConfirm = async (done: Function) => {
-  modal.confirmLoading = true;
-  const res = await UploadFileRef.value.upload().catch(console.error);
+  modal && (modal.confirmLoading = true);
+  const res = await UploadFileRef.value?.upload().catch(console.error);
   done(res);
-  modal.confirmLoading = false;
+  modal && (modal.confirmLoading = false);
 };
 
-const uploadSuccess = res => {
+const uploadSuccess = (res: UploadResult[]) => {
   const albumListRes = res.map(item => ({
     path: item.path,
     name: item.file.name,
-    size: item.file.size,
+    size: item.file.size
   }));
 
   dispatch('createAlbumImage', { images: albumListRes, albumId: Number(props.albumId) }).then(res => {
@@ -78,7 +80,7 @@ const uploadSuccess = res => {
 };
 
 defineExpose({
-  beforeConfirm,
+  beforeConfirm
 });
 </script>
 

@@ -10,3 +10,7 @@ export interface ModalConfig {
   width?: number | string;
   beforeConfirm?: (done: (params?: any) => void, params: any) => void;
 }
+
+export interface OpenModal {
+  confirmLoading: boolean;
+}

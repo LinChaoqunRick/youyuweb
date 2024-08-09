@@ -107,7 +107,7 @@ const emit = defineEmits(['onClose']);
 const current = defineModel('current', { type: Number, default: 0 });
 const { idle } = useIdle(2 * 1000);
 
-let image: HTMLImageElement,
+let image: HTMLDivElement,
   x: number = 0,
   y: number = 0,
   minScale: number = 0.2,
