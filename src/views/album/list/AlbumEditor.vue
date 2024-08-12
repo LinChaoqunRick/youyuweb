@@ -68,10 +68,6 @@ async function getFormData() {
   return await formRef.value.validate().catch(console.log);
 }
 
-function uploadSuccess(fileList: []) {
-  props.formValidate.cover = fileList[0].url;
-}
-
 defineExpose({
   getFormData
 });

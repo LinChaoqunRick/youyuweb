@@ -1,8 +1,8 @@
 <template>
   <div class="column-detail">
-    <div class="column-item">
+    <div class="column-item" v-if="column">
       <div class="column-cover">
-        <img :src="column.cover" />
+        <img :src="column.cover" alt="" />
       </div>
       <div class="column-data">
         <div class="column-title">
@@ -13,7 +13,7 @@
                 <template #content>
                   <a-button type="text" @click="onEdit">编辑专栏</a-button>
                   <a-button type="text" class="top-btn"
-                    ><span>{{ column.isTop === '1' ? '取消置顶' : '置顶' }}</span></a-button
+                  ><span>{{ column.isTop === 1 ? '取消置顶' : '置顶' }}</span></a-button
                   >
                   <a-button type="text" class="delete-btn" @click="onDelete">删除</a-button>
                 </template>
@@ -74,19 +74,8 @@ import openModal from '@/libs/tools/openModal';
 import ColumnEdit from '@/views/user/profile/column/list/ColumnEdit.vue';
 import { message, Modal } from 'ant-design-vue';
 import { cloneDeep } from 'lodash';
-import type { userType } from '@/types/user';
+import type { Column } from './types';
 
-interface Column {
-  id: number;
-  title: string;
-  content: string;
-  cover: string;
-  isTop: number,
-  createTime: string;
-  postNum: number;
-  subscriberNum: number;
-  user?: userType;
-}
 
 const { getters, dispatch } = useStore();
 const route = useRoute();
@@ -94,11 +83,11 @@ const route = useRoute();
 const activeKey = ref('postList');
 const columnId = route.params.columnId;
 const userInfo = computed(() => getters['userInfo']);
-const isOwn = computed(() => column.value.user?.id === userInfo.value.id);
-const column = ref<Column>({});
+const isOwn = computed(() => column.value?.user.id === userInfo.value.id);
+const column = ref<Column | null>(null);
 const listParams = computed(() => ({
   columnId,
-  pageSize: 20,
+  pageSize: 20
 }));
 
 const getColumnDetail = () => {
@@ -109,13 +98,15 @@ const getColumnDetail = () => {
 
 getColumnDetail();
 
-function handleSubscribe() {}
+function handleSubscribe() {
+}
 
 const onEdit = () => {
-  openModal({
+  openModal<Column>({
     component: ColumnEdit,
     componentProps: { columnId: column.value.id },
-  }).then(res => {
+    title: '编辑专栏'
+  }).then((res) => {
     column.value.title = res.title;
     column.value.content = res.content;
     column.value.cover = res.cover;
@@ -130,17 +121,16 @@ const onDelete = () => {
     async onOk() {
       const res = await dispatch('deleteColumn', { columnId: column.value.id });
       message.success('删除成功');
-    },
+    }
   });
 };
 
-const onRemoveConfirm = item => {
+const onRemoveConfirm = (item: Column) => {
   const post = cloneDeep(item);
   post.columnIds = post.columnIds
     .split(',')
-    .filter(id => id != columnId)
+    .filter((id: number | string) => id != columnId)
     .join(',');
-  // dispatch("")
 };
 </script>
 

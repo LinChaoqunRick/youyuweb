@@ -213,7 +213,7 @@ const onDelete = () => {
       const ids = checkedList.value.map(item => item.id).join(',');
       dispatch('removeAlbumImage', { ids: ids }).then(res => {
         message.success('删除成功');
-        ContentListRef.value!.list = ContentListRef.value?.list.filter(item => !checkedList.value.includes(item));
+        ContentListRef.value && (ContentListRef.value.list = ContentListRef.value?.list.filter(item => !checkedList.value.includes(item)) ?? []);
         checkedList.value = [];
       });
     }

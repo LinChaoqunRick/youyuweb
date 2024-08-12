@@ -6,7 +6,7 @@ import router from '@/router';
 import IconPark from '@/libs/plugins/iconpark';
 import type { ModalConfig } from './types';
 
-export default function openModal(config: ModalConfig): Promise<number> {
+export default function openModal<T>(config: ModalConfig): Promise<T> {
   const modalProps = { ...Modal.props };
   // 删除visible、confirmLoading用自定义
   Reflect.deleteProperty(modalProps, 'open');
