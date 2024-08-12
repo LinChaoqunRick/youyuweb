@@ -38,14 +38,14 @@
 </template>
 
 <script setup lang="ts">
-import type { AlbumType } from '@/views/album/type';
 import type { PropType } from 'vue';
 import dayjs from 'dayjs';
 import defaultImage from '@/assets/images/common/defaultImage.png';
+import type { AlbumDetailData } from '@/views/album/detail/types';
 
 const props = defineProps({
   data: {
-    type: Object as PropType<AlbumType>,
+    type: Object as PropType<AlbumDetailData>,
     required: true
   }
 });
