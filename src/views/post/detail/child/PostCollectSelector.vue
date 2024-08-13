@@ -1,7 +1,7 @@
 <template>
   <div class="post-select-collect">
     <a-checkbox v-for="item in favoritesList" :checked="form.favoritesId == item.id" @click="onCheck(item)">
-      <FavoritesItem :data="item" :show-more-btn="false"/>
+      <FavoritesItem :data="item" :show-more-btn="false" />
     </a-checkbox>
   </div>
 </template>
@@ -12,27 +12,28 @@ import { ref, reactive, type PropType, computed, inject } from 'vue';
 import type { FavoritesType } from '@/views/user/profile/favorites/type';
 import FavoritesItem from '@/views/user/profile/favorites/components/FavoritesItem.vue';
 import { message } from 'ant-design-vue';
+import type { Post, PostCollect } from '@/views/post/detail/types';
 
 const { dispatch, getters } = useStore();
 const props = defineProps({
   post: {
-    type: Object as PropType<any>,
-    required: true,
+    type: Object as PropType<Post>,
+    required: true
   },
   setPostAttribute: {
-    type: Function,
-  },
+    type: Function
+  }
 });
 
 const modal = inject('modal');
 const userInfo = computed(() => getters['userInfo']);
 const favoritesList = ref<FavoritesType[]>();
 
-const form = reactive({
+const form: PostCollect = reactive({
   postId: props.post.id,
   userId: userInfo.value.id,
   userIdTo: props.post.userId,
-  favoritesId: null,
+  favoritesId: ''
 });
 
 const initData = async () => {
@@ -42,7 +43,7 @@ const initData = async () => {
 
   await dispatch('getPostCollectInfo', {
     postId: props.post.id,
-    userId: userInfo.value.id,
+    userId: userInfo.value.id
   }).then(res => {
     const data = res.data;
     if (!data) {
@@ -82,7 +83,7 @@ const onCheck = (item: FavoritesType) => {
 };
 
 defineExpose({
-  beforeConfirm,
+  beforeConfirm
 });
 </script>
 

@@ -9,7 +9,7 @@
   import {useStore} from "vuex";
   import {onBeforeRouteLeave, useRoute, useRouter} from "vue-router";
   import PostEditor from "./PostEditor.vue";
-  import type {postData} from "@/types/post";
+  import type {postData} from "@/views/post/detail/types";
   import {notification} from "ant-design-vue";
   import {cloneDeep} from 'lodash';
 

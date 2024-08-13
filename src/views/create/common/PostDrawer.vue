@@ -120,7 +120,7 @@ import type {TreeSelectProps} from 'ant-design-vue';
 import {message} from 'ant-design-vue';
 import {useStore} from 'vuex';
 import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
-import type {postData} from "@/types/post";
+import type {postData} from "@/views/post/detail/types";
 import {getMarkDownImages} from "@/assets/utils/utils";
 import openImage from "@/libs/tools/openImage";
 import openModal from "@/libs/tools/openModal";

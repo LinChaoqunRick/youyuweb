@@ -1,4 +1,4 @@
-export interface postData {
+export interface Post {
   id: number | null,
   title: string,
   content: string,
@@ -11,4 +11,11 @@ export interface postData {
   userId: number | null,
   columnIds: string | string[] | number[] | null,
   user: object
+}
+
+export interface PostCollect {
+  postId: number,
+  userId: number,
+  userIdTo: number,
+  favoritesId: string,
 }

@@ -46,8 +46,8 @@
       <a-tab-pane key="postList" tab="收录文章">
         <div class="post-list">
           <YTable listUrl="getColumnPosts" :params="listParams">
-            <template #default="{ dataList }">
-              <div v-for="(item, index) in dataList" class="article-item" :key="item.postId">
+            <template #default="{ dataList}">
+              <div v-for="(item, index) in dataList" class="article-item" :key="item.id">
                 <PostItem :data="item" :index="index">
                   <template v-slot:footer>
                     <a-popconfirm title="是否移除本文?" ok-text="是" cancel-text="否" @confirm="onRemoveConfirm(item)">
@@ -75,6 +75,7 @@ import ColumnEdit from '@/views/user/profile/column/list/ColumnEdit.vue';
 import { message, Modal } from 'ant-design-vue';
 import { cloneDeep } from 'lodash';
 import type { Column } from './types';
+import type { Post } from '@/views/post/detail/types';
 
 
 const { getters, dispatch } = useStore();
@@ -102,6 +103,7 @@ function handleSubscribe() {
 }
 
 const onEdit = () => {
+  if (!column.value) return;
   openModal<Column>({
     component: ColumnEdit,
     componentProps: { columnId: column.value.id },

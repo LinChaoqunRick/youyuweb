@@ -59,7 +59,7 @@ export default function openImage(config: ImageModalConfig) {
       mounted() {
         this.visible = true;
       },
-    }).use(Antd);
+    }, config).use(Antd);
     IconPark(Comp);
     const preview = document.createElement('div');
     const instance = Comp.mount(preview);

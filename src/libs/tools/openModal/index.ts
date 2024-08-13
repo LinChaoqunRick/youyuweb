@@ -17,7 +17,7 @@ export default function openModal<T>(config: ModalConfig): Promise<T> {
       cancelText: '取消',
       okText: '确定',
       componentProps: {},
-      beforeConfirm: null,
+      beforeConfirm: null
     },
     config
   );
@@ -31,26 +31,26 @@ export default function openModal<T>(config: ModalConfig): Promise<T> {
       components: {
         [config.component.name as string]: config.component,
         Modal,
-        Button,
+        Button
       },
       provide() {
         return {
-          modal: this,
+          modal: this
         };
       },
       data() {
         return {
           confirmLoading: false,
-          modalVisible: true,
+          modalVisible: true
         };
       },
       template: `
         <Modal v-model:open="modalVisible" v-bind="$props" class="modal-body" @cancel="handleCancel(false)">
           <div class="modal-content" style="font-size:14px">
-            <component ref="modalBody" is="${config.component.name}" v-bind="componentProps"/>
+            <component ref="modalBody" is="${config.component.name}" v-bind="componentProps" />
           </div>
           <template v-slot:closeIcon>
-            <i-close theme="outline" size="18" fill="currentColor"/>
+            <i-close theme="outline" size="18" fill="currentColor" />
           </template>
           <template v-slot:footer>
             <Button v-if="cancelText" type="text" @click="handleCancel" :size="buttonSize">
@@ -65,19 +65,19 @@ export default function openModal<T>(config: ModalConfig): Promise<T> {
       props: {
         componentProps: {
           type: Object,
-          default: () => ({}),
+          default: () => ({})
         },
         ...modalProps,
         ...{
           title: {
             type: String,
-            default: '提示',
+            default: '提示'
           },
           buttonSize: {
             type: String,
-            default: 'medium',
-          },
-        },
+            default: 'medium'
+          }
+        }
       },
       methods: {
         close() {
@@ -109,9 +109,9 @@ export default function openModal<T>(config: ModalConfig): Promise<T> {
           } else {
             this.ok();
           }
-        },
-      },
-    })
+        }
+      }
+    }, config)
       .use(store)
       .use(router)
       .use(Antd);

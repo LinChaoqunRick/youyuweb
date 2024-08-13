@@ -121,7 +121,7 @@ import { Modal, message } from 'ant-design-vue';
 import { useStore } from 'vuex';
 import { debounce } from 'lodash';
 import { scrollToTop, scrollToAnchor } from '@/assets/utils/utils';
-import type { postData } from '@/types/post';
+import type { Post } from '@/views/post/detail/types';
 
 import PercentCounter from '@/components/common/utils/percentCounter/PercentCounter.vue';
 import MdPreview from '@/components/content/mdEditor/MdPreview.vue';
@@ -137,7 +137,7 @@ const reload = inject('reload');
 const route = useRoute();
 const router = useRouter();
 const { state, dispatch, getters } = useStore();
-const post = ref<postData>({
+const post = ref<Post>({
   id: null,
   title: '',
   content: '',

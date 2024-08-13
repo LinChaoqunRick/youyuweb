@@ -86,6 +86,7 @@ function onLike() {
 }
 
 async function onCollect() {
+  console.log(post.value);
   const res = await openModal({
     component: PostCollectSelector,
     componentProps: {

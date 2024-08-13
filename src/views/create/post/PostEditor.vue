@@ -21,7 +21,7 @@
   import {ref} from 'vue';
   import type {PropType} from 'vue';
   import {useStore} from 'vuex';
-  import type {postData} from "@/types/post";
+  import type {postData} from "@/views/post/detail/types";
   import MdEditorCom from "@/components/content/mdEditor/MdEditorCom.vue";
   import PostDrawer from "../common/PostDrawer.vue";
 

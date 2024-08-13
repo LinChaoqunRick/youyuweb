@@ -1,5 +1,5 @@
 <template>
-  <div class="album-detail-info">
+  <div class="album-detail-info" v-if="data">
     <div class="header-tip">
       <a-alert type="info" show-icon>
         <template #message>
@@ -61,6 +61,7 @@ const initData = () => {
 initData();
 
 const onEdit = async () => {
+  console.log(data.value);
   const res = await openModal({
     component: AlbumEdit,
     componentProps: {

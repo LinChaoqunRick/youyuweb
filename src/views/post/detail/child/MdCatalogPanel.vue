@@ -2,7 +2,7 @@
   <div class="md-catalog-panel">
     <div class="fold-panel">
       <div class="switch" @click="handleShow" v-show="!move">
-        <i-list-middle theme="outline" size="22" fill="currentColor"/>
+        <i-list-middle theme="outline" size="22" fill="currentColor" />
       </div>
       <div v-show="show"
            class="md-catalog-wrapper"
@@ -10,22 +10,22 @@
            ref="mdCatalogWrapperRef">
         <div ref="handle" class="catalog-title">
           <div class="header-title">
-            <i-list-middle theme="outline" :strokeWidth="3" size="18" fill="currentColor"/>
+            <i-list-middle theme="outline" :strokeWidth="3" size="18" fill="currentColor" />
             目录
           </div>
           <div class="move-switch" @click="onMove">
-            <i-direction-adjustment-three theme="outline" :strokeWidth="3" size="18" fill="#141414"/>
+            <i-direction-adjustment-three theme="outline" :strokeWidth="3" size="18" fill="#141414" />
           </div>
         </div>
         <div class="catalog-body youyu-scrollbar">
           <md-catalog
-              :editor-id="editorId"
-              :scroll-element="scrollElement"
-              :offsetTop="80"
-              :scrollElementOffsetTop="headerClientHeight"
-              :mdHeadingId="createMdHeadingId"
-              @onClick="onHeadingClick"
-              ref="mdCatalogRef"
+            :editor-id="editorId"
+            :scroll-element="scrollElement"
+            :offsetTop="80"
+            :scrollElementOffsetTop="headerClientHeight"
+            :mdHeadingId="createMdHeadingId"
+            @onClick="onHeadingClick"
+            ref="mdCatalogRef"
           />
         </div>
         <div class="resize-handler resize-n"></div>
@@ -42,22 +42,20 @@
 </template>
 
 <script setup lang="ts">
-import {ref, onMounted, onUpdated, watch, nextTick} from 'vue';
-import {useRouter} from "vue-router";
-import {useDraggable} from '@vueuse/core';
-import {MdCatalog} from 'md-editor-v3';
-import {getElementTop, getElementLeft, scrollToAnchor, keepScrollTop} from "@/assets/utils/utils";
-import {createMdHeadingId} from "@/components/content/mdEditor/utils";
+import { ref, onMounted, watch, nextTick } from 'vue';
+import { useDraggable } from '@vueuse/core';
+import { MdCatalog } from 'md-editor-v3';
+import { getElementTop, getElementLeft, scrollToAnchor, keepScrollTop } from '@/assets/utils/utils';
+import { createMdHeadingId } from '@/components/content/mdEditor/utils';
 import type { TocItem } from 'md-editor-v3/lib/types/MdCatalog/MdCatalog';
 
 const props = defineProps({
   editorId: {
     type: String,
     default: 'post-content'
-  },
-})
+  }
+});
 
-const router = useRouter();
 const mdCatalogWrapperRef = ref<HTMLElement | null>(null);
 const mdCatalogRef = ref<typeof MdCatalog | null>(null);
 const handle = ref<HTMLElement | null>(null);
@@ -72,11 +70,11 @@ const minHeight = 120;
 const handleShow = () => {
   show.value = !show.value;
   nextTick(() => {
-    !initOffsetWidth && (initOffsetWidth = mdCatalogWrapperRef.value.offsetWidth);
-  })
-}
+    !initOffsetWidth && (initOffsetWidth = mdCatalogWrapperRef.value?.offsetWidth);
+  });
+};
 
-const {position, isDragging, style} = useDraggable(mdCatalogWrapperRef, {handle})
+const { position, isDragging, style } = useDraggable(mdCatalogWrapperRef, { handle });
 
 watch(() => style.value, (newVal) => {
   const mdCatalogWrapper = mdCatalogWrapperRef.value;
@@ -89,7 +87,7 @@ watch(() => style.value, (newVal) => {
       mdCatalogWrapper.style.top = `${position.value.y}px`;
     }
   }
-})
+});
 
 const onMove = (e: Event) => {
   const mdCatalogWrapper = mdCatalogWrapperRef.value;
@@ -105,16 +103,16 @@ const onMove = (e: Event) => {
 };
 
 const initDragEvent = () => {
-  const handlers = document.getElementsByClassName("resize-handler");
+  const handlers = document.getElementsByClassName('resize-handler');
   for (let i = 0; i < handlers.length; i++) {
-    bindDragEvent(handlers[i]);
+    bindDragEvent(handlers[i] as HTMLElement);
   }
-}
+};
 
-const bindDragEvent = (targetDOM: Element) => {
+const bindDragEvent = (targetDOM: HTMLElement) => {
   const mdCatalogWrapper = mdCatalogWrapperRef.value;
   if (!mdCatalogWrapper) return;
-  targetDOM?.addEventListener("pointerdown", (e: Event) => {
+  targetDOM?.addEventListener('pointerdown', (e: PointerEvent) => {
 
     targetDOM?.setPointerCapture(e.pointerId);
     const cn = targetDOM.classList[1];
@@ -129,7 +127,7 @@ const bindDragEvent = (targetDOM: Element) => {
     const startMouseMoveX = e.clientX;
     const startMouseMoveY = e.clientY;
 
-    const onresize = (ev: Event) => {
+    const onresize = (ev: MouseEvent) => {
       // 鼠标移动时的鼠标位置
       const mouseMoveX = ev.clientX;
       const mouseMoveY = ev.clientY;
@@ -142,77 +140,77 @@ const bindDragEvent = (targetDOM: Element) => {
           if (OffsetWidth + offsetX < minWidth) return;
           mdCatalogWrapper.style.width = `${OffsetWidth + offsetX}px`;
           mdCatalogWrapper.style.left = `${Left - offsetX}px`;
-        }
+        };
         const resizeE = () => {
           if (OffsetWidth - offsetX < minWidth) return;
           mdCatalogWrapper.style.width = `${OffsetWidth - offsetX}px`;
-        }
+        };
         const resizeS = () => {
           if (OffsetHeight - offsetY < minHeight) return;
           mdCatalogWrapper.style.height = `${OffsetHeight - offsetY}px`;
-        }
+        };
         const resizeN = () => {
           if (OffsetHeight + offsetY < minHeight) return;
           mdCatalogWrapper.style.height = `${OffsetHeight + offsetY}px`;
           mdCatalogWrapper.style.top = `${Top - offsetY}px`;
-        }
+        };
         switch (dir) {
-          case "resize-w":
+          case 'resize-w':
             resizeW();
             break;
-          case "resize-s":
+          case 'resize-s':
             resizeS();
             break;
-          case "resize-e":
+          case 'resize-e':
             resizeE();
             break;
-          case "resize-n":
+          case 'resize-n':
             resizeN();
             break;
-          case "resize-sw":
+          case 'resize-sw':
             resizeS();
             resizeW();
             break;
-          case "resize-nw":
+          case 'resize-nw':
             resizeN();
             resizeW();
             break;
-          case "resize-se":
+          case 'resize-se':
             resizeS();
             resizeE();
             break;
-          case "resize-ne":
+          case 'resize-ne':
             resizeN();
             resizeE();
             break;
         }
-      }
+      };
 
       if (!move.value) {
-        if (["resize-w", "resize-s", "resize-sw"].includes(cn)) {
+        if (['resize-w', 'resize-s', 'resize-sw'].includes(cn)) {
           resizeHandler(cn);
         }
       } else {
         resizeHandler(cn);
       }
-    }
+    };
 
-    if (cn && cn.startsWith("resize")) {
-      targetDOM?.addEventListener("pointermove", onresize, false);
+    if (cn && cn.startsWith('resize')) {
+      targetDOM?.addEventListener('pointermove', onresize, false);
 
-      targetDOM?.addEventListener("pointerup", (ev: Event) => {
-        targetDOM?.removeEventListener("pointermove", onresize, false);
-      })
+      targetDOM?.addEventListener('pointerup', (ev: Event) => {
+        targetDOM?.removeEventListener('pointermove', onresize, false);
+      });
     }
-  })
-}
+  });
+};
 
 const onHeadingClick = (e: MouseEvent, t: TocItem) => {
   history.replaceState({}, '', `${location.pathname}#${t.text}`);
 };
 
 onMounted(() => {
-  const header = document.getElementById("header");
+  const header = document.getElementById('header');
   headerClientHeight.value = header?.clientHeight ?? 40;
   initDragEvent();
 });

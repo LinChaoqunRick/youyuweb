@@ -65,7 +65,7 @@ import MdEditorCom from '@/components/content/mdEditor/MdEditorCom.vue';
 import CommentHint from './CommentHint.vue';
 import SortSwitch from '@/components/common/utils/sortSwitch/SortSwitch.vue';
 import ContentList from '@/components/common/system/ContentList.vue';
-import type { postData } from '@/types/post';
+import type { postData } from '@/views/post/detail/types';
 
 const isLogin = computed(() => getters['isLogin']);
 
