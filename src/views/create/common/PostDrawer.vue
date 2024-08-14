@@ -2,7 +2,7 @@
   <div class="create-post-info">
     <a-drawer title="发布文章" width="500" :open="visible" @close="onClose" class="create-post-drawer">
       <template #closeIcon>
-        <i-close theme="outline" size="20" fill="#909090"/>
+        <i-close theme="outline" size="20" fill="#909090" />
       </template>
       <a-form :model="formValidate" :rules="rulesRef" :label-col="labelCol" :wrapper-col="wrapperCol" ref="formRef">
         <a-form-item label="文章分类" name="categoryId">
@@ -42,7 +42,7 @@
           <a-tag v-if="!state.inputVisible && formValidate.tags.length<3"
                  @click="showInput"
                  class="new-tag">
-            <i-plus theme="outline" size="14" fill="currentColor"/>
+            <i-plus theme="outline" size="14" fill="currentColor" />
             新建
           </a-tag>
         </a-form-item>
@@ -56,18 +56,18 @@
               中选取
             </div>
           </div>
-          <UploadFile :disabled="formValidate.thumbnail.length>=3" auto-upload @uploadSuccess="uploadSuccess"/>
+          <UploadFile :disabled="formValidate.thumbnail.length>=3" auto-upload @uploadSuccess="uploadSuccess" />
           <div class="file-list">
             <div v-for="(file, index) in formValidate.thumbnail" :key="file"
                  :style="{left: 40 * index + 'px',  top: 8 * index + 'px'}" class="image-preview">
-              <img :src="file"/>
+              <img :src="file" alt="" />
               <div class="image-mask">
                 <div class="image-mask-content content-preview" @click="handlePreview(file, index)">
-                  <i-preview-open theme="outline" size="16" fill="currentColor"/>
+                  <i-preview-open theme="outline" size="16" fill="currentColor" />
                   <div class="content-name">预览</div>
                 </div>
                 <div class="image-mask-content content-delete" @click="handleDelete(index)">
-                  <i-delete-four theme="outline" size="16" fill="currentColor"/>
+                  <i-delete-four theme="outline" size="16" fill="currentColor" />
                   <div class="content-name">删除</div>
                 </div>
               </div>
@@ -94,7 +94,7 @@
           </a-radio-group>
         </a-form-item>
         <a-form-item label="原文连接" name="originalLink" v-if="formValidate.createType!=='0'">
-          <a-input v-model:value="formValidate.originalLink"/>
+          <a-input v-model:value="formValidate.originalLink" />
         </a-form-item>
       </a-form>
       <template #footer>
@@ -110,82 +110,85 @@
 <script lang="ts">
 export default {
   name: 'PostDrawer'
-}
+};
 </script>
 
 <script setup lang="ts">
-import {nextTick, reactive, ref, watch, computed} from 'vue';
-import type {PropType,} from 'vue';
-import type {TreeSelectProps} from 'ant-design-vue';
-import {message} from 'ant-design-vue';
-import {useStore} from 'vuex';
+import { nextTick, reactive, ref, watch, computed } from 'vue';
+import type { PropType } from 'vue';
+import type { TreeSelectProps } from 'ant-design-vue';
+import { message } from 'ant-design-vue';
+import { useStore } from 'vuex';
 import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
-import type {postData} from "@/views/post/detail/types";
-import {getMarkDownImages} from "@/assets/utils/utils";
-import openImage from "@/libs/tools/openImage";
-import openModal from "@/libs/tools/openModal";
-import CoverSelect from "@/views/create/common/CoverSelect.vue";
-import defaultImages from "@/views/create/common/defaultImages";
+import type { Post } from '@/views/post/detail/types';
+import { getMarkDownImages } from '@/assets/utils/utils';
+import openImage from '@/libs/tools/openImage';
+import openModal from '@/libs/tools/openModal';
+import CoverSelect from '@/views/create/common/CoverSelect.vue';
+import defaultImages from '@/views/create/common/defaultImages';
+import type { Column } from '@/views/column/detail/types';
+import type { Category, CreateType } from '@/views/create/common/types';
+import type { UploadResult } from '@/components/common/utils/upload/types';
 
-const {dispatch} = useStore();
+const { dispatch } = useStore();
 
 const props = defineProps({
   formValidate: {
-    type: Object as PropType<postData>,
+    type: Object as PropType<Post>,
     required: true
   },
   visible: {
     type: Boolean,
     default: false
   }
-})
+});
 
-const emit = defineEmits(['handleSubmit', 'update:visible'])
+const emit = defineEmits(['handleSubmit', 'update:visible']);
 
 const treeData = ref<TreeSelectProps['treeData']>([]);
-const labelCol = {span: 6};
-const wrapperCol = {span: 16};
-const createTypes = ref([]);
+const labelCol = { span: 6 };
+const wrapperCol = { span: 16 };
+const createTypes = ref<Array<CreateType>>([]);
 const rulesRef = reactive({
   categoryId: [
     {
       required: true,
-      message: '请选择文章分类',
-    },
+      message: '请选择文章分类'
+    }
   ],
   summary: [
     {
       required: true,
-      message: '请输入文章摘要',
-    },
+      message: '请输入文章摘要'
+    }
   ],
   createType: [
     {
       required: true,
-      message: '请选择文章类型',
-    },
+      message: '请选择文章类型'
+    }
   ],
   originalLink: [
     {
       required: true,
-      message: '请输入原文链接',
-    },
+      message: '请输入原文链接'
+    }
   ],
   thumbnail: [
     {
       required: true,
-      message: '请至少上传一张首图',
-    },
+      message: '请至少上传一张首图'
+    }
   ]
 });
 const formRef = ref();
 const inputRef = ref();
 const state = reactive({
   inputVisible: false,
-  inputValue: '',
+  inputValue: ''
 });
 const postImages = ref([]);
-const columnList = ref([]);
+const columnList = ref<Array<Column>>([]);
 const loading = ref(false);
 const restNum = computed(() => 3 - props.formValidate.thumbnail.length);
 
@@ -200,25 +203,25 @@ async function onSubmit() {
 }
 
 function getCategoryList() {
-  dispatch("getCategoryList").then(res => {
+  dispatch('getCategoryList').then(res => {
     treeData.value = transferData(res.data);
-  })
+  });
 }
 
 function getCreateTypes() {
-  dispatch("getCreateTypes").then(res => {
+  dispatch('getCreateTypes').then(res => {
     createTypes.value = res.data;
-  })
+  });
 }
 
 function getColumnList() {
-  dispatch('getColumnList', {userId: props.formValidate.userId}).then(res => {
+  dispatch('getColumnList', { userId: props.formValidate.userId }).then(res => {
     columnList.value = res.data;
-    columnList.value.forEach(item => item.id = item.id + '')
-  })
+    columnList.value.forEach(item => item.id = item.id + '');
+  });
 }
 
-function uploadSuccess(fileList) {
+function uploadSuccess(fileList: UploadResult[]) {
   props.formValidate.thumbnail.push(fileList[0].url);
 }
 
@@ -230,22 +233,22 @@ watch(() => props.formValidate.userId, (newVal) => {
   if (newVal) {
     getColumnList();
   }
-}, {immediate: true})
+}, { immediate: true });
 
-function transferData(data) {
+function transferData(data: Array<Category>) {
   data.forEach(item => {
     item.title = item.name;
     if (item.pid > -1) {
       const parent = data.find(i => i.id === item.pid);
       if (parent) {
         if (!parent.children?.length) {
-          parent.children = []
+          parent.children = [];
         }
         parent.children.push(item);
       }
     }
-  })
-  return data.filter(item => item.pid === -1)
+  });
+  return data.filter(item => item.pid === -1);
 }
 
 const showInput = () => {
@@ -256,7 +259,7 @@ const showInput = () => {
 };
 
 const handleClose = (removedTag: string) => {
-  props.formValidate.tags = props.formValidate.tags.filter(tag => tag !== removedTag);
+  props.formValidate.tags = (props.formValidate.tags as string[]).filter(tag => tag !== removedTag);
 };
 
 function onClose() {
@@ -270,39 +273,39 @@ const handleInputConfirm = () => {
   }
   Object.assign(state, {
     inputVisible: false,
-    inputValue: '',
+    inputValue: ''
   });
 };
 
-const handlePreview = (item, index): void => {
-  const list = props.formValidate.thumbnail.map(item => item.split("?")[0]);
+const handlePreview = (item: string, index: number): void => {
+  const list = props.formValidate.thumbnail.map(item => item.split('?')[0]);
   openImage({
     componentProps: {
       list,
       current: index
     }
-  })
-}
+  });
+};
 
-const handleDelete = (index): void => {
+const handleDelete = (index: number): void => {
   if (props.formValidate.thumbnail.length === 1) {
-    message.error("至少保留一张图片");
+    message.error('至少保留一张图片');
     return;
   }
-  props.formValidate.thumbnail.splice(index, 1)
-}
+  props.formValidate.thumbnail.splice(index, 1);
+};
 
 const openCoverSelectModal = (type: string) => {
   let images: string[] = [];
   if (type === 'post') {
     images = getMarkDownImages(props.formValidate.content).map(item => {
-      return item.url.split("?")[0] + "?x-oss-process=style/detailThumb"
-    })
+      return item.url.split('?')[0] + '?x-oss-process=style/detailThumb';
+    });
   } else {
     images = defaultImages;
   }
 
-  openModal({
+  openModal<string[]>({
     component: CoverSelect,
     title: `从${type === 'post' ? '文章' : '预设'}中选取封面(还可选${restNum.value}张)`,
     width: '60%',
@@ -311,23 +314,23 @@ const openCoverSelectModal = (type: string) => {
       maxNum: restNum.value,
       images: images
     }
-  }).then(res => {
+  }).then((res: string[] | string) => {
     if (res) {
-      props.formValidate.thumbnail.push(...res)
+      props.formValidate.thumbnail.push(...res);
     }
-  })
-}
+  });
+};
 
-const onColumnSelect = (value) => {
+const onColumnSelect = (value: Column) => {
   const columnIds = props.formValidate.columnIds;
   if (columnIds && columnIds.length > 3) {
-    columnIds.pop();
+    (columnIds as Array<string | number>).pop();
   }
-}
+};
 
 defineExpose({
-  onSubmit,
-})
+  onSubmit
+});
 </script>
 
 <style lang="scss" scoped>

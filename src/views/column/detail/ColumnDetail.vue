@@ -75,8 +75,6 @@ import ColumnEdit from '@/views/user/profile/column/list/ColumnEdit.vue';
 import { message, Modal } from 'ant-design-vue';
 import { cloneDeep } from 'lodash';
 import type { Column } from './types';
-import type { Post } from '@/views/post/detail/types';
-
 
 const { getters, dispatch } = useStore();
 const route = useRoute();
@@ -109,9 +107,9 @@ const onEdit = () => {
     componentProps: { columnId: column.value.id },
     title: '编辑专栏'
   }).then((res) => {
-    column.value.title = res.title;
-    column.value.content = res.content;
-    column.value.cover = res.cover;
+    column.value!.title = res.title;
+    column.value!.content = res.content;
+    column.value!.cover = res.cover;
   });
 };
 
@@ -121,7 +119,7 @@ const onDelete = () => {
     icon: '', // <help theme="outline" size="24" fill="#1890ff"/>
     content: '确定删除此专栏？',
     async onOk() {
-      const res = await dispatch('deleteColumn', { columnId: column.value.id });
+      const res = await dispatch('deleteColumn', { columnId: column.value!.id });
       message.success('删除成功');
     }
   });

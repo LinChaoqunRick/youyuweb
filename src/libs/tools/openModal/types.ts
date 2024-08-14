@@ -8,6 +8,7 @@ export interface ModalConfig {
   maskClosable?: boolean;
   title: string;
   width?: number | string;
+  wrapClassName?: string;
   beforeConfirm?: (done: (params?: any) => void, params: any) => void;
 }
 

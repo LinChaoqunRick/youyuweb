@@ -13,11 +13,12 @@
 </template>
 
 <script setup lang="ts">
-import {computed, reactive} from "vue";
+import { computed, type PropType, reactive } from 'vue';
+import type { PreSetCover } from '@/views/create/common/types';
 
 const props = defineProps({
   images: {
-    type: Array,
+    type: Object as PropType<Array<string>>,
     required: true
   },
   maxNum: {
@@ -28,14 +29,14 @@ const props = defineProps({
 
 const selectNum = computed(() => showImages.value.filter(i => i.selected).length);
 
-const showImages = computed(() => {
+const showImages = computed<Array<PreSetCover>>(() => {
   return props.images.map(item => (reactive({
     url: item,
     selected: false
   })))
 })
 
-const handleItemClick = (item) => {
+const handleItemClick = (item: PreSetCover) => {
   if (item.selected) {
     return item.selected = !item.selected;
   }

@@ -1,7 +1,7 @@
 import type { userType } from '@/types/user';
 
 export interface Column {
-  id: number;
+  id: number | string;
   title: string;
   content: string;
   cover: string;
