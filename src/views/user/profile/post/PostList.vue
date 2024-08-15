@@ -6,11 +6,11 @@
       </div>
       <div class="sort-type">
         <div class="sort-item" :class="{'active': sort}" @click="handleSort(true)">
-          <i-time theme="filled" size="13" fill="currentColor"/>
+          <i-time theme="filled" size="13" fill="currentColor" />
           最新
         </div>
         <div class="sort-item" :class="{'active': !sort}" @click="handleSort(false)">
-          <i-fire theme="filled" size="13" fill="currentColor"/>
+          <i-fire theme="filled" size="13" fill="currentColor" />
           最热
         </div>
       </div>
@@ -38,135 +38,133 @@
   </div>
 </template>
 
-<script lang="ts">
-  export default {
-    name: "PostList"
-  }
-</script>
-
 <script setup lang="ts">
-  import {computed, ref, nextTick, inject, watch, onActivated} from 'vue';
-  import {useStore} from "vuex";
-  import {useRoute, useRouter, onBeforeRouteLeave } from "vue-router";
-  import {message} from "ant-design-vue";
+import { computed, ref, nextTick, inject, watch, onActivated } from 'vue';
+import { useStore } from 'vuex';
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
+import { message } from 'ant-design-vue';
 
-  import YTable from "@/components/common/table/YTable.vue";
-  import PostItem from "./PostItem.vue";
+defineOptions({
+  name: 'PostList'
+});
 
-  const {getters, dispatch} = useStore();
-  const user = inject('user');
-  const route = useRoute();
-  const router = useRouter();
+import YTable from '@/components/common/table/YTable.vue';
+import PostItem from './PostItem.vue';
 
-  const yTable = ref(null);
-  const checked = ref(false);
-  const sort = ref(true); // true:最新 false:最热
-  const userInfo = computed(() => getters['userInfo']);
-  const listParams = computed(() => ({
-    userId: user.value.id,
-    original: checked.value,
-    sort: !sort.value,
-    pageSize: 20
-  }));
-  const isOwn = computed(() => userInfo.value.id === user.value.id);
-  let cachePage: number | string = 0;
+const { getters, dispatch } = useStore();
+const user = inject('user');
+const route = useRoute();
+const router = useRouter();
 
-  function handleSort(value: boolean) {
-    if (sort.value === value) {
-      return;
-    }
-    sort.value = value;
-    searchData();
+const yTable = ref(null);
+const checked = ref(false);
+const sort = ref(true); // true:最新 false:最热
+const userInfo = computed(() => getters['userInfo']);
+const listParams = computed(() => ({
+  userId: user.value.id,
+  original: checked.value,
+  sort: !sort.value,
+  pageSize: 20
+}));
+const isOwn = computed(() => userInfo.value.id === user.value.id);
+let cachePage: number | string = 0;
+
+function handleSort(value: boolean) {
+  if (sort.value === value) {
+    return;
   }
+  sort.value = value;
+  searchData();
+}
 
-  function searchData() {
-    nextTick(() => {
-      yTable.value.page = 1;
+function searchData() {
+  nextTick(() => {
+    yTable.value.page = 1;
+    yTable.value.initData();
+  });
+}
+
+function handleEdit(item) {
+  router.push({ path: '/editPost', query: { postId: item.id } });
+}
+
+function onDeleteConfirm(item) {
+  dispatch('deletePost', { postId: item.id }).then(res => {
+    if (res.data) {
+      message.success('删除成功');
       yTable.value.initData();
-    })
-  }
-
-  function handleEdit(item) {
-    router.push({path: '/editPost', query: {postId: item.id}})
-  }
-
-  function onDeleteConfirm(item) {
-    dispatch("deletePost", {postId: item.id}).then(res => {
-      if (res.data) {
-        message.success("删除成功");
-        yTable.value.initData();
-      }
-    })
-  }
-
-  onActivated(() => {
-    if (cachePage) {
-      route.params.page = cachePage;
-      router.push(route)
     }
-  })
+  });
+}
 
-  onBeforeRouteLeave(() => {
-    cachePage = Number(route.params.page ?? 1);
-  })
+onActivated(() => {
+  if (cachePage) {
+    route.params.page = cachePage;
+    router.push(route);
+  }
+});
+
+onBeforeRouteLeave(() => {
+  cachePage = Number(route.params.page ?? 1);
+});
 </script>
 
 <style lang="scss" scoped>
-  .post-list {
-    padding: 6px 10px;
-    background-color: var(--youyu-background1);
+.post-list {
+  padding: 6px 10px;
+  background-color: var(--youyu-background1);
 
-    .list-top {
-      display: flex;
-      justify-content: space-between;
+  .list-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 6px;
+
+    .sort-type {
+      display: inline-flex;
       align-items: center;
-      padding-bottom: 6px;
+      font-size: 14px;
+      color: #4e5969;
+      font-weight: 400;
+      cursor: pointer;
+      background: var(--youyu-body-background-ligth);
+      border-radius: 2px;
+      padding: 3px;
 
-      .sort-type {
-        display: inline-flex;
+      .sort-item {
+        display: flex;
         align-items: center;
+        padding: 2px 12px;
+        line-height: 22px;
         font-size: 14px;
-        color: #4e5969;
-        font-weight: 400;
-        cursor: pointer;
-        background: var(--youyu-body-background-ligth);
-        border-radius: 2px;
-        padding: 3px;
+        color: #8a919f;
 
-        .sort-item {
-          display: flex;
-          align-items: center;
-          padding: 2px 12px;
-          line-height: 22px;
-          font-size: 14px;
-          color: #8a919f;
-
-          ::v-deep(svg) {
-            margin-right: 4px;
-          }
-        }
-
-        .active {
-          color: #1890ff;
-          border-radius: 2px;
-          background: var(--youyu-body-background2);
-
-          ::v-deep(svg) {
-            margin-right: 4px;
-          }
+        ::v-deep(svg) {
+          margin-right: 4px;
         }
       }
-    }
 
-    .list-body {
-      .article-item {
-        border-top: 1px solid var(--youyu-border-color);
+      .active {
+        color: #1890ff;
+        border-radius: 2px;
+        background: var(--youyu-body-background2);
 
-        button {
-          font-size: 13px;
-          margin-left: 6px;
+        ::v-deep(svg) {
+          margin-right: 4px;
         }
       }
     }
   }
+
+  .list-body {
+    .article-item {
+      border-top: 1px solid var(--youyu-border-color);
+
+      button {
+        font-size: 13px;
+        margin-left: 6px;
+      }
+    }
+  }
+}
 </style>

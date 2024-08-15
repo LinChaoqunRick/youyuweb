@@ -258,6 +258,7 @@ const onClearHistory = () => {
 
             ::v-deep(.ant-tag) {
               transition: .3s;
+              margin: 0 4px 4px 0;
 
               &:hover {
                 border-color: #1890ff;
