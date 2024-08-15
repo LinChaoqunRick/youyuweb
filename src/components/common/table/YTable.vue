@@ -4,7 +4,7 @@
       <a-spin :spinning="loading">
         <slot :dataList="dataList">
           <div v-if="failed" @click="initData" class="retry-load">
-            <i-refresh theme="outline" size="15" fill="#1890ff"/>
+            <i-refresh theme="outline" size="15" fill="#1890ff" />
             <span class="loading-text">加载失败，重新加载</span>
           </div>
           <div class="table-no-data" v-else-if="!loading && !dataList.length">
@@ -22,26 +22,27 @@
                     :total="total"
                     :show-total="() => `共${total}条`"
                     @change="handleChange">
-        <template #itemRender="{ type, originalElement }">
-          <a v-if="type === 'prev'">上一页</a>
-          <a v-else-if="type === 'next'">下一页</a>
-          <component :is="originalElement" v-else></component>
-        </template>
+        <!--        <template #itemRender="{ type, originalElement }">-->
+        <!--          <a v-if="type === 'prev'">上一页</a>-->
+        <!--          <a v-else-if="type === 'next'">下一页</a>-->
+        <!--          <component :is="originalElement" v-else></component>-->
+        <!--        </template>-->
       </a-pagination>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {computed, onDeactivated, ref, watch} from 'vue';
-import {useStore} from "vuex";
-import {useRoute, useRouter} from "vue-router";
+import { computed, ref } from 'vue';
+import { useStore } from 'vuex';
+import { useRoute, useRouter } from 'vue-router';
+import { useEventListener } from '@vueuse/core';
 
 const emit = defineEmits(['onLoaded']);
 
 const route = useRoute();
 const router = useRouter();
-const {dispatch} = useStore();
+const { dispatch } = useStore();
 const props = defineProps({
   listUrl: {
     type: String,
@@ -75,39 +76,37 @@ const dataList = ref([]);
 const loading = ref<boolean>(false);
 const failed = ref<boolean>(false);
 const paginationConfig = computed(() => Object.assign({}, {
-  // showQuickJumper: true,
-  // showLessItems: true,
   showSizeChanger: false
 }, props.paginationProps));
 
 const initData = async () => {
   loading.value = true;
   failed.value = false;
+
   if (props.beforeGetData) {
     const result = await props.beforeGetData();
     if (!result) {
       return loading.value = false;
     }
   }
-  dispatch(props.listUrl, Object.assign({}, props.params, {
-    pageNum: current.value,
-    pageSize: size.value
-  })).then(res => {
-    dataList.value = [];
-    document.documentElement.scrollTop = 0;
-    if (route.params.page && (route.params.page != res.data.current)) {
-      updateRoutePageParam(res.data.current);
-    }
-    total.value = res.data.total;
-    dataList.value = res.data.list;
-    emit("onLoaded");
-  }).catch(() => {
+
+  const params = Object.assign({}, props.params, { pageNum: current.value, pageSize: size.value });
+
+  const res = await dispatch(props.listUrl, params).catch(() => {
     dataList.value = [];
     failed.value = true;
-  }).finally(() => {
-    loading.value = false;
-  })
-}
+  });
+
+  dataList.value = [];
+  document.documentElement.scrollTop = 0;
+  if (route.params.page && (route.params.page != res.data.current)) {
+    await router.push({ params: { page: res.data.current } });
+  }
+  total.value = res.data.total;
+  dataList.value = res.data.list;
+  emit('onLoaded');
+  loading.value = false;
+};
 
 const refreshData = () => {
   dispatch(props.listUrl, Object.assign({}, {
@@ -116,42 +115,29 @@ const refreshData = () => {
   }, props.params)).then(res => {
     total.value = res.data.total;
     dataList.value = res.data.list;
-    emit("onLoaded");
-  })
-}
+    emit('onLoaded');
+  });
+};
 
 if (props.loadImmediate) {
   initData();
 }
 
 const handleChange = (page: number, pageSize: number) => {
-  console.log(page, pageSize);
   size.value = pageSize;
   initData();
 };
 
-const updateRoutePageParam = (page: number) => {
-  const fullPath = route.fullPath;
-  const [path, query] = fullPath.split("?");
-  const pathItems = path.split("/");
-  pathItems[pathItems.length - 1] = String(page);
-  const combinePath = query ? [pathItems.join("/"), query].join("?") : pathItems.join("/");
-  history.pushState(null, "", combinePath);
-}
-
-// const paramsPageWatcher = watch(() => route.params.page, (newVal) => {
-//   console.log(newVal);
-// })
-
-onDeactivated(() => {
-  // paramsPageWatcher();
-})
+useEventListener('popstate', () => {
+  current.value = Number(route.params.page);
+  initData();
+});
 
 defineExpose({
   page: initPage,
   initData,
   refreshData
-})
+});
 </script>
 
 <style lang="scss" scoped>
