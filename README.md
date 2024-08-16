@@ -1,5 +1,5 @@
 ## 项目介绍
-**有语** 是一个基于Vue3 + Spring Cloud的个人网站，由作者完全自主全栈开发，前后端分离，后端仓库在[此处](https://github.com/LinChaoqunRick/youyu-parent-cloud)。
+**有语** 是一个基于Vue3 + Spring Cloud的个人网站，由作者独立全栈开发，这是一个前后端分离项目，后端仓库在[此处](https://github.com/LinChaoqunRick/youyu-parent-cloud)。
 项目的前端主要技术栈是vite+Vue3+TypeScript+ant-design-vue，后端主要技术栈包括SpringCloud Alibaba+Mybatis Plus+Nacos，采用OAuth2+JWT认证，支持QQ、github等第三方登录方式，采用docker-compose容器编排技术运行于腾讯云服务器，使用阿里云OSS作为图床，并采用CDN加速静态资源。
 
 演示地址：https://v2.youyul.com/
