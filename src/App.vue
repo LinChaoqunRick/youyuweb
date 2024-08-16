@@ -1,10 +1,5 @@
 <template>
-  <a-config-provider
-    :theme="{
-      algorithm:
-        currentTheme === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm,
-    }"
-  >
+  <a-config-provider :theme="{ algorithm: currentTheme === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm }">
     <div class="app" id="youyu-app">
       <a-config-provider :locale="zhCN">
         <div class="header" id="header">
@@ -20,24 +15,20 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, provide, computed, watch, onMounted } from "vue";
-import { useStore } from "vuex";
-import { useRoute, useRouter } from "vue-router";
-import { theme } from "ant-design-vue";
+import { nextTick, ref, provide, computed, watch } from 'vue';
+import { useStore } from 'vuex';
+import { theme } from 'ant-design-vue';
 
-import zhCN from "ant-design-vue/es/locale/zh_CN";
-import YHeader from "@/components/common/header/YHeader.vue";
-import YFooter from "@/components/common/footer/YFooter.vue";
+import zhCN from 'ant-design-vue/es/locale/zh_CN';
+import YHeader from '@/components/common/header/YHeader.vue';
+import YFooter from '@/components/common/footer/YFooter.vue';
 
-const { getters, commit, dispatch } = useStore();
-const route = useRoute();
-const router = useRouter();
+const { getters } = useStore();
 
 const isRouterAlive = ref<boolean>(true);
 const currentTheme = computed(() => getters.currentTheme);
 
-const isLogin = computed(() => getters["isLogin"]);
-const globalSpinning = computed(() => getters["getGlobalSpinning"]);
+const isLogin = computed(() => getters['isLogin']);
 
 function reload() {
   isRouterAlive.value = false;
@@ -51,14 +42,14 @@ function reload() {
  */
 watch(
   () => isLogin.value,
-  (newVal) => {
+  newVal => {
     if (newVal) {
       reload();
     }
   }
 );
 
-provide("reload", reload);
+provide('reload', reload);
 </script>
 
 <style lang="scss" scoped>

@@ -7,21 +7,21 @@
             <i-refresh theme="outline" size="15" fill="#1890ff" />
             <span class="loading-text">加载失败，重新加载</span>
           </div>
-          <div class="table-no-data" v-else-if="!loading && !dataList.length">
-            暂无数据
-          </div>
+          <div class="table-no-data" v-else-if="!loading && !dataList.length">暂无数据</div>
           <a-skeleton active v-else></a-skeleton>
         </slot>
       </a-spin>
     </div>
     <div class="table-pagination">
-      <a-pagination v-if="!!total"
-                    v-model:current="current"
-                    v-model:pageSize="size"
-                    v-bind="paginationConfig"
-                    :total="total"
-                    :show-total="() => `共${total}条`"
-                    @change="handleChange">
+      <a-pagination
+        v-if="!!total"
+        v-model:current="current"
+        v-model:pageSize="size"
+        v-bind="paginationConfig"
+        :total="total"
+        :show-total="() => `共${total}条`"
+        @change="handleChange"
+      >
         <!--        <template #itemRender="{ type, originalElement }">-->
         <!--          <a v-if="type === 'prev'">上一页</a>-->
         <!--          <a v-else-if="type === 'next'">下一页</a>-->
@@ -46,25 +46,26 @@ const { dispatch } = useStore();
 const props = defineProps({
   listUrl: {
     type: String,
-    required: true
+    required: true,
   },
   params: {
     type: Object,
     default: () => ({
-      pageSize: 10
-    })
+      pageSize: 10,
+    }),
   },
-  loadImmediate: { // 是否一开始就获取数据
+  loadImmediate: {
+    // 是否一开始就获取数据
     type: Boolean,
-    default: true
+    default: true,
   },
   beforeGetData: {
-    type: Function
+    type: Function,
   },
   paginationProps: {
     type: Object,
-    default: () => ({})
-  }
+    default: () => ({}),
+  },
 });
 
 const initPage = Number(route.params.page);
@@ -75,9 +76,15 @@ const total = ref(0);
 const dataList = ref([]);
 const loading = ref<boolean>(false);
 const failed = ref<boolean>(false);
-const paginationConfig = computed(() => Object.assign({}, {
-  showSizeChanger: false
-}, props.paginationProps));
+const paginationConfig = computed(() =>
+  Object.assign(
+    {},
+    {
+      showSizeChanger: false,
+    },
+    props.paginationProps
+  )
+);
 
 const initData = async () => {
   loading.value = true;
@@ -86,7 +93,7 @@ const initData = async () => {
   if (props.beforeGetData) {
     const result = await props.beforeGetData();
     if (!result) {
-      return loading.value = false;
+      return (loading.value = false);
     }
   }
 
@@ -99,7 +106,7 @@ const initData = async () => {
 
   dataList.value = [];
   document.documentElement.scrollTop = 0;
-  if (route.params.page && (route.params.page != res.data.current)) {
+  if (route.params.page && route.params.page != res.data.current) {
     await router.push({ params: { page: res.data.current } });
   }
   total.value = res.data.total;
@@ -109,10 +116,17 @@ const initData = async () => {
 };
 
 const refreshData = () => {
-  dispatch(props.listUrl, Object.assign({}, {
-    pageNum: current.value,
-    pageSize: size.value
-  }, props.params)).then(res => {
+  dispatch(
+    props.listUrl,
+    Object.assign(
+      {},
+      {
+        pageNum: current.value,
+        pageSize: size.value,
+      },
+      props.params
+    )
+  ).then(res => {
     total.value = res.data.total;
     dataList.value = res.data.list;
     emit('onLoaded');
@@ -136,14 +150,13 @@ useEventListener('popstate', () => {
 defineExpose({
   page: initPage,
   initData,
-  refreshData
+  refreshData,
 });
 </script>
 
 <style lang="scss" scoped>
 .y-table {
   .table-body {
-
     ::v-deep(.ant-spin-nested-loading) {
       width: 100%;
       height: 100%;
@@ -157,7 +170,8 @@ defineExpose({
       cursor: pointer;
     }
 
-    .table-no-data, .retry-load {
+    .table-no-data,
+    .retry-load {
       width: 100%;
       min-height: 200px;
       display: flex;
@@ -187,9 +201,13 @@ defineExpose({
   .table-pagination {
     display: flex;
     justify-content: center;
+    background-color: var(--pagination-background);
+    padding: 10px 0;
+    border-radius: 8px;
 
     ::v-deep(.ant-pagination) {
-      .ant-pagination-item, .ant-pagination-jump-next {
+      .ant-pagination-item,
+      .ant-pagination-jump-next {
         background-color: var(--pagination-background);
         border: var(--pagination-border);
         border-radius: 2px;
@@ -205,7 +223,10 @@ defineExpose({
         }
       }
 
-      .ant-pagination-total-text, .ant-pagination-prev, .ant-pagination-next, .ant-select-selector {
+      .ant-pagination-total-text,
+      .ant-pagination-prev,
+      .ant-pagination-next,
+      .ant-select-selector {
         padding: 0 6px;
         background-color: var(--pagination-background);
         border: var(--pagination-border);

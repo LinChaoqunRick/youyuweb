@@ -1,9 +1,6 @@
 <template>
   <div class="content-list" :class="{ 'content-list-expand': !fold }">
-    <div
-      class="data-list-wrapper"
-      v-if="!!dataList?.length"
-      ref="dataListWrapperRef">
+    <div class="data-list-wrapper" v-if="!!dataList?.length" ref="dataListWrapperRef">
       <div class="data-list">
         <slot :list="dataList" />
       </div>
@@ -19,25 +16,26 @@
         <div
           class="view-all-data"
           v-if="
-          showViewAll &&
-          (total != null ? !!total : true) &&
-          !fold &&
-          (pageNum <= totalPageNum || totalPageNum === 0) &&
-          (firstLoading ? true : restNum > 0)"
-          @click="onLoadData">
+            showViewAll &&
+            (total != null ? !!total : true) &&
+            !fold &&
+            (pageNum <= totalPageNum || totalPageNum === 0) &&
+            (firstLoading ? true : restNum > 0)
+          "
+          @click="onLoadData"
+        >
           <slot name="loadMoreBox" :loading="restLoading" :total="totalNum">
             <div class="load-more-item mr-10">
-              <div>{{ pageNum === 1 ? `${(firstLoading && !totalNum) ? '加载中' : total + dataText}` : `查看更多${dataText}` }}
+              <div>
+                {{ pageNum === 1 ? `${firstLoading && !totalNum ? '加载中' : total + dataText}` : `查看更多${dataText}` }}
               </div>
               <i-down v-if="!restLoading" theme="outline" size="14" fill="currentColor" />
               <i-loading-four v-else theme="outline" size="14" fill="currentColor" />
             </div>
           </slot>
         </div>
-        <div
-          class="loaded-all-data"
-          v-else-if="showLoadedAll && pageNum > totalPageNum">
-          <slot name="loadedAllBox">已加载全部{{totalNum ?? 0}}{{ dataText }} ~</slot>
+        <div class="loaded-all-data" v-else-if="showLoadedAll && pageNum > totalPageNum">
+          <slot name="loadedAllBox">已加载全部{{ totalNum ?? 0 }}{{ dataText }} ~</slot>
         </div>
         <div class="no-data" v-else-if="showNoData && (totalNum === 0 || total === 0)">
           <slot name="noDataBox">暂无数据</slot>
@@ -76,14 +74,12 @@ const props = defineProps({
   immediate: { type: Boolean, default: true },
   dataText: { type: String, default: '条数据' },
   autoLoad: { type: Boolean, default: false }, // 滚动到底后自动加载
-  loadTrigger: { type: Boolean, default: false } // 配合autoLoad使用，如果是true，则需要点击后触发autoLoad
+  loadTrigger: { type: Boolean, default: false }, // 配合autoLoad使用，如果是true，则需要点击后触发autoLoad
 });
 
 const { dispatch } = useStore();
 
 const emit = defineEmits(['update:total']);
-
-let dataListHeight: number = 0;
 
 const firstLoading = computed(() => !dataList.value.length && restLoading.value);
 const pageNum = ref<number>(1);
@@ -99,15 +95,14 @@ const bottomOperation = ref<HTMLElement | null>(null);
 const dataListWrapperRef = ref<HTMLElement | null>(null);
 
 const getListData = () => {
-  if ((totalPageNum.value !== -1 && pageNum > totalPageNum) || failed.value || restLoading.value)
-    return;
+  if ((totalPageNum.value !== -1 && pageNum > totalPageNum) || failed.value || restLoading.value) return;
   const params = {
     pageSize: 10,
-    pageNum: pageNum.value
+    pageNum: pageNum.value,
   };
   restLoading.value = true;
   dispatch(props.url, Object.assign({}, params, props.params))
-    .then((res) => {
+    .then(res => {
       if (pageNum.value === 1) {
         dataList.value = res.data.list;
       } else {
@@ -152,7 +147,7 @@ const onLoadData = () => {
 
 const onUnlock = () => {
   if (!bottomOperation.value) return;
-  const ob = new IntersectionObserver((entries) => {
+  const ob = new IntersectionObserver(entries => {
     if (entries[0].isIntersecting && pageNum.value <= totalPageNum.value) {
       getListData();
     }
@@ -180,8 +175,7 @@ const onFold = (value: boolean) => {
 const foldAnimation = () => {
   nextTick(() => {
     if (dataListWrapperRef.value) {
-      ({ height: dataListHeight } =
-        dataListWrapperRef.value.getBoundingClientRect());
+      ({ height: dataListHeight } = dataListWrapperRef.value.getBoundingClientRect());
       // dataListWrapperRef.value.style.height = '0';
       // dataListWrapperRef.value.offsetHeight;
       // dataListWrapperRef.value.style.height = `${dataListHeight}px`;
@@ -191,7 +185,7 @@ const foldAnimation = () => {
 
 watch(
   () => firstLoading.value,
-  (value) => {
+  value => {
     if (value) {
       dataList.value = [];
     }
@@ -208,7 +202,7 @@ watch(
 defineExpose({
   list: dataList,
   getListData,
-  initData
+  initData,
 });
 </script>
 

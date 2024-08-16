@@ -1,20 +1,10 @@
 <template>
   <div class="user-home">
-    <ContentList
-      url="getUserDynamics"
-      :params="params"
-      auto-load
-      ref="ContentListRef"
-    >
+    <ContentList url="getUserDynamics" :params="params" auto-load ref="ContentListRef">
       <template v-slot="{ list }">
-        <div v-for="item in list" class="dynamic-item">
+        <div v-for="item in list" :key="item.id" class="dynamic-item">
           <div class="dynamic-item-title">{{ $dayjs().to(item.createTime) }} {{ getItemType(item) }}</div>
-          <Component
-            :is="isComponent(item)"
-            :data="item"
-            @deleteSuccess="deleteSuccess"
-            class="dynamic-item-component"
-          />
+          <Component :is="isComponent(item)" :data="item" @deleteSuccess="deleteSuccess" class="dynamic-item-component" />
         </div>
       </template>
       <template v-slot:loadMoreBox="{ loading }">
@@ -39,7 +29,7 @@ const ContentListRef = ref();
 
 const params = computed(() => ({
   userId: user.value.id,
-  pageSize: 10
+  pageSize: 10,
 }));
 
 const isComponent = (item: any) => {
@@ -66,11 +56,11 @@ const getItemType = (item: any) => {
   }
 };
 
-const deleteSuccess = (data) => {
+const deleteSuccess = data => {
   if (data.hasOwnProperty('momentLike')) {
     // 删除的是一个时刻
     ContentListRef.value.list = ContentListRef.value.list.filter(
-      (item) => item.hasOwnProperty('momentLike') && item.id !== data.id
+      item => item.hasOwnProperty('momentLike') && item.id !== data.id
     );
   }
 };
@@ -100,9 +90,10 @@ const deleteSuccess = (data) => {
     background-color: var(--youyu-body-background2);
 
     .dynamic-item-title {
-      padding: 6px 16px;
+      padding: 8px 16px;
       border-bottom: var(--youyu-border);
-      font-weight: bold;
+      color: var(--youyu-text1);
+      font-size: 14px;
     }
 
     .dynamic-item-component {

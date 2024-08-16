@@ -58,7 +58,7 @@
           :auto-load="false"
           :show-loaded-all="false"
           :total="data.replyCount"
-          data-text="回复"
+          data-text="条回复"
           ref="ContentListRef"
         >
           <template v-slot="{ list }">
