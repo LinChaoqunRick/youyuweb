@@ -12,9 +12,8 @@
         </slot>
       </a-spin>
     </div>
-    <div class="table-pagination">
+    <div class="table-pagination" v-if="!!total">
       <a-pagination
-        v-if="!!total"
         v-model:current="current"
         v-model:pageSize="size"
         v-bind="paginationConfig"
@@ -46,26 +45,26 @@ const { dispatch } = useStore();
 const props = defineProps({
   listUrl: {
     type: String,
-    required: true,
+    required: true
   },
   params: {
     type: Object,
     default: () => ({
-      pageSize: 10,
-    }),
+      pageSize: 10
+    })
   },
   loadImmediate: {
     // 是否一开始就获取数据
     type: Boolean,
-    default: true,
+    default: true
   },
   beforeGetData: {
-    type: Function,
+    type: Function
   },
   paginationProps: {
     type: Object,
-    default: () => ({}),
-  },
+    default: () => ({})
+  }
 });
 
 const initPage = Number(route.params.page);
@@ -80,7 +79,7 @@ const paginationConfig = computed(() =>
   Object.assign(
     {},
     {
-      showSizeChanger: false,
+      showSizeChanger: false
     },
     props.paginationProps
   )
@@ -122,7 +121,7 @@ const refreshData = () => {
       {},
       {
         pageNum: current.value,
-        pageSize: size.value,
+        pageSize: size.value
       },
       props.params
     )
@@ -150,7 +149,7 @@ useEventListener('popstate', () => {
 defineExpose({
   page: initPage,
   initData,
-  refreshData,
+  refreshData
 });
 </script>
 
