@@ -7,13 +7,13 @@
                           :placeholder="placeholder"
                           :auto-focus="autoFocus"
                           @onPasteImage="onPasteImage"
-                          ref="richEditorRef"/>
+                          ref="richEditorRef" />
     </div>
     <div class="image-wrapper" v-if="reply.images?.length">
       <div v-for="(item, index) in reply.images" class="image-item">
-        <img :src="item.thumb || item" :alt="item.name"/>
+        <img :src="item.thumb || item" :alt="item.name" />
         <div class="image-delete" @click="onImageDelete(index)">
-          <i-close theme="outline" size="10" fill="currentColor" :strokeWidth="2"/>
+          <i-close theme="outline" size="10" fill="currentColor" :strokeWidth="2" />
         </div>
       </div>
     </div>
@@ -24,12 +24,12 @@
                  :visible="emojiVisible">
         <template #content>
           <EmojiPicker
-              @onImagePick="onImagePick"
-              @onEmojiPick="onEmojiPick"
-              v-on-click-outside="onEmojiClose"/>
+            @onImagePick="onImagePick"
+            @onEmojiPick="onEmojiPick"
+            v-on-click-outside="onEmojiClose" />
         </template>
         <div class="tool-item" v-login="onClickEmoji" style="cursor: pointer">
-          <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
+          <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3" />
           <span class="tool-title">表情</span>
         </div>
       </a-popover>
@@ -41,7 +41,7 @@
                   :config="{data: { base: 'moment/images' }}"
                   ref="UploadFileRef">
         <div class="tool-item item-upload-image" @click="onCheckLogin">
-          <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
+          <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3" />
           <span class="tool-title">图片</span>
         </div>
       </UploadFile>
@@ -58,29 +58,29 @@
 
 <script lang="ts">
 export default {
-  name: "MomentReplyEditor"
-}
+  name: 'MomentReplyEditor'
+};
 </script>
 
 <script setup lang="ts">
-import {computed, reactive, ref} from "vue";
-import {useStore} from "vuex";
-import {message} from "ant-design-vue";
-import {cloneDeep} from 'lodash';
-import {onCheckLogin} from "@/assets/utils/utils";
-import {vOnClickOutside} from '@vueuse/components'
-import ContentEditableDiv from "@/components/common/utils/contenteditable/ContentEditableDiv.vue";
+import { computed, reactive, ref } from 'vue';
+import { useStore } from 'vuex';
+import { message } from 'ant-design-vue';
+import { cloneDeep } from 'lodash';
+import { onCheckLogin } from '@/assets/utils/utils';
+import { vOnClickOutside } from '@vueuse/components';
+import ContentEditableDiv from '@/components/common/utils/contenteditable/ContentEditableDiv.vue';
 import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
-import EmojiPicker from "@/components/common/utils/emoji/EmojiPicker.vue";
+import EmojiPicker from '@/components/common/utils/emoji/EmojiPicker.vue';
 import {
-  transformHTMLToTag,
-} from "@/components/common/utils/emoji/youyu_emoji";
+  transformHTMLToTag
+} from '@/components/common/utils/emoji/youyu_emoji';
 
-const {getters, commit, dispatch} = useStore();
+const { getters, commit, dispatch } = useStore();
 
 const props = defineProps({
   placeholder: {
-    type: String,
+    type: String
   },
   autoFocus: {
     type: Boolean,
@@ -128,27 +128,27 @@ const loading = ref<boolean>(false);
 
 const onClickEmoji = () => {
   emojiVisible.value = true;
-}
+};
 
 const onEmojiClose = () => {
   emojiVisible.value = false;
-}
+};
 
 const onImagePick = (value: HTMLElement | string) => {
-  richEditorRef.value?.insertHtml(value)
-}
+  richEditorRef.value?.insertHtml(value);
+};
 
 const onEmojiPick = (value: string) => {
-  richEditorRef.value?.insertText(value)
-}
+  richEditorRef.value?.insertText(value);
+};
 
 const onImageDelete = (index: number) => {
   reply.images.splice(index, 1);
-}
+};
 
 const toLogin = () => {
-  commit("changeLogin", true);
-}
+  commit('changeLogin', true);
+};
 
 const onSubmit = async () => {
   // 上传图片
@@ -164,14 +164,14 @@ const onSubmit = async () => {
   form.content = transformHTMLToTag(form.content);
   loading.value = true;
 
-  dispatch("createMomentComment", Object.assign({}, form, props.params)).then((res) => {
-    message.success("发布成功");
+  dispatch('createMomentComment', Object.assign({}, form, props.params)).then((res) => {
+    message.success('发布成功');
     richEditorRef.value?.clearContent();
-    emit("saveSuccess", res.data)
+    emit('saveSuccess', res.data);
   }).finally(() => {
     loading.value = false;
-  })
-}
+  });
+};
 
 const onPasteImage = (files: File[]) => {
   // 验证最大上传数量
@@ -190,16 +190,16 @@ const onPasteImage = (files: File[]) => {
         name: file.name,
         size: file.size,
         type: file.type,
-        originFileObj: file,
-      })
+        originFileObj: file
+      });
     }
   }
   reply.images.push(...validFiles);
-}
+};
 
 defineExpose({
   reply
-})
+});
 </script>
 
 <style lang="scss" scoped>

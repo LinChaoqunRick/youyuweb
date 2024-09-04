@@ -161,7 +161,7 @@ const replyEditorPlaceholder = computed(() => (props.data ? '回复@' + props.da
 const replyParams = computed(() => {
   return {
     momentId: props.moment.id,
-    // userIdTo: props.moment.userId, // 根评论不传递userIdTo，因为肯定是父评论的userId
+    userIdTo: props.moment.userId,
     rootId: props.data.id,
   };
 });
