@@ -146,7 +146,7 @@ const updateModelValue = () => {
   emit("update:modelValue", box.value?.innerHTML);
 };
 
-const insertHtml = (html: string) => {
+const insertHtml = (html: HTMLElement | string) => {
   box.value?.focus();
   // 创建一个新的选区
   const selection = window.getSelection();
