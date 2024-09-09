@@ -89,12 +89,12 @@ const props = defineProps({
   },
   autoFocus: {
     type: Boolean,
-    default: true,
+    default: true
   },
   params: {
     type: Object,
-    default: () => ({}),
-  },
+    default: () => ({})
+  }
 });
 const emit = defineEmits(['saveSuccess']);
 
@@ -125,7 +125,7 @@ const loading = ref<boolean>(false);
 
 const onClickEmoji = () => {
   emojiVisible.value = true;
-};
+}
 
 const onEmojiClose = () => {
   emojiVisible.value = false;
