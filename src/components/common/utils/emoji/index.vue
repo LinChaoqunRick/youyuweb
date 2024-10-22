@@ -71,14 +71,15 @@ function emojiHandler(event: Event) {
       list-style: none;
 
       .emoji-item {
-        height: 32px;
-        width: 32px;
+        height: 25px;
+        width: 25px;
         cursor: pointer;
         font-size: 22px;
         border-radius: 6px;
         display: flex;
         justify-content: center;
         align-items: center;
+        margin: 2px;
 
         &:hover {
           background-color: #eaeaea;
