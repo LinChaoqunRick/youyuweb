@@ -1,7 +1,7 @@
 <template>
   <div class="message-item">
     <div class="message-avatar">
-      <img :src="data.userId ? data.userInfo.avatar : data.avatar" alt="头像"/>
+      <img :src="data.userId ? data.userInfo.avatar : data.avatar" alt="头像" />
     </div>
     <div class="message-right">
       <div class="message-nickname">{{ data.userId ? data.userInfo.nickname : data.nickname }}</div>
@@ -20,8 +20,8 @@
 const props = defineProps({
   data: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 });
 </script>
 
