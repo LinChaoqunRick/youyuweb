@@ -3,12 +3,7 @@
     <div class="moment-item-content">
       <div class="content-top">
         <div class="user-avatar">
-          <a-popover
-            placement="top"
-            :mouseEnterDelay="0.6"
-            :mouseLeaveDelay="0.3"
-            @visibleChange="onUserVisibleChange"
-          >
+          <a-popover placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onUserVisibleChange">
             <template #content>
               <UserCardMoment :user="data.user" />
             </template>
@@ -18,12 +13,7 @@
           </a-popover>
         </div>
         <div class="user-nickname-time">
-          <a-popover
-            placement="top"
-            :mouseEnterDelay="0.6"
-            :mouseLeaveDelay="0.3"
-            @visibleChange="onUserVisibleChange"
-          >
+          <a-popover placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onUserVisibleChange">
             <template #content>
               <UserCardMoment :user="data.user" />
             </template>
@@ -55,7 +45,7 @@
                 编辑
               </div>
               <div v-if="showDetail" class="operation-item" @click="onDetail">
-                <i-doc-detail theme="outline" size="14" fill="currentColor"/>
+                <i-doc-detail theme="outline" size="14" fill="currentColor" />
                 详情
               </div>
               <div class="operation-item">
@@ -83,7 +73,7 @@
         <div class="limit-btn" @click="expand = true" v-show="row > 7 && !expand">展开</div>
         <div class="limit-btn" @click="expand = false" v-show="row > 7 && expand">收起</div>
         <div class="content-images" :class="[imageClass]" v-if="images?.length && !preview">
-          <img :src="item" v-for="(item, index) in images" @click="onPreview(index)" />
+          <img :src="item" v-for="(item, index) in images" :key="index" @click="onPreview(index)" alt="" />
         </div>
         <div class="content-image-preview" v-if="images?.length && preview">
           <ImagePreviewEmbed :list="images" :current="current" @onClose="onClose" />
@@ -105,17 +95,36 @@
       </div>
     </div>
     <div class="moment-item-actions">
-      <div class="item-operation">
-        <div class="item-icon">
-          <i-share-one theme="outline" size="14" fill="currentColor" />
+      <a-popover trigger="click" overlayClassName="share-actions-popover">
+        <template #content>
+          <div class="share-action-item copy-link" @click="onCopyLink">
+            <svg
+              t="1729582073552"
+              class="icon"
+              viewBox="0 0 1109 1024"
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              p-id="5152"
+              width="16"
+              height="16"
+            >
+              <path
+                d="M483.84 560.298667c24.234667 24.149333 24.234667 60.330667 0 84.48s-66.304 30.122667-90.453333 5.973333a229.461333 229.461333 0 0 1 0-325.802667L634.88 83.626667c90.453333-90.538667 235.264-90.538667 325.802667 0s96.512 229.290667 5.973333 319.744l-72.362667 72.448c-24.149333 24.149333-60.330667 24.149333-90.453333-6.058667s-24.149333-60.330667 0-84.48l72.362667-72.362667c42.24-42.24 36.181333-108.629333 0-144.896S767.488 119.808 725.333333 162.133333L483.925333 403.370667a112.981333 112.981333 0 0 0 0 156.928z m90.624-90.538667c-24.149333-24.149333-24.149333-60.330667 5.973333-90.453333s60.330667-24.149333 84.48 0a229.461333 229.461333 0 0 1 0 325.802666L423.594667 946.346667c-90.453333 90.453333-241.408 96.597333-331.946667 5.973333s-84.48-241.322667 6.058667-331.776l72.448-72.448c24.149333-24.149333 66.389333-30.122667 90.453333-5.973333s18.176 66.304-5.973333 90.453333l-72.448 72.448c-42.24 42.24-42.24 114.602667 0 156.842667s108.629333 36.181333 150.869333-5.973334l241.408-241.408c42.154667-42.24 42.154667-102.570667 0-144.810666z"
+                fill="#1890ff"
+                p-id="5153"
+              ></path>
+            </svg>
+            <div class="share-action-item-text">复制链接</div>
+          </div>
+        </template>
+        <div class="item-operation">
+          <div class="item-icon">
+            <i-share-one theme="outline" size="14" fill="currentColor" />
+          </div>
+          <div class="item-text">分享</div>
         </div>
-        <div class="item-text">分享</div>
-      </div>
-      <div
-        class="item-operation comment-operation"
-        @click="onClickReply"
-        :class="{ 'action-active': replyShow }"
-      >
+      </a-popover>
+      <div class="item-operation comment-operation" @click="onClickReply" :class="{ 'action-active': replyShow }">
         <div class="pointer-arrow" v-if="replyShow"></div>
         <div class="item-icon">
           <i-comment :theme="replyShow ? 'filled' : 'outline'" size="14" fill="currentColor" />
@@ -132,9 +141,10 @@
     <div class="moment-item-bottom" v-if="commentListShowVisibleIf" v-show="commentListShowVisibleShow">
       <div class="moment-comment-editor">
         <div class="user-avatar">
-          <img v-if="isLogin" :src="userInfo.avatar" :alt="userInfo.nickname+'的头像'"/>
+          <img v-if="isLogin" :src="userInfo.avatar" :alt="userInfo.nickname + '的头像'" />
           <img
-            v-else alt="默认头像"
+            v-else
+            alt="默认头像"
             src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png"
           />
         </div>
@@ -148,12 +158,7 @@
           <SortSwitch v-model="sort" @onChange="onChange" />
         </div>
         <div class="comment-list">
-          <ContentData
-            url="listMomentCommentPage"
-            :params="listParams"
-            v-slot="{ data }"
-            ref="ContentDataRef"
-          >
+          <ContentData url="listMomentCommentPage" :params="listParams" v-slot="{ data }" ref="ContentDataRef">
             <MomentCommentItem
               v-for="item in data?.list"
               :key="item.id"
@@ -184,7 +189,6 @@ import { useStore } from 'vuex';
 import type { momentListType } from '@/views/moment/types';
 import { message, Modal } from 'ant-design-vue';
 import openModal from '@/libs/tools/openModal';
-import { transformHTMLToTag } from '@/components/common/utils/emoji/youyu_emoji';
 import { transformTagToHTML } from '@/components/common/utils/emoji/youyu_emoji';
 import ImagePreviewEmbed from '@/components/common/utils/image/ImagePreviceEmbed.vue';
 import MomentReplyEditor from '@/views/moment/components/MomentReplyEditor.vue';
@@ -193,6 +197,8 @@ import MomentCommentItem from '../components/MomentCommentItem.vue';
 import ContentData from '@/components/common/system/ContentData.vue';
 import SortSwitch from '@/components/common/utils/sortSwitch/SortSwitch.vue';
 import LocationPreview from '@/components/common/utils/aMap/LocationPreview.vue';
+import { copyToClipboard } from '@/assets/utils/utils';
+import { DOMAIN } from '@/libs/consts';
 
 const { getters, dispatch } = useStore();
 
@@ -202,12 +208,12 @@ const router = useRouter();
 const props = defineProps({
   data: {
     type: Object as PropType<momentListType>,
-    required: true
+    required: true,
   },
   showDetail: {
     type: Boolean,
-    default: true
-  }
+    default: true,
+  },
 });
 
 const emit = defineEmits(['deleteSuccess', 'onEdit', 'onCommentSaveSuccess', 'onCommentDeleteSuccess']);
@@ -250,8 +256,8 @@ const replyParams = computed(() => {
   return {
     momentId: props.data.id,
     userIdTo: props.data.userId,
-  }
-})
+  };
+});
 const ContentDataRef = ref<InstanceType<typeof ContentData> | null>(null);
 
 function set(value: number) {
@@ -378,7 +384,11 @@ const onLocationPreview = () => {
     keyboard: false,
     centered: true,
     wrapClassName: 'select-position-modal-wrapper',
-  })
+  });
+};
+
+const onCopyLink = () => {
+  copyToClipboard(DOMAIN + '/moment/details/' + props.data.id);
 };
 
 defineExpose({
@@ -392,7 +402,7 @@ defineExpose({
   background-color: var(--youyu-body-background2);
 
   .moment-item-content {
-    padding: 16px;
+    padding: 16px 16px 10px 16px;
 
     .content-top {
       display: flex;
@@ -470,8 +480,8 @@ defineExpose({
       ::v-deep(.content-text) {
         margin: 4px 0;
         white-space: pre-wrap;
-        line-height: 2rem;
-        max-height: 12rem;
+        line-height: 1.8rem;
+        max-height: 10.8rem;
         overflow: hidden;
 
         &.content-expand {
@@ -515,6 +525,8 @@ defineExpose({
       }
 
       .limit-btn {
+        position: relative;
+        top: -4px;
         cursor: pointer;
         font-size: 14px;
         line-height: 22px;
@@ -802,6 +814,22 @@ defineExpose({
           color: #1890ff;
         }
       }
+    }
+  }
+}
+
+.share-actions-popover {
+  .share-action-item {
+    width: 100px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: var(--youyu-text2);
+
+    &-text {
+      margin-left: 6px;
     }
   }
 }

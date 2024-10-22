@@ -101,6 +101,10 @@ import {
   FullSelection,
   Pic,
   LinkCloud,
+  LinkOne,
+  FilePdf,
+  LoadingOne,
+  CloseOne,
 } from '@icon-park/vue-next';
 import type { App } from 'vue';
 
@@ -207,6 +211,10 @@ const IconPark = (app: App<Element>) => {
   app.component('IFullSelection', FullSelection);
   app.component('IPic', Pic);
   app.component('ILinkCloud', LinkCloud);
+  app.component('ILinkOne', LinkOne);
+  app.component('IFilePdf', FilePdf);
+  app.component('ILoadingOne', LoadingOne);
+  app.component('ICloseOne', CloseOne);
 };
 
 export default IconPark;

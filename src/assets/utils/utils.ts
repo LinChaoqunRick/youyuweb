@@ -1,5 +1,7 @@
 import { nextTick } from 'vue';
 import store from '@/store/index';
+import type { ClipboardCopyOptions } from '@/assets/utils/types';
+import { message } from 'ant-design-vue';
 
 export function getElementLeft(element: HTMLElement) {
   let actualLeft: number = element.offsetLeft;
@@ -233,3 +235,31 @@ export const scrollToAnchor = () => {
     });
   }
 };
+
+const defaultCopyOptions: ClipboardCopyOptions = {
+  showTips: true,
+};
+
+/**
+ * 复制到粘贴板
+ * @param text 需要复制的文本
+ * @param config 复制操作的配置
+ */
+export async function copyToClipboard(text: string, config?: ClipboardCopyOptions) {
+  const copyOptions: ClipboardCopyOptions = Object.assign({}, defaultCopyOptions, config);
+  let success: boolean = false;
+  try {
+    // 使用writeText方法复制文本
+    await navigator.clipboard.writeText(text);
+    success = true;
+  } catch (err) {
+    // 如果出现错误，比如用户拒绝了权限请求，则会进入catch块
+    success = false;
+  }
+
+  if (copyOptions.showTips) {
+    message.success(success ? '复制成功!' : '复制失败!');
+  }
+
+  return success;
+}
