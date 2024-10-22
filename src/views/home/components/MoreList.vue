@@ -28,11 +28,11 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 0 80px 40px 80px;
+  padding: 40px 80px 80px 80px;
 
   img {
-    height: 260px;
-    width: 260px;
+    height: 180px;
+    width: 180px;
     border-radius: 50%;
   }
 
