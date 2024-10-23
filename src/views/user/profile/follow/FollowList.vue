@@ -31,7 +31,7 @@
 
 <style lang="scss" scoped>
   .follow-list {
-    background-color: var(--youyu-background1);
+    background-color: var(--youyu-body-background2);
     padding-bottom: 6px;
 
     .list-body {

@@ -200,7 +200,7 @@ defineExpose({
   .table-pagination {
     display: flex;
     justify-content: center;
-    background-color: var(--pagination-background);
+    background-color: var(--youyu-body-background2);
     padding: 10px 0;
     border-radius: 8px;
 

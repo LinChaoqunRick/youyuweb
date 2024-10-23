@@ -53,7 +53,7 @@
   .note-item {
     display: flex;
     height: 140px;
-    background-color: var(--youyu-background1);
+    background-color: var(--youyu-body-background2);
     padding: 0 12px;
 
     .note-left {

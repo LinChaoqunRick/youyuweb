@@ -67,7 +67,7 @@
     display: flex;
     align-items: center;
     height: 80px;
-    background-color: var(--youyu-background1);
+    background-color: var(--youyu-body-background2);
     padding: 0 12px;
 
     .user-left {

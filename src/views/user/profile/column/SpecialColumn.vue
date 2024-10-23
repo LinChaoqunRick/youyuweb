@@ -55,7 +55,7 @@ const updateSuccess = () => {
 
 <style lang="scss" scoped>
 .special-column {
-  background-color: var(--youyu-background1);
+  background-color: var(--youyu-body-background2);
   padding: 0 16px 16px 16px;
 
   .column-header {

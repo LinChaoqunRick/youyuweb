@@ -84,7 +84,7 @@ const onEdit = () => {
   display: flex;
   height: 70px;
   //padding: 6px 0;
-  background-color: var(--youyu-background1);
+  background-color: var(--youyu-body-background2);
 
   .favorites-preview {
     display: flex;

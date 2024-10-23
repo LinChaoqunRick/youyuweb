@@ -23,7 +23,7 @@ const menuList = [
 
 <style lang="scss" scoped>
 .collection-list {
-  background-color: var(--youyu-background1);
+  background-color: var(--youyu-body-background2);
   padding: 8px 16px;
 
   .collect-menu {

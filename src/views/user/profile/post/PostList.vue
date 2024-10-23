@@ -112,7 +112,7 @@ onBeforeRouteLeave(() => {
 <style lang="scss" scoped>
 .post-list {
   padding: 6px 10px;
-  background-color: var(--youyu-background1);
+  background-color: var(--youyu-body-background2);
 
   .list-top {
     display: flex;

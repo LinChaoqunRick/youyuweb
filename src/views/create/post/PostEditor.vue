@@ -3,7 +3,7 @@
     <div class="top-box">
       <input v-model="formValidate.title" placeholder="请输入文章标题" maxlength="255" />
       <div class="top-tips">
-        <a-switch v-model:checked="autoSave" size="small" />
+        <a-switch v-model:checked="autoSave" size="small" @change="onAutoSaveChange" />
         <div v-if="!autoSave">自动保存已关闭</div>
         <div v-else>
           <div class="save-status" v-show="autoSaveStatus === 0">自动保存已开启</div>
@@ -72,7 +72,6 @@ function handlePost() {
 
 const saveDraft = debounce(
   () => {
-    console.log(123123);
     autoSaveStatus.value = 1;
     setTimeout(() => {
       autoSaveStatus.value = 2;
@@ -84,6 +83,12 @@ const saveDraft = debounce(
     trailing: true,
   }
 );
+
+const onAutoSaveChange = (value: boolean) => {
+  if (value) {
+    autoSaveStatus.value = 0;
+  }
+};
 </script>
 
 <style lang="scss" scoped>

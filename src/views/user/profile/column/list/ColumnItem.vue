@@ -149,7 +149,6 @@ const onDelete = () => {
     width: calc(100% - 166px);
     margin-left: 12px;
     box-sizing: border-box;
-    border-bottom: 1px solid #e5e6eb;
 
     .column-title {
       width: 100%;

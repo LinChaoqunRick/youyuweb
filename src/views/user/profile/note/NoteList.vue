@@ -26,7 +26,7 @@ const params = computed(() => ({
 
 <style lang="scss" scoped>
 .note-list {
-  background-color: var(--youyu-background1);
+  background-color: var(--youyu-body-background2);
 
   ::v-deep(.note-item) {
     margin-top: 8px;
