@@ -39,6 +39,10 @@
 
       .list-item {
         border-top: 1px solid var(--youyu-border-color);
+
+        &:first-child {
+          border-top: none;
+        }
       }
     }
   }

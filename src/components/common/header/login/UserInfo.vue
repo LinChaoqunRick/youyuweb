@@ -170,7 +170,7 @@ const showLogoutConfirm = () => {
 function handleLogout() {
   dispatch("logout").then((res) => {
     cleanCookieLocalStorage();
-    message.success("注销成功!");
+    message.success("登出成功!");
     // 刷新页面
     setTimeout(() => {
       location.reload();
