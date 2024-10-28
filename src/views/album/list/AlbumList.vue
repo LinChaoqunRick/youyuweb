@@ -62,6 +62,7 @@ const onAdd = async () => {
       margin-top: 18px;
       position: sticky;
       top: 95%;
+      background-color: transparent !important;
     }
   }
 

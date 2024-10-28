@@ -38,17 +38,18 @@
   import {useStore} from "vuex";
   import UserInfoPanel from "@/views/post/detail/child/UserInfoPanel.vue";
   import type {userType, statType} from "@/types/user";
-  import {message, Modal} from "ant-design-vue";
+  import { message, Modal } from "ant-design-vue";
   import openModal from "@/libs/tools/openModal";
   import EmptyPage from "@/components/common/system/EmptyPage.vue";
   import MenuSetting from "./components/menu/MenuSetting.vue"
+  import type { MenuItem } from '@/views/user/profile/types';
 
   const {getters, dispatch} = useStore();
   const reload = inject('reload')
   const UserInfoRef = ref(null)
   const route = useRoute();
   const router = useRouter();
-  const user = ref(null)
+  const user = ref<userType | null>(null)
   const current = ref<string[]>(['MomentList']);
   const userInfo = computed(() => getters['userInfo']);
   const isOwn = computed(() => userInfo.value.id === user.value?.id);
@@ -56,8 +57,8 @@
   provide('user', user);
 
   const userId = router.currentRoute.value.params.userId;
-  const menuItems = ref([]);
-  const showMenuItems = ref([]); // 做展示用的
+  const menuItems = ref<Array<MenuItem>>([]);
+  const showMenuItems = ref<Array<MenuItem>>([]); // 做展示用的
   const menuPermit = ref({});
 
   async function getProfileMenu() {
@@ -112,9 +113,9 @@
         return item;
       })
     } else {
-      console.log(menuItems.value, menuPermit.value);
+      // console.log(menuItems.value, menuPermit.value);
       showMenuItems.value = menuItems.value.filter(item => !!menuPermit.value[item.value]);
-      console.log(showMenuItems.value);
+      // console.log(showMenuItems.value);
     }
   }
 
