@@ -1,14 +1,8 @@
 <template>
   <div class="album-list">
-    <Teleport defer to="#album-actions">
-      <div class="actions-wrapper">
-        <a-button class="create-btn" shape="round" type="primary" @click="onAdd">
-          <i-folder-plus theme="outline" size="16" fill="#fff" style="margin-right: 4px" />
-          新增
-        </a-button>
-        <AlbumActions />
-      </div>
-    </Teleport>
+    <div class="actions-wrapper">
+      <AlbumActions />
+    </div>
     <YTable listUrl="getAlbumList" ref="YTableRef">
       <template #default="{ dataList }">
         <div class="list-wrapper">
@@ -22,40 +16,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import AlbumItem from '@/views/album/list/AlbumItem.vue';
+import AlbumItem from '@/views/album/components/AlbumItem.vue';
 import YTable from '@/components/common/table/YTable.vue';
-import openModal from '@/libs/tools/openModal';
-import AlbumAdd from '@/views/album/list/AlbumAdd.vue';
 import AlbumActions from '@/views/album/components/AlbumActions.vue';
-
-const YTableRef = ref<typeof YTable | null>(null);
-
-const onAdd = async () => {
-  const res = await openModal({
-    component: AlbumAdd,
-    title: '创建相册',
-    maskClosable: false,
-    width: '580px',
-  }).catch(console.log);
-  if (res) {
-    YTableRef.value?.refreshData();
-  }
-};
 </script>
 
 <style lang="scss" scoped>
 .album-list {
+  height: 100%;
+
   .actions-wrapper {
+    position: absolute;
+    top: 8px;
+    right: 0;
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    width: 100%;
     padding-right: 30px;
-
-    button {
-      margin-right: 16px;
-    }
 
     ::v-deep(.ant-input-affix-wrapper) {
       width: 200px;
@@ -73,6 +50,7 @@ const onAdd = async () => {
     justify-items: center;
     align-items: center;
     grid-gap: 50px 0;
+    padding-top: 30px;
 
     ::v-deep(.album-item) {
       width: 270px;
@@ -82,6 +60,10 @@ const onAdd = async () => {
 
   ::v-deep(.y-table) {
     height: 100%;
+
+    .table-body {
+      height: 100%;
+    }
 
     .table-pagination {
       margin-top: 18px;

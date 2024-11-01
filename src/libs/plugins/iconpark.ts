@@ -109,6 +109,7 @@ import {
   SortOne,
   ViewGridCard,
   ViewGridList,
+  PictureAlbum,
 } from '@icon-park/vue-next';
 import type { App } from 'vue';
 
@@ -223,6 +224,7 @@ const IconPark = (app: App<Element>) => {
   app.component('ISortOne', SortOne);
   app.component('IViewGridCard', ViewGridCard);
   app.component('IViewGridList', ViewGridList);
+  app.component('IPictureAlbum', PictureAlbum);
 };
 
 export default IconPark;

@@ -16,14 +16,14 @@
         {{ item.label }}
       </div>
     </template>
-    <i-sort-one title="排序方式" theme="outline" size="22" fill="#283d57" />
+    <i-sort-one title="排序方式" theme="outline" size="22" fill="currentColor" />
   </a-popover>
   <i-view-grid-card
     v-if="viewType === 'card'"
     title="卡片模式"
     theme="outline"
     size="22"
-    fill="#000"
+    fill="currentColor"
     :strokeWidth="3"
     @click="onViewChange('list')"
   />
@@ -32,7 +32,7 @@
     title="列表模式"
     theme="outline"
     size="22"
-    fill="#000"
+    fill="currentColor"
     :strokeWidth="3"
     @click="onViewChange('card')"
   />

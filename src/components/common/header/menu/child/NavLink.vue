@@ -40,19 +40,19 @@
   </div>
   <div class="nav-link nav-link-single" v-else>
     <RouterLink :to="route.path" custom v-slot="{ isActive, isExactActive, navigate }">
-      <div
+      <a
+        class="nav-link-item cp"
         :class="{
-          'nav-link-item': true,
-          'cp': true,
           'router-link-active': route.exact ? isExactActive : isActive,
           'router-link-exact-active': route.exact ? isExactActive : isActive,
         }"
+        :href="route.path"
         @click="onRouteClick($event, isActive, isExactActive, navigate)"
       >
         <slot>
           <span>{{ route.title }}</span>
         </slot>
-      </div>
+      </a>
     </RouterLink>
   </div>
 </template>

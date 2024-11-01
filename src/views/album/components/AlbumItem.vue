@@ -2,20 +2,14 @@
   <RouterLink :to="`/album/detail/${data.id}`">
     <div class="album-item cp">
       <div class="album-cover">
-        <img :src="data.cover || defaultImage" alt="">
-        <div class="detail-mask">
-          <div class="detail-info-createTime">
-            创建于：{{ dayjs(data.createTime).format('YYYY-MM-DD') }}
-          </div>
-          <div class="detail-info-content">
-            简介：{{ data.content }}
-          </div>
-        </div>
+        <img :src="data.cover || '/src/assets/images/common/no_img_top.png'" alt="" />
         <div class="detail-info">
+          <div class="detail-info-user">
+            <img :src="data.userInfo?.avatar" alt="" />
+            <div class="user-nickname">{{ data.userInfo?.nickname }}</div>
+          </div>
           <div class="album-info-data">
-            <div class="edit-btn" v-if="false">
-              编辑
-            </div>
+            <div class="edit-btn" v-if="false">编辑</div>
             <div class="album-info-data-item" v-if="!data.open">
               <i-lock theme="outline" size="15" fill="currentColor" />
             </div>
@@ -23,10 +17,6 @@
               <i-material-three theme="outline" size="16" fill="currentColor" />
               <span class="data-image-count">{{ data.imageCount }}</span>
             </div>
-          </div>
-          <div class="detail-info-user">
-            <img :src="data.userInfo?.avatar" alt="">
-            <div class="user-nickname">{{ data.userInfo?.nickname }}</div>
           </div>
         </div>
       </div>
@@ -40,14 +30,13 @@
 <script setup lang="ts">
 import type { PropType } from 'vue';
 import dayjs from 'dayjs';
-import defaultImage from '@/assets/images/common/defaultImage.png';
 import type { AlbumDetailData } from '@/views/album/detail/types';
 
 const props = defineProps({
   data: {
     type: Object as PropType<AlbumDetailData>,
-    required: true
-  }
+    required: true,
+  },
 });
 </script>
 
@@ -72,7 +61,6 @@ const props = defineProps({
     }
 
     .detail-info {
-
       .detail-info-user {
         display: flex;
         align-items: center;
@@ -80,7 +68,6 @@ const props = defineProps({
         .user-nickname {
           margin-left: 6px;
           color: black;
-          font-weight: bold;
         }
 
         img {
@@ -92,17 +79,21 @@ const props = defineProps({
 
       .album-info-data {
         display: flex;
+        justify-content: flex-end;
         align-items: center;
         position: absolute;
-        bottom: 4px;
-        right: 8px;
-        height: 24px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 40px;
+        padding-right: 10px;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.36));
 
         .edit-btn {
           opacity: 0;
           color: #1890ff;
           font-size: 14px;
-          margin-right: 4px
+          margin-right: 4px;
         }
 
         .album-info-data-item {
@@ -112,8 +103,8 @@ const props = defineProps({
           padding: 0 6px;
           border-radius: 4px;
           background-color: rgba(102, 102, 102, 0.2);
-          color: var(--youyu-text2);
-          height: 100%;
+          color: white;
+          height: 24px;
           margin-left: 3px;
 
           .data-image-count {
@@ -123,7 +114,7 @@ const props = defineProps({
       }
     }
 
-    .detail-info, .detail-mask {
+    .detail-info {
       position: absolute;
       left: 0;
       top: 0;
@@ -131,37 +122,17 @@ const props = defineProps({
       bottom: 0;
       padding: 12px;
     }
-
-    .detail-mask {
-      opacity: 0;
-      padding-top: 45px;
-      background-color: var(--mask-background);
-      color: #FFFFFF;
-      transition: .3s;
-    }
   }
 
   .album-info {
-    padding: 6px 10px;
+    padding: 8px 10px;
 
     .album-info-name {
-      font-weight: bold;
+      //font-weight: bold;
     }
   }
 
   &:hover {
-    .detail-mask {
-      opacity: 1;
-    }
-
-    .user-nickname {
-      color: #1890ff !important;
-    }
-
-    .album-info-data-item {
-      color: #FFFFFF !important;
-    }
-
     .edit-btn {
       opacity: 1 !important;
     }

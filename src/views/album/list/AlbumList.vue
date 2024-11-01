@@ -2,7 +2,6 @@
   <div class="album-list">
     <div class="album-list-top-menu">
       <nav-link v-for="route in routes" :route="route" :key="route.title" />
-      <div id="album-actions"></div>
     </div>
     <div class="album-list-content">
       <empty-page />
@@ -15,8 +14,8 @@ import NavLink from '@/components/common/header/menu/child/NavLink.vue';
 import EmptyPage from '@/components/common/system/EmptyPage.vue';
 
 const routes = [
-  { path: '/album/list/all', title: '全部相册' },
-  { path: '/album/list/mine', title: '个人中心' },
+  { path: '/album/all', title: '全部相册' },
+  { path: '/album/mine', title: '个人中心' },
 ];
 </script>
 
@@ -32,6 +31,7 @@ const routes = [
     display: flex;
     align-items: center;
     background-color: var(--youyu-body-background2);
+    border-bottom: var(--youyu-navigation-border);
     padding-left: 121px;
 
     ::v-deep(.nav-link) {
@@ -54,16 +54,10 @@ const routes = [
         }
       }
     }
-
-    #album-actions {
-      flex: 1;
-      overflow: hidden;
-    }
   }
 
   .album-list-content {
     flex: 1;
-    padding-top: 30px;
     overflow: auto;
   }
 }

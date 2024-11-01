@@ -12,7 +12,7 @@ const route = [
     component: () => import('@/components/common/system/EmptyPage.vue'),
     children: [
       {
-        path: 'list',
+        path: '',
         name: 'AlbumList',
         redirect: to => {
           return { name: 'AlbumListAllPage', params: { page: 1 } };
@@ -32,6 +32,7 @@ const route = [
             },
             meta: {
               title: '相册列表-全部',
+              keepAlive: true,
             },
             component: () => import('@/components/common/system/EmptyPage.vue'),
             children: [
@@ -41,7 +42,7 @@ const route = [
                 meta: {
                   title: '相册列表-全部',
                 },
-                component: () => import('@/views/album/list/AlbumListAll.vue'),
+                component: () => import('@/views/album/list/all/AlbumListAll.vue'),
               },
             ],
           },
@@ -53,16 +54,27 @@ const route = [
             },
             meta: {
               title: '相册列表-我的',
+              keepAlive: true,
             },
-            component: () => import('@/components/common/system/EmptyPage.vue'),
+            component: () => import('@/views/album/list/mine/AlbumListMine.vue'),
             children: [
               {
-                path: ':page(\\d+)',
+                path: ':page(\\d+)?',
                 name: 'AlbumListMinePage',
                 meta: {
-                  title: '相册列表-我的',
+                  title: '个人中心-相册-列表',
+                  keepAlive: true,
                 },
-                component: () => import('@/views/album/list/AlbumListMine.vue'),
+                component: () => import('@/views/album/list/mine/AlbumListMinePage.vue'),
+              },
+              {
+                path: 'recycle',
+                name: 'AlbumListMineRecycle',
+                meta: {
+                  title: '个人中心-相册-回收站',
+                  keepAlive: true,
+                },
+                component: () => import('@/views/album/list/mine/AlbumRecycle.vue'),
               },
             ],
           },
