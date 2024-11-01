@@ -7,20 +7,12 @@
       <div class="user-content">
         <div class="user-menu-content">
           <div class="content-menu">
-            <RouterLink v-for="item in showMenuItems" :to="item.path" v-slot="{ isActive, isExactActive, navigate }">
-              <div
-                :class="{
-                  'router-link-active': isActive,
-                  'router-link-exact-active': item.exact ? isExactActive : isActive,
-                }"
-                class="menu-item"
-              >
-                {{ item.title }}
-                <div class="lock" v-if="item.hide">
-                  <i-protect theme="filled" size="10" fill="#1890ff" />
-                </div>
+            <nav-link v-for="item in showMenuItems" :route="item" :key="item.path">
+              {{ item.title }}
+              <div class="lock" v-if="item.hide">
+                <i-protect theme="filled" size="10" fill="#1890ff" />
               </div>
-            </RouterLink>
+            </nav-link>
             <div class="menu-right">
               <div class="menu-setting" v-if="isOwn">
                 <i-setting-two theme="outline" size="18" fill="currentColor" title="设置" @click="onSetting" />
@@ -47,6 +39,7 @@ import openModal from '@/libs/tools/openModal';
 import EmptyPage from '@/components/common/system/EmptyPage.vue';
 import MenuSetting from './components/menu/MenuSetting.vue';
 import type { MenuItem } from '@/views/user/profile/types';
+import NavLink from '@/components/common/header/menu/child/NavLink.vue';
 
 const { getters, dispatch } = useStore();
 const reload = inject('reload');
@@ -54,7 +47,6 @@ const UserInfoRef = ref(null);
 const route = useRoute();
 const router = useRouter();
 const user = ref<userType | null>(null);
-const current = ref<string[]>(['MomentList']);
 const userInfo = computed(() => getters['userInfo']);
 const isOwn = computed(() => userInfo.value.id && userInfo.value.id === user.value?.id);
 const pathPermit = ref<boolean>(false);
@@ -77,7 +69,7 @@ const handlePathPermit = () => {
   // 判读该用户是否开通了这个目录
   const name = route.matched[2].name;
   if (isOwn.value) {
-    return pathPermit.value = true;
+    return (pathPermit.value = true);
   }
   const nameMap = {
     userHome: 'showHome',
@@ -114,7 +106,7 @@ async function onLoaded(userData: userType) {
 
 function handlePermit() {
   if (isOwn.value) {
-    showMenuItems.value = menuItems.value.map(item => {
+    showMenuItems.value = menuItems.value.map((item, index) => {
       item.hide = !menuPermit.value[item.value];
       return item;
     });
@@ -348,13 +340,10 @@ watch(
           padding: 0 10px;
           display: flex;
           background-color: var(--youyu-body-background2);
-          border-bottom: 1px solid var(--youyu-border-color);
 
-          .menu-item {
+          ::v-deep(.nav-link) {
             position: relative;
-            display: flex;
-            align-items: center;
-            height: calc(100% - 1px);
+            height: 100%;
             box-sizing: content-box;
             cursor: pointer;
             transition: 0s;
@@ -362,10 +351,16 @@ watch(
             color: var(--youyu-text2) !important;
             font-weight: normal;
 
-            &.router-link-exact-active {
+            .nav-link-item {
+              display: flex;
+              align-items: center;
+              height: 100%;
+              border-bottom: 2px solid transparent;
+            }
+
+            .router-link-exact-active {
               border-bottom: 2px solid #1890ff;
               color: #1890ff !important;
-              font-weight: bold;
             }
 
             .lock {

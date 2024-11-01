@@ -1,21 +1,35 @@
 <template>
-  <div class="nav-link" v-if="route?.children.length">
-    <a-dropdown :getPopupContainer="triggerNode=>triggerNode.parentNode"
-                placement="bottom" overlayClassName="route-dropdown">
+  <div class="nav-link" v-if="route?.children?.length">
+    <a-dropdown
+      :getPopupContainer="triggerNode => triggerNode.parentNode"
+      placement="bottom"
+      overlayClassName="route-dropdown"
+    >
       <div class="route-dropdown-trigger">
-        <RouterLink :to="route.path" custom v-slot="{isActive, isExactActive, navigate}">
-          <div :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}">
+        <RouterLink :to="route.path" custom v-slot="{ isActive, isExactActive, navigate }">
+          <div
+            :class="{
+              'router-link-active': route.exact ? isExactActive : isActive,
+              'router-link-exact-active': route.exact ? isExactActive : isActive,
+            }"
+          >
             <span>{{ route.title }}</span>
-            <i-down theme="outline" size="14" fill="currentColor"/>
+            <i-down theme="outline" size="14" fill="currentColor" />
           </div>
         </RouterLink>
       </div>
       <template #overlay>
         <a-menu>
-          <a-menu-item v-for="item in route.children">
-            <RouterLink :to="item.path" custom v-slot="{isActive, isExactActive, navigate}">
-              <a :href="item.path" :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}"
-                 @click="onRouteClick($event, isActive, isExactActive, navigate)">
+          <a-menu-item v-for="item in route.children" :key="item.path">
+            <RouterLink :to="item.path" custom v-slot="{ isActive, isExactActive, navigate }">
+              <a
+                :class="{
+                  'router-link-active': route.exact ? isExactActive : isActive,
+                  'router-link-exact-active': item.exact ? isExactActive : isActive,
+                }"
+                :href="item.path"
+                @click="onRouteClick($event, isActive, isExactActive, navigate)"
+              >
                 <span>{{ item.title }}</span>
               </a>
             </RouterLink>
@@ -25,31 +39,41 @@
     </a-dropdown>
   </div>
   <div class="nav-link nav-link-single" v-else>
-    <RouterLink :to="route.path" custom v-slot="{isActive, isExactActive, navigate}">
-      <a :href="route.path" :class="{'router-link-active':isActive, 'router-link-exact-active':isExactActive}"
-         @click="onRouteClick($event, isActive, isExactActive, navigate)">
-        <span>{{ route.title }}</span>
-      </a>
+    <RouterLink :to="route.path" custom v-slot="{ isActive, isExactActive, navigate }">
+      <div
+        :class="{
+          'nav-link-item': true,
+          'cp': true,
+          'router-link-active': route.exact ? isExactActive : isActive,
+          'router-link-exact-active': route.exact ? isExactActive : isActive,
+        }"
+        @click="onRouteClick($event, isActive, isExactActive, navigate)"
+      >
+        <slot>
+          <span>{{ route.title }}</span>
+        </slot>
+      </div>
     </RouterLink>
   </div>
 </template>
 
 <script setup lang="ts">
-import {RouterLink} from 'vue-router';
+import type { NavLink } from './types';
+import type { PropType } from 'vue';
 
-const prop = defineProps({
+defineProps({
   route: {
-    type: Object,
-    required: true
-  }
-})
+    type: Object as PropType<NavLink>,
+    required: true,
+  },
+});
 
-const onRouteClick = (e: Event, isActive, isExactActive, navigate) => {
+const onRouteClick = (e: Event, isActive: boolean, isExactActive: boolean, navigate: Function) => {
   e.preventDefault();
-  if (!isActive) {
+  if (!isExactActive) {
     navigate();
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -59,8 +83,10 @@ const onRouteClick = (e: Event, isActive, isExactActive, navigate) => {
   justify-content: center;
   align-items: center;
 
-  a, .i-icon, div {
-    transition: .3s;
+  a,
+  .i-icon,
+  div {
+    transition: 0.3s;
     color: var(--youyu-text2);
   }
 
@@ -76,10 +102,10 @@ const onRouteClick = (e: Event, isActive, isExactActive, navigate) => {
   }
 
   &:hover {
-
     .route-dropdown-trigger {
-
-      a, .i-icon, div {
+      a,
+      .i-icon,
+      div {
         color: #1890ff !important;
       }
     }

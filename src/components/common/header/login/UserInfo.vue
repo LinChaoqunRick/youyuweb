@@ -5,7 +5,7 @@
       placement="bottomRight"
       trigger="click"
       overlayClassName="user-info-popover"
-      :getPopupContainer="(triggerNode) => triggerNode.parentNode"
+      :getPopupContainer="triggerNode => triggerNode.parentNode"
     >
       <template #content>
         <div class="user-info">
@@ -44,18 +44,13 @@
           </div>
         </div>
         <div class="menu-list">
-          <div v-for="item in menuList" class="menu-item" @click="onItemClick">
-            <RouterLink
-              :to="item.path"
-              v-slot="{ isActive, isExactActive, navigate }"
-            >
+          <div v-for="item in menuList" :key="item.path" class="menu-item" @click="onItemClick">
+            <RouterLink :to="item.path" v-slot="{ isActive, isExactActive }">
               <div
                 class="ope-list-item"
                 :class="{
                   'router-link-active': isActive,
-                  'router-link-exact-active': item.exact
-                    ? isExactActive
-                    : isActive,
+                  'router-link-exact-active': item.exact ? isExactActive : isActive,
                 }"
               >
                 <component :is="item.icon" theme="outline" size="18" />
@@ -90,60 +85,60 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import { useStore } from "vuex";
-import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
-import { createVNode } from "vue";
-import { Modal, message } from "ant-design-vue";
-import { useRouter, RouterLink } from "vue-router";
-import { cleanCookieLocalStorage } from "@/assets/utils/utils";
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { createVNode } from 'vue';
+import { Modal, message } from 'ant-design-vue';
+import { useRouter, RouterLink } from 'vue-router';
+import { cleanCookieLocalStorage } from '@/assets/utils/utils';
 
 const { getters, dispatch } = useStore();
-let userInfo = computed(() => getters["userInfo"]);
+let userInfo = computed(() => getters['userInfo']);
 const router = useRouter();
 const visible = ref(false);
 
 const menuList = [
   {
-    label: "我的主页",
-    icon: "i-home",
+    label: '我的主页',
+    icon: 'i-home',
     path: `/user/${userInfo.value.id}`,
     exact: true,
   },
   {
-    label: "管理文章",
-    icon: "i-pencil",
+    label: '管理文章',
+    icon: 'i-pencil',
     path: `/user/${userInfo.value.id}/post`,
   },
   {
-    label: "我的时刻",
-    icon: "i-ulikecam",
+    label: '我的时刻',
+    icon: 'i-ulikecam',
     path: `/user/${userInfo.value.id}/moment`,
   },
   {
-    label: "我的关注",
-    icon: "i-like",
+    label: '我的关注',
+    icon: 'i-like',
     path: `/user/${userInfo.value.id}/follow`,
   },
   {
-    label: "我的收藏",
-    icon: "i-star",
+    label: '我的收藏',
+    icon: 'i-star',
     path: `/user/${userInfo.value.id}/favorites`,
   },
   {
-    label: "个人中心",
-    icon: "i-user",
-    path: "/user/center/profile",
+    label: '个人中心',
+    icon: 'i-user',
+    path: '/user/center/profile',
   },
   {
-    label: "消息通知",
-    icon: "i-remind",
-    path: "/user/center/message",
+    label: '消息通知',
+    icon: 'i-remind',
+    path: '/user/center/message',
   },
   {
-    label: "账号设置",
-    icon: "i-setting-one",
-    path: "/user/center/account",
+    label: '账号设置',
+    icon: 'i-setting-one',
+    path: '/user/center/account',
   },
 ];
 
@@ -154,7 +149,7 @@ function onItemClick() {
 const showLogoutConfirm = () => {
   visible.value = false;
   Modal.confirm({
-    title: "您确定要退出当前账号?",
+    title: '您确定要退出当前账号?',
     icon: createVNode(ExclamationCircleOutlined),
     // content: createVNode('div', { style: 'color:red;' }, 'Some descriptions'),
     onOk() {
@@ -163,14 +158,14 @@ const showLogoutConfirm = () => {
     onCancel() {
       // console.log('Cancel');
     },
-    class: "test",
+    class: 'test',
   });
 };
 
 function handleLogout() {
-  dispatch("logout").then((res) => {
+  dispatch('logout').then(res => {
     cleanCookieLocalStorage();
-    message.success("登出成功!");
+    message.success('登出成功!');
     // 刷新页面
     setTimeout(() => {
       location.reload();

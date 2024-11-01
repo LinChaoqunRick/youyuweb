@@ -1,74 +1,70 @@
 <template>
   <div class="album-list">
-    <YTable listUrl="getAlbumList" ref="YTableRef">
-      <template #default="{dataList}">
-        <div class="list-wrapper">
-          <div v-for="item in dataList" class="album-item-body" :key="item.id">
-            <AlbumItem :data="item" />
-          </div>
-        </div>
-      </template>
-    </YTable>
-    <a-button class="create-btn" type="primary" @click="onAdd">新增</a-button>
+    <div class="album-list-top-menu">
+      <nav-link v-for="route in routes" :route="route" :key="route.title" />
+      <div id="album-actions"></div>
+    </div>
+    <div class="album-list-content">
+      <empty-page />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import AlbumItem from '@/views/album/list/AlbumItem.vue';
-import YTable from '@/components/common/table/YTable.vue';
-import openModal from '@/libs/tools/openModal';
-import AlbumAdd from '@/views/album/list/AlbumAdd.vue';
-import { ref } from 'vue';
+import NavLink from '@/components/common/header/menu/child/NavLink.vue';
+import EmptyPage from '@/components/common/system/EmptyPage.vue';
 
-const YTableRef = ref(null);
-
-const onAdd = async () => {
-  const res = await openModal({
-    component: AlbumAdd,
-    title: '创建相册',
-    maskClosable: false,
-    width: '580px'
-  }).catch(console.log);
-  if (res) {
-    YTableRef.value.refreshData();
-  }
-};
-
+const routes = [
+  { path: '/album/list/all', title: '全部相册' },
+  { path: '/album/list/mine', title: '个人中心' },
+];
 </script>
 
 <style lang="scss" scoped>
 .album-list {
-  padding: 40px 16px;
+  display: flex;
+  flex-direction: column;
   height: calc(100vh - 100px);
-  overflow: auto;
+  overflow: hidden;
 
-  .list-wrapper {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    justify-items: center;
+  .album-list-top-menu {
+    height: 48px;
+    display: flex;
     align-items: center;
-    grid-gap: 50px 0;
+    background-color: var(--youyu-body-background2);
+    padding-left: 121px;
 
-    ::v-deep(.album-item) {
-      width: 270px;
-      height: 220px;
+    ::v-deep(.nav-link) {
+      position: relative;
+      height: fit-content;
+      padding: 0 16px;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        width: 1px;
+        height: 12px;
+        background-color: var(--youyu-text1);
+      }
+
+      &:first-child {
+        &::before {
+          display: none;
+        }
+      }
+    }
+
+    #album-actions {
+      flex: 1;
+      overflow: hidden;
     }
   }
 
-  ::v-deep(.y-table) {
-    height: 100%;
-
-    .table-pagination {
-      margin-top: 18px;
-      position: sticky;
-      top: 95%;
-      background-color: transparent !important;
-    }
-  }
-
-  .create-btn {
-    position: absolute;
-    bottom: 12px;
+  .album-list-content {
+    flex: 1;
+    padding-top: 30px;
+    overflow: auto;
   }
 }
 </style>

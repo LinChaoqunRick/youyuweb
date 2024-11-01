@@ -105,6 +105,10 @@ import {
   FilePdf,
   LoadingOne,
   CloseOne,
+  FolderPlus,
+  SortOne,
+  ViewGridCard,
+  ViewGridList,
 } from '@icon-park/vue-next';
 import type { App } from 'vue';
 
@@ -215,6 +219,10 @@ const IconPark = (app: App<Element>) => {
   app.component('IFilePdf', FilePdf);
   app.component('ILoadingOne', LoadingOne);
   app.component('ICloseOne', CloseOne);
+  app.component('IFolderPlus', FolderPlus);
+  app.component('ISortOne', SortOne);
+  app.component('IViewGridCard', ViewGridCard);
+  app.component('IViewGridList', ViewGridList);
 };
 
 export default IconPark;
