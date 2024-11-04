@@ -297,7 +297,7 @@ $imageWidth: 152px;
               position: absolute;
               top: 0;
               left: 0;
-              z-index: 10;
+              z-index: 1;
               font-size: 48px;
             }
 
