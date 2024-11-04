@@ -58,7 +58,6 @@ const restAuthUserNumber = computed(() =>
 const initData = () => {
   dispatch('getAlbumDetail', { id: props.albumId }).then(res => {
     data.value = res.data;
-    data.value.coverImageId = 226;
   });
 };
 initData();
