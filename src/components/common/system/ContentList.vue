@@ -27,7 +27,7 @@
           <slot name="loadMoreBox" :loading="restLoading" :total="totalNum">
             <div class="load-more-item mr-10">
               <div>
-                {{ pageNum === 1 ? `${firstLoading && !totalNum ? '加载中' : total + dataText}` : `查看更多${dataText}` }}
+                {{ pageNum === 1 ? `${firstLoading && !totalNum ? '加载中' : total + unit + dataText}` : `查看更多${dataText}` }}
               </div>
               <i-down v-if="!restLoading" theme="outline" size="14" fill="currentColor" />
               <i-loading-four v-else theme="outline" size="14" fill="currentColor" />
@@ -72,7 +72,8 @@ const props = defineProps({
   foldable: { type: Boolean, default: false },
   total: { type: Number },
   immediate: { type: Boolean, default: true },
-  dataText: { type: String, default: '条数据' },
+  unit: { type: String, default: '条' },
+  dataText: { type: String, default: '数据' },
   autoLoad: { type: Boolean, default: false }, // 滚动到底后自动加载
   loadTrigger: { type: Boolean, default: false }, // 配合autoLoad使用，如果是true，则需要点击后触发autoLoad
 });

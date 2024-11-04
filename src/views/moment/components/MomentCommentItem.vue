@@ -93,11 +93,13 @@
       :params="params"
       :immediate="false"
       foldable
+      unit="条"
       data-text="回复"
       ref="ContentListRef"
     >
       <MomentReplyItem
         v-for="item in list"
+        :key="item.id"
         :data="item"
         :root="data"
         :moment="moment"

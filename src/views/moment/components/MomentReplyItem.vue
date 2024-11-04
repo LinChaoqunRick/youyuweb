@@ -313,7 +313,6 @@ const onUserToVisibleChange = (visible: boolean) => {
           top: 7.8px;
           float: left;
           margin-right: 5px;
-          font-weight: bold;
           color: #1890ff;
         }
 
