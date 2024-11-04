@@ -15,7 +15,7 @@ import EmptyPage from '@/components/common/system/EmptyPage.vue';
 
 const routes = [
   { path: '/album/all', title: '全部相册' },
-  { path: '/album/mine', title: '个人中心' },
+  { path: '/album/mine/', title: '个人中心' },
 ];
 </script>
 

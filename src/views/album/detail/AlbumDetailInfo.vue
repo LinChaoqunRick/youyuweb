@@ -4,7 +4,7 @@
       <a-alert type="info" show-icon>
         <template #message>
           此相册为
-          <span class="open-status" :class="{'private-album': !data.open}">{{ data.open ? '公开' : '私密' }}</span>
+          <span class="open-status" :class="{ 'private-album': !data.open }">{{ data.open ? '公开' : '私密' }}</span>
           相册
         </template>
         <template #action v-if="userInfo.id === data.userId">
@@ -19,15 +19,13 @@
       <img :src="data.userInfo?.avatar" alt="" />
       <div class="owner-info-nickname">{{ data.userInfo?.nickname }}</div>
     </div>
-    <div class="authorized-users" v-if="!data.open && (userInfo.id === data.userInfo?.id)">
+    <div class="authorized-users" v-if="!data.open && userInfo.id === data.userInfo?.id">
       <div>授权用户：</div>
       <div class="authorized-users-list cp">
-        <div class="authorized-users-item" v-for="item in data.authorizedUserList">
+        <div class="authorized-users-item" v-for="item in data.authorizedUserList" :key="item.id">
           <img :src="item.avatar" :title="item.nickname" alt="" />
         </div>
-        <div class="authorized-users-item" title="添加用户">
-          +{{ restAuthUserNumber ? restAuthUserNumber : '' }}
-        </div>
+        <div class="authorized-users-item" title="添加用户">+{{ restAuthUserNumber ? restAuthUserNumber : '' }}</div>
       </div>
     </div>
   </div>
@@ -37,25 +35,30 @@
 import { useStore } from 'vuex';
 import { computed, reactive, ref } from 'vue';
 import openModal from '@/libs/tools/openModal';
-import AlbumEdit from '@/views/album/list/AlbumEdit.vue';
+import AlbumEdit from '@/views/album/common/AlbumEdit.vue';
 import { cloneDeep } from 'lodash';
 import type { AlbumDetailData } from './types';
 
 const props = defineProps({
   albumId: {
     type: [String, Number],
-    required: true
-  }
+    required: true,
+  },
 });
 
 const { getters, dispatch } = useStore();
 const data = ref<AlbumDetailData | null>(null);
 const userInfo = computed(() => getters['userInfo']);
-const restAuthUserNumber = computed(() => data.value?.authorizedUsers ? data.value.authorizedUsers?.split(',').length - (data.value?.authorizedUserList?.length ?? 0) : 0);
+const restAuthUserNumber = computed(() =>
+  data.value?.authorizedUsers
+    ? data.value.authorizedUsers?.split(',').length - (data.value?.authorizedUserList?.length ?? 0)
+    : 0
+);
 
 const initData = () => {
   dispatch('getAlbumDetail', { id: props.albumId }).then(res => {
     data.value = res.data;
+    data.value.coverImageId = 226;
   });
 };
 initData();
@@ -65,11 +68,11 @@ const onEdit = async () => {
   const res = await openModal({
     component: AlbumEdit,
     componentProps: {
-      formValidate: reactive(cloneDeep(data.value))
+      formValidate: reactive(cloneDeep(data.value)),
     },
     title: '编辑相册',
     maskClosable: false,
-    width: '580px'
+    width: '580px',
   }).catch(console.log);
 
   if (res) {
@@ -78,7 +81,7 @@ const onEdit = async () => {
 };
 
 defineExpose({
-  data: data
+  data: data,
 });
 </script>
 

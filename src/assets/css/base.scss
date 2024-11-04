@@ -192,3 +192,11 @@ a {
   background: rgba(0, 0, 0, .3) !important;
   backdrop-filter: blur(12px) !important;
 }
+
+.icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+}

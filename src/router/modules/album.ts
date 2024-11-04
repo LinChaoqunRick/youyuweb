@@ -59,7 +59,7 @@ const route = [
             component: () => import('@/views/album/list/mine/AlbumListMine.vue'),
             children: [
               {
-                path: ':page(\\d+)?',
+                path: ':page(\\d+)',
                 name: 'AlbumListMinePage',
                 meta: {
                   title: '个人中心-相册-列表',

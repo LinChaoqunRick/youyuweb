@@ -18,6 +18,7 @@ export interface AlbumDetailData {
   authorizedUserList: BasicUserInfo[] | null;
   content: string;
   cover: string;
+  coverImageId: number;
   createTime: string;
   likeCount: number;
   imageCount: number;

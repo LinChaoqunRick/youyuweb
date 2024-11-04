@@ -3,6 +3,44 @@
     <div class="album-detail-container">
       <div v-if="data" class="album-detail" :class="{ 'album-detail-collapse': collapse }">
         <div class="album-images-wrapper">
+          <div class="album-detail-top-menu" v-if="userInfo.id === albumDetailData?.userId">
+            <a-button type="primary" shape="round" @click="onClickUpload">
+              <template #icon>
+                <i-upload-one theme="outline" size="16" fill="currentColor" />
+              </template>
+              上传
+            </a-button>
+            <a-button type="primary" shape="round" v-if="!selection" @click="onSelection">
+              <template #icon>
+                <i-full-selection theme="outline" size="16" fill="currentColor" />
+              </template>
+              选择
+            </a-button>
+            <a-button type="primary" shape="round" v-if="selection" @click="onSelection">
+              <template #icon>
+                <i-close theme="outline" size="16" fill="currentColor" />
+              </template>
+              取消
+            </a-button>
+            <a-button
+              type="primary"
+              shape="round"
+              v-if="selection"
+              :disabled="!(checkedList.length === 1)"
+              @click="onSetCover"
+            >
+              <template #icon>
+                <i-pic theme="outline" size="16" fill="currentColor" />
+              </template>
+              设为封面
+            </a-button>
+            <a-button type="primary" danger shape="round" v-if="selection" :disabled="!checkedList.length" @click="onDelete">
+              <template #icon>
+                <i-delete-five theme="outline" size="16" fill="currentColor" />
+              </template>
+              删除
+            </a-button>
+          </div>
           <ContentList
             url="getAlbumImageList"
             :params="params"
@@ -16,8 +54,12 @@
                 v-for="(item, index) in imageList"
                 :key="item.id"
                 class="image-wrapper"
+                :class="{ 'album-cover': item.id === albumDetailData?.coverImageId }"
                 @click="onImageClick(item, index)"
               >
+                <svg v-if="item.id === albumDetailData?.coverImageId" class="album-cover-tag icon" aria-hidden="true">
+                  <use xlink:href="#icon-fengmian"></use>
+                </svg>
                 <img :src="item.url" :alt="item.name" class="cp" />
                 <div class="item-check" v-if="selection && checkedList.includes(item)">
                   <i-check-one theme="filled" size="24" fill="#1677FF" />
@@ -41,45 +83,6 @@
           <div class="collapse-button" @click="onCollapse">
             <i-right theme="outline" size="16" fill="currentColor" />
           </div>
-        </div>
-        <div class="upload-btn" v-if="userInfo.id === albumDetailData?.userId">
-          <a-button type="primary" shape="round" @click="onClickUpload">
-            <template #icon>
-              <i-upload-one theme="outline" size="16" fill="currentColor" />
-            </template>
-            上传
-          </a-button>
-          <a-button type="primary" shape="round" v-if="!selection" @click="onSelection">
-            <template #icon>
-              <i-full-selection theme="outline" size="16" fill="currentColor" />
-            </template>
-            选择
-          </a-button>
-          <a-button type="primary" shape="round" v-if="selection" @click="onSelection">
-            <template #icon>
-              <i-close theme="outline" size="16" fill="currentColor" />
-            </template>
-            取消
-          </a-button>
-          <a-button
-            type="primary"
-            shape="round"
-            v-if="selection"
-            :disabled="!(checkedList.length === 1)"
-            @click="onSetCover"
-          >
-            <template #icon>
-              <i-pic theme="outline" size="16" fill="currentColor" />
-            </template>
-            设为封面
-          </a-button>
-          <a-button type="primary" danger shape="round" v-if="selection" :disabled="!checkedList.length"
-                    @click="onDelete">
-            <template #icon>
-              <i-delete-five theme="outline" size="16" fill="currentColor" />
-            </template>
-            删除
-          </a-button>
         </div>
       </div>
       <div v-else-if="data === false" class="inaccessible-wrapper gf">
@@ -130,7 +133,7 @@ const onClickUpload = async () => {
   await openModal({
     component: UploadImageList,
     componentProps: {
-      albumId: albumId
+      albumId: albumId,
     },
     maskClosable: false,
     title: '上传照片',
@@ -146,7 +149,7 @@ const onClickUpload = async () => {
         });
         imageList.value.unshift(...successData);
       }
-    }
+    },
   });
 };
 
@@ -183,8 +186,8 @@ const onImageClick = (item: AlbumImageItem, index: number) => {
             return imageList.value[index].originUrl;
           });
         }
-      }
-    }
+      },
+    },
   });
 };
 
@@ -213,10 +216,11 @@ const onDelete = () => {
       const ids = checkedList.value.map(item => item.id).join(',');
       dispatch('removeAlbumImage', { ids: ids }).then(res => {
         message.success('删除成功');
-        ContentListRef.value && (ContentListRef.value.list = ContentListRef.value?.list.filter(item => !checkedList.value.includes(item)) ?? []);
+        ContentListRef.value &&
+          (ContentListRef.value.list = ContentListRef.value?.list.filter(item => !checkedList.value.includes(item)) ?? []);
         checkedList.value = [];
       });
-    }
+    },
   });
 };
 </script>
@@ -225,7 +229,7 @@ const onDelete = () => {
 $infoBodyWidth: 300px;
 $imageWrapperPadding: 10px;
 $gridGap: 2px;
-$imageWidth: 164px;
+$imageWidth: 152px;
 
 .content-data-container {
   height: calc(100vh - 100px);
@@ -245,11 +249,37 @@ $imageWidth: 164px;
       overflow: hidden;
 
       .album-images-wrapper {
-        padding: $imageWrapperPadding;
         flex: 1;
         overflow-y: auto;
 
+        button {
+          &:nth-child(n + 2) {
+            margin-left: 6px;
+          }
+        }
+
+        ::v-deep(.i-icon) {
+          position: relative;
+          top: 1px;
+          margin-right: 3px;
+        }
+
+        .album-detail-top-menu {
+          position: sticky;
+          top: 0;
+          height: 48px;
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          background-color: var(--youyu-body-background2);
+          border-bottom: var(--youyu-navigation-border);
+          padding-right: 20px;
+          z-index: 10;
+        }
+
         .album-content-list {
+          padding: $imageWrapperPadding;
+
           .image-wrapper {
             height: $imageWidth;
             width: $imageWidth;
@@ -263,10 +293,18 @@ $imageWidth: 164px;
               }
             }
 
+            .album-cover-tag {
+              position: absolute;
+              top: 0;
+              left: 0;
+              z-index: 10;
+              font-size: 48px;
+            }
+
             .item-check {
               position: absolute;
-              bottom: 4px;
-              right: 9px;
+              top: 6px;
+              right: 6px;
             }
 
             .image-info-box {
@@ -276,12 +314,12 @@ $imageWidth: 164px;
               bottom: 0;
               left: 0;
               right: 0;
-              background-color: rgba(0, 0, 0, 0.6);
               color: white;
               padding: 2px;
               font-size: 11px;
               cursor: pointer;
               transform: translateY(100%);
+              background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.42));
               transition: 0.3s;
 
               .info-data-item {
@@ -352,27 +390,6 @@ $imageWidth: 164px;
           &:hover {
             color: var(--youyu-text2);
           }
-        }
-      }
-
-      .upload-btn {
-        position: fixed;
-        bottom: 20px;
-        left: calc(50%);
-        transform: translateX(calc(-50% - #{$infoBodyWidth} / 2));
-        opacity: 1;
-        transition: 0.3s;
-
-        button {
-          &:nth-child(n + 2) {
-            margin-left: 6px;
-          }
-        }
-
-        ::v-deep(.i-icon) {
-          position: relative;
-          top: 1px;
-          margin-right: 3px;
         }
       }
 
