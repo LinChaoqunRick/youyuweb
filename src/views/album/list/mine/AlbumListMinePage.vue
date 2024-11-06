@@ -7,27 +7,18 @@
       </a-button>
       <AlbumActions />
     </div>
-    <YTable listUrl="getAlbumList" ref="YTableRef">
-      <template #default="{ dataList }">
-        <div class="list-wrapper">
-          <div v-for="item in dataList" class="album-item-body" :key="item.id">
-            <AlbumItem :data="item" />
-          </div>
-        </div>
-      </template>
-    </YTable>
+    <AlbumCommonList ref="AlbumCommonListRef" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import AlbumItem from '@/views/album/components/AlbumItem.vue';
-import YTable from '@/components/common/table/YTable.vue';
 import openModal from '@/libs/tools/openModal';
 import AlbumAdd from '@/views/album/common/AlbumAdd.vue';
 import AlbumActions from '@/views/album/components/AlbumActions.vue';
+import AlbumCommonList from '@/views/album/list/common/AlbumCommonList.vue';
 
-const YTableRef = ref<typeof YTable | null>(null);
+const AlbumCommonListRef = ref<typeof AlbumCommonList | null>(null);
 
 const onAdd = async () => {
   const res = await openModal({
@@ -37,7 +28,7 @@ const onAdd = async () => {
     width: '580px',
   }).catch(console.log);
   if (res) {
-    YTableRef.value?.refreshData();
+    AlbumCommonListRef.value?.YTableRef.value?.refreshData();
   }
 };
 </script>
@@ -69,34 +60,6 @@ const onAdd = async () => {
     ::v-deep(> span) {
       margin-right: 16px;
       cursor: pointer;
-    }
-  }
-
-  ::v-deep(.y-table) {
-    width: 100%;
-  }
-
-  .list-wrapper {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    justify-items: center;
-    align-items: center;
-    padding-top: 30px;
-
-    ::v-deep(.album-item) {
-      width: 270px;
-      height: 220px;
-    }
-  }
-
-  ::v-deep(.y-table) {
-    height: 100%;
-
-    .table-pagination {
-      margin-top: 18px;
-      position: sticky;
-      top: 90%;
-      background-color: transparent !important;
     }
   }
 }

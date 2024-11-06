@@ -10,9 +10,9 @@
           </div>
           <div class="album-info-data">
             <div class="edit-btn" v-if="false">编辑</div>
-            <div class="album-info-data-item" v-if="!data.open">
-              <i-lock theme="outline" size="15" fill="currentColor" />
-            </div>
+            <!--            <div class="album-info-data-item" v-if="!data.open">-->
+            <!--              <i-lock theme="outline" size="15" fill="currentColor" />-->
+            <!--            </div>-->
             <div class="album-info-data-item">
               <i-material-three theme="outline" size="16" fill="currentColor" />
               <span class="data-image-count">{{ data.imageCount }}</span>
@@ -22,6 +22,7 @@
       </div>
       <div class="album-info">
         <div class="album-info-name text-limit">{{ data.name }}</div>
+        <div>{{ data.open ? '公开' : '私密' }}</div>
       </div>
     </div>
   </RouterLink>
@@ -42,7 +43,6 @@ const props = defineProps({
 
 <style scoped lang="scss">
 .album-item {
-  width: 230px;
   background-color: var(--youyu-body-background3);
   overflow: hidden;
   color: var(--youyu-text);

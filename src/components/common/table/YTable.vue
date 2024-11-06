@@ -1,7 +1,7 @@
 <template>
   <div class="y-table">
-    <div class="table-body">
-      <a-spin :spinning="loading">
+    <a-spin :spinning="loading">
+      <div class="table-body">
         <slot :dataList="dataList">
           <div v-if="failed" @click="initData" class="retry-load">
             <i-refresh theme="outline" size="15" fill="#1890ff" />
@@ -10,24 +10,24 @@
           <div class="table-no-data" v-else-if="!loading && !dataList.length">暂无数据</div>
           <a-skeleton active v-else></a-skeleton>
         </slot>
-      </a-spin>
-    </div>
-    <div class="table-pagination" v-if="!!total">
-      <a-pagination
-        v-model:current="current"
-        v-model:pageSize="size"
-        v-bind="paginationConfig"
-        :total="total"
-        :show-total="() => `共${total}条`"
-        @change="handleChange"
-      >
-        <!--        <template #itemRender="{ type, originalElement }">-->
-        <!--          <a v-if="type === 'prev'">上一页</a>-->
-        <!--          <a v-else-if="type === 'next'">下一页</a>-->
-        <!--          <component :is="originalElement" v-else></component>-->
-        <!--        </template>-->
-      </a-pagination>
-    </div>
+      </div>
+      <div class="table-pagination" v-if="!!total">
+        <a-pagination
+          v-model:current="current"
+          v-model:pageSize="size"
+          v-bind="paginationConfig"
+          :total="total"
+          :show-total="() => `共${total}条`"
+          @change="handleChange"
+        >
+          <!--        <template #itemRender="{ type, originalElement }">-->
+          <!--          <a v-if="type === 'prev'">上一页</a>-->
+          <!--          <a v-else-if="type === 'next'">下一页</a>-->
+          <!--          <component :is="originalElement" v-else></component>-->
+          <!--        </template>-->
+        </a-pagination>
+      </div>
+    </a-spin>
   </div>
 </template>
 
@@ -200,14 +200,14 @@ defineExpose({
   .table-pagination {
     display: flex;
     justify-content: center;
-    background-color: var(--youyu-body-background2);
+    //background-color: var(--youyu-body-background2);
     padding: 10px 0;
     border-radius: 8px;
 
     ::v-deep(.ant-pagination) {
       .ant-pagination-item,
       .ant-pagination-jump-next {
-        background-color: var(--pagination-background);
+        background-color: var(--youyu-body-background2);
         border: var(--pagination-border);
         border-radius: 2px;
 
@@ -227,7 +227,7 @@ defineExpose({
       .ant-pagination-next,
       .ant-select-selector {
         padding: 0 6px;
-        background-color: var(--pagination-background);
+        background-color: var(--youyu-body-background2);
         border: var(--pagination-border);
         color: var(--pagination-text);
       }

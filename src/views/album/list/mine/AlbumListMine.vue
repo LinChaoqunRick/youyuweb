@@ -21,7 +21,7 @@ import NavLink from '@/components/common/header/menu/child/NavLink.vue';
 const menus = [
   {
     title: '相册',
-    path: '/album/mine',
+    path: '/album/mine/list',
     icon: 'i-picture-album',
     // exact: true,
   },
@@ -39,20 +39,9 @@ const menus = [
   display: flex;
 
   .mine-album-menu {
-    width: 240px;
+    width: 213px;
     height: 100%;
     background-color: var(--youyu-body-background2);
-
-    ::v-deep(a) {
-      display: block;
-      height: 100%;
-      width: 100%;
-      color: var(--youyu-text) !important;
-
-      &.router-link-active {
-        color: #1890ff !important;
-      }
-    }
 
     .album-mine-menu-item {
       height: 42px;
@@ -65,8 +54,17 @@ const menus = [
         margin-right: 6px;
       }
 
-      .nav-link {
-        justify-content: flex-start;
+      ::v-deep(.nav-link) {
+        a {
+          display: block;
+          height: 100%;
+          width: 100%;
+          color: var(--youyu-text) !important;
+
+          &.router-link-active {
+            color: #1890ff !important;
+          }
+        }
       }
 
       &:has(.router-link-active) {

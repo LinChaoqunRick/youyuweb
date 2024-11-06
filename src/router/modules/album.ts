@@ -59,13 +59,27 @@ const route = [
             component: () => import('@/views/album/list/mine/AlbumListMine.vue'),
             children: [
               {
-                path: ':page(\\d+)',
-                name: 'AlbumListMinePage',
+                path: 'list',
+                name: 'AlbumListMineList',
+                redirect: to => {
+                  return { name: 'AlbumListMinePage', params: { page: 1 } };
+                },
                 meta: {
                   title: '个人中心-相册-列表',
                   keepAlive: true,
                 },
-                component: () => import('@/views/album/list/mine/AlbumListMinePage.vue'),
+                component: () => import('@/components/common/system/EmptyPage.vue'),
+                children: [
+                  {
+                    path: ':page(\\d+)',
+                    name: 'AlbumListMinePage',
+                    meta: {
+                      title: '个人中心-相册-列表',
+                      keepAlive: true,
+                    },
+                    component: () => import('@/views/album/list/mine/AlbumListMinePage.vue'),
+                  },
+                ],
               },
               {
                 path: 'recycle',
