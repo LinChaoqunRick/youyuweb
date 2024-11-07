@@ -3,53 +3,71 @@
     <div class="moment-detail-middle">
       <div v-if="moment">
         <div class="moment-detail-item">
-          <MomentItem v-if="!isEdit" :data="moment" :show-detail="false"
-                      @deleteSuccess="onMomentDeleteSuccess"
-                      @onCommentDeleteSuccess="onCommentDeleteSuccess"
-                      @onEdit="onEdit"
-                      ref="MomentRef"/>
+          <MomentItem
+            v-if="!isEdit"
+            :data="moment"
+            :show-detail="false"
+            @deleteSuccess="onMomentDeleteSuccess"
+            @onCommentDeleteSuccess="onCommentDeleteSuccess"
+            @onEdit="onEdit"
+            ref="MomentRef"
+          />
           <MomentEditor v-else isEdit :form="formData" @saveSuccess="saveSuccess">
             <template v-slot:bottom>
-              <a-button type="link" class="cancel-btn" @click="onEditCancel">
-                取消
-              </a-button>
+              <a-button type="link" class="cancel-btn" @click="onEditCancel"> 取消 </a-button>
             </template>
           </MomentEditor>
         </div>
         <div class="moment-comment-editor-wrapper mt-8">
           <div class="editor-title">评论</div>
-          <MomentReplyEditor :params="replyParams" @saveSuccess="onSaveCommentSuccess"
-                             :placeholder="replyEditorPlaceholder" :auto-focus="false"/>
+          <MomentReplyEditor
+            :params="replyParams"
+            @saveSuccess="onSaveCommentSuccess"
+            :placeholder="replyEditorPlaceholder"
+            :auto-focus="false"
+          />
         </div>
         <div id="comment" class="moment-comment-list mt-8 mb-8">
           <div class="comment-list-top">
-            <div class="comment-count">
-              全部评论（{{ moment.commentCount || 0 }}）
-            </div>
+            <div class="comment-count">全部评论（{{ moment.commentCount || 0 }}）</div>
             <div class="sort-type">
               <div class="sort-item" :class="{ active: sort }" @click="handleSort(true)">
-                <i-time theme="filled" size="13" fill="currentColor"/>
+                <i-time theme="filled" size="13" fill="currentColor" />
                 最新
               </div>
               <div class="sort-item" :class="{ active: !sort }" @click="handleSort(false)">
-                <i-fire theme="filled" size="13" fill="currentColor"/>
+                <i-fire theme="filled" size="13" fill="currentColor" />
                 最热
               </div>
             </div>
           </div>
           <div class="comment-list">
-            <ContentList url="listMomentCommentPage" :params="listParams" :total="moment.commentCount"
-                         auto-load load-trigger ref="ContentListRef">
+            <ContentList
+              url="listMomentCommentPage"
+              :params="listParams"
+              :total="moment.commentCount"
+              auto-load
+              load-trigger
+              ref="ContentListRef"
+            >
               <template v-slot="{ list }">
-                <MomentCommentItem v-for="item in list" :key="item.id" class="comment-item" :data="item"
-                                   :moment="moment" @deleteSuccess="MomentRef?.deleteSuccess"/>
+                <MomentCommentItem
+                  v-for="item in list"
+                  :key="item.id"
+                  class="comment-item"
+                  :data="item"
+                  :moment="moment"
+                  @deleteSuccess="MomentRef?.deleteSuccess"
+                />
               </template>
               <template #loadMoreBox="{ loading, total }">
-                <span class="mr-8">查看全部<span class="comment-count">
-                  {{ moment.commentCount ?? total }}
-                </span>条评论</span>
-                <i-down v-if="!loading" theme="outline" size="14" fill="#1890ff"/>
-                <i-loading-four v-else theme="outline" size="14" fill="#1890ff"/>
+                <span class="mr-8"
+                  >查看全部<span class="comment-count">
+                    {{ moment.commentCount ?? total }} </span
+                  >条评论</span
+                >
+                <i-down v-if="!loading" theme="outline" size="14" fill="#1890ff" />
+                <i-loading-four v-else theme="outline" size="14" fill="#1890ff" />
               </template>
             </ContentList>
           </div>
@@ -60,28 +78,28 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, ref, nextTick} from "vue";
-import type {PropType} from "vue";
-import {useStore} from "vuex";
-import {useRoute, useRouter} from "vue-router";
-import {cloneDeep} from "lodash";
-import type {momentListType} from "@/views/moment/types";
-import MomentItem from "../list/MomentItem.vue";
-import MomentReplyEditor from "@/views/moment/components/MomentReplyEditor.vue";
-import MomentCommentItem from "../components/MomentCommentItem.vue";
-import MomentEditor from "../components/MomentEditor.vue";
-import ContentList from "@/components/common/system/ContentList.vue";
-import {transformTagToHTML} from "@/components/common/utils/emoji/youyu_emoji";
+import { computed, ref, nextTick } from 'vue';
+import type { PropType } from 'vue';
+import { useStore } from 'vuex';
+import { useRoute, useRouter } from 'vue-router';
+import { cloneDeep } from 'lodash';
+import type { momentListType } from '@/views/moment/types';
+import MomentItem from '../list/MomentItem.vue';
+import MomentReplyEditor from '@/views/moment/components/MomentReplyEditor.vue';
+import MomentCommentItem from '../components/MomentCommentItem.vue';
+import MomentEditor from '../components/MomentEditor.vue';
+import ContentList from '@/components/common/system/ContentList.vue';
+import { transformTagToHTML } from '@/components/common/utils/emoji/youyu_emoji';
 
 const route = useRoute();
 const router = useRouter();
-const {dispatch} = useStore();
+const { dispatch } = useStore();
 
 const moment = ref<momentListType | null>(null);
 const MomentRef = ref<HTMLElement | null>(null);
 const sort = ref<boolean>(true); // true:最新 false:最热
-const order = computed(() => (sort.value ? "create_time" : "support_count"));
-const isEdit = ref<boolean>(route.query.type === "edit");
+const order = computed(() => (sort.value ? 'create_time' : 'support_count'));
+const isEdit = ref<boolean>(route.query.type === 'edit');
 const formData = ref({});
 const listParams = computed(() => ({
   momentId: moment.value.id,
@@ -91,12 +109,12 @@ const replyEditorPlaceholder = computed(() => (moment.value ? '回复@' + moment
 const replyParams = computed(() => {
   return {
     momentId: moment.value.id,
-  }
-})
+  };
+});
 const ContentListRef = ref<InstanceType<typeof ContentList> | null>(null);
 
 const getMomentDetail = () => {
-  dispatch("getMoment", {momentId: route.params.momentId}).then((res) => {
+  dispatch('getMoment', { momentId: route.params.momentId }).then(res => {
     moment.value = res.data;
     if (isEdit.value) {
       onEdit();
@@ -107,7 +125,7 @@ const getMomentDetail = () => {
 getMomentDetail();
 
 const onMomentDeleteSuccess = () => {
-  router.push("/moment/list");
+  router.push('/moment/list');
 };
 
 const handleSort = (value: boolean) => {
@@ -118,10 +136,8 @@ const handleSort = (value: boolean) => {
   });
 };
 
-const onCommentDeleteSuccess = (comment) => {
-  ContentListRef.value.list = ContentListRef.value.list.filter(
-    (item) => item.id !== comment.id
-  );
+const onCommentDeleteSuccess = comment => {
+  ContentListRef.value.list = ContentListRef.value.list.filter(item => item.id !== comment.id);
 };
 
 const onSaveCommentSuccess = (data: momentListType) => {
@@ -131,10 +147,8 @@ const onSaveCommentSuccess = (data: momentListType) => {
 
 const onEdit = () => {
   formData.value = cloneDeep(moment.value);
-  formData.value.content = transformTagToHTML(formData.value.content)
-  formData.value.images = formData.value.images
-    ? formData.value.images.split(",")
-    : [];
+  formData.value.content = transformTagToHTML(formData.value.content);
+  formData.value.images = formData.value.images ? formData.value.images.split(',') : [];
   isEdit.value = true;
 };
 
@@ -150,7 +164,6 @@ const saveSuccess = (data: momentListType) => {
 
 <style lang="scss" scoped>
 .moment-detail {
-
   .moment-detail-middle {
     margin: 0 auto;
     width: 824px;

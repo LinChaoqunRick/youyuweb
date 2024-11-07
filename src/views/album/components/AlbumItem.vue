@@ -22,7 +22,7 @@
       </div>
       <div class="album-info">
         <div class="album-info-name text-limit">{{ data.name }}</div>
-        <div>{{ data.open ? '公开' : '私密' }}</div>
+        <div :class="[data.open ? 'album-open' : 'album-private']">{{ data.open ? '公开' : '私密' }}</div>
       </div>
     </div>
   </RouterLink>
@@ -43,7 +43,7 @@ const props = defineProps({
 
 <style scoped lang="scss">
 .album-item {
-  background-color: var(--youyu-body-background3);
+  background-color: var(--youyu-body-background2);
   overflow: hidden;
   color: var(--youyu-text);
   display: flex;
@@ -126,6 +126,14 @@ const props = defineProps({
 
   .album-info {
     padding: 8px 10px;
+
+    .album-open {
+      color: #52c41a;
+    }
+
+    .album-private {
+      color: red;
+    }
 
     .album-info-name {
       //font-weight: bold;

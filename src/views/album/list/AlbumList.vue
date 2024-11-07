@@ -14,8 +14,8 @@ import NavLink from '@/components/common/header/menu/child/NavLink.vue';
 import EmptyPage from '@/components/common/system/EmptyPage.vue';
 
 const routes = [
-  { path: '/album/all', title: '全部相册' },
-  { path: '/album/mine/', title: '个人中心' },
+  { path: '/album/list/all', title: '全部相册' },
+  { path: '/album/list/mine', title: '个人中心' },
 ];
 </script>
 
@@ -25,6 +25,8 @@ const routes = [
   flex-direction: column;
   height: calc(100vh - 100px);
   overflow: hidden;
+  background: rgba(0, 0, 0, 0.15) !important;
+  backdrop-filter: blur(10px) !important;
 
   .album-list-top-menu {
     height: 48px;

@@ -1,5 +1,5 @@
 <template>
-  <div class="album-list">
+  <div class="album-list" v-if="isLogin">
     <div class="mine-album-menu">
       <div v-for="(item, index) in menus" :key="index" class="album-mine-menu-item">
         <nav-link :route="item">
@@ -12,22 +12,32 @@
       <empty-page />
     </div>
   </div>
+  <div v-else class="login-hit mt-8">
+    <div class="hint-text">登录以查看更多内容</div>
+    <a-button type="primary" v-login>立即登录</a-button>
+  </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 import EmptyPage from '@/components/common/system/EmptyPage.vue';
 import NavLink from '@/components/common/header/menu/child/NavLink.vue';
+
+const { getters } = useStore();
+
+const isLogin = computed(() => getters['isLogin']);
 
 const menus = [
   {
     title: '相册',
-    path: '/album/mine/list',
+    path: '/album/list/mine/page',
     icon: 'i-picture-album',
     // exact: true,
   },
   {
     title: '回收站',
-    path: '/album/mine/recycle',
+    path: '/album/list/mine/recycle',
     icon: 'i-delete',
   },
 ];
@@ -77,5 +87,13 @@ const menus = [
     flex: 1;
     overflow: hidden;
   }
+}
+
+.login-hit {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 </style>

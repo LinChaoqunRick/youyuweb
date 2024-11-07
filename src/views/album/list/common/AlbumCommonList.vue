@@ -35,6 +35,7 @@ defineExpose({
 .y-table {
   width: 100%;
   height: 100%;
+  overflow: auto;
 
   ::v-deep(.ant-spin-nested-loading) {
     height: 100%;
@@ -46,7 +47,6 @@ defineExpose({
 
       .table-body {
         flex: 1;
-        overflow: hidden;
 
         .list-wrapper {
           height: 100%;

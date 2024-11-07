@@ -3,7 +3,7 @@ const route = [
     path: '/album',
     name: 'Album',
     redirect: to => {
-      return { name: 'AlbumListAllPage', params: { page: 1 } };
+      return { name: 'AlbumList', params: { page: 1 } };
     },
     meta: {
       title: '相册',
@@ -12,7 +12,17 @@ const route = [
     component: () => import('@/components/common/system/EmptyPage.vue'),
     children: [
       {
-        path: '',
+        path: 'detail/:albumId(\\d+)',
+        name: 'AlbumDetail',
+        meta: {
+          title: '相册详情',
+          hide: true,
+          code: 'ALBUM_DETAIL',
+        },
+        component: () => import('@/views/album/detail/AlbumDetail.vue'),
+      },
+      {
+        path: 'list',
         name: 'AlbumList',
         redirect: to => {
           return { name: 'AlbumListAllPage', params: { page: 1 } };
@@ -59,7 +69,7 @@ const route = [
             component: () => import('@/views/album/list/mine/AlbumListMine.vue'),
             children: [
               {
-                path: 'list',
+                path: 'page',
                 name: 'AlbumListMineList',
                 redirect: to => {
                   return { name: 'AlbumListMinePage', params: { page: 1 } };
@@ -93,17 +103,6 @@ const route = [
             ],
           },
         ],
-      },
-      {
-        path: 'detail/:albumId(\\d+)',
-        name: 'AlbumDetail',
-        meta: {
-          title: '相册详情',
-          hide: true,
-          code: 'ALBUM_DETAIL',
-          keepAlive: true,
-        },
-        component: () => import('@/views/album/detail/AlbumDetail.vue'),
       },
     ],
   },
