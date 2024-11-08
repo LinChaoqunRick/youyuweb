@@ -232,7 +232,7 @@ defineExpose({
       justify-content: center;
       align-items: center;
       color: #1890ff;
-      min-height: 48px;
+      height: 100%;
       cursor: pointer;
 
       span {

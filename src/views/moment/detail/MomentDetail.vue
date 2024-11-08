@@ -14,7 +14,7 @@
           />
           <MomentEditor v-else isEdit :form="formData" @saveSuccess="saveSuccess">
             <template v-slot:bottom>
-              <a-button type="link" class="cancel-btn" @click="onEditCancel"> 取消 </a-button>
+              <a-button type="link" class="cancel-btn" @click="onEditCancel"> 取消</a-button>
             </template>
           </MomentEditor>
         </div>
@@ -48,6 +48,8 @@
               :total="moment.commentCount"
               auto-load
               load-trigger
+              unit="条"
+              data-text="评论"
               ref="ContentListRef"
             >
               <template v-slot="{ list }">
@@ -61,10 +63,8 @@
                 />
               </template>
               <template #loadMoreBox="{ loading, total }">
-                <span class="mr-8"
-                  >查看全部<span class="comment-count">
-                    {{ moment.commentCount ?? total }} </span
-                  >条评论</span
+                <span class="mr-8">
+                  查看全部<span class="comment-count">{{ moment.commentCount ?? total }} </span>条评论</span
                 >
                 <i-down v-if="!loading" theme="outline" size="14" fill="#1890ff" />
                 <i-loading-four v-else theme="outline" size="14" fill="#1890ff" />

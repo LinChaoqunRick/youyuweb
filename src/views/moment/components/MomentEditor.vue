@@ -326,8 +326,7 @@ const onUploadProgress = (progress: number[]) => {
 
     .editor-content-wrapper {
       position: relative;
-      max-height: 216px;
-      overflow-y: auto;
+      max-height: 230px;
       word-wrap: break-word;
 
       ::v-deep(.editable-div) {
@@ -342,6 +341,7 @@ const onUploadProgress = (progress: number[]) => {
       align-items: center;
       justify-content: space-between;
       font-size: 12px;
+      background-color: var(--youyu-body-background);
 
       .add-position {
         padding: 0 6px 0 8px;
