@@ -34,11 +34,11 @@
             </div>
           </slot>
         </div>
-        <div class="loaded-all-data" v-else-if="showLoadedAll && pageNum > totalPageNum">
-          <slot name="loadedAllBox">已加载全部{{ totalNum ?? 0 }}{{ dataText }} ~</slot>
-        </div>
         <div class="no-data" v-else-if="showNoData && (totalNum === 0 || total === 0)">
           <slot name="noDataBox">暂无数据</slot>
+        </div>
+        <div class="loaded-all-data" v-else-if="showLoadedAll && pageNum > totalPageNum">
+          <slot name="loadedAllBox">已加载全部{{ totalNum ?? 0 }}{{ dataText }} ~</slot>
         </div>
         <div class="loaded-fold" v-if="foldable && !!dataList?.length">
           <slot name="loadedAllFold">
@@ -232,7 +232,7 @@ defineExpose({
       justify-content: center;
       align-items: center;
       color: #1890ff;
-      height: 100%;
+      min-height: 48px;
       cursor: pointer;
 
       span {

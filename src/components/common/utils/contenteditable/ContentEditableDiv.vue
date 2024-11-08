@@ -18,11 +18,7 @@
     </div>
     <div class="editor-bottom">
       <slot name="bottom"></slot>
-      <div
-        v-if="showLimit"
-        class="length-limit"
-        :class="{ 'exceed-error': contentLengthExceed }"
-      >
+      <div v-if="showLimit" class="length-limit" :class="{ 'exceed-error': contentLengthExceed }">
         {{ totalStrLength }}/{{ maxLength }}
       </div>
     </div>
@@ -31,18 +27,18 @@
 
 <script lang="ts">
 export default {
-  name: "ContentEditableDiv2",
+  name: 'ContentEditableDiv2',
 };
 </script>
 
 <script setup lang="ts">
-import {ref, computed, nextTick, onMounted} from "vue";
-import {uploadToOss} from "@/components/common/utils/upload/utils";
+import { ref, computed, nextTick, onMounted } from 'vue';
+import { uploadToOss } from '@/components/common/utils/upload/utils';
 
 const props = defineProps({
   modelValue: {
     type: String,
-    default: "",
+    default: '',
   },
   row: {
     type: Number,
@@ -50,7 +46,7 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: "请输入内容...",
+    default: '请输入内容...',
   },
   maxLength: {
     type: Number,
@@ -67,10 +63,10 @@ const props = defineProps({
   upload: {
     type: true,
     default: false,
-  }
+  },
 });
 
-const emit = defineEmits(["update:modelValue", "uploadSuccess"]);
+const emit = defineEmits(['update:modelValue', 'uploadSuccess']);
 
 const contenteditable = ref<boolean>(true);
 const box = ref<HTMLElement | null>(null);
@@ -79,7 +75,7 @@ const active = computed(() => focusActive.value || totalStrLength.value);
 const focusActive = ref<boolean>(false);
 let currentRange = null;
 let _parentElem = null;
-const supportRange = typeof document.createRange === "function";
+const supportRange = typeof document.createRange === 'function';
 const contentLengthExceed = computed(() => totalStrLength.value > props.maxLength);
 
 onMounted(() => {
@@ -99,12 +95,10 @@ const onBlur = () => {
   updateModelValue();
 };
 
-const onKeydown = (e) => {
+const onKeydown = (e: KeyboardEvent) => {
   //  因为先执行keydownup事件 当到达长度后重新计算字符数 避免到达字符限制输入框无法输入
   // 换行 空格  以及字符超出最大限制  禁止输入    超出最大限制后除了退格其他都不可以输入
-  contenteditable.value = !(
-    totalStrLength.value >= props.maxLength && e.keyCode !== 8
-  );
+  contenteditable.value = !(totalStrLength.value >= props.maxLength && e.keyCode !== 8);
   if (!contenteditable.value) {
     e.preventDefault();
   }
@@ -116,7 +110,7 @@ const onKeydown = (e) => {
   });
 };
 
-const onKeyup = (e) => {
+const onKeyup = (e: KeyboardEvent) => {
   saveSelection();
 };
 
@@ -124,7 +118,7 @@ const onMouseup = () => {
   saveSelection();
 };
 
-const onInput = (e) => {
+const onInput = (e: KeyboardEvent) => {
   calcTextAreaLength();
 };
 
@@ -135,6 +129,11 @@ const calcTextAreaLength = () => {
   let stringText = box.value.innerText; //  拿到输入框中字符长度
   let emojiArr = stringHtml.match(reg) || [];
   totalStrLength.value = stringText.length + emojiArr.length;
+  if (stringHtml === '<br>') {
+    box.value.innerHTML = '';
+    totalStrLength.value = 0;
+    return 0;
+  }
   return stringText.length + emojiArr.length;
 };
 
@@ -143,7 +142,7 @@ const saveSelection = () => {
 };
 
 const updateModelValue = () => {
-  emit("update:modelValue", box.value?.innerHTML);
+  emit('update:modelValue', box.value?.innerHTML);
 };
 
 const insertHtml = (html: HTMLElement | string) => {
@@ -164,7 +163,7 @@ const insertHtml = (html: HTMLElement | string) => {
   dispatchInputEvent();
 };
 
-const insertText = (text) => {
+const insertText = text => {
   box.value.focus();
   const selection = window.getSelection();
   const range = currentRange ?? selection.getRangeAt(0);
@@ -198,7 +197,7 @@ const getCurrentRange = () => {
   return range;
 };
 
-const onPaste = (e) => {
+const onPaste = e => {
   e.stopPropagation();
   e.preventDefault();
 
@@ -234,20 +233,20 @@ const handleText = (item: DataTransferItem) => {
     }
     insertText(text);
     dispatchInputEvent();
-  })
-}
+  });
+};
 
 const handleImage = async (files: File[]) => {
   emit('onPasteImage', files);
-}
+};
 
 const clearContent = () => {
-  box.value.innerHTML = "";
+  box.value.innerHTML = '';
   calcTextAreaLength();
 };
 
 const dispatchInputEvent = () => {
-  const inputEvent = new Event("input", {bubbles: false, cancelable: false});
+  const inputEvent = new Event('input', { bubbles: false, cancelable: false });
   box.value.dispatchEvent(inputEvent);
 };
 
