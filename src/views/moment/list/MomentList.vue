@@ -4,12 +4,7 @@
       <div class="moment-list-left-menu" v-aside3>
         <div v-for="menu in menuList" class="menu-item">
           <RouterLink :to="menu.path">
-            <component
-              :is="menu.icon"
-              theme="filled"
-              size="16"
-              fill="currentColor"
-            />
+            <component :is="menu.icon" theme="filled" size="16" fill="currentColor" />
             <span>{{ menu.title }}</span>
           </RouterLink>
         </div>
@@ -27,44 +22,44 @@
 
 <script lang="ts">
 export default {
-  name: "MomentList",
+  name: 'MomentList',
 };
 </script>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useRoute, RouterLink } from "vue-router";
-import EmptyPage from "@/components/common/system/EmptyPage.vue";
-import MomentEditor from "../components/MomentEditor.vue";
-import UserPanelMoment from "@/views/moment/components/UserPanelMoment.vue";
+import { ref } from 'vue';
+import { useRoute, RouterLink } from 'vue-router';
+import EmptyPage from '@/components/common/system/EmptyPage.vue';
+import MomentEditor from '../components/MomentEditor.vue';
+import UserPanelMoment from '@/views/moment/components/UserPanelMoment.vue';
 
 const route = useRoute();
 const menuList = [
   {
-    title: "最新",
-    path: "/moment/new",
-    icon: "i-time",
+    title: '最新',
+    path: '/moment/list/new',
+    icon: 'i-time',
   },
   {
-    title: "热门",
-    path: "/moment/hot",
-    icon: "i-fire",
+    title: '热门',
+    path: '/moment/list/hot',
+    icon: 'i-fire',
   },
   {
-    title: "关注",
-    path: "/moment/following",
-    icon: "i-concern",
+    title: '关注',
+    path: '/moment/list/following',
+    icon: 'i-concern',
   },
   {
-    title: "我的",
-    path: "/moment/me",
-    icon: "i-user",
+    title: '我的',
+    path: '/moment/list/me',
+    icon: 'i-user',
   },
 ];
 const EmptyPageRef = ref<typeof EmptyPage>(null);
 
-const saveSuccess = (data) => {
-  if (route.name === "MomentListNew") {
+const saveSuccess = data => {
+  if (route.name === 'MomentListNew') {
     EmptyPageRef.value.Component.unshiftItem(data);
   }
 };

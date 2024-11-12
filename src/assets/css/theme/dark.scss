@@ -4,7 +4,6 @@
   --youyu-background3: #212121;
   --youyu-background4: #1f1f1f;
   --youyu-background5: #343434;
-  --bg-gradient: 0, 0, 0;
 
   --youyu-text: #ffffff;
   --youyu-text1: #F2F2F5;
@@ -77,7 +76,13 @@
   --antd-background: #141414;
 
   /*md-editor*/
-  --editor-icon-color: #999999
+  --editor-icon-color: #999999;
+
+
+
+
+
+  --bg-transparent: rgba(28, 28, 28, 0.95);
 }
 
 @mixin darkGlassFilter {

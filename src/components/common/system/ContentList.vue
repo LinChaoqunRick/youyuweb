@@ -27,7 +27,9 @@
           <slot name="loadMoreBox" :loading="restLoading" :total="totalNum">
             <div class="load-more-item mr-10">
               <div>
-                {{ pageNum === 1 ? `${firstLoading && !totalNum ? '加载中' : total + unit + dataText}` : `查看更多${dataText}` }}
+                {{
+                  pageNum === 1 ? `${firstLoading && !totalNum ? '加载中' : total + unit + dataText}` : `查看更多${dataText}`
+                }}
               </div>
               <i-down v-if="!restLoading" theme="outline" size="14" fill="currentColor" />
               <i-loading-four v-else theme="outline" size="14" fill="currentColor" />
@@ -38,7 +40,7 @@
           <slot name="noDataBox">暂无数据</slot>
         </div>
         <div class="loaded-all-data" v-else-if="showLoadedAll && pageNum > totalPageNum">
-          <slot name="loadedAllBox">已加载全部{{ totalNum ?? 0 }}{{ dataText }} ~</slot>
+          <slot name="loadedAllBox">已加载全部{{ totalNum ?? 0 }}{{ unit + dataText }} ~</slot>
         </div>
         <div class="loaded-fold" v-if="foldable && !!dataList?.length">
           <slot name="loadedAllFold">

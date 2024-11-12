@@ -8,7 +8,7 @@
               <UserCardMoment :user="data.user" />
             </template>
             <RouterLink :to="`/user/${data.user.id}/moment`">
-              <img :src="data.user.avatar" />
+              <img :src="data.user.avatar" alt="" />
             </RouterLink>
           </a-popover>
         </div>

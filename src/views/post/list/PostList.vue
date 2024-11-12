@@ -38,8 +38,7 @@ const postItem = ref([]);
   padding: 8px 0;
 
   .article-list {
-    width: 54%;
-    max-width: 860px;
+    width: 50%;
 
     .article-body {
       width: 100%;

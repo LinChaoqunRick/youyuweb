@@ -43,8 +43,14 @@
     <div class="next-introduce">
       <div class="features-container">
         <div class="introduce-title">功能介绍</div>
-        <RouterLink v-for="item in featureList" :to="item.path" class="feature-item"
-                    @mouseenter="onLottieAnimate(item, 'play')" @mouseleave="onLottieAnimate(item, 'pause')">
+        <RouterLink
+          v-for="item in featureList"
+          :to="item.path"
+          :key="item.path"
+          class="feature-item"
+          @mouseenter="onLottieAnimate(item, 'play')"
+          @mouseleave="onLottieAnimate(item, 'pause')"
+        >
           <div class="feature-item-wrapper">
             <div class="feature-introduce">
               <div class="feature-name">{{ item.name }}</div>
@@ -104,7 +110,7 @@ const featureList = [
     lottieClass: 'post-lottie',
     lottieData: ' https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/lottie/post.json',
     ref: postLottie,
-    animation: null
+    animation: null,
   },
   {
     name: '时刻🧭',
@@ -113,7 +119,7 @@ const featureList = [
     lottieClass: 'moment-lottie',
     lottieData: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/lottie/travel.json',
     ref: momentLottie,
-    animation: null
+    animation: null,
   },
   {
     name: '笔记🎯',
@@ -122,7 +128,7 @@ const featureList = [
     lottieClass: 'note-lottie',
     lottieData: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/lottie/draw.json',
     ref: noteLottie,
-    animation: null
+    animation: null,
   },
   {
     name: '相册📷',
@@ -131,7 +137,7 @@ const featureList = [
     lottieClass: 'album-lottie',
     lottieData: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/lottie/album.json',
     ref: albumLottie,
-    animation: null
+    animation: null,
   },
   {
     name: '实验室🔎',
@@ -140,8 +146,8 @@ const featureList = [
     lottieClass: 'lab-lottie',
     lottieData: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/lottie/lab.json',
     ref: labLottie,
-    animation: null
-  }
+    animation: null,
+  },
 ];
 
 const getAuthorInfo = () => {
@@ -154,15 +160,17 @@ getAuthorInfo();
 const initLottie = () => {
   featureList.forEach(item => {
     if (item.lottieData) {
-      fetch(item.lottieData).then(res => res.json()).then(data => {
-        item.animation = lottie.loadAnimation({
-          container: item.ref.value[0],
-          renderer: 'canvas', // 或者 'canvas'
-          loop: true,
-          autoplay: false,
-          animationData: data // 导入的动画 JSON 数据
+      fetch(item.lottieData)
+        .then(res => res.json())
+        .then(data => {
+          item.animation = lottie.loadAnimation({
+            container: item.ref.value[0],
+            renderer: 'canvas', // 或者 'canvas'
+            loop: true,
+            autoplay: false,
+            animationData: data, // 导入的动画 JSON 数据
+          });
         });
-      });
     }
   });
 };
@@ -232,10 +240,9 @@ onMounted(() => {
           align-items: center;
           font-size: 52px;
           font-weight: 600;
-          font-family: Roboto, Verdana, 'Raleway', 'PingFang SC', 'Microsoft Yahei', sans-serif;
           color: var(--youyu-text5);
           margin: 20px 0;
-          animation: bounceInUpMe 0.8s ease-in-out .2s backwards;
+          animation: bounceInUpMe 0.8s ease-in-out 0.2s backwards;
 
           .site-name {
             color: #1890ff;
@@ -246,7 +253,7 @@ onMounted(() => {
         .text-second {
           font-size: 20px;
           color: var(--youyu-text5);
-          animation: bounceInUpMe 0.8s ease-in-out .4s backwards;
+          animation: bounceInUpMe 0.8s ease-in-out 0.4s backwards;
 
           a {
             font-weight: bold;
@@ -312,7 +319,7 @@ onMounted(() => {
 
   .next-introduce {
     text-align: center;
-    background-color: var(--youyu-background1);
+    background-color: var(--bg-transparent);
 
     .features-container {
       display: flex;
@@ -339,7 +346,7 @@ onMounted(() => {
           width: 300px;
           border-radius: 50%;
           background: linear-gradient(270deg, #30b6ec, #0692ef 95%);
-          transition: .4s;
+          transition: 0.4s;
           transform: translate(-300px, -300px);
           z-index: 0;
         }
@@ -425,7 +432,6 @@ onMounted(() => {
     }
 
     .technology-container {
-
       .list-wrapper {
         margin: 30px 0;
         display: flex;

@@ -1,6 +1,8 @@
 @import "./base.scss";
 @import "aside/aside";
 @import "animate/index";
+@import "reset.scss";
+@import url("https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/lxgw-wenkai-screen-webfont/1.7.0/lxgwwenkaiscreenr.css");
 
 $headerHeight: 60px;
 

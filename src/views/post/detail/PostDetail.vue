@@ -361,7 +361,7 @@ provide('setPostAttribute', setPostAttribute);
       }
 
       .post-main-content {
-        padding: 30px 36px 36px 36px;
+        padding: 20px 36px 36px 36px;
 
         .post-summary {
           padding: 12px;
