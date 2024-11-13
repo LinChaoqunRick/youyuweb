@@ -2,7 +2,7 @@
   <RouterLink :to="`/album/detail/${data.id}`">
     <div class="album-item cp">
       <div class="album-cover">
-        <img :src="data.cover || '/src/assets/images/common/no_img_top.png'" alt="" />
+        <img :src="data.cover || '/static/images/common/no_img_top.png'" alt="" />
         <div class="detail-info">
           <div class="detail-info-user">
             <img :src="data.userInfo?.avatar" alt="" />

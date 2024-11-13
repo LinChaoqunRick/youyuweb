@@ -1,5 +1,5 @@
 <template>
-  <YTable listUrl="getAlbumList" ref="YTableRef" :params="props.tableParams">
+  <YTable :listUrl="listUrl" ref="YTableRef" :params="props.tableParams">
     <template #default="{ dataList }">
       <div class="list-wrapper">
         <div v-for="item in dataList" class="album-item-body" :key="item.id">
@@ -18,6 +18,10 @@ import { ref } from 'vue';
 const YTableRef = ref<typeof YTable | null>(null);
 
 const props = defineProps({
+  listUrl: {
+    type: String,
+    default: 'getAlbumList',
+  },
   tableParams: {
     type: Object,
     default: () => ({

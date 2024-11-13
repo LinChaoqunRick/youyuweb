@@ -45,7 +45,8 @@
             url="getAlbumImageList"
             :params="params"
             auto-load
-            data-text="张照片"
+            data-text="照片"
+            unit="张"
             class="album-content-list"
             ref="ContentListRef"
           >
@@ -199,9 +200,14 @@ const onSelection = () => {
 };
 
 const onSetCover = () => {
-  const newCover = checkedList.value[0].path;
-  dispatch('updateAlbum', { ...albumDetailData.value, cover: newCover }).then(res => {
-    message.success('保存成功');
+  const newCoverId = checkedList.value[0].id;
+  dispatch('setAlbumCover', {
+    id: albumDetailData.value?.id,
+    coverImageId: newCoverId,
+  }).then(res => {
+    message.success('设置成功');
+    albumDetailData.value.coverImageId = newCoverId;
+    selection.value = false;
   });
 };
 
@@ -227,7 +233,7 @@ const onDelete = () => {
 
 <style lang="scss" scoped>
 $infoBodyWidth: 300px;
-$imageWrapperPadding: 10px;
+$imageWrapperPadding: 2px;
 $gridGap: 2px;
 $imageWidth: 152px;
 
@@ -239,8 +245,6 @@ $imageWidth: 152px;
     justify-content: center;
     align-items: center;
     height: calc(100vh - 100px);
-    background: rgba(0, 0, 0, 0.15) !important;
-    backdrop-filter: blur(10px) !important;
 
     .album-detail {
       display: flex;
@@ -355,9 +359,7 @@ $imageWidth: 152px;
           }
 
           ::v-deep(.bottom-operation) {
-            > div {
-              color: var(--youyu-text) !important;
-            }
+            height: 42px;
           }
         }
       }

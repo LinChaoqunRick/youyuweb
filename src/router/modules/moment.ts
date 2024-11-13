@@ -42,7 +42,7 @@ const route = [
             component: () => import('@/views/moment/list/MomentListHot.vue'),
           },
           {
-            path: 'following',
+            path: 'follow',
             name: 'MomentListFollow',
             meta: {
               title: '时刻列表-关注',

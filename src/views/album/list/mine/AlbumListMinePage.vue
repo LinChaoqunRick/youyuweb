@@ -7,7 +7,7 @@
       </a-button>
       <AlbumActions />
     </div>
-    <AlbumCommonList ref="AlbumCommonListRef" />
+    <AlbumCommonList list-url="getMineAlbumList" ref="AlbumCommonListRef" />
   </div>
 </template>
 

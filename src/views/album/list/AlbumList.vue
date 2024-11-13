@@ -25,8 +25,6 @@ const routes = [
   flex-direction: column;
   height: calc(100vh - 100px);
   overflow: hidden;
-  background: rgba(0, 0, 0, 0.15) !important;
-  backdrop-filter: blur(10px) !important;
 
   .album-list-top-menu {
     height: 48px;

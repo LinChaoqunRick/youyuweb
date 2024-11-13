@@ -151,6 +151,7 @@ const onLoadData = () => {
 const onUnlock = () => {
   if (!bottomOperation.value) return;
   const ob = new IntersectionObserver(entries => {
+    console.log(123);
     if (entries[0].isIntersecting && pageNum.value <= totalPageNum.value) {
       getListData();
     }

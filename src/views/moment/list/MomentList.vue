@@ -47,7 +47,7 @@ const menuList = [
   },
   {
     title: '关注',
-    path: '/moment/list/following',
+    path: '/moment/list/follow',
     icon: 'i-concern',
   },
   {

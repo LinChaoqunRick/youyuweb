@@ -73,7 +73,7 @@
       </div>
     </Transition>
     <div class="image-preview-footer" v-if="!isSingleImage">
-      <div class="image-thumbnails" :class="{'flex-box': isThumbsOverScreen}" ref="imageThumbnailRef">
+      <div class="image-thumbnails" :class="{ 'flex-box': isThumbsOverScreen }" ref="imageThumbnailRef">
         <div
           v-for="(item, index) in props.list"
           :key="item"
@@ -81,7 +81,7 @@
           :class="{ active: index === current }"
           @click="onClickThumbnail(index)"
         >
-          <img :src="item" alt="" />
+          <img :src="item" alt="" draggable="false" />
         </div>
       </div>
     </div>
@@ -92,16 +92,16 @@
 import { computed, defineModel, onMounted, onUnmounted, ref, watch } from 'vue';
 import { disabledBodyScroll, enabledBodyScroll } from '@/assets/utils/utils';
 import { Spin } from 'ant-design-vue';
-import { useIdle } from '@vueuse/core';
+import { useEventListener, useIdle, usePointerSwipe } from '@vueuse/core';
 
 const props = defineProps({
   list: {
     type: Array<string>,
-    required: true
+    required: true,
   },
   originTransfer: {
-    type: Function
-  }
+    type: Function,
+  },
 });
 const emit = defineEmits(['onClose']);
 const current = defineModel('current', { type: Number, default: 0 });
@@ -142,7 +142,8 @@ const handleFooterScroll = () => {
   const halfDocumentClientWidth = documentClientWidth / 2;
   const currentOffset = current.value * imageThumbnailWidth.value;
   if (currentOffset > halfDocumentClientWidth) {
-    imageThumbnailRef.value && (imageThumbnailRef.value.scrollLeft = currentOffset + imageThumbnailWidth.value / 2 - halfDocumentClientWidth);
+    imageThumbnailRef.value &&
+      (imageThumbnailRef.value.scrollLeft = currentOffset + imageThumbnailWidth.value / 2 - halfDocumentClientWidth);
   } else {
     imageThumbnailRef.value && (imageThumbnailRef.value.scrollLeft = 0);
   }
@@ -175,7 +176,7 @@ function onLoad() {
 }
 
 function listenWheel() {
-  imagePreviewBodyRef.value?.addEventListener('wheel', (e: WheelEvent) => {
+  useEventListener(imagePreviewBodyRef, 'wheel', (e: WheelEvent) => {
     let ratio = scaleRatio;
     // 缩小
     if (e.deltaY > 0) {
@@ -196,25 +197,25 @@ function listenWheel() {
       // 图片的中心坐标
       const origin = {
         x: window.innerWidth * 0.5 + x,
-        y: (window.innerHeight - 80) * 0.5 + y
+        y: (window.innerHeight - 80) * 0.5 + y,
       };
 
       // 滚动前的x长度，y长度
       const before = {
         x: e.clientX - origin.x,
-        y: e.clientY - origin.y
+        y: e.clientY - origin.y,
       };
 
       // 滚动后的x‘长度，y’长度
       const after = {
         x: before.x * ratio,
-        y: before.y * ratio
+        y: before.y * ratio,
       };
 
       // 计算差值
       const diff = {
         x: after.x - before.x,
-        y: after.y - before.y
+        y: after.y - before.y,
       };
 
       x -= diff.x;
@@ -226,13 +227,13 @@ function listenWheel() {
 
 function listenDrag() {
   // 绑定 pointerdown
-  image.addEventListener('pointerdown', function(e) {
+  useEventListener(image, 'pointerdown', function (e: PointerEvent) {
     isPointerdown = true;
     image.setPointerCapture(e.pointerId);
     lastPointermove = { x: e.clientX, y: e.clientY };
   });
   // 绑定 pointermove
-  image.addEventListener('pointermove', function(e) {
+  useEventListener(image, 'pointermove', function (e: PointerEvent) {
     if (isPointerdown) {
       const current = { x: e.clientX, y: e.clientY };
       moveDiff.x = current.x - lastPointermove.x;
@@ -245,13 +246,13 @@ function listenDrag() {
     e.preventDefault();
   });
   // 绑定 pointerup
-  image.addEventListener('pointerup', function(e) {
+  useEventListener(image, 'pointerup', function (e) {
     if (isPointerdown) {
       isPointerdown = false;
     }
   });
   // 绑定 pointercancel
-  image.addEventListener('pointercancel', function(e) {
+  useEventListener(image, 'pointercancel', function (e) {
     if (isPointerdown) {
       isPointerdown = false;
     }
@@ -333,8 +334,24 @@ function onClose() {
 }
 
 const onClickThumbnail = (index: number) => {
+  imageThumbnailRef.value && (imageThumbnailRef.value.style.scrollBehavior = 'smooth');
   current.value = index;
 };
+
+let swipeStartScrollLeft = 0;
+const { distanceX, isSwiping } = usePointerSwipe(imageThumbnailRef, {
+  onSwipe() {
+    if (imageThumbnailRef.value) {
+      imageThumbnailRef.value.scrollLeft = swipeStartScrollLeft + distanceX.value;
+    }
+  },
+  onSwipeStart() {
+    if (imageThumbnailRef.value) {
+      imageThumbnailRef.value.style.scrollBehavior = 'unset';
+      swipeStartScrollLeft = imageThumbnailRef.value.scrollLeft;
+    }
+  },
+});
 
 disabledBodyScroll();
 
@@ -517,6 +534,7 @@ $footerHeight: 80px;
     bottom: 0;
     height: $footerHeight;
     background-color: rgba(0, 0, 0, 0.2);
+    user-select: none;
 
     .image-thumbnails {
       white-space: nowrap;

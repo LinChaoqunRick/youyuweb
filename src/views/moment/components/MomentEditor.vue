@@ -8,7 +8,8 @@
           showLimit
           placeholder="此刻在想什么？快来分享一些新鲜事或发表一些看法吧！"
           @onPasteImage="onPasteImage"
-          ref="richEditor">
+          ref="richEditor"
+        >
           <template #bottom>
             <div class="topic-wrapper">
               <div class="add-position" @click="onAddPosition">
@@ -37,7 +38,8 @@
         v-bind="dragOptions"
         @start="drag = true"
         @end="drag = false"
-        :item-key="element => element">
+        :item-key="element => element"
+      >
         <template #item="{ element, index }">
           <ImageItem :data="element" :progress="progressList[index]" @on-image-delete="onImageDelete(index)" />
         </template>
@@ -52,7 +54,8 @@
           placement="bottomLeft"
           overlayClassName="emoji-picker-popover"
           :getPopupContainer="triggerNode => triggerNode.parentNode"
-          :open="emojiVisible">
+          :open="emojiVisible"
+        >
           <template #content>
             <EmojiPicker @onImagePick="onImagePick" @onEmojiPick="onEmojiPick" v-on-click-outside="onEmojiClose" />
           </template>
@@ -68,24 +71,22 @@
           :max-num="maxFileNum"
           :disabled="uploadDisabled"
           multiple
-          :config="{data: { base: 'moment/images' }}"
+          :config="{ data: { base: 'moment/images' } }"
           @onProgress="onUploadProgress"
-          ref="UploadFileRef">
+          ref="UploadFileRef"
+        >
           <div class="tool-item item-upload-image" v-login>
             <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3" />
             <span class="tool-title">图片</span>
           </div>
         </UploadFile>
-        <!--<div class="tool-item" @click="onCheckLogin">
-          <i-topic theme="outline" size="16" fill="currentColor" :strokeWidth="3"/>
-          <span class="tool-title">话题</span>
-        </div>-->
       </div>
       <a-button
         type="primary"
         :disabled="!isLogin || !currentLength || contentLengthExceed"
         :loading="submitLoading"
-        @click="onSubmit">
+        @click="onSubmit"
+      >
         发布
       </a-button>
       <slot name="bottom"></slot>
@@ -100,7 +101,6 @@ import { useStore } from 'vuex';
 import { message } from 'ant-design-vue';
 import { cloneDeep } from 'lodash';
 import { vOnClickOutside } from '@vueuse/components';
-import { onCheckLogin } from '@/assets/utils/utils';
 import draggable from 'vuedraggable';
 import openModal from '@/libs/tools/openModal';
 import { transformHTMLToTag } from '@/components/common/utils/emoji/youyu_emoji';
@@ -118,14 +118,14 @@ const props = defineProps({
     default() {
       return reactive({
         content: '',
-        images: []
+        images: [],
       });
-    }
+    },
   },
   isEdit: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
 const emit = defineEmits(['saveSuccess']);
@@ -133,7 +133,7 @@ const dragOptions = reactive({
   animation: 200,
   group: 'description',
   disabled: false,
-  ghostClass: 'ghost'
+  ghostClass: 'ghost',
 });
 
 const maxFileNum = 9;
@@ -178,7 +178,11 @@ const onSubmit = async () => {
     const firstErrorItem = imagesListRes.find(item => item instanceof AxiosError);
     if (firstErrorItem) {
       submitLoading.value = false;
-      return message.error(`发布失败：${firstErrorItem.response ? getXmlTextContent(firstErrorItem.response.data, 'Message') : firstErrorItem.message}`);
+      return message.error(
+        `发布失败：${
+          firstErrorItem.response ? getXmlTextContent(firstErrorItem.response.data, 'Message') : firstErrorItem.message
+        }`
+      );
     }
   }
 
@@ -207,7 +211,7 @@ const onSubmit = async () => {
       if (isEdit) {
         router.replace({
           name: 'MomentDetail',
-          params: { momentId: props.form.id }
+          params: { momentId: props.form.id },
         });
       }
     })
@@ -247,14 +251,14 @@ const onAddPosition = () => {
   openModal({
     component: LocationSelector,
     componentProps: {
-      data: props.form
+      data: props.form,
     },
     title: '添加位置',
     width: '88vw',
     maskClosable: false,
     keyboard: false,
     centered: true,
-    wrapClassName: 'select-position-modal-wrapper'
+    wrapClassName: 'select-position-modal-wrapper',
   })
     .then(res => {
       props.form.location = res.name;
@@ -279,7 +283,8 @@ const onPasteImage = (files: File[]) => {
   const maxFileByteSize = maxFileSize * 1024 * 1024;
   const validFiles: File[] = [];
   for (const file of files) {
-    if (file.size > maxFileByteSize) { // 一个文件超过，全部退回
+    if (file.size > maxFileByteSize) {
+      // 一个文件超过，全部退回
       return message.error(`文件大小不能大于${maxFileSize}MB`);
     } else {
       validFiles.push({
@@ -287,7 +292,7 @@ const onPasteImage = (files: File[]) => {
         name: file.name,
         size: file.size,
         type: file.type,
-        originFileObj: file
+        originFileObj: file,
       });
     }
   }
