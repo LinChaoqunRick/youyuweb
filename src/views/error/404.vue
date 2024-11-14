@@ -1,31 +1,33 @@
 <template>
   <div class="not-found">
-    <img src="https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/error/404Error.png" alt="404"/>
-    <p class="error-text text1">哎呀，你访问的页面不存在！{{ time }}秒后返回首页</p>
+    <img src="https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/error/404Error.png" alt="404" />
+    <p class="error-text text1">哎呀，你访问的页面不存在！{{ time }} 秒后返回上一页</p>
     <p class="error-text text2">你输入的网址有误或链接已经过期</p>
-    <a-button type="primary" size="large" @click="$router.replace('/')">返回首页</a-button>
+    <a-button type="primary" size="large" @click="router.replace('/')">返回首页</a-button>
   </div>
 </template>
 
 <script setup>
-import {onUnmounted, ref} from "vue";
-import {useRouter} from "vue-router";
+import { onUnmounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
 const time = ref(5);
 
+console.log(history.length);
+
 const interval = setInterval(() => {
   time.value--;
   if (time.value <= 0) {
     clearInterval(interval);
-    router.replace("/");
+    router.back();
   }
 }, 1000);
 
 onUnmounted(() => {
   clearInterval(interval);
-})
+});
 </script>
 
 <style lang="scss" scoped>
@@ -44,7 +46,7 @@ onUnmounted(() => {
   }
 
   .error-text {
-    color: #29AAE3;
+    color: #29aae3;
   }
 
   .text1 {

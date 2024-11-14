@@ -532,6 +532,10 @@ const onUploadProgress = (progress: number[]) => {
 .emoji-picker-popover {
   z-index: 9;
 
+  .ant-popover-inner {
+    padding: 0;
+  }
+
   .ant-popover-inner-content {
     padding: 0;
   }

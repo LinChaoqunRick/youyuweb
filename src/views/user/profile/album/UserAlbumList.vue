@@ -7,7 +7,7 @@
       </a-button>
       <AlbumActions />
     </div>
-    <AlbumCommonList list-url="getMineAlbumList" ref="AlbumCommonListRef" />
+    <AlbumCommonList list-url="getMineAlbumList" :table-params="tableParams" ref="AlbumCommonListRef" />
   </div>
 </template>
 
@@ -20,17 +20,19 @@ import AlbumCommonList from '@/views/album/list/common/AlbumCommonList.vue';
 
 const AlbumCommonListRef = ref<typeof AlbumCommonList | null>(null);
 
+const tableParams = {
+  pageSize: 12,
+};
+
 const onAdd = async () => {
-  console.log('onAdd');
   const res = await openModal({
     component: AlbumAdd,
     title: '创建相册',
     maskClosable: false,
     width: '580px',
   }).catch(console.log);
-  console.log(res);
   if (res) {
-    AlbumCommonListRef.value.YTableRef.value.refreshData();
+    AlbumCommonListRef.value?.YTableRef.refreshData();
   }
 };
 </script>
@@ -40,16 +42,15 @@ const onAdd = async () => {
   height: 100%;
   width: 100%;
   display: flex;
+  flex-direction: column;
   overflow: auto;
+  background-color: var(--youyu-body-background2);
 
   .actions-wrapper {
-    position: absolute;
-    top: 8px;
-    right: 0;
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    padding-right: 30px;
+    padding: 10px 0;
 
     button {
       margin-right: 16px;
@@ -62,6 +63,13 @@ const onAdd = async () => {
     ::v-deep(> span) {
       margin-right: 16px;
       cursor: pointer;
+    }
+  }
+
+  ::v-deep(.y-table) {
+    .list-wrapper {
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 30px 0;
     }
   }
 }

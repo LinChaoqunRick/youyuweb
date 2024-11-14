@@ -1,5 +1,5 @@
 <template>
-  <YTable :listUrl="listUrl" ref="YTableRef" :params="props.tableParams">
+  <YTable :listUrl="listUrl" :params="props.tableParams" ref="YTableRef">
     <template #default="{ dataList }">
       <div class="list-wrapper">
         <div v-for="item in dataList" class="album-item-body" :key="item.id">

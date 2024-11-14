@@ -266,7 +266,8 @@ defineExpose({
   transition: 0.2s;
   line-height: 2rem;
   min-height: 2rem;
-  border-radius: 2px;
+  border-radius: 4px;
+  border: 1px solid transparent;
 
   &.editor-active {
     border-color: #1890ff !important;

@@ -1,22 +1,24 @@
 <template>
   <div class="emoji-picker">
     <div class="emoji-picker-header">
-      <div class="emoji-switch emoji-first" :class="{'item-active': activeIndex === 0}" @click="onSwitch(0)">
-        <img :src="youyuEmojis[0].src" />
+      <div class="emoji-switch emoji-first" :class="{ 'item-active': activeIndex === 0 }" @click="onSwitch(0)">
+        <img :src="youyuEmojis[0].src" alt="" />
       </div>
-      <div class="emoji-switch emoji-second" :class="{'item-active': activeIndex === 1}" @click="onSwitch(1)">
+      <div class="emoji-switch emoji-second" :class="{ 'item-active': activeIndex === 1 }" @click="onSwitch(1)">
         <div>😃</div>
       </div>
     </div>
-    <div class="emoji-picker-body">
-      <div v-if="activeIndex === 0" class="list-youyu-emoji youyu-scrollbar" @click="onImagePick">
-        <div v-for="item in youyuEmojis" class="emoji-image">
-          <img :src="item.src" :title="item.title" />
+    <div class="emoji-picker-body-wrapper youyu-scrollbar">
+      <div class="emoji-picker-body">
+        <div v-if="activeIndex === 0" class="list-youyu-emoji youyu-scrollbar" @click="onImagePick">
+          <div v-for="item in youyuEmojis" :key="item.title" class="emoji-image">
+            <img :src="item.src" :title="item.title" :alt="item.title" />
+          </div>
         </div>
-      </div>
-      <div v-else class="list-youyu-emoji youyu-scrollbar" @click="onEmojiPick">
-        <div v-for="item in emojiList" class="emoji-image emoji-item">
-          <span v-html="item.char" />
+        <div v-else class="list-youyu-emoji youyu-scrollbar" @click="onEmojiPick">
+          <div v-for="item in emojiList" :key="item.codes" class="emoji-image emoji-item">
+            <span v-html="item.char" />
+          </div>
         </div>
       </div>
     </div>
@@ -51,20 +53,18 @@ const onEmojiPick = (event: MouseEvent) => {
     emit('onEmojiPick', eventTarget.innerHTML);
   }
 };
-
 </script>
 
 <style lang="scss" scoped>
 .emoji-picker {
-  width: 437px;
+  width: 410px;
   background-color: var(--youyu-background1);
 
   .emoji-picker-header {
     display: flex;
     align-items: center;
     border-bottom: 1px solid var(--youyu-border-color);
-    height: 36px;
-    padding-bottom: 6px;
+    padding: 8px;
 
     .emoji-switch {
       cursor: pointer;
@@ -74,7 +74,7 @@ const onEmojiPick = (event: MouseEvent) => {
       width: 48px;
       height: 32px;
       border-radius: 4px;
-      transition: background-color .3s;
+      transition: background-color 0.3s;
       margin-right: 12px;
 
       &.item-active {
@@ -96,73 +96,44 @@ const onEmojiPick = (event: MouseEvent) => {
     }
   }
 
-  .emoji-picker-body {
-    padding: 6px 0;
+  .emoji-picker-body-wrapper {
+    height: 270px;
+    overflow: auto;
+    padding: 6px 0 6px 12px;
 
-    .list-youyu-emoji {
-      display: flex;
-      flex-wrap: wrap;
-      height: 270px;
-      overflow: auto;
-
-      /* 滚动条整体部分 */
-      ::-webkit-scrollbar {
-        width: 20px;
-        height: 20px;
-      }
-
-      /*滚动条轨道、滚动条*/
-      ::-webkit-scrollbar-track,
-      ::-webkit-scrollbar-thumb {
-        border-radius: 50px;
-        border: 5px solid transparent;
-      }
-
-      /*滚动条轨道*/
-      ::-webkit-scrollbar-track {
-        box-shadow: 1px 1px 10px #AAAAAA inset;
-      }
-
-      /*滚动条*/
-      ::-webkit-scrollbar-thumb {
-        min-height: 20px;
-
-        background-clip: content-box;
-        box-shadow: 0 0 0 5px #088 inset;
-      }
-
-      /*边角*/
-      ::-webkit-scrollbar-corner {
-        background: transparent;
-      }
-
-      .emoji-image {
+    .emoji-picker-body {
+      .list-youyu-emoji {
         display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 32px;
-        width: 32px;
-        cursor: pointer;
-        margin: 0 7px 7px 0;
-        transition: .3s;
+        flex-wrap: wrap;
 
-        &.emoji-item {
-          font-size: 24px;
+        .emoji-image {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 32px;
+          width: 32px;
+          cursor: pointer;
+          margin: 0 7px 7px 0;
+          transition: 0.3s;
+
+          &.emoji-item {
+            font-size: 24px;
+
+            &:hover {
+              transform: scale(1.1);
+            }
+          }
 
           &:hover {
-            transform: scale(1.1);
+            img {
+              transform: scale(1.2);
+            }
           }
-        }
 
-        &:hover {
           img {
-            transform: scale(1.2);
+            height: 28px;
+            transition: 0.3s;
           }
-        }
-
-        img {
-          height: 28px;
-          transition: .3s;
         }
       }
     }

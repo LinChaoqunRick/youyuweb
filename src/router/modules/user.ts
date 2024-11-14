@@ -85,6 +85,15 @@ const route = [
             ],
           },
           {
+            path: 'album',
+            name: 'userAlbum',
+            meta: {
+              title: 'Ta的专栏',
+              keepAlive: true,
+            },
+            component: () => import('@/views/user/profile/album/UserAlbumList.vue'),
+          },
+          {
             path: 'favorites',
             name: 'userFavorites',
             redirect: to => {
