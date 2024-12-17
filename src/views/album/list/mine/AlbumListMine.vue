@@ -95,5 +95,9 @@ const menus = [
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  .hint-text {
+    margin-bottom: 20px;
+  }
 }
 </style>

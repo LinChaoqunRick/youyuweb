@@ -206,7 +206,8 @@ defineExpose({
 
     ::v-deep(.ant-pagination) {
       .ant-pagination-item,
-      .ant-pagination-jump-next {
+      .ant-pagination-jump-next,
+      .ant-pagination-jump-prev {
         background-color: var(--youyu-body-background2);
         border: var(--pagination-border);
         border-radius: 2px;

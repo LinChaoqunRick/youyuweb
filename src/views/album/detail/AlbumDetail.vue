@@ -1,8 +1,8 @@
 <template>
-  <ContentData url="getAlbumAccessible" :params="{ id: albumId }" v-slot="{ data }" class="content-data-container">
+  <ContentData url="getAlbumAccessible" :params="{ id: albumId }" v-slot="{ data }" class="content-data-container gf">
     <div class="album-detail-container">
       <div v-if="data" class="album-detail" :class="{ 'album-detail-collapse': collapse }">
-        <div class="album-images-wrapper">
+        <div class="album-images-wrapper youyu-scrollbar">
           <div class="album-detail-top-menu" v-if="userInfo.id === albumDetailData?.userId">
             <a-button type="primary" shape="round" @click="onClickUpload">
               <template #icon>

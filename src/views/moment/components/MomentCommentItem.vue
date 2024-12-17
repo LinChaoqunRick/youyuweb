@@ -163,7 +163,7 @@ const replyEditorPlaceholder = computed(() => (props.data ? '回复@' + props.da
 const replyParams = computed(() => {
   return {
     momentId: props.moment.id,
-    userIdTo: props.moment.userId,
+    userIdTo: props.data.userId,
     rootId: props.data.id,
   };
 });

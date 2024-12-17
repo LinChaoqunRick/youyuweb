@@ -84,7 +84,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
@@ -92,10 +92,11 @@ import { createVNode } from 'vue';
 import { Modal, message } from 'ant-design-vue';
 import { useRouter, RouterLink } from 'vue-router';
 import { cleanCookieLocalStorage } from '@/assets/utils/utils';
+import openSpin from '@/libs/tools/openSpin';
 
+let closeSpin: Function;
 const { getters, dispatch } = useStore();
 let userInfo = computed(() => getters['userInfo']);
-const router = useRouter();
 const visible = ref(false);
 
 const menuList = [
@@ -151,8 +152,12 @@ const showLogoutConfirm = () => {
   Modal.confirm({
     title: '您确定要退出当前账号?',
     icon: createVNode(ExclamationCircleOutlined),
-    // content: createVNode('div', { style: 'color:red;' }, 'Some descriptions'),
     onOk() {
+      closeSpin = openSpin({
+        componentProps: {
+          tip: '正在登出账号...',
+        },
+      });
       handleLogout();
     },
     onCancel() {
@@ -163,14 +168,18 @@ const showLogoutConfirm = () => {
 };
 
 function handleLogout() {
-  dispatch('logout').then(res => {
-    cleanCookieLocalStorage();
-    message.success('登出成功!');
-    // 刷新页面
-    setTimeout(() => {
-      location.reload();
-    }, 800);
-  });
+  dispatch('logout')
+    .then(res => {
+      cleanCookieLocalStorage();
+      message.success('登出成功!');
+      // 刷新页面
+      setTimeout(() => {
+        location.reload();
+      }, 800);
+    })
+    .finally(() => {
+      closeSpin();
+    });
 }
 </script>
 
