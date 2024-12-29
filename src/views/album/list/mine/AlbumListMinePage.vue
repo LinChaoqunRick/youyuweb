@@ -1,5 +1,5 @@
 <template>
-  <div class="album-list">
+  <div class="album-list" v-if="isLogin">
     <div class="actions-wrapper">
       <a-button class="create-btn" shape="round" type="primary" @click="onAdd">
         <i-folder-plus theme="outline" size="16" fill="#fff" style="margin-right: 4px" />
@@ -12,25 +12,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import openModal from '@/libs/tools/openModal';
 import AlbumAdd from '@/views/album/common/AlbumAdd.vue';
 import AlbumActions from '@/views/album/components/AlbumActions.vue';
 import AlbumCommonList from '@/views/album/list/common/AlbumCommonList.vue';
+import { useStore } from 'vuex';
+
+const { getters } = useStore();
 
 const AlbumCommonListRef = ref<typeof AlbumCommonList | null>(null);
+const isLogin = computed(() => getters['isLogin']);
 
 const onAdd = async () => {
-  console.log('onAdd');
   const res = await openModal({
     component: AlbumAdd,
     title: '创建相册',
     maskClosable: false,
     width: '580px',
   }).catch(console.log);
-  console.log(res);
   if (res) {
-    AlbumCommonListRef.value.YTableRef.value.refreshData();
+    AlbumCommonListRef.value?.YTableRef.value.refreshData();
   }
 };
 </script>

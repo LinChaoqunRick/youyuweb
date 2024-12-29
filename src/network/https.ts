@@ -1,5 +1,5 @@
 import axios, { type InternalAxiosRequestConfig } from 'axios';
-import { message } from 'ant-design-vue';
+import { message, Modal } from 'ant-design-vue';
 import store from '@/store';
 import router from '@/router';
 import qs from 'qs';
@@ -24,7 +24,7 @@ const showMessageCode = [403, 508, 509, 510, 530, 600, 800];
 const instance = axios.create({
   baseURL: '', //配置固定域名
   timeout: 200 * 1000,
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 });
 
 instance.interceptors.request.use(
@@ -35,13 +35,13 @@ instance.interceptors.request.use(
     }
     return config;
   },
-  (err) => {
+  err => {
     console.log(err);
   }
 );
 
 instance.interceptors.response.use(
-  (response) => {
+  response => {
     const res = response.data;
     if (res.code === 200) {
       return res;
@@ -57,7 +57,7 @@ instance.interceptors.response.use(
       return Promise.reject(res);
     }
   },
-  (error) => {
+  error => {
     const status = error.response.status;
     const data = error.response.data;
     if (status === 401) {
@@ -82,7 +82,7 @@ instance.interceptors.response.use(
  */
 function get(url: string, params = {}) {
   return instance.get(url, {
-    params: params
+    params: params,
   });
 }
 
@@ -96,8 +96,8 @@ function post(url: string, data = {}, config: any = null) {
   if (!config) {
     config = {
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-      }
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
     };
     return instance.post(url, qs.stringify(data), config);
   } else if (!!config && config.headers['Content-Type'] !== 'application/json') {
@@ -116,19 +116,25 @@ const refreshAuthLogic = async (failedRequest: any) => {
       client_id: 'web', // oauth客户端id
       client_secret: '654321', // oauth客户端密码
       grant_type: 'refresh_token',
-      refresh_token: refresh_token
-    }).catch((e) => {
-      message.warning('持久凭证已过期，刷新令牌失败，请重新登录！');
-      cleanCookieLocalStorage();
-      store.commit('changeUser', {});
-      setTimeout(() => {
-        window.location.reload();
-        router.push('/');
-      }, 1500);
+      refresh_token: refresh_token,
+    })
+    .catch(e => {
+      Modal.info({
+        title: '凭证过期',
+        content: '持久凭证失效，请重新登录！',
+        onOk() {
+          cleanCookieLocalStorage();
+          store.commit('changeUser', {});
+          setTimeout(() => {
+            window.location.reload();
+            router.push('/');
+          }, 100);
+        },
+      });
     });
   const { access_token: res_access_token, refresh_token: res_refresh_token } = tokenRefreshResponse.data;
-  localStorage.setItem("access_token", res_access_token);
-  localStorage.setItem("refresh_token", res_refresh_token);
+  localStorage.setItem('access_token', res_access_token);
+  localStorage.setItem('refresh_token', res_refresh_token);
   failedRequest.response.config.headers['Authorization'] = 'Bearer ' + res_access_token;
   return await Promise.resolve();
 };
@@ -138,7 +144,7 @@ createAuthRefreshInterceptor(instance, refreshAuthLogic);
 
 const http = {
   get,
-  post
+  post,
 };
 
 export default http;

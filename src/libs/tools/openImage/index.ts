@@ -23,43 +23,46 @@ export default function openImage(config: ImageModalConfig) {
   }
 
   return new Promise((resolve, reject) => {
-    const Comp = createApp({
-      name: 'PreviewComp',
-      inheritAttrs: false,
-      components: {
-        ImagePreview,
-      },
-      data() {
-        return {
-          visible: false,
-        };
-      },
-      template: `
-          <transition name="fade">
-            <ImagePreview v-if="visible" v-bind="componentProps" @onClose="close"/>
-          </transition>
-        `,
-      props: {
-        componentProps: {
-          type: Object,
-          default: () => ({}),
+    const Comp = createApp(
+      {
+        name: 'PreviewComp',
+        inheritAttrs: false,
+        components: {
+          ImagePreview,
         },
-        ...imageProps,
-      },
-      methods: {
-        close() {
-          this.visible = false;
-          setTimeout(() => {
-            Comp.unmount();
-            document.body.removeChild(preview);
-            resolve(true);
-          }, 300);
+        data() {
+          return {
+            visible: false,
+          };
+        },
+        template: `
+        <transition name="fade">
+          <ImagePreview v-if="visible" v-bind="componentProps" @onClose="close" />
+        </transition>
+      `,
+        props: {
+          componentProps: {
+            type: Object,
+            default: () => ({}),
+          },
+          ...imageProps,
+        },
+        methods: {
+          close() {
+            this.visible = false;
+            setTimeout(() => {
+              Comp.unmount();
+              document.body.removeChild(preview);
+              resolve(true);
+            }, 300);
+          },
+        },
+        mounted() {
+          this.visible = true;
         },
       },
-      mounted() {
-        this.visible = true;
-      },
-    }, config).use(Antd);
+      config
+    ).use(Antd);
     IconPark(Comp);
     const preview = document.createElement('div');
     const instance = Comp.mount(preview);

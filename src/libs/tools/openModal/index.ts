@@ -17,7 +17,7 @@ export default function openModal<T>(config: ModalConfig): Promise<T> {
       cancelText: '取消',
       okText: '确定',
       componentProps: {},
-      beforeConfirm: null
+      beforeConfirm: null,
     },
     config
   );
@@ -25,26 +25,27 @@ export default function openModal<T>(config: ModalConfig): Promise<T> {
     throw new Error('component is required!');
   }
   return new Promise((resolve, reject) => {
-    const Comp = createApp({
-      name: 'ModalContainer',
-      inheritAttrs: false,
-      components: {
-        [config.component.name as string]: config.component,
-        Modal,
-        Button
-      },
-      provide() {
-        return {
-          modal: this
-        };
-      },
-      data() {
-        return {
-          confirmLoading: false,
-          modalVisible: true
-        };
-      },
-      template: `
+    const Comp = createApp(
+      {
+        name: 'ModalContainer',
+        inheritAttrs: false,
+        components: {
+          [config.component.name as string]: config.component,
+          Modal,
+          Button,
+        },
+        provide() {
+          return {
+            modal: this,
+          };
+        },
+        data() {
+          return {
+            confirmLoading: false,
+            modalVisible: true,
+          };
+        },
+        template: `
         <Modal v-model:open="modalVisible" v-bind="$props" class="modal-body" @cancel="handleCancel(false)">
           <div class="modal-content" style="font-size:14px">
             <component ref="modalBody" is="${config.component.name}" v-bind="componentProps" />
@@ -62,56 +63,58 @@ export default function openModal<T>(config: ModalConfig): Promise<T> {
           </template>
         </Modal>
       `,
-      props: {
-        componentProps: {
-          type: Object,
-          default: () => ({})
-        },
-        ...modalProps,
-        ...{
-          title: {
-            type: String,
-            default: '提示'
+        props: {
+          componentProps: {
+            type: Object,
+            default: () => ({}),
           },
-          buttonSize: {
-            type: String,
-            default: 'medium'
-          }
-        }
-      },
-      methods: {
-        close() {
-          this.modalVisible = false;
-          setTimeout(() => {
-            Comp.unmount();
-            document.body.removeChild(modal);
-          }, 100);
+          ...modalProps,
+          ...{
+            title: {
+              type: String,
+              default: '提示',
+            },
+            buttonSize: {
+              type: String,
+              default: 'medium',
+            },
+          },
         },
-        ok(params: any) {
-          const done = () => {
+        methods: {
+          close() {
+            this.modalVisible = false;
+            setTimeout(() => {
+              Comp.unmount();
+              document.body.removeChild(modal);
+            }, 100);
+          },
+          ok(params: any) {
+            const done = () => {
+              this.close();
+              resolve(params ?? 1);
+            };
+            if (typeof config.beforeConfirm === 'function') {
+              config.beforeConfirm(done, params);
+            } else {
+              done();
+            }
+          },
+          handleCancel(action: boolean | undefined) {
+            const value = action === false ? false : 0;
             this.close();
-            resolve(params ?? 1);
-          };
-          if (typeof config.beforeConfirm === 'function') {
-            config.beforeConfirm(done, params);
-          } else {
-            done();
-          }
+            reject(value);
+          },
+          handleOk() {
+            if (this.$refs.modalBody && typeof this.$refs.modalBody.beforeConfirm === 'function') {
+              this.$refs.modalBody.beforeConfirm(this.ok);
+            } else {
+              this.ok();
+            }
+          },
         },
-        handleCancel(action: boolean | undefined) {
-          const value = action === false ? false : 0;
-          this.close();
-          reject(value);
-        },
-        handleOk() {
-          if (this.$refs.modalBody && typeof this.$refs.modalBody.beforeConfirm === 'function') {
-            this.$refs.modalBody.beforeConfirm(this.ok);
-          } else {
-            this.ok();
-          }
-        }
-      }
-    }, config)
+      },
+      config
+    )
       .use(store)
       .use(router)
       .use(Antd);

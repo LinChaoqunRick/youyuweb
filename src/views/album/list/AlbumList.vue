@@ -1,5 +1,5 @@
 <template>
-  <div class="album-list">
+  <div class="album-list gf">
     <div class="album-list-top-menu">
       <nav-link v-for="route in routes" :route="route" :key="route.title" />
     </div>
