@@ -5,7 +5,7 @@
         <div class="reply-right-top">
           <div class="user-info">
             <div class="user-avatar">
-              <a-popover placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onUserVisibleChange">
+              <a-popover overlayClassName="user-info-moment-popover" placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onUserVisibleChange">
                 <template #content>
                   <UserCardMoment :user="data.user" />
                 </template>
@@ -15,7 +15,7 @@
               </a-popover>
             </div>
             <div class="user-nickname">
-              <a-popover placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onUserVisibleChange">
+              <a-popover overlayClassName="user-info-moment-popover" placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onUserVisibleChange">
                 <template #content>
                   <UserCardMoment :user="data.user" />
                 </template>

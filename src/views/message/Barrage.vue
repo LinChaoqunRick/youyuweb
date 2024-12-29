@@ -39,7 +39,7 @@ const barrageWrapperRef = ref<HTMLDivElement | null>(null);
 let channelNumber = 1;
 const channelHeight = 40;
 
-const DURATION = 12 * 1000;
+const DURATION = 18 * 1000;
 const animationMap = new WeakMap();
 
 const onShowFinish = (item: Message) => {

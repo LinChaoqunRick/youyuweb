@@ -1,5 +1,5 @@
 <template>
-  <div class="my-homepage">
+  <div class="change-homepage">
     <a-form
       :model="formValidate"
       :colon="false"

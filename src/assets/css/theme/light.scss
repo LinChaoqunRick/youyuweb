@@ -85,13 +85,13 @@
   --bg-transparent: rgba(239, 240, 242, 0.95);
 }
 
-@mixin darkGlassFilter {
+@mixin lightGlassFilter {
   background-color: hsla(0, 0%, 100%, 0.4) !important;
-  backdrop-filter: blur(10px) !important;
+  backdrop-filter: blur(5px) !important;
 }
 
 .light-theme {
   .gf {
-    @include darkGlassFilter;
+    @include lightGlassFilter;
   }
 }

@@ -5,3 +5,15 @@
 .github-theme {
   line-height: 1.9 !important;
 }
+
+.user-info-moment-popover {
+  filter: drop-shadow(var(--youyu-shadow1));
+
+  .ant-popover-content {
+    border-radius: 4px;
+  }
+
+  .ant-popover-inner {
+    padding: 0 !important;
+  }
+}

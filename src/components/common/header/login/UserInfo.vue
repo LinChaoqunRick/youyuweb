@@ -90,7 +90,7 @@ import { useStore } from 'vuex';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { createVNode } from 'vue';
 import { Modal, message } from 'ant-design-vue';
-import { useRouter, RouterLink } from 'vue-router';
+import { RouterLink } from 'vue-router';
 import { cleanCookieLocalStorage } from '@/assets/utils/utils';
 
 const { getters, dispatch } = useStore();
@@ -104,6 +104,11 @@ const menuList = [
     icon: 'i-home',
     path: `/user/${userInfo.value.id}`,
     exact: true,
+  },
+  {
+    label: '个人中心',
+    icon: 'i-user',
+    path: '/user/center/profile',
   },
   {
     label: '管理文章',
@@ -126,14 +131,9 @@ const menuList = [
     path: `/user/${userInfo.value.id}/favorites`,
   },
   {
-    label: '个人中心',
-    icon: 'i-user',
-    path: '/user/center/profile',
-  },
-  {
-    label: '消息通知',
-    icon: 'i-remind',
-    path: '/user/center/message',
+    label: '我的相册',
+    icon: 'i-picture-album',
+    path: '/album/list/mine/page',
   },
   {
     label: '账号设置',

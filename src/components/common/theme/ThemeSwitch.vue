@@ -28,7 +28,7 @@ const handleSwitch = () => {
   theme = theme === 'light' ? 'dark' : 'light';
   checked.value = theme === 'light';
   commit('changeTheme', theme);
-  document.documentElement.className = (theme === 'light') ? 'light-theme' : 'dark-theme';
+  document.documentElement.className = theme === 'light' ? 'light-theme' : 'dark-theme';
   // addSkin(checked.value ? light : dark);
 };
 
@@ -51,7 +51,7 @@ const addSkin = (content: string) => {
 };
 
 document.documentElement.setAttribute('theme', theme);
-document.documentElement.className = (theme === 'light') ? 'light-theme' : 'dark-theme';
+document.documentElement.className = theme === 'light' ? 'light-theme' : 'dark-theme';
 // addSkin(checked.value ? light : dark);
 </script>
 
@@ -59,5 +59,11 @@ document.documentElement.className = (theme === 'light') ? 'light-theme' : 'dark
 ::v-deep(.ant-switch) {
   box-sizing: content-box;
   border: var(--theme-switch-border);
+}
+
+.theme-switch {
+  .switch-button {
+    font-size: 0;
+  }
 }
 </style>

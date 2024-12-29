@@ -31,7 +31,7 @@ const route = [
             },
             component: () => import('@/views/moment/list/MomentListNew.vue'),
           },
-          {
+          /*{
             path: 'hot',
             name: 'MomentListHot',
             meta: {
@@ -40,7 +40,7 @@ const route = [
               keepAlive: true,
             },
             component: () => import('@/views/moment/list/MomentListHot.vue'),
-          },
+          },*/
           {
             path: 'follow',
             name: 'MomentListFollow',

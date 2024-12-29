@@ -2,7 +2,13 @@
   <div class="moment-comment-item" v-on-click-outside="onClickOutside">
     <div class="moment-comment-detail">
       <div class="user-avatar">
-        <a-popover placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onUserVisibleChange">
+        <a-popover
+          overlayClassName="user-info-moment-popover"
+          placement="top"
+          :mouseEnterDelay="0.6"
+          :mouseLeaveDelay="0.3"
+          @visibleChange="onUserVisibleChange"
+        >
           <template #content>
             <UserCardMoment :user="data.user" />
           </template>
@@ -14,7 +20,13 @@
       <div class="comment-right">
         <div class="comment-right-top">
           <div class="user-nickname">
-            <a-popover placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onUserVisibleChange">
+            <a-popover
+              overlayClassName="user-info-moment-popover"
+              placement="top"
+              :mouseEnterDelay="0.6"
+              :mouseLeaveDelay="0.3"
+              @visibleChange="onUserVisibleChange"
+            >
               <template #content>
                 <UserCardMoment :user="data.user" />
               </template>
@@ -480,6 +492,12 @@ const onUserVisibleChange = (visible: boolean) => {
     .delete-ope {
       display: inline-block !important;
     }
+  }
+}
+
+.user-avatar {
+  a {
+    display: block;
   }
 }
 </style>

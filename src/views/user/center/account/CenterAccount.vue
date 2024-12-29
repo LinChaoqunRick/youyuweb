@@ -1,8 +1,6 @@
 <template>
   <div class="center-account">
-    <div class="center-title">
-      账号设置
-    </div>
+    <div class="center-title">账号设置</div>
     <div class="center-content">
       <div class="setting-item">
         <div class="setting-item-title">手机</div>
@@ -35,24 +33,28 @@
       <div class="setting-item">
         <div class="setting-item-title">社交账号</div>
         <div class="setting-item-value social-account-tag">
-          <div class="tag-item tag-wechat" :class="{'active': false}"
-               :title="'微信:' + (user.wxId ? '已绑定' : '未绑定')">
-            <img src="/static/images/logo/wechat.png" alt="" @click="onSocialBind('wechat','微信', user.wxId)"/>
+          <div class="tag-item tag-wechat" :class="{ active: false }" :title="'微信:' + (user.wxId ? '已绑定' : '未绑定')">
+            <img src="/static/images/logo/wechat.png" alt="" @click="onSocialBind('wechat', '微信', user.wxId)" />
           </div>
-          <div class="tag-item tag-qq" :class="{'active': false}" :title="'QQ:' + (user.qqId ? '已绑定' : '未绑定')">
-            <img src="/static/images/logo/qq.png" alt="" @click="onSocialBind('qq','QQ', user.qqId)"/>
+          <div class="tag-item tag-qq" :class="{ active: false }" :title="'QQ:' + (user.qqId ? '已绑定' : '未绑定')">
+            <img src="/static/images/logo/qq.png" alt="" @click="onSocialBind('qq', 'QQ', user.qqId)" />
           </div>
-          <div class="tag-item tag-github" :class="{'active': user.githubId}"
-               :title="'Github:' + (user.githubId ? '已绑定' : '未绑定')">
-            <img src="/static/images/logo/github.png" alt="" @click="onSocialBind('github','Github', user.githubId)"/>
+          <div
+            class="tag-item tag-github"
+            :class="{ active: user.githubId }"
+            :title="'Github:' + (user.githubId ? '已绑定' : '未绑定')"
+          >
+            <img src="/static/images/logo/github.png" alt="" @click="onSocialBind('github', 'Github', user.githubId)" />
           </div>
-          <div class="tag-item tag-alipay" :class="{'active': false}"
-               :title="'支付宝:' + (user.alipayId ? '已绑定' : '未绑定')">
-            <img src="/static/images/logo/alipay.png" alt="" @click="onSocialBind('alipay', '支付宝', user.alipayId)"/>
+          <div
+            class="tag-item tag-alipay"
+            :class="{ active: false }"
+            :title="'支付宝:' + (user.alipayId ? '已绑定' : '未绑定')"
+          >
+            <img src="/static/images/logo/alipay.png" alt="" @click="onSocialBind('alipay', '支付宝', user.alipayId)" />
           </div>
-          <div class="tag-item tag-weibo" :class="{'active': false}"
-               :title="'微博:' + (user.weiboId ? '已绑定' : '未绑定')">
-            <img src="/static/images/logo/weibo.png" alt="" @click="onSocialBind('weibo','微博', user.weiboId)"/>
+          <div class="tag-item tag-weibo" :class="{ active: false }" :title="'微博:' + (user.weiboId ? '已绑定' : '未绑定')">
+            <img src="/static/images/logo/weibo.png" alt="" @click="onSocialBind('weibo', '微博', user.weiboId)" />
           </div>
         </div>
       </div>
@@ -69,30 +71,33 @@
     v-model:open="accountBindModalVisible"
     title="账号解绑提示"
     :confirm-loading="accountBindConfirmLoading"
-    @ok="onSocialUnbind">
-    <p>确定要与 <strong>{{ socialAppName }}</strong> 账号解绑？后续将无法通过该方式登录！</p>
+    @ok="onSocialUnbind"
+  >
+    <p>
+      确定要与 <strong>{{ socialAppName }}</strong> 账号解绑？后续将无法通过该方式登录！
+    </p>
   </a-modal>
 </template>
 
 <script setup lang="ts">
-import {useStore} from "vuex";
-import {computed, ref} from "vue";
+import { useStore } from 'vuex';
+import { computed, ref } from 'vue';
 import Homepage from './components/Homepage.vue';
 import Telephone from './components/Telephone.vue';
-import Password from "./components/Password.vue";
-import Email from "./components/Email.vue";
-import openModal from "@/libs/tools/openModal";
+import Password from './components/Password.vue';
+import Email from './components/Email.vue';
+import openModal from '@/libs/tools/openModal';
 
-const {getters, dispatch} = useStore();
+const { getters, dispatch } = useStore();
 const user = ref({});
 const accountBindModalVisible = ref(false);
 const accountBindConfirmLoading = ref(false);
-const socialAppType = ref("Github");
-const socialAppName = ref("Github");
+const socialAppType = ref('Github');
+const socialAppName = ref('Github');
 const userInfo = computed(() => getters['userInfo']);
 
 function initData() {
-  dispatch("getUserDetail", {userId: userInfo.value.id}).then(res => {
+  dispatch('getUserDetail', { userId: userInfo.value.id }).then(res => {
     user.value = res.data;
   });
 }
@@ -105,11 +110,14 @@ async function onEditHomepage() {
     title: '个人主页设置',
     maskClosable: false,
     componentProps: {
-      user: user.value
-    }
-  }).then(res => {
-    initData();
-  }).catch(console.log)
+      user: user.value,
+    },
+    wrapClassName: 'change-homepage-modal',
+  })
+    .then(res => {
+      initData();
+    })
+    .catch(console.log);
 }
 
 async function onEditEmail() {
@@ -118,12 +126,15 @@ async function onEditEmail() {
     title: '邮箱设置',
     maskClosable: false,
     componentProps: {
-      user: user.value
+      user: user.value,
     },
     width: '320px',
-  }).then(res => {
-    initData();
-  }).catch(console.log)
+    wrapClassName: 'change-email-modal',
+  })
+    .then(res => {
+      initData();
+    })
+    .catch(console.log);
 }
 
 async function onChangeTelephone() {
@@ -132,13 +143,15 @@ async function onChangeTelephone() {
     title: '换绑手机',
     maskClosable: false,
     componentProps: {
-      user: user.value
+      user: user.value,
     },
     width: '320px',
-    wrapClassName: 'change-telephone-modal'
-  }).then(res => {
-    initData();
-  }).catch(console.log)
+    wrapClassName: 'change-telephone-modal',
+  })
+    .then(res => {
+      initData();
+    })
+    .catch(console.log);
 }
 
 async function onChangePassword() {
@@ -147,13 +160,11 @@ async function onChangePassword() {
     title: '修改密码',
     maskClosable: false,
     componentProps: {
-      user: user.value
+      user: user.value,
     },
     width: '320px',
-    wrapClassName: 'change-password-modal'
-  }).then(res => {
-
-  })
+    wrapClassName: 'change-password-modal',
+  }).then(res => {});
 }
 
 const onSocialBind = (type: string, name: string, bindId: string) => {
@@ -162,15 +173,15 @@ const onSocialBind = (type: string, name: string, bindId: string) => {
     accountBindModalVisible.value = true;
     socialAppType.value = type;
   } else {
-    dispatch('getConnectURL', {type, state: "bind"}).then(res => {
+    dispatch('getConnectURL', { type, state: 'bind' }).then(res => {
       location.href = res.data;
-    })
+    });
   }
-}
+};
 
 const onSocialUnbind = () => {
   console.log(socialAppType.value);
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -224,7 +235,7 @@ const onSocialUnbind = () => {
             transform: scale(0.84);
           }
 
-          &:nth-child(n+2) {
+          &:nth-child(n + 2) {
             margin-left: 4px;
           }
 
@@ -263,10 +274,13 @@ const onSocialUnbind = () => {
 </style>
 
 <style lang="scss">
-.change-telephone-modal, .change-password-modal {
+.change-telephone-modal,
+.change-password-modal,
+.change-email-modal,
+.change-homepage-modal {
   .ant-modal-body {
     position: relative;
-    padding: 10px 24px 20px 24px;
+    padding-top: 10px;
 
     .ant-form-item {
       /*margin-bottom: 20px;*/

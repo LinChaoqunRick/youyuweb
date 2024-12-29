@@ -40,11 +40,11 @@ const menuList = [
     path: '/moment/list/new',
     icon: 'i-time',
   },
-  {
+  /*{
     title: '热门',
     path: '/moment/list/hot',
     icon: 'i-fire',
-  },
+  },*/
   {
     title: '关注',
     path: '/moment/list/follow',

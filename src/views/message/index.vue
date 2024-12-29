@@ -1,6 +1,6 @@
 <template>
   <div class="message">
-    <div class="barrage-view">
+    <div class="barrage-view gf">
       <Barrage v-model="dataList" />
       <div class="locate-button" :class="{ 'is-hide': formVisible }">
         <a-button type="primary" shape="round" @click="onLocate">

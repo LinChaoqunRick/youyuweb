@@ -2,11 +2,16 @@
   <div class="change-telephone">
     <!-- 如果之前绑定了手机号 -->
     <div v-if="props.user.username && !next">
-      <a-form :model="formPrevious" :colon="false" :rules="rulesRef" :label-col="labelCol" :wrapper-col="wrapperCol"
-              ref="formRef" class="code-form">
-        <div class="user-telephone">
-          原手机号：{{ props.user.username }}
-        </div>
+      <a-form
+        :model="formPrevious"
+        :colon="false"
+        :rules="rulesRef"
+        :label-col="labelCol"
+        :wrapper-col="wrapperCol"
+        ref="formRef"
+        class="code-form"
+      >
+        <div class="user-telephone">原手机号：{{ props.user.username }}</div>
         <a-form-item label=" " name="code">
           <a-input v-model:value="formPrevious.code" :maxlength="6" size="large" placeholder="验证码">
             <template v-slot:suffix>
@@ -20,10 +25,17 @@
       </a-form>
     </div>
     <div v-else>
-      <a-form :model="formNew" :colon="false" :rules="rulesRef" :label-col="labelCol" :wrapper-col="wrapperCol"
-              ref="formRef" class="code-form">
+      <a-form
+        :model="formNew"
+        :colon="false"
+        :rules="rulesRef"
+        :label-col="labelCol"
+        :wrapper-col="wrapperCol"
+        ref="formRef"
+        class="code-form"
+      >
         <a-form-item label=" " name="telephone">
-          <a-input v-model:value="formNew.telephone" size="large" :maxlength="11" placeholder="新手机号"/>
+          <a-input v-model:value="formNew.telephone" size="large" :maxlength="11" placeholder="新手机号" />
         </a-form-item>
         <a-form-item label=" " name="code">
           <a-input v-model:value="formNew.code" :maxlength="6" size="large" placeholder="验证码">
@@ -41,74 +53,72 @@
 </template>
 
 <script setup lang="ts">
-import {ref, inject} from "vue";
-import type {PropType} from "vue";
-import type {userType} from "@/types/user";
-import {useStore} from "vuex";
-import {reactive} from "vue";
-import {checkTelephone} from "@/libs/validate/validate";
-import {message} from "ant-design-vue";
-import smsCode from "@/enums/sms/smsCode";
+import { ref, inject } from 'vue';
+import type { PropType } from 'vue';
+import type { userType } from '@/types/user';
+import { useStore } from 'vuex';
+import { reactive } from 'vue';
+import { checkTelephone } from '@/libs/validate/validate';
+import { message } from 'ant-design-vue';
+import smsCode from '@/enums/sms/smsCode';
 
 const modal = inject('modal');
-const labelCol = {span: 0};
-const wrapperCol = {span: 24};
-const {dispatch} = useStore();
+const labelCol = { span: 0 };
+const wrapperCol = { span: 24 };
+const { dispatch } = useStore();
 const formRef = ref();
 const tryCount = ref(0);
 const next = ref(false);
 
 const props = defineProps({
   user: {
-    type: Object as PropType<userType>
-  }
-})
+    type: Object as PropType<userType>,
+  },
+});
 
 interface btnProp {
-  text: string,
-  disabled: boolean,
-  correct: boolean
+  text: string;
+  disabled: boolean;
+  correct: boolean;
 }
 
 const rulesRef = {
-  telephone: [
-    {required: true, validator: checkTelephone, trigger: 'change'}
-  ],
-  code: [
-    {required: true, message: '请输入6位验证码', min: 6, max: 6, trigger: 'change'}
-  ],
+  telephone: [{ required: true, validator: checkTelephone, trigger: 'change' }],
+  code: [{ required: true, message: '请输入6位验证码', min: 6, max: 6, trigger: 'change' }],
 };
 
 const preBtnProps = reactive<btnProp>({
   text: '发送验证码',
   disabled: false,
-  correct: true
+  correct: true,
 });
 
 const nextBtnProps = reactive<btnProp>({
   text: '发送验证码',
   disabled: false,
-  correct: true
+  correct: true,
 });
 
 const formPrevious = reactive({
-  telephone: props.user.username,
-  code: ''
-})
+  telephone: props.user?.username,
+  code: '',
+  type: 0,
+});
 
 const formNew = reactive({
   telephone: '',
-  code: ''
-})
+  code: '',
+  type: 0,
+});
 
 function onPreSendCode() {
   dispatch('messageSend', {
-    telephone: props.user.username,
-    type: smsCode.CHANGE_TELEPHONE_PREV
+    telephone: props.user?.username,
+    type: smsCode.CHANGE_TELEPHONE_PREV,
   }).then(res => {
-    message.success("发送成功");
+    message.success('发送成功');
     disableTimer(preBtnProps);
-  })
+  });
 }
 
 function onNextSendCode() {
@@ -116,29 +126,31 @@ function onNextSendCode() {
     dispatch('messageSend', {
       telephone: formNew.telephone,
       repeat: true,
-      type: smsCode.CHANGE_TELEPHONE_NEXT
-    }).then(res => {
-      message.success("发送成功");
-      disableTimer(nextBtnProps);
-    }).catch(e => {
-      message.error("发送失败:" + e.message);
+      type: smsCode.CHANGE_TELEPHONE_NEXT,
     })
+      .then(res => {
+        message.success('发送成功');
+        disableTimer(nextBtnProps);
+      })
+      .catch(e => {
+        message.error('发送失败:' + e.message);
+      });
   });
 }
 
 function disableTimer(obj: btnProp) {
   let second: number = 60;
-  obj.text = `${second}秒后重新发送`
+  obj.text = `${second}秒后重新发送`;
   obj.disabled = true;
   const interval = setInterval(() => {
-    obj.text = `${second}秒后重新发送`
+    obj.text = `${second}秒后重新发送`;
     second = second - 1;
     if (second <= 0) {
       clearInterval(interval);
-      obj.text = `发送验证码`
+      obj.text = `发送验证码`;
       obj.disabled = false;
     }
-  }, 1000)
+  }, 1000);
 }
 
 async function beforeConfirm(done) {
@@ -149,48 +161,54 @@ async function beforeConfirm(done) {
   const form = await formRef.value.validate().catch(console.log);
   if (form) {
     modal.confirmLoading = true;
-    if (props.user.username && !next.value) {
+    if (props.user?.username && !next.value) {
       preBtnProps.correct = true;
-      formPrevious.type = smsCode.CHANGE_TELEPHONE_PREV
-      dispatch('messageVerify', formPrevious).then(res => {
-        if (!res.data) {
-          tryCount.value++;
-          preBtnProps.correct = false;
-        } else {
-          next.value = true;
-          tryCount.value = 0;
-        }
-      }).finally(() => {
-        modal.confirmLoading = false;
-      })
-    } else {
-      nextBtnProps.correct = true;
-      formNew.type = smsCode.CHANGE_TELEPHONE_NEXT
-      await dispatch('messageVerify', formNew).then(async res => {
-        if (!res.data) {
-          tryCount.value++;
-          nextBtnProps.correct = false;
-        } else {
-          await dispatch("saveTelephone", {oldTel: props.user.username, newTel: formNew.telephone}).then(res => {
-            if (res.data) {
-              message.success("修改成功");
-              done();
-            } else {
-              message.success("修改失败");
-            }
-          }).catch(console.log);
-        }
-      }).catch(console.log)
+      formPrevious.type = smsCode.CHANGE_TELEPHONE_PREV;
+      dispatch('messageVerify', formPrevious)
+        .then(res => {
+          if (!res.data) {
+            tryCount.value++;
+            preBtnProps.correct = false;
+          } else {
+            next.value = true;
+            tryCount.value = 0;
+          }
+        })
         .finally(() => {
           modal.confirmLoading = false;
+        });
+    } else {
+      nextBtnProps.correct = true;
+      formNew.type = smsCode.CHANGE_TELEPHONE_NEXT;
+      await dispatch('messageVerify', formNew)
+        .then(async res => {
+          if (!res.data) {
+            tryCount.value++;
+            nextBtnProps.correct = false;
+          } else {
+            await dispatch('saveTelephone', { oldTel: props.user?.username, newTel: formNew.telephone })
+              .then(res => {
+                if (res.data) {
+                  message.success('修改成功');
+                  done();
+                } else {
+                  message.success('修改失败');
+                }
+              })
+              .catch(console.log);
+          }
         })
+        .catch(console.log)
+        .finally(() => {
+          modal.confirmLoading = false;
+        });
     }
   }
 }
 
 defineExpose({
-  beforeConfirm
-})
+  beforeConfirm,
+});
 </script>
 
 <style lang="scss" scoped>
@@ -198,7 +216,7 @@ defineExpose({
   .code-form {
     .user-telephone {
       font-weight: bold;
-      margin-bottom: 8px;
+      margin-bottom: 14px;
       margin-left: 2px;
     }
 

@@ -2,20 +2,32 @@
   <div class="moment-item">
     <div class="moment-item-content">
       <div class="content-top">
-        <div class="user-avatar">
-          <a-popover placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onUserVisibleChange">
-            <template #content>
-              <UserCardMoment :user="data.user" />
-            </template>
+        <a-popover
+          overlayClassName="user-info-moment-popover"
+          placement="top"
+          :mouseEnterDelay="0.6"
+          :mouseLeaveDelay="0.3"
+          @visibleChange="onUserVisibleChange"
+        >
+          <template #content>
+            <UserCardMoment overlayClassName="user-info-moment-popover" :user="data.user" />
+          </template>
+          <div class="user-avatar cp">
             <RouterLink :to="`/user/${data.user.id}/moment`">
               <img :src="data.user.avatar" alt="" />
             </RouterLink>
-          </a-popover>
-        </div>
+          </div>
+        </a-popover>
         <div class="user-nickname-time">
-          <a-popover placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onUserVisibleChange">
+          <a-popover
+            overlayClassName="user-info-moment-popover"
+            placement="top"
+            :mouseEnterDelay="0.6"
+            :mouseLeaveDelay="0.3"
+            @visibleChange="onUserVisibleChange"
+          >
             <template #content>
-              <UserCardMoment :user="data.user" />
+              <UserCardMoment overlayClassName="user-info-moment-popover" :user="data.user" />
             </template>
             <RouterLink :to="`/user/${data.user.id}/moment`">
               <div class="user-nickname">{{ data.user.nickname }}</div>

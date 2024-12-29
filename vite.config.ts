@@ -1,15 +1,15 @@
-import {fileURLToPath, URL} from 'node:url'
+import { fileURLToPath, URL } from 'node:url';
 
-import {defineConfig} from 'vite';
+import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
-import {Plugin as importToCDN} from 'vite-plugin-cdn-import';
-import {visualizer} from 'rollup-plugin-visualizer';
+import cdn from 'vite-plugin-cdn-import';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
-    sourcemap: false,     // 开启/关闭sourcemap
+    sourcemap: false     // 开启/关闭sourcemap
   },
   resolve: {
     alias: {
@@ -22,15 +22,21 @@ export default defineConfig({
     port: 3000, //端口号
     open: false, //启动后是否自动打开浏览器,
     proxy: {
-      /*'/plat': {
+      '/plat': {
         target: "http://localhost:8080",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/plat/, '')
-      },*/
-      '/plat': {
-        target: "https://v2.youyul.com/",
-        changeOrigin: true,
       },
+      /*'/plat': {
+        target: 'https://v2.youyul.com/',
+        changeOrigin: true,
+        secure: false
+      }*/
+      /*'/plat': {
+        target: "http://124.222.79.236:8080",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/plat/, '')
+      },*/
       /*'/api': {
         target: "https://116.62.114.102:8081",
         changeOrigin: true,
@@ -41,39 +47,39 @@ export default defineConfig({
   plugins: [
     vue(),
     vueJsx(),
-    visualizer({open: true}),
-    importToCDN({
+    visualizer({ open: true }),
+    cdn({
       prodUrl: '//unpkg.com/{name}@{version}/{path}',
       modules: [
         {
           name: 'vue',
           var: 'Vue',
-          path: 'dist/vue.global.prod.js',
+          path: 'dist/vue.global.prod.js'
         },
         {
           name: 'vue-demi',
           var: 'VueDemi',
-          path: 'lib/index.iife.js',
+          path: 'lib/index.iife.js'
         },
         {
           name: 'vue-router',
           var: 'VueRouter',
-          path: 'dist/vue-router.global.prod.js',
+          path: 'dist/vue-router.global.prod.js'
         },
         {
           name: 'vuex',
           var: 'Vuex',
-          path: 'dist/vuex.global.prod.js',
+          path: 'dist/vuex.global.prod.js'
         },
         {
           name: 'axios',
           var: 'axios',
-          path: 'dist/axios.min.js',
+          path: 'dist/axios.min.js'
         },
         {
           name: 'lodash',
           var: '_',
-          path: 'lodash.min.js',
+          path: 'lodash.min.js'
         },
         // 因为ant-design-vue使用了dayjs插件，需要配置dayjs
         {
@@ -89,12 +95,37 @@ export default defineConfig({
             'plugin/advancedFormat.js',
             'plugin/quarterOfYear.js',
             'plugin/relativeTime.js'
-          ],
+          ]
         },
         {
           name: 'ant-design-vue',
           var: 'antd',
-          path: 'dist/antd.min.js',
+          path: 'dist/antd.min.js'
+        },
+        {
+          name: 'lottie-web',
+          var: 'lottie',
+          path: 'build/player/lottie.min.js'
+        },
+        {
+          name: 'heic2any',
+          var: 'heic2any',
+          path: 'dist/heic2any.min.js'
+        },
+        {
+          name: 'sortablejs',
+          var: 'Sortable',
+          path: 'Sortable.min.js'
+        },
+        {
+          name: 'vuedraggable',
+          var: 'vuedraggable',
+          path: 'dist/vuedraggable.umd.min.js'
+        },
+        /*{
+          name: '@codemirror/view',
+          var: 'CodeMirror',
+          path: 'https://cdn.jsdelivr.net/npm/@codemirror/view@6.0.0/dist/index.min.js',
         },
         {
           name: 'md-editor-v3',
@@ -102,7 +133,12 @@ export default defineConfig({
           path: 'lib/umd/index.js',
           css: ['lib/preview.css', 'lib/style.css']
         },
-      ],
+        {
+          name: 'three',
+          var: 'THREE',
+          path: 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js',
+        },*/
+      ]
     })
-  ],
-})
+  ]
+});
