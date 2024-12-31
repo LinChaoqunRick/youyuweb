@@ -1,11 +1,11 @@
-import { ref } from "vue";
-import type { Ref } from "vue";
-import type { RouteRecordRaw, Router } from "vue-router";
-import permissionList from "../permission";
-import { cloneDeep } from "lodash";
-import http from "@/network/https";
-import { GET_AUTH_ROUTES } from "@/network/apis";
-import { router } from "@/router";
+import { ref } from 'vue';
+import type { Ref } from 'vue';
+import type { RouteRecordRaw } from 'vue-router';
+import permissionList from '../permission';
+import { cloneDeep } from 'lodash';
+import http from '@/network/https';
+import { GET_AUTH_ROUTES } from '@/network/apis';
+import { router } from '@/router';
 
 interface routeItemType {
   code: number;
@@ -41,11 +41,11 @@ function generateRoutes(
   _routes: RouteRecordRaw[],
   parent: RouteRecordRaw | null
 ) {
-  permissionList.forEach((route) => {
-    if (codeList.findIndex((item) => item.code === route.meta?.code) > -1) {
+  permissionList.forEach(route => {
+    if (codeList.findIndex(item => item.code === route.meta?.code) > -1) {
       // console.log(route?.path);
-      route.path = `${parent ? parent.path + "/" + route.path : route.path}`;
-      let copyRoute = cloneDeep(route);
+      route.path = `${parent ? parent.path + '/' + route.path : route.path}`;
+      const copyRoute = cloneDeep(route);
       if (route.children?.length && isNeedAuth(route.children)) {
         copyRoute.children = [];
         generateRoutes(route.children, codeList, copyRoute.children, route);
@@ -62,7 +62,7 @@ function generateRoutes(
  * 参数：route: 需要添加的路由集合
  **/
 function handleAddRoutes(route: RouteRecordRaw[]) {
-  route.forEach((item) => {
+  route.forEach(item => {
     router.addRoute(item);
   });
   // 添加404路由
@@ -74,7 +74,7 @@ function handleAddRoutes(route: RouteRecordRaw[]) {
  * 获取权限路由信息
  */
 function getAuthRoutes() {
-  return http.get(GET_AUTH_ROUTES).then((res) => {
+  return http.get(GET_AUTH_ROUTES).then(res => {
     return res.data;
   });
 }

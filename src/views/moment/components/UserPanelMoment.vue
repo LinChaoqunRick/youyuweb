@@ -110,6 +110,8 @@ initData();
       }
 
       .basic-data {
+        flex: 1;
+        overflow: hidden;
         padding: 2px 10px;
 
         .nickname {

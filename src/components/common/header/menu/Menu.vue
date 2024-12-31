@@ -11,7 +11,7 @@ import { ref, toRef, watchEffect } from 'vue';
 import { _routes } from '@/router/config/useGenerateRoutes';
 import NavLink from './child/NavLink.vue';
 
-const routes = toRef(_routes, 'value');
+const routes = toRef(_routes);
 const showRoutes = ref([]);
 
 watchEffect(() => {
@@ -86,8 +86,8 @@ function generateRoutes(routes, _routes) {
       }
     }
 
-    a {
-      color: #909090;
+    ::v-deep(a) {
+      //font-weight: bold;
     }
   }
 }

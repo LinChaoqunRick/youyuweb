@@ -65,16 +65,11 @@ router.beforeEach(async (to, from, next) => {
   isInit = true;
 });
 
-router.beforeEach((to, from, next) => {
+router.afterEach((to, from): any => {
   const title = to.meta.title;
   if (title) {
     document.title = <string>title + '-有语';
   }
-  next();
-});
-
-router.afterEach((to, from): any => {
-  // document.title = <string>to.meta.title;
 });
 
 export default router;
