@@ -24,10 +24,10 @@ const menuList = [
 <style lang="scss" scoped>
 .collection-list {
   background-color: var(--youyu-body-background2);
-  padding: 8px 16px;
+  padding: 12px;
 
   .collect-menu {
-    padding-bottom: 6px;
+    padding-bottom: 12px;
 
     .menu-item {
       padding: 4px 8px;

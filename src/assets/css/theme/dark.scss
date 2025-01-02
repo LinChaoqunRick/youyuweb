@@ -1,9 +1,13 @@
+$avatar-bc: #242424;
+
 :root[theme='dark'] {
   --youyu-background1: #000000;
   --youyu-background2: #2a2a2a;
   --youyu-background3: #212121;
   --youyu-background4: #1f1f1f;
   --youyu-background5: #343434;
+
+  --youyu-backgroud-fill: rgba(0, 0, 0, 0.2);
 
   --youyu-text: #ffffff;
   --youyu-text1: #F2F2F5;
@@ -34,6 +38,10 @@
   --youyu-border-color4: #d7d7d7;
   --youyu-border: 1px solid #282828;
   --youyu-border2: 1px solid #4b4b4b;
+
+  --youyu-avatar-border-color: #{$avatar-bc};
+  --youyu-avatar-border: 1px solid #{$avatar-bc};
+
   --primary-color: #1890ff;
 
   /*navigation*/
@@ -77,9 +85,6 @@
 
   /*md-editor*/
   --editor-icon-color: #999999;
-
-
-
 
 
   --bg-transparent: rgba(28, 28, 28, 0.95);

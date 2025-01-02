@@ -3,9 +3,9 @@
     <div class="follow-menu"></div>
     <div class="list-body">
       <YTable listUrl="getFollowList" :params="listParams">
-        <template #default="{dataList}">
+        <template #default="{ dataList }">
           <div v-for="(item, index) in dataList" class="list-item" :key="item.postId">
-            <UserItem :data="item"/>
+            <UserItem :data="item" />
           </div>
         </template>
       </YTable>
@@ -14,36 +14,32 @@
 </template>
 
 <script setup lang="ts">
-  import {useStore} from "vuex";
-  import {computed, inject, ref, watch} from "vue";
-  import YTable from "@/components/common/table/YTable.vue";
-  import UserItem from "@/components/content/user/item/UserItem.vue";
+import { useStore } from 'vuex';
+import { computed, inject, ref, watch } from 'vue';
+import YTable from '@/components/common/table/YTable.vue';
+import UserItem from '@/components/content/user/item/UserItem.vue';
 
-  const {getters, dispatch} = useStore();
-  const user = inject('user');
+const { getters, dispatch } = useStore();
+const user = inject('user');
 
-  const userInfo = computed(() => getters['userInfo']);
-  const listParams = computed(() => ({
-    userId: user.value.id,
-    pageSize: 20
-  }))
+const userInfo = computed(() => getters['userInfo']);
+const listParams = computed(() => ({
+  userId: user.value.id,
+  pageSize: 20,
+}));
 </script>
 
 <style lang="scss" scoped>
-  .follow-list {
-    background-color: var(--youyu-body-background2);
-    padding-bottom: 6px;
+.follow-list {
+  background-color: var(--youyu-body-background2);
+  padding-bottom: 6px;
 
-    .list-body {
-      padding: 0 10px;
+  .list-body {
+    padding: 0 10px;
 
-      .list-item {
-        border-top: 1px solid var(--youyu-border-color);
-
-        &:first-child {
-          border-top: none;
-        }
-      }
+    .list-item {
+      border-bottom: 1px solid var(--youyu-border-color);
     }
   }
+}
 </style>

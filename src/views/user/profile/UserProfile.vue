@@ -342,6 +342,7 @@ watch(
           padding: 0 10px;
           display: flex;
           background-color: var(--youyu-body-background2);
+          border-bottom: var(--youyu-border);
 
           ::v-deep(.nav-link) {
             position: relative;

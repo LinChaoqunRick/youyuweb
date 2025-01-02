@@ -1,9 +1,13 @@
+$avatar-bc: #ebebeb;
+
 :root {
   --youyu-background1: #ffffff;
   --youyu-background2: #eeeeee;
   --youyu-background3: #e5e6eb;
   --youyu-background4: #fafafa;
   --youyu-background5: #f2f3f5;
+
+  --youyu-backgroud-fill: rgba(255, 255, 255, 0.2);
 
   --youyu-text: #000000;
   --youyu-text1: #909090;
@@ -15,7 +19,7 @@
   --youyu-text7: #515767;
 
   /*globe*/
-  --youyu-body-background: rgba(244, 245, 245, 0.4);
+  --youyu-body-background: rgba(244, 245, 245, 0.5);
   --youyu-body-background1: rgba(255, 255, 255, 0.68);
   --youyu-body-background2: rgba(255, 255, 255, 1);
   --youyu-body-background3: rgba(255, 255, 255, 0.85);
@@ -34,6 +38,10 @@
   --youyu-border-color4: #d7d7d7;
   --youyu-border: 1px solid #f1f1f1;
   --youyu-border2: 1px solid #f0f0f0;
+
+  --youyu-avatar-bc: #{$avatar-bc};
+  --youyu-avatar-border: 1px solid #{$avatar-bc};
+
   --primary-color: #1890ff;
 
   /*navigation*/
@@ -77,9 +85,6 @@
 
   /*md-editor*/
   --editor-icon-color: #3F4A54;
-
-
-
 
 
   --bg-transparent: rgba(239, 240, 242, 0.95);

@@ -1,5 +1,5 @@
 <template>
-  <ContentData url="getAlbumAccessible" :params="{ id: albumId }" v-slot="{ data }" class="content-data-container gf">
+  <ContentData url="getAlbumAccessible" :params="{ id: albumId }" v-slot="{ data }" class="content-data-container">
     <div class="album-detail-container">
       <div v-if="data" class="album-detail" :class="{ 'album-detail-collapse': collapse }">
         <div class="album-images-wrapper youyu-scrollbar">
@@ -65,7 +65,7 @@
                 <div class="item-check" v-if="selection && checkedList.includes(item)">
                   <i-check-one theme="filled" size="24" fill="#1677FF" />
                 </div>
-                <div class="image-info-box gf">
+                <div class="image-info-box">
                   <div class="info-data-item">
                     <i-time theme="outline" size="13" fill="currentColor" />
                     <div class="info-create-time">{{ dayjs(item.createTime).format('YYYY-MM-DD') }}</div>
@@ -86,7 +86,7 @@
           </div>
         </div>
       </div>
-      <div v-else-if="data === false" class="inaccessible-wrapper gf">
+      <div v-else-if="data === false" class="inaccessible-wrapper">
         <div class="tip-text">您没有权限访问该相册</div>
         <a-button type="primary" v-login="onApply">申请访问</a-button>
       </div>

@@ -5,17 +5,29 @@
         <div class="reply-right-top">
           <div class="user-info">
             <div class="user-avatar">
-              <a-popover overlayClassName="user-info-moment-popover" placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onUserVisibleChange">
+              <a-popover
+                overlayClassName="user-info-moment-popover"
+                placement="top"
+                :mouseEnterDelay="0.6"
+                :mouseLeaveDelay="0.3"
+                @visibleChange="onUserVisibleChange"
+              >
                 <template #content>
                   <UserCardMoment :user="data.user" />
                 </template>
                 <RouterLink :to="{ name: 'userHome', params: { userId: data.user.id } }">
-                  <img :src="data.user.avatar" />
+                  <img :src="data.user.avatar" alt="" />
                 </RouterLink>
               </a-popover>
             </div>
             <div class="user-nickname">
-              <a-popover overlayClassName="user-info-moment-popover" placement="top" :mouseEnterDelay="0.6" :mouseLeaveDelay="0.3" @visibleChange="onUserVisibleChange">
+              <a-popover
+                overlayClassName="user-info-moment-popover"
+                placement="top"
+                :mouseEnterDelay="0.6"
+                :mouseLeaveDelay="0.3"
+                @visibleChange="onUserVisibleChange"
+              >
                 <template #content>
                   <UserCardMoment :user="data.user" />
                 </template>
@@ -33,8 +45,12 @@
             <div class="adname" v-if="data.adname">・{{ data.adname }}</div>
           </div>
         </div>
-        <div class="item-content" :class="{ 'content-expand': expand }"
-          :style="{ 'max-height': maxRow * 1 + 0.4 + 'rem' }" v-row="{ set: set }">
+        <div
+          class="item-content"
+          :class="{ 'content-expand': expand }"
+          :style="{ 'max-height': maxRow * 1 + 0.4 + 'rem' }"
+          v-row="{ set: set }"
+        >
           <div class="user-to-info" v-if="data.userTo">@{{ data.userTo.nickname }}</div>
           <p class="reply-content" v-html="transformTagToHTML(data.content)"></p>
         </div>
@@ -71,8 +87,12 @@
     </div>
     <div v-if="active" class="moment-reply">
       <div class="user-avatar">
-        <img v-if="isLogin" :src="userInfo.avatar" alt="用户头像"/>
-        <img v-else src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png" alt="默认头像"/>
+        <img v-if="isLogin" :src="userInfo.avatar" alt="用户头像" />
+        <img
+          v-else
+          src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png"
+          alt="默认头像"
+        />
       </div>
       <div class="reply-box-wrapper">
         <MomentReplyEditor
@@ -249,6 +269,7 @@ const onUserToVisibleChange = (visible: boolean) => {
           width: 24px;
           border-radius: 100%;
           overflow: hidden;
+          border: var(--youyu-avatar-border);
 
           img {
             height: 100%;
@@ -406,6 +427,7 @@ const onUserToVisibleChange = (visible: boolean) => {
       border-radius: 100%;
       overflow: hidden;
       margin-right: 8px;
+      border: var(--youyu-avatar-border);
 
       img {
         height: 100%;

@@ -98,10 +98,11 @@ initData();
       border-bottom: 1px solid var(--youyu-border-color);
 
       .avatar {
-        height: 48px;
-        width: 48px;
+        height: 54px;
+        width: 54px;
         border-radius: 50%;
         overflow: hidden;
+        border: 2px solid var(--youyu-avatar-bc);
 
         img {
           height: 100%;
@@ -120,7 +121,7 @@ initData();
 
         .signature {
           color: var(--youyu-body-text2);
-          font-size: 12px;
+          font-size: 13px;
         }
       }
     }

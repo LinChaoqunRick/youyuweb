@@ -71,6 +71,17 @@ watch(
   }
 );
 
+watch(
+  () => isRouteReady.value,
+  newVal => {
+    if (newVal) {
+      setTimeout(() => {
+        isShowApp.value = true;
+      }, 800);
+    }
+  }
+);
+
 provide('reload', reload);
 </script>
 
@@ -90,7 +101,7 @@ provide('reload', reload);
     width: 120px;
     height: 22px;
     border-radius: 20px;
-    color: #1890ff;
+    color: skyblue;
     border: 2px solid;
     position: relative;
     margin-top: 8px;

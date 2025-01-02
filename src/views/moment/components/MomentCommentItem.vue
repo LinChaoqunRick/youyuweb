@@ -280,6 +280,7 @@ const onUserVisibleChange = (visible: boolean) => {
       width: 36px;
       border-radius: 100%;
       overflow: hidden;
+      border: var(--youyu-avatar-border);
 
       img {
         height: 100%;
@@ -461,6 +462,7 @@ const onUserVisibleChange = (visible: boolean) => {
       border-radius: 100%;
       overflow: hidden;
       margin-right: 8px;
+      border: var(--youyu-avatar-border);
 
       img {
         height: 100%;
@@ -496,6 +498,8 @@ const onUserVisibleChange = (visible: boolean) => {
 }
 
 .user-avatar {
+  border: var(--youyu-avatar-border);
+
   a {
     display: block;
   }

@@ -25,11 +25,11 @@ const params = computed(() => ({
 
 <style lang="scss" scoped>
 .note-list {
-  background-color: var(--youyu-body-background2);
   padding-top: 8px;
 
   ::v-deep(.note-item) {
     border-radius: 4px;
+    margin-bottom: 8px;
   }
 }
 </style>

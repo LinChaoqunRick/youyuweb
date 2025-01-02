@@ -196,8 +196,8 @@ onMounted(() => {
     align-items: center;
     min-height: calc(100vh - 60px);
     position: relative;
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    backdrop-filter: blur(10px) !important;
+    //background-color: rgba(255, 255, 255, 0.2) !important;
+    //backdrop-filter: blur(10px) !important;
     background-image: url('/static/images/background/Pattern-Half-Circle.svg');
     background-position: 100% 50%;
     background-size: contain;

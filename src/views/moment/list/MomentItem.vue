@@ -426,6 +426,7 @@ defineExpose({
         border-radius: 50%;
         cursor: pointer;
         overflow: hidden;
+        border: var(--youyu-avatar-border);
 
         img {
           height: 100%;
@@ -691,6 +692,7 @@ defineExpose({
         border-radius: 100%;
         overflow: hidden;
         margin: 0 12px 0 4px;
+        border: var(--youyu-avatar-border);
 
         img {
           height: 100%;
