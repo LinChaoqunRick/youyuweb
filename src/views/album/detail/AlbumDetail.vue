@@ -23,9 +23,10 @@
               取消
             </a-button>
             <a-button
+              v-if="selection"
+              :loading="setCoverLoading"
               type="primary"
               shape="round"
-              v-if="selection"
               :disabled="!(checkedList.length === 1)"
               @click="onSetCover"
             >
@@ -34,7 +35,15 @@
               </template>
               设为封面
             </a-button>
-            <a-button type="primary" danger shape="round" v-if="selection" :disabled="!checkedList.length" @click="onDelete">
+            <a-button
+              v-if="selection"
+              :loading="deleteLoading"
+              type="primary"
+              danger
+              shape="round"
+              :disabled="!checkedList.length"
+              @click="onDelete"
+            >
               <template #icon>
                 <i-delete-five theme="outline" size="16" fill="currentColor" />
               </template>
@@ -58,7 +67,11 @@
                 :class="{ 'album-cover': item.id === albumDetailData?.coverImageId }"
                 @click="onImageClick(item, index)"
               >
-                <svg v-if="item.id === albumDetailData?.coverImageId" class="album-cover-tag icon" aria-hidden="true">
+                <svg
+                  v-if="albumDetailData?.coverImageId ? item.id === albumDetailData?.coverImageId : index === 0"
+                  class="album-cover-tag icon"
+                  aria-hidden="true"
+                >
                   <use xlink:href="#icon-fengmian"></use>
                 </svg>
                 <img :src="item.url" :alt="item.name" class="cp" />
@@ -120,6 +133,8 @@ const albumId: string = route.params.albumId as string;
 const ContentListRef = ref<InstanceType<typeof ContentList> | null>(null);
 const AlbumDetailInfoRef = ref<InstanceType<typeof AlbumDetailInfo> | null>(null);
 const imageList = computed<Array<AlbumImageItem>>(() => ContentListRef.value?.list as Array<AlbumImageItem>);
+const setCoverLoading = ref<boolean>(false);
+const deleteLoading = ref<boolean>(false);
 
 const params = computed(() => ({ id: albumId, pageSize: 25 }));
 const albumDetailData = computed(() => AlbumDetailInfoRef.value?.data);
@@ -200,18 +215,24 @@ const onSelection = () => {
 };
 
 const onSetCover = () => {
+  setCoverLoading.value = true;
   const newCoverId = checkedList.value[0].id;
   dispatch('setAlbumCover', {
     id: albumDetailData.value?.id,
     coverImageId: newCoverId,
-  }).then(res => {
-    message.success('设置成功');
-    albumDetailData.value.coverImageId = newCoverId;
-    selection.value = false;
-  });
+  })
+    .then(res => {
+      message.success('设置成功');
+      albumDetailData.value!.coverImageId = newCoverId;
+      selection.value = false;
+    })
+    .finally(() => {
+      setCoverLoading.value = false;
+    });
 };
 
 const onDelete = () => {
+  deleteLoading.value = true;
   Modal.confirm({
     title: '删除照片',
     content: '确定删除这些照片？',
@@ -220,12 +241,19 @@ const onDelete = () => {
     cancelText: '取消',
     onOk() {
       const ids = checkedList.value.map(item => item.id).join(',');
-      dispatch('removeAlbumImage', { ids: ids }).then(res => {
-        message.success('删除成功');
-        ContentListRef.value &&
-          (ContentListRef.value.list = ContentListRef.value?.list.filter(item => !checkedList.value.includes(item)) ?? []);
-        checkedList.value = [];
-      });
+      dispatch('removeAlbumImage', { ids: ids })
+        .then(res => {
+          message.success('删除成功');
+          ContentListRef.value &&
+            (ContentListRef.value.list = ContentListRef.value?.list.filter(item => !checkedList.value.includes(item)) ?? []);
+          checkedList.value = [];
+        })
+        .finally(() => {
+          deleteLoading.value = false;
+        });
+    },
+    onCancel() {
+      deleteLoading.value = true;
     },
   });
 };

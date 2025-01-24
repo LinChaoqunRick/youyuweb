@@ -5,7 +5,7 @@
         <div class="user-avatar-nickname">
           <div class="user-avatar">
             <RouterLink :to="`/user/${user.id}`">
-              <img :src="user.avatar" />
+              <img :src="user.avatar" alt="" />
             </RouterLink>
             <div class="user-gender" v-if="user.sex !== undefined">
               <i-female v-if="user.sex == 1" theme="outline" size="14" fill="#ffc0cb" />
@@ -59,7 +59,7 @@
     <div class="column-list mt-8">
       <a-card title="Ta的专栏" style="width: 100%">
         <template #extra>
-          <RouterLink :to="`/user/${user.id}/column`"> 更多 </RouterLink>
+          <RouterLink :to="`/user/${user.id}/column`"> 更多</RouterLink>
         </template>
         <div class="column-list" v-if="columnList.length">
           <ColumnItemMini v-for="item in columnList" :data="item" />
@@ -67,18 +67,18 @@
         <div v-else class="no-data">暂无数据</div>
       </a-card>
     </div>
-<!--    <div class="hot-posts">
-      <a-card title="热门文章" style="width: 100%">
-        <div class="post-list">
-          <ul v-if="hotPosts.length">
-            <li v-for="item in hotPosts">
-              <router-link :to="{ name: 'PostDetail', params: { postId: item.id } }" v-html="item.title"></router-link>
-            </li>
-          </ul>
-          <div v-else class="no-data">暂无数据</div>
-        </div>
-      </a-card>
-    </div>-->
+    <!--    <div class="hot-posts">
+          <a-card title="热门文章" style="width: 100%">
+            <div class="post-list">
+              <ul v-if="hotPosts.length">
+                <li v-for="item in hotPosts">
+                  <router-link :to="{ name: 'PostDetail', params: { postId: item.id } }" v-html="item.title"></router-link>
+                </li>
+              </ul>
+              <div v-else class="no-data">暂无数据</div>
+            </div>
+          </a-card>
+        </div>-->
     <div class="new-posts">
       <a-card title="最新文章" style="width: 100%">
         <div class="post-list">
@@ -95,15 +95,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useStore } from 'vuex';
-import { useRoute, useRouter, RouterLink } from 'vue-router';
+import { useRouter, RouterLink } from 'vue-router';
 import { message, Modal } from 'ant-design-vue';
-import type { statType, userType } from '@/types/user';
+import type { statType, User } from '@/types/user';
 import ColumnItemMini from '@/components/content/user/column/ColumnItemMini.vue';
 import Announcement from '@/components/common/share/announcement/index.vue';
 
-const route = useRoute();
 const router = useRouter();
 
 const { getters, commit, dispatch } = useStore();
@@ -111,7 +110,7 @@ const { getters, commit, dispatch } = useStore();
 const props = defineProps({
   id: {
     type: [String, Number],
-    // required: true
+    required: true,
   },
 });
 
@@ -139,7 +138,7 @@ const dataItems = [
 ];
 
 const isOwn = ref(true);
-const user = ref<userType | object>({});
+const user = ref<User | object>({});
 const columnList = ref([]);
 const hotPosts = ref([]);
 const newPosts = ref([]);

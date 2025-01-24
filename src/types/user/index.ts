@@ -1,4 +1,4 @@
-export interface userType {
+export interface User {
   username: string;
   nickname: string;
   id: number;

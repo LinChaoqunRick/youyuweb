@@ -1,25 +1,25 @@
-import type { userType } from '@/types/user';
+import type { User } from '@/types/user';
 
 export interface momentType {
-  id: number,
-  userId: number,
-  content: string,
-  mood: number,
-  topicId: number,
-  images: string | null,
-  createTime: string,
-  updateTime: string,
-  userInfo: userType
+  id: number;
+  userId: number;
+  content: string;
+  mood: number;
+  topicId: number;
+  images: string | null;
+  createTime: string;
+  updateTime: string;
+  userInfo: User;
 }
 
 export interface momentListType extends momentType {
-  momentLike: object | null,
-  user: userType,
-  commentCount: number,
-  supportCount: number,
-  likeUsers: userType[],
-  longitude: string,
-  latitude: string,
-  location: string,
-  adname: string,
+  momentLike: object | null;
+  user: User;
+  commentCount: number;
+  supportCount: number;
+  likeUsers: User[];
+  longitude: string;
+  latitude: string;
+  location: string;
+  adname: string;
 }

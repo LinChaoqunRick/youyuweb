@@ -1,4 +1,4 @@
-import type { userType } from '@/types/user';
+import type { User } from '@/types/user';
 
 export interface Column {
   id: number | string;
@@ -9,5 +9,5 @@ export interface Column {
   createTime: string;
   postNum: number;
   subscriberNum: number;
-  user: userType;
+  user: User;
 }

@@ -8,6 +8,7 @@
           :footers="footers"
           :extend="{
             maxLength: 500,
+            preview: false,
           }"
           class="write-comment-editor"
           ref="commentEditor"
@@ -38,7 +39,8 @@
           :total="post.commentCount"
           load-trigger
           v-if="post.id"
-          ref="ContentListRef">
+          ref="ContentListRef"
+        >
           <template v-slot="{ list }">
             <CommentItem v-for="item in list" :data="item" :key="item.id" @deleteSuccess="deleteSuccess" />
           </template>

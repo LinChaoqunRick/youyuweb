@@ -2,19 +2,16 @@
   <div class="md-catalog-panel">
     <div class="fold-panel">
       <div class="switch" @click="handleShow" v-show="!move">
-        <i-list-middle theme="outline" size="22" fill="currentColor" />
+        <i-list-middle theme="outline" size="20" fill="currentColor" :strokeWidth="3" />
       </div>
-      <div v-show="show"
-           class="md-catalog-wrapper"
-           :class="{'fixed': move, 'dragging': isDragging}"
-           ref="mdCatalogWrapperRef">
+      <div v-show="show" class="md-catalog-wrapper" :class="{ fixed: move, dragging: isDragging }" ref="mdCatalogWrapperRef">
         <div ref="handle" class="catalog-title">
           <div class="header-title">
             <i-list-middle theme="outline" :strokeWidth="3" size="18" fill="currentColor" />
             目录
           </div>
           <div class="move-switch" @click="onMove">
-            <i-direction-adjustment-three theme="outline" :strokeWidth="3" size="18" fill="#141414" />
+            <i-drag theme="outline" :strokeWidth="3" size="14" fill="#141414" />
           </div>
         </div>
         <div class="catalog-body youyu-scrollbar">
@@ -52,8 +49,8 @@ import type { TocItem } from 'md-editor-v3/lib/types/MdCatalog/MdCatalog';
 const props = defineProps({
   editorId: {
     type: String,
-    default: 'post-content'
-  }
+    default: 'post-content',
+  },
 });
 
 const mdCatalogWrapperRef = ref<HTMLElement | null>(null);
@@ -76,18 +73,21 @@ const handleShow = () => {
 
 const { position, isDragging, style } = useDraggable(mdCatalogWrapperRef, { handle });
 
-watch(() => style.value, (newVal) => {
-  const mdCatalogWrapper = mdCatalogWrapperRef.value;
-  if (!mdCatalogWrapper) return;
-  if (move.value) {
-    if (position.value.x >= 0 && position.value.x + mdCatalogWrapper.offsetWidth <= document.body.offsetWidth) {
-      mdCatalogWrapper.style.left = `${position.value.x}px`;
-    }
-    if (position.value.y >= 0 && position.value.y + mdCatalogWrapper.offsetHeight <= document.body.offsetHeight) {
-      mdCatalogWrapper.style.top = `${position.value.y}px`;
+watch(
+  () => style.value,
+  newVal => {
+    const mdCatalogWrapper = mdCatalogWrapperRef.value;
+    if (!mdCatalogWrapper) return;
+    if (move.value) {
+      if (position.value.x >= 0 && position.value.x + mdCatalogWrapper.offsetWidth <= document.body.offsetWidth) {
+        mdCatalogWrapper.style.left = `${position.value.x}px`;
+      }
+      if (position.value.y >= 0 && position.value.y + mdCatalogWrapper.offsetHeight <= document.body.offsetHeight) {
+        mdCatalogWrapper.style.top = `${position.value.y}px`;
+      }
     }
   }
-});
+);
 
 const onMove = (e: Event) => {
   const mdCatalogWrapper = mdCatalogWrapperRef.value;
@@ -113,7 +113,6 @@ const bindDragEvent = (targetDOM: HTMLElement) => {
   const mdCatalogWrapper = mdCatalogWrapperRef.value;
   if (!mdCatalogWrapper) return;
   targetDOM?.addEventListener('pointerdown', (e: PointerEvent) => {
-
     targetDOM?.setPointerCapture(e.pointerId);
     const cn = targetDOM.classList[1];
 
@@ -248,7 +247,7 @@ onMounted(() => {
       border: 1px solid #9ca3af4d;
       border-radius: 6px;
       opacity: 1;
-      transition: opacity .2s;
+      transition: opacity 0.2s;
       box-shadow: rgba(0, 0, 0, 0.12) 0px 0px 2px, rgba(0, 0, 0, 0.04) 0px 0px 6px;
 
       &.dragging.fixed {
@@ -297,13 +296,23 @@ onMounted(() => {
         padding: 0 10px;
       }
 
-      .resize-n, .resize-s, .resize-nw, .resize-ne, .resize-se, .resize-sw {
+      .resize-n,
+      .resize-s,
+      .resize-nw,
+      .resize-ne,
+      .resize-se,
+      .resize-sw {
         height: 10px;
         position: absolute;
         /*background-color: rgba(135, 206, 235, 0.4);*/
       }
 
-      .resize-w, .resize-e, .resize-nw, .resize-ne, .resize-se, .resize-sw {
+      .resize-w,
+      .resize-e,
+      .resize-nw,
+      .resize-ne,
+      .resize-se,
+      .resize-sw {
         width: 10px;
         position: absolute;
         /*background-color: rgba(135, 206, 235, 0.4);*/
