@@ -95,7 +95,7 @@ provide('reload', reload);
   height: 100vh;
   width: 100vw;
   background-color: var(--youyu-background1);
-  z-index: 99999999;
+  z-index: 999999;
 
   .loader {
     width: 120px;

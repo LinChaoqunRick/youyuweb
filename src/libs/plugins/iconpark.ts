@@ -110,6 +110,8 @@ import {
   ViewGridCard,
   ViewGridList,
   PictureAlbum,
+  Drag,
+  Extend,
 } from '@icon-park/vue-next';
 import type { App } from 'vue';
 
@@ -225,6 +227,8 @@ const IconPark = (app: App<Element>) => {
   app.component('IViewGridCard', ViewGridCard);
   app.component('IViewGridList', ViewGridList);
   app.component('IPictureAlbum', PictureAlbum);
+  app.component('IDrag', Drag);
+  app.component('IExtend', Extend);
 };
 
 export default IconPark;

@@ -1,5 +1,8 @@
 <template>
   <div class="post-operation">
+    <div class="ope-item" title="全屏">
+      <i-full-screen theme="outline" size="21" fill="currentColor" />
+    </div>
     <a-badge :count="post.likeCount" color="#1890ff" :overflow-count="99">
       <div
         class="ope-item"
@@ -7,12 +10,12 @@
         v-login="onLike"
         :title="`${post.postLike ? '取消点赞' : '点赞'}`"
       >
-        <i-good-two theme="filled" size="21" fill="currentColor" />
+        <i-good-two :theme="post.postLike ? 'filled' : 'outline'" size="21" fill="currentColor" />
       </div>
     </a-badge>
     <a-badge :count="post.commentCount" color="#1890ff" :overflow-count="99">
       <div class="ope-item" @click="scrollToComment" title="评论">
-        <i-comment theme="filled" size="19" fill="currentColor" />
+        <i-comment theme="outline" size="19" fill="currentColor" />
       </div>
     </a-badge>
     <a-badge :count="post.collectCount" color="#1890ff" :overflow-count="99">
@@ -22,41 +25,42 @@
         v-login="onCollect"
         :title="post.postCollect ? '取消收藏' : '收藏'"
       >
-        <i-star theme="filled" size="22" fill="currentColor" />
+        <i-star :theme="post.postCollect ? 'filled' : 'outline'" size="22" fill="currentColor" />
       </div>
     </a-badge>
     <div class="ope-item" title="分享">
-      <i-share-one theme="filled" size="21" fill="currentColor" />
+      <i-share-one theme="outline" size="21" fill="currentColor" />
     </div>
-    <div class="ope-item" title="举报">
-      <i-caution theme="filled" size="19" fill="currentColor" />
-    </div>
-    <a-back-top class="ant-back-top">
-      <div class="ope-item" ref="item" title="返回顶部">
-        <i-to-top-one theme="filled" size="21" fill="currentColor" />
+    <!--    <div class="ope-item" title="举报">
+          <i-caution theme="outline" size="19" fill="currentColor" />
+        </div>-->
+    <transition name="fade">
+      <div class="ope-item" title="回到顶部" v-show="isShowBackTop" @click="onTop">
+        <i-to-top theme="outline" size="21" fill="#545457" />
       </div>
-    </a-back-top>
+    </transition>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, toRefs, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 import { useStore } from 'vuex';
-import { message } from 'ant-design-vue';
+import type { Post } from '@/views/post/detail/types';
 import openModal from '@/libs/tools/openModal';
 import PostCollectSelector from '@/views/post/detail/child/PostCollectSelector.vue';
+import { useWindowScroll } from '@vueuse/core';
 
-const { getters, commit, dispatch } = useStore();
+const { getters, dispatch } = useStore();
 
 const emit = defineEmits(['scrollToComment']);
-const post = inject('post');
+const post = inject<Post>('post')!;
 const setPostAttribute = inject('setPostAttribute');
-const item = ref(null);
 const likeLoading = ref<boolean>(false);
-const collectLoading = ref<boolean>(false);
+const { y } = useWindowScroll();
+
+const isShowBackTop = computed(() => y.value >= 200);
 
 const userInfo = computed(() => getters['userInfo']);
-const isLogin = computed(() => getters['isLogin']);
 
 function scrollToComment() {
   emit('scrollToComment');
@@ -86,15 +90,21 @@ function onLike() {
 }
 
 async function onCollect() {
-  console.log(post.value);
   const res = await openModal({
     component: PostCollectSelector,
     componentProps: {
       post: post.value,
-      setPostAttribute: setPostAttribute
+      setPostAttribute: setPostAttribute,
     },
     title: '添加到收藏夹',
-    maskClosable: false
+    maskClosable: false,
+  });
+}
+
+function onTop() {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth', // 平滑滚动
   });
 }
 </script>
@@ -131,6 +141,7 @@ async function onCollect() {
   }
 
   .ant-back-top {
+    display: none;
     position: relative;
     top: 0;
     left: 0;

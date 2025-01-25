@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import { ref, reactive, inject } from 'vue';
 import type { PropType } from 'vue';
-import type { userType } from '@/types/user';
+import type { User } from '@/types/user';
 import { useStore } from 'vuex';
 import { message } from 'ant-design-vue';
 import { checkDomain } from '@/libs/validate/validate';
@@ -34,7 +34,7 @@ const { dispatch } = useStore();
 
 const props = defineProps({
   user: {
-    type: Object as PropType<userType>,
+    type: Object as PropType<User>,
   },
 });
 

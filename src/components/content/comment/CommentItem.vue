@@ -79,11 +79,9 @@
 
 <script setup lang="ts">
 import { ref, computed, inject, nextTick } from 'vue';
-import type { PropType } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter, RouterLink } from 'vue-router';
 import { message, Modal } from 'ant-design-vue';
-import type { userType } from '@/types/user';
 import ReplyItem from '@/components/content/comment/ReplyItem.vue';
 import UserCard from '@/components/content/comment/UserCard.vue';
 import ReplyEditor from '@/components/content/comment/ReplyEditor.vue';
@@ -279,7 +277,6 @@ const deleteSuccess = data => {
     .comment-content {
       line-height: 2rem;
       color: #515767;
-      margin-top: 8px;
       overflow: hidden;
 
       &.content-expand {

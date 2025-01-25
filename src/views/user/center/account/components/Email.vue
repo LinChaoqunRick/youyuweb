@@ -38,7 +38,7 @@ import type { PropType } from 'vue';
 import { useStore } from 'vuex';
 import { message } from 'ant-design-vue';
 import { checkPassword } from '@/libs/validate/validate';
-import type { userType } from '@/types/user';
+import type { User } from '@/types/user';
 
 const modal = inject('modal');
 const labelCol = { span: 0 };
@@ -48,7 +48,7 @@ const { dispatch } = useStore();
 
 const props = defineProps({
   user: {
-    type: Object as PropType<userType>,
+    type: Object as PropType<User>,
   },
 });
 

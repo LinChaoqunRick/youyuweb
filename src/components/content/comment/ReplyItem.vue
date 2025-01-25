@@ -73,7 +73,6 @@ import { message, Modal } from 'ant-design-vue';
 
 import ReplyEditor from '@/components/content/comment/ReplyEditor.vue';
 import UserCard from '@/components/content/comment/UserCard.vue';
-import type { userType } from '@/types/user';
 
 const { getters, commit, dispatch } = useStore();
 const router = useRouter();
@@ -255,7 +254,6 @@ const onUserToVisibleChange = (visible: boolean) => {
   }
 
   .reply-content {
-    margin: 8px 0 0 0;
     white-space: pre-wrap;
     overflow: hidden;
     line-height: 2rem;

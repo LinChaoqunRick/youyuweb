@@ -33,19 +33,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { useStore } from 'vuex';
 import type { PropType } from 'vue';
-import type { column } from '@/views/user/profile/column/type';
+import type { Column } from '@/views/user/profile/column/type';
 
 const props = defineProps({
   data: {
-    type: Object as PropType<column>,
+    type: Object as PropType<Column>,
+    required: true,
   },
 });
 
-const { getters, dispatch } = useStore();
-const isLogin = computed(() => getters['isLogin']);
+const { dispatch } = useStore();
 const loading = ref<boolean>(false);
 
 const onSubscribe = () => {
@@ -75,7 +75,7 @@ const onSubscribe = () => {
   display: flex;
   position: relative;
   background-color: var(--youyu-background1);
-  border-radius: 12px;
+  border-radius: 6px;
   cursor: pointer;
   box-shadow: var(--youyu-shadow2);
   z-index: 2;
@@ -90,7 +90,7 @@ const onSubscribe = () => {
       height: 100%;
       width: 100%;
       object-fit: cover;
-      border-radius: 8px;
+      border-radius: 6px;
     }
   }
 

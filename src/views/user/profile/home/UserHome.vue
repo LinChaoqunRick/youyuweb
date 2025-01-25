@@ -18,13 +18,13 @@
 <script setup lang="ts">
 import { computed, inject, ref } from 'vue';
 import ContentList from '@/components/common/system/ContentList.vue';
-import type { userType } from '@/types/user';
+import type { User } from '@/types/user';
 import PostItem from '../post/PostItem.vue';
 import MomentItem from '@/views/moment/list/MomentItem.vue';
 import NoteItem from '@/views/user/profile/home/component/NoteItem.vue';
 import ChapterItem from '@/views/user/profile/home/component/ChapterItem.vue';
 
-const user = inject<userType>('user');
+const user = inject<User>('user');
 const ContentListRef = ref();
 
 const params = computed(() => ({

@@ -36,13 +36,13 @@ import type { PropType } from 'vue';
 import { useStore } from 'vuex';
 import { checkTelephone, checkPassword } from '@/libs/validate/validate';
 import { message } from 'ant-design-vue';
-import type { userType } from '@/types/user';
+import type { User } from '@/types/user';
 import { cleanCookieLocalStorage } from '@/assets/utils/utils';
 import smsCode from '@/enums/sms/smsCode';
 
 const props = defineProps({
   user: {
-    type: Object as PropType<userType>,
+    type: Object as PropType<User>,
   },
 });
 

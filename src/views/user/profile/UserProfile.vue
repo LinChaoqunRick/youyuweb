@@ -33,7 +33,7 @@ import { ref, watch, provide, inject, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import UserInfoPanel from '@/views/post/detail/child/UserInfoPanel.vue';
-import type { userType, statType } from '@/types/user';
+import type { User, statType } from '@/types/user';
 import { message, Modal } from 'ant-design-vue';
 import openModal from '@/libs/tools/openModal';
 import EmptyPage from '@/components/common/system/EmptyPage.vue';
@@ -46,7 +46,7 @@ const reload = inject('reload');
 const UserInfoRef = ref(null);
 const route = useRoute();
 const router = useRouter();
-const user = ref<userType | null>(null);
+const user = ref<User | null>(null);
 const userInfo = computed(() => getters['userInfo']);
 const isOwn = computed(() => userInfo.value.id && userInfo.value.id === user.value?.id);
 const pathPermit = ref<boolean>(false);
@@ -88,7 +88,7 @@ const handlePathPermit = () => {
   }
 };
 
-async function onLoaded(userData: userType) {
+async function onLoaded(userData: User) {
   user.value = userData;
   await getProfileMenu();
   menuItems.value = [
