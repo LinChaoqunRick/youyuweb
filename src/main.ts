@@ -36,10 +36,10 @@ const app = createApp(App);
 app.use(router).use(Antd).use(store);
 IconPark(app);
 
-app.directive('aside', aside);
-app.directive('aside2', aside2);
+// app.directive('aside', aside);
+// app.directive('aside2', aside2);
 app.directive('aside3', aside3);
-app.directive('aside4', aside4);
+// app.directive('aside4', aside4);
 app.directive('scroll-to-el', scrollToEl);
 app.directive('row', row);
 app.directive('focus', focus);

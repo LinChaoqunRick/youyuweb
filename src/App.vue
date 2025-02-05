@@ -71,17 +71,6 @@ watch(
   }
 );
 
-watch(
-  () => isRouteReady.value,
-  newVal => {
-    if (newVal) {
-      setTimeout(() => {
-        isShowApp.value = true;
-      }, 800);
-    }
-  }
-);
-
 provide('reload', reload);
 </script>
 
