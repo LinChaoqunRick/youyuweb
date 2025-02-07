@@ -89,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineModel, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { disabledBodyScroll, enabledBodyScroll } from '@/assets/utils/utils';
 import { Spin } from 'ant-design-vue';
 import { useEventListener, useIdle, usePointerSwipe } from '@vueuse/core';

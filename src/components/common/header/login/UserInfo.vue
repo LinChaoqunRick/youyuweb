@@ -87,8 +87,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import { createVNode } from 'vue';
 import { Modal, message } from 'ant-design-vue';
 import { RouterLink } from 'vue-router';
 import { cleanCookieLocalStorage } from '@/assets/utils/utils';
@@ -151,7 +149,7 @@ const showLogoutConfirm = () => {
   visible.value = false;
   Modal.confirm({
     title: '您确定要退出当前账号?',
-    icon: createVNode(ExclamationCircleOutlined),
+    icon: '',
     onOk() {
       closeSpin = openSpin({
         componentProps: {

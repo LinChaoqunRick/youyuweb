@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, computed, onMounted, watch, defineProps} from 'vue';
+import {ref, computed} from 'vue';
 
 const props = defineProps({
   value: {
