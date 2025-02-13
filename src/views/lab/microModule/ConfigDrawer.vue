@@ -1,13 +1,18 @@
 <template>
   <a-drawer title="微模块配置" width="92%" :open="visible" @close="onClose" class="micro-config-drawer">
     <template #closeIcon>
-      <i-close theme="outline" size="20" fill="#909090"/>
+      <i-close theme="outline" size="20" fill="#909090" />
     </template>
     <div class="drawer-content">
       <div class="config-form">
-        <a-form :model="formValidate" :rules="rulesRef" :label-col="{span: 4}" :wrapper-col="{span: 20}"
-                :class="['form_head_' + formValidate.doorHeadType]"
-                ref="formRef">
+        <a-form
+          :model="formValidate"
+          :rules="rulesRef"
+          :label-col="{ span: 4 }"
+          :wrapper-col="{ span: 20 }"
+          :class="['form_head_' + formValidate.doorHeadType]"
+          ref="formRef"
+        >
           <a-form-item label="门头" name="doorHeadType" class="door-header-type-item">
             <a-radio-group v-model:value="formValidate.doorHeadType">
               <a-radio-button v-for="item in microConfig.doorHeadType" :value="item.code">
@@ -18,16 +23,20 @@
           <a-form-item label="门楣" name="lintelLogoType" class="lintel-logo-type-item">
             <a-radio-group v-model:value="formValidate.lintelLogoType" name="lintelRadioGroup">
               <a-radio v-for="(item, i) in microConfig.lintelLogoType" :value="item.code">
-                <img v-if="item.code!=99" class="lintel-logo" :class="['lintel-logo-'+ i]"
-                     :src="'/static/micro/map/'+item.image"
-                     :alt="item.desc"/>
+                <img
+                  v-if="item.code != 99"
+                  class="lintel-logo"
+                  :class="['lintel-logo-' + i]"
+                  :src="'/static/micro/map/' + item.image"
+                  :alt="item.desc"
+                />
                 <div v-else class="lintel-logo lintel-logo-self">
                   <UploadFile auto-upload @uploadSuccess="onUploadLintelSuccess">
                     <div v-if="!formValidate.lintelLogoFilePath" class="upload-box" title="点击上传">
-                      <i-plus theme="outline" size="14" fill="currentColor"/>
+                      <i-plus theme="outline" size="14" fill="currentColor" />
                       点击上传
                     </div>
-                    <img v-else :src="formValidate.lintelLogoFilePath" alt="自定义图片"/>
+                    <img v-else :src="formValidate.lintelLogoFilePath" alt="自定义图片" />
                   </UploadFile>
                 </div>
                 <div class="lintel-name">({{ item.desc }})</div>
@@ -37,19 +46,40 @@
           <a-form-item label="液晶屏" name="lcdDisplayType" class="lcd-display-type-item">
             <a-radio-group v-model:value="formValidate.lcdDisplayType" name="lintelRadioGroup">
               <a-radio
-                v-for="(item, i) in formValidate.doorHeadType == 1 ? microConfig.lcdStandardDisplayType : microConfig.lcdHighEndDisplayType"
-                :value="item.code">
-                <div class="lcd-logo" :class="['lcd-logo-'+ i]">
-                  <img v-if="item.code !== '99'" class="lcd-image" :src="'/static/micro/map/'+item.image"
-                       :alt="item.desc"/>
+                v-for="(item, i) in formValidate.doorHeadType == 1
+                  ? microConfig.lcdStandardDisplayType
+                  : microConfig.lcdHighEndDisplayType"
+                :value="item.code"
+              >
+                <div class="lcd-logo" :class="['lcd-logo-' + i]">
+                  <img
+                    v-if="item.code !== '99'"
+                    class="lcd-image"
+                    :src="'/static/micro/map/' + item.image"
+                    :alt="item.desc"
+                  />
                   <UploadFile v-else auto-upload @uploadSuccess="onUploadLcdSuccess">
-                    <div v-if="!(formValidate.doorHeadType == 1 ? formValidate.lcdDisplayStandardFilePath
-                    : formValidate.lcdDisplayHighEndFilePath)" class="upload-box" title="点击上传">
-                      <i-plus theme="outline" size="14" fill="currentColor"/>
+                    <div
+                      v-if="
+                        !(formValidate.doorHeadType == 1
+                          ? formValidate.lcdDisplayStandardFilePath
+                          : formValidate.lcdDisplayHighEndFilePath)
+                      "
+                      class="upload-box"
+                      title="点击上传"
+                    >
+                      <i-plus theme="outline" size="14" fill="currentColor" />
                       点击上传
                     </div>
-                    <img v-else :src="formValidate.doorHeadType == 1 ? formValidate.lcdDisplayStandardFilePath
-                    : formValidate.lcdDisplayHighEndFilePath" alt="自定义图片"/>
+                    <img
+                      v-else
+                      :src="
+                        formValidate.doorHeadType == 1
+                          ? formValidate.lcdDisplayStandardFilePath
+                          : formValidate.lcdDisplayHighEndFilePath
+                      "
+                      alt="自定义图片"
+                    />
                   </UploadFile>
                   <div class="lcd-name">({{ item.desc }})</div>
                 </div>
@@ -58,21 +88,23 @@
           </a-form-item>
           <a-form-item label="门Logo" name="glassDoorLogoType" class="door-logo-type-item">
             <a-radio-group v-model:value="formValidate.glassDoorLogoType" name="glassDoorLogoType">
-              <a-radio
-                v-for="(item, i) in  microConfig.glassDoorLogoType"
-                :value="item.code">
+              <a-radio v-for="(item, i) in microConfig.glassDoorLogoType" :value="item.code">
                 <div class="glass-logo" v-if="item.code !== '99'">
-                  <img class="glass-image" :class="['lcd-image-'+ i]" :src="'/static/micro/map/'+item.image"
-                       :alt="item.desc"/>
+                  <img
+                    class="glass-image"
+                    :class="['lcd-image-' + i]"
+                    :src="'/static/micro/map/' + item.image"
+                    :alt="item.desc"
+                  />
                   <div class="glass-name">({{ item.desc }})</div>
                 </div>
                 <div class="glass-logo" v-else>
                   <UploadFile auto-upload @uploadSuccess="onUploadDoorSuccess">
                     <div v-if="!formValidate.glassDoorLogoFilepath" class="upload-box" title="点击上传">
-                      <i-plus theme="outline" size="14" fill="currentColor"/>
+                      <i-plus theme="outline" size="14" fill="currentColor" />
                       点击上传
                     </div>
-                    <img v-else :src="formValidate.glassDoorLogoFilepath" alt="自定义图片"/>
+                    <img v-else :src="formValidate.glassDoorLogoFilepath" alt="自定义图片" />
                   </UploadFile>
                   <div class="lcd-name">({{ item.desc }})</div>
                 </div>
@@ -81,10 +113,14 @@
           </a-form-item>
           <a-form-item label="玻璃门" name="glassDoorLogoType" class="glass-door-type-item">
             <a-radio-group v-model:value="formValidate.glassDoorType" name="glassDoorType">
-              <a-radio v-for="(item, i) in  microConfig.glassDoorType" :value="item.code">
+              <a-radio v-for="(item, i) in microConfig.glassDoorType" :value="item.code">
                 <div class="glass-door">
-                  <img class="door-image" :class="['lcd-image-'+ i]" :src="'/static/micro/images/'+item.image"
-                       :alt="item.desc"/>
+                  <img
+                    class="door-image"
+                    :class="['lcd-image-' + i]"
+                    :src="'/static/micro/images/' + item.image"
+                    :alt="item.desc"
+                  />
                   <div class="door-name">({{ item.desc }})</div>
                 </div>
               </a-radio>
@@ -103,15 +139,15 @@
 </template>
 
 <script setup lang="ts">
-import {ref, defineModel} from "vue";
-import {useStore} from "vuex";
-import {mockCabinetData, mockMicroConfigEnum} from "@/views/lab/microModule/config";
-import UploadFile from "@/components/common/utils/upload/UploadFile.vue";
-import {cloneDeep} from 'lodash';
-import {message} from "ant-design-vue";
+import { ref } from 'vue';
+import { useStore } from 'vuex';
+import { mockCabinetData, mockMicroConfigEnum } from '@/views/lab/microModule/config';
+import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
+import { cloneDeep } from 'lodash';
+import { message } from 'ant-design-vue';
 
-const visible = defineModel('visible', {type: Boolean, default: false});
-const {dispatch} = useStore();
+const visible = defineModel('visible', { type: Boolean, default: false });
+const { dispatch } = useStore();
 
 const emit = defineEmits(['saveConfigSuccess']);
 const formValidate = ref({});
@@ -119,10 +155,10 @@ const formRef = ref(null);
 const microConfig = mockMicroConfigEnum;
 
 const rulesRef = {
-  doorHeadType: [{required: true, message: '请选择门头'}],
-  lintelLogoType: [{required: true, message: '请选择门楣'}],
-  lcdDisplayType: [{required: true, message: '请选择液晶屏'}],
-  glassDoorLogoType: [{required: true, message: '请选择门Logo'}],
+  doorHeadType: [{ required: true, message: '请选择门头' }],
+  lintelLogoType: [{ required: true, message: '请选择门楣' }],
+  lcdDisplayType: [{ required: true, message: '请选择液晶屏' }],
+  glassDoorLogoType: [{ required: true, message: '请选择门Logo' }],
 };
 const submitLoading = ref(false);
 
@@ -130,30 +166,30 @@ const initData = () => {
   dispatch('getMicroModuleConfig').then(res => {
     res.data = cloneDeep(mockCabinetData);
     formValidate.value = res.data;
-  })
+  });
 };
 
 initData();
 
 const onClose = () => {
   visible.value = false;
-}
+};
 
-const onUploadLintelSuccess = (data) => {
+const onUploadLintelSuccess = data => {
   formValidate.value.lintelLogoFilePath = data[0].url;
-}
+};
 
-const onUploadLcdSuccess = (data) => {
+const onUploadLcdSuccess = data => {
   if (formValidate.value.doorHeadType == 1) {
     formValidate.value.lcdDisplayStandardFilePath = data[0].url;
   } else {
     formValidate.value.lcdDisplayHighEndFilePath = data[0].url;
   }
-}
+};
 
-const onUploadDoorSuccess = (data) => {
+const onUploadDoorSuccess = data => {
   formValidate.value.glassDoorLogoFilepath = data[0].url;
-}
+};
 
 const onSubmit = async () => {
   const form = await formRef.value.validate().catch(console.log);
@@ -166,19 +202,19 @@ const onSubmit = async () => {
     lcdDisplayStandardFilePath,
     lcdDisplayHighEndFilePath,
     glassDoorLogoType,
-    glassDoorLogoFilepath
+    glassDoorLogoFilepath,
   } = formValidate.value;
 
   if (form) {
-    if (lintelLogoType === "99" && !lintelLogoFilePath) {
+    if (lintelLogoType === '99' && !lintelLogoFilePath) {
       return message.error('请上传自定义门楣');
     }
 
-    if (lcdDisplayType === "99" && !(doorHeadType == 1 ? lcdDisplayStandardFilePath : lcdDisplayHighEndFilePath)) {
+    if (lcdDisplayType === '99' && !(doorHeadType == 1 ? lcdDisplayStandardFilePath : lcdDisplayHighEndFilePath)) {
       return message.error('请上传自定义液晶屏');
     }
 
-    if (glassDoorLogoType === "99" && !glassDoorLogoFilepath) {
+    if (glassDoorLogoType === '99' && !glassDoorLogoFilepath) {
       return message.error('请上传自定义门Logo');
     }
 
@@ -191,16 +227,13 @@ const onSubmit = async () => {
       emit('saveConfigSuccess', formValidate.value);
     }, 500);
   }
-}
+};
 </script>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>
 
 <style lang="scss">
 .micro-config-drawer {
-
   .ant-drawer-body {
     padding: 12px 0;
 
@@ -371,7 +404,6 @@ const onSubmit = async () => {
             display: flex;
 
             .ant-radio-wrapper {
-
               > span:nth-child(2) {
                 width: 186px;
               }
@@ -435,9 +467,7 @@ const onSubmit = async () => {
 
   .lcd-display-type-item {
     .ant-radio-group {
-
       .ant-radio-wrapper {
-
         > span:nth-child(2) {
           display: flex;
           width: 186px;
