@@ -2,7 +2,7 @@
   <div class="post-detail">
     <div class="post-aside">
       <div v-aside3 class="post-aside-body">
-        <UserInfoPanel :id="post!.userId" />
+        <UserInfoPanel v-if="post?.userId" :id="post?.userId" />
       </div>
     </div>
     <div class="post-body" id="aside-right">
@@ -108,7 +108,7 @@
       </div>
       <div class="post-comment">
         <div class="post-comment-list" ref="commentRef">
-          <PostComment ref="postComment" />
+          <PostComment v-if="post" ref="postComment" />
         </div>
       </div>
     </div>

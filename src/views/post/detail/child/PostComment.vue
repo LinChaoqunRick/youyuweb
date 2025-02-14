@@ -26,7 +26,7 @@
     <a-card style="width: 100%" class="comment-list-card">
       <template #title>
         <div class="title-container">
-          <div class="title-text large-font">全部评论({{ post.commentCount }})</div>
+          <div class="title-text large-font">全部评论({{ post?.commentCount ?? 0 }})</div>
           <SortSwitch v-model="sort" @onChange="onChange" />
         </div>
       </template>

@@ -25,6 +25,7 @@ const editorProps = reactive({
   previewOnly: true,
   codeTheme: 'github',
   showCodeRowNumber: true,
+  codeFoldable: false,
 });
 
 const editorConfig = computed(() => {
