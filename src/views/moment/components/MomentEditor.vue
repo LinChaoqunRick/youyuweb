@@ -66,7 +66,7 @@
         </a-popover>
         <UploadFile
           v-model="form.images"
-          accept=".jpg, .jpeg, .png, .JPG, .PNG"
+          accept=".jpg, .jpeg, .png, .JPG, .PNG, .HEIC"
           :max-size="maxFileSize"
           :max-num="maxFileNum"
           :disabled="uploadDisabled"
