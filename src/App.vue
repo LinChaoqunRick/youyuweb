@@ -1,12 +1,19 @@
 <template>
-  <transition name="app-mask-fade" mode="out-in">
-    <div class="first-loading-mask" v-if="!isShowApp">
-      <span class="blinking">加载中...</span>
-      <div class="loader"></div>
+  <transition-group name="app-mask-fade" mode="out-in">
+    <div class="first-loading-mask" v-if="routeStatus !== RouteStatus.Resolved">
+      <div v-if="routeStatus === RouteStatus.Pending">
+        <span class="blinking">加载中...</span>
+        <div class="loader"></div>
+      </div>
+      <div v-if="routeStatus === RouteStatus.Rejected">
+        <svg aria-hidden="true">
+          <use xlink:href="#icon-jiazaishibai"></use>
+        </svg>
+        <span>加载失败，请稍后再试</span>
+      </div>
     </div>
-  </transition>
-
-  <a-config-provider :theme="{ algorithm: currentTheme === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm }">
+  </transition-group>
+  <a-cofig-provider :theme="{ algorithm: currentTheme === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm }">
     <div class="app" id="youyu-app">
       <a-config-provider :locale="zhCN">
         <div class="header" id="header">
@@ -18,32 +25,28 @@
         <YFooter />
       </a-config-provider>
     </div>
-  </a-config-provider>
+  </a-cofig-provider>
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, provide, computed, watch, toRef } from 'vue';
+import { nextTick, ref, provide, computed, watch } from 'vue';
 import { useStore } from 'vuex';
 import { theme } from 'ant-design-vue';
-import { _routes } from '@/router/config/useGenerateRoutes';
-
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 import YHeader from '@/components/common/header/YHeader.vue';
 import YFooter from '@/components/common/footer/YFooter.vue';
+import { RouteStatus } from '@/store/system/login/login';
 
 const { getters } = useStore();
-const routes = toRef(_routes);
 
-const isRouteReady = computed(() => !!routes.value.length);
+const routeStatus = computed(() => getters['getRouteStatus']);
 const isRouterAlive = ref<boolean>(true);
-const isShowApp = ref<boolean>(false);
 const currentTheme = computed(() => getters.currentTheme);
-
 const isLogin = computed(() => getters['isLogin']);
 
 function reload() {
   isRouterAlive.value = false;
-  nextTick(function () {
+  nextTick(function() {
     isRouterAlive.value = true;
   });
 }
@@ -56,17 +59,6 @@ watch(
   newVal => {
     if (newVal) {
       reload();
-    }
-  }
-);
-
-watch(
-  () => isRouteReady.value,
-  newVal => {
-    if (newVal) {
-      setTimeout(() => {
-        isShowApp.value = true;
-      }, 800);
     }
   }
 );
@@ -85,6 +77,12 @@ provide('reload', reload);
   width: 100vw;
   background-color: var(--youyu-background1);
   z-index: 999999;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
   .loader {
     width: 120px;

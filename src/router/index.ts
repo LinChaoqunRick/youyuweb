@@ -5,8 +5,11 @@ import { computed } from 'vue';
 import { message } from 'ant-design-vue';
 import { generateAuthRoutes } from '@/router/config/useGenerateRoutes';
 import { executeConnect, isConnectRoute } from '@/router/config/connect';
+import { RouteStatus } from '@/store/system/login/login';
 
 const isLogin = computed(() => store.getters['isLogin']);
+const routeStatus = computed(() => store.getters['getRouteStatus']);
+const setRouteStatus = (status: string) => store.commit('setRouteStatus', status);
 
 /**
  * fix: #12
@@ -44,25 +47,28 @@ export const router = createRouter({
     } else {
       return { top: 0 };
     }
-  },
+  }
 });
 
-let isInit = false;
 router.beforeEach(async (to, from, next) => {
-  if (!isInit) {
-    await executeConnect();
-    await checkTokenValid();
-    await generateAuthRoutes();
-    if (isConnectRoute(location.pathname)) {
-      // 如果是授权页面，清除query参数
-      next({ path: '/', query: {} });
+  try {
+    if (routeStatus.value === RouteStatus.Pending) {
+      await executeConnect();
+      await checkTokenValid();
+      await generateAuthRoutes();
+      if (isConnectRoute(location.pathname)) {
+        // 如果是授权页面，清除query参数
+        next({ path: '/', query: {} });
+      } else {
+        next({ ...to });
+      }
     } else {
-      next({ ...to });
+      next();
     }
-  } else {
-    next();
+    setRouteStatus(RouteStatus.Resolved);
+  } catch (e) {
+    setRouteStatus(RouteStatus.Rejected);
   }
-  isInit = true;
 });
 
 router.afterEach((to, from): any => {

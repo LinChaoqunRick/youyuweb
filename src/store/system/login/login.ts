@@ -10,11 +10,18 @@ import {
   CONNECT_BIND
 } from "@/network/apis";
 
+export const RouteStatus = {
+  Pending: 'pending',
+  Rejected: 'reject',
+  Resolved: 'resolved'
+}
+
 export default {
   state: () => ({
     showLogin: false,
     user: JSON.parse(localStorage.getItem("user") || "{}"),
     authorId: 10000, // 本站作者id
+    routeStatus: RouteStatus.Pending
   }),
   getters: {
     loginPanelStatus(state: any) {
@@ -31,6 +38,9 @@ export default {
     },
     getAuthorId(state: any) {
       return state.authorId;
+    },
+    getRouteStatus(state: any) {
+      return state.routeStatus
     }
   },
   mutations: {
@@ -41,6 +51,9 @@ export default {
       localStorage.setItem("user", JSON.stringify(user));
       state.user = user;
     },
+    setRouteStatus(state: any, status: string) {
+      state.routeStatus = status
+    }
   },
   actions: {
     token(context: any, params: object) {
