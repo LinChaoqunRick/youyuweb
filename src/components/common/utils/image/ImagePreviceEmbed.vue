@@ -21,7 +21,8 @@
     <div class="preview-body" ref="previewBody">
       <transition name="toggle" mode="in-out">
         <a-spin :spinning="loading" :key="currentImage">
-          <img v-if="showImage" :src="currentImage" @load="onLoad" @error="onError" @click="onClose" ref="image" alt="" />
+          <img v-if="showImage" :src="currentImage" @load="onLoad" @error="onError" @progress="onProgress"
+               @click="onClose" ref="image" alt="" />
           <div class="reload-image" v-if="fail">
             <div class="reload-btn" @click="onReload">
               <i-refresh theme="outline" size="16" fill="currentColor" />
@@ -56,19 +57,19 @@ import { getImgSizeByMaxWidth, getImgSizeByMaxHeight } from '@/components/common
 const props = defineProps({
   list: {
     type: Array<String>,
-    required: true,
+    required: true
   },
   current: {
     type: Number,
-    default: 0,
-  },
+    default: 0
+  }
 });
 const emit = defineEmits(['onClose']);
 
 const showImage = ref<boolean>(true);
 const current = ref<number>(props.current);
 const currentImage = computed(() => props.list[current.value].split('?')[0] + '?x-oss-process=style/detailThumb');
-const loading = ref<boolean>(false);
+const loading = ref<boolean>(true);
 const fail = ref<boolean>(false);
 const image = ref<HTMLImageElement | null>(null);
 const previewBody = ref<HTMLElement | null>(null);
@@ -96,6 +97,10 @@ const onClick = (index: number) => {
 const onLoad = () => {
   loading.value = false;
   refreshTransform();
+};
+
+const onProgress = () => {
+  console.log(111);
 };
 
 const onRotate = (direction: string) => {
@@ -135,8 +140,8 @@ const onDetail = () => {
   openImage({
     componentProps: {
       list: props.list,
-      current: current.value,
-    },
+      current: current.value
+    }
   });
 };
 

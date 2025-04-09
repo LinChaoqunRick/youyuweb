@@ -93,6 +93,7 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { disabledBodyScroll, enabledBodyScroll } from '@/assets/utils/utils';
 import { Spin } from 'ant-design-vue';
 import { useEventListener, useIdle, usePointerSwipe } from '@vueuse/core';
+import { convertHEICUrlToBlob } from '@/components/common/utils/upload/utils';
 
 const props = defineProps({
   list: {
@@ -156,6 +157,14 @@ watch(
     currentOriginUrl.value = props.originTransfer
       ? await props.originTransfer(current.value)
       : props.list[current.value].split('?')[0];
+
+    const fileNameArr = currentOriginUrl.value!.split('.');
+    const suffix = fileNameArr[fileNameArr.length - 1];
+
+    if (suffix.toLowerCase() === 'heic') {
+      currentOriginUrl.value = await convertHEICUrlToBlob(currentOriginUrl.value as string);
+    }
+
     handleFooterScroll();
   },
   { immediate: true }

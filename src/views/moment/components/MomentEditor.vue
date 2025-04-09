@@ -72,6 +72,7 @@
           :disabled="uploadDisabled"
           multiple
           :config="{ data: { base: 'moment/images' } }"
+          :auto-clear="false"
           @onProgress="onUploadProgress"
           ref="UploadFileRef"
         >
@@ -118,14 +119,14 @@ const props = defineProps({
     default() {
       return reactive({
         content: '',
-        images: [],
+        images: []
       });
-    },
+    }
   },
   isEdit: {
     type: Boolean,
-    default: false,
-  },
+    default: false
+  }
 });
 
 const emit = defineEmits(['saveSuccess']);
@@ -133,7 +134,7 @@ const dragOptions = reactive({
   animation: 200,
   group: 'description',
   disabled: false,
-  ghostClass: 'ghost',
+  ghostClass: 'ghost'
 });
 
 const maxFileNum = 9;
@@ -168,11 +169,9 @@ const onImageDelete = (index: number) => {
 const onSubmit = async () => {
   submitLoading.value = true;
   const isEdit = props.isEdit;
-  const form = cloneDeep(props.form);
+  const formData = cloneDeep(props.form);
 
-  const imagesListRes = await UploadFileRef.value.upload().finally(() => {
-    progressList.value = [];
-  });
+  const imagesListRes = await UploadFileRef.value.upload();
 
   if (imagesListRes?.length) {
     const firstErrorItem = imagesListRes.find(item => item instanceof AxiosError);
@@ -186,24 +185,24 @@ const onSubmit = async () => {
     }
   }
 
-  if (form.images?.length) {
+  if (formData.images?.length) {
     if (props.isEdit) {
       // 如果是编辑，添加新上传图片
       if (imagesListRes) {
-        form.images.push(...imagesListRes.map(item => item.url + '?x-oss-process=style/smallThumb'));
+        formData.images.push(...imagesListRes.map(item => item.url + '?x-oss-process=style/smallThumb'));
       }
     } else {
       // 如果是新增，直接赋值
-      form.images = imagesListRes.map(item => item.url + '?x-oss-process=style/smallThumb');
+      formData.images = imagesListRes.map(item => item.url + '?x-oss-process=style/smallThumb');
     }
-    form.images = form.images.filter(item => typeof item === 'string');
-    form.images = form.images.length ? form.images.join(',') : null;
+    formData.images = formData.images.filter(item => typeof item === 'string');
+    formData.images = formData.images.length ? formData.images.join(',') : null;
   } else {
-    form.images = '';
+    formData.images = '';
   }
 
-  form.content = transformHTMLToTag(form.content);
-  dispatch(isEdit ? 'updateMoment' : 'createMoment', form)
+  formData.content = transformHTMLToTag(formData.content);
+  dispatch(isEdit ? 'updateMoment' : 'createMoment', formData)
     .then(res => {
       message.success(isEdit ? '修改成功' : '发布成功');
       resetEditor();
@@ -211,7 +210,7 @@ const onSubmit = async () => {
       if (isEdit) {
         router.replace({
           name: 'MomentDetail',
-          params: { momentId: props.form.id },
+          params: { momentId: props.formData.id }
         });
       }
     })
@@ -251,14 +250,14 @@ const onAddPosition = () => {
   openModal({
     component: LocationSelector,
     componentProps: {
-      data: props.form,
+      data: props.form
     },
     title: '添加位置',
     width: '88vw',
     maskClosable: false,
     keyboard: false,
     centered: true,
-    wrapClassName: 'select-position-modal-wrapper',
+    wrapClassName: 'select-position-modal-wrapper'
   })
     .then(res => {
       props.form.location = res.name;
@@ -292,7 +291,7 @@ const onPasteImage = (files: File[]) => {
         name: file.name,
         size: file.size,
         type: file.type,
-        originFileObj: file,
+        originFileObj: file
       });
     }
   }
@@ -300,7 +299,6 @@ const onPasteImage = (files: File[]) => {
 };
 
 const onUploadProgress = (progress: number[]) => {
-  console.log(progress);
   progressList.value = progress;
 };
 </script>
@@ -346,7 +344,6 @@ const onUploadProgress = (progress: number[]) => {
       align-items: center;
       justify-content: space-between;
       font-size: 12px;
-      background-color: var(--youyu-body-background);
 
       .add-position {
         padding: 0 6px 0 8px;

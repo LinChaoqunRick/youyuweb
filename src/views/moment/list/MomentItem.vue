@@ -161,7 +161,8 @@
           />
         </div>
         <div class="reply-box-wrapper">
-          <MomentReplyEditor :params="replyParams" :placeholder="replyEditorPlaceholder" @saveSuccess="onCommentSuccess" />
+          <MomentReplyEditor :params="replyParams" :placeholder="replyEditorPlaceholder"
+                             @saveSuccess="onCommentSuccess" />
         </div>
       </div>
       <div class="moment-comment-list">
@@ -220,12 +221,12 @@ const router = useRouter();
 const props = defineProps({
   data: {
     type: Object as PropType<momentListType>,
-    required: true,
+    required: true
   },
   showDetail: {
     type: Boolean,
-    default: true,
-  },
+    default: true
+  }
 });
 
 const emit = defineEmits(['deleteSuccess', 'onEdit', 'onCommentSaveSuccess', 'onCommentDeleteSuccess']);
@@ -261,13 +262,13 @@ const likeActive = computed(() => props.data.momentLike);
 const listParams = computed(() => ({
   momentId: props.data.id,
   pageSize: 5,
-  orderBy: order.value,
+  orderBy: order.value
 }));
 const replyEditorPlaceholder = computed(() => (props.data ? '回复@' + props.data.user.nickname : ''));
 const replyParams = computed(() => {
   return {
     momentId: props.data.id,
-    userIdTo: props.data.userId,
+    userIdTo: props.data.userId
   };
 });
 const ContentDataRef = ref<InstanceType<typeof ContentData> | null>(null);
@@ -320,14 +321,14 @@ const onDelete = () => {
     content: '确定删除这条时刻吗？',
     onOk() {
       return dispatch('deleteMoment', {
-        momentId: props.data.id,
+        momentId: props.data.id
       })
         .then(res => {
           message.success('删除成功');
           emit('deleteSuccess', props.data);
         })
         .catch(console.log);
-    },
+    }
   });
 };
 
@@ -338,7 +339,7 @@ const onEdit = () => {
     router.push({
       name: 'MomentDetail',
       params: { momentId: props.data.id },
-      query: { type: 'edit' },
+      query: { type: 'edit' }
     });
   }
 };
@@ -350,7 +351,7 @@ const onLike = () => {
   dispatch(isLike ? 'cancelMomentLike' : 'setMomentLike', {
     momentId: props.data.id,
     userId: userInfo.value.id,
-    userIdTo: props.data.userId,
+    userIdTo: props.data.userId
   })
     .then(res => {
       if (isLike) {
@@ -383,19 +384,19 @@ const onLocationPreview = () => {
   const location = {
     longitude: props.data.longitude,
     latitude: props.data.latitude,
-    name: props.data.location,
+    name: props.data.location
   };
   openModal({
     component: LocationPreview,
     componentProps: {
-      data: location,
+      data: location
     },
     title: `位置详情`,
     width: '80vw',
     maskClosable: false,
     keyboard: false,
     centered: true,
-    wrapClassName: 'select-position-modal-wrapper',
+    wrapClassName: 'select-position-modal-wrapper'
   });
 };
 
@@ -405,7 +406,7 @@ const onCopyLink = () => {
 
 defineExpose({
   // onCommentSubmit,
-  deleteSuccess,
+  deleteSuccess
 });
 </script>
 

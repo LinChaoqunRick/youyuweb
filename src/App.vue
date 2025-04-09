@@ -1,5 +1,5 @@
 <template>
-  <transition-group name="app-mask-fade" mode="out-in">
+  <transition-group name="app-mask-fade">
     <div class="first-loading-mask" v-if="routeStatus !== RouteStatus.Resolved">
       <div v-if="routeStatus === RouteStatus.Pending">
         <span class="blinking">加载中...</span>
@@ -13,7 +13,7 @@
       </div>
     </div>
   </transition-group>
-  <a-cofig-provider :theme="{ algorithm: currentTheme === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm }">
+  <a-config-provider :theme="{ algorithm: currentTheme === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm }">
     <div class="app" id="youyu-app">
       <a-config-provider :locale="zhCN">
         <div class="header" id="header">
@@ -25,7 +25,7 @@
         <YFooter />
       </a-config-provider>
     </div>
-  </a-cofig-provider>
+  </a-config-provider>
 </template>
 
 <script setup lang="ts">

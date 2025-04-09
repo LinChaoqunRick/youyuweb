@@ -147,7 +147,6 @@ const upload = async () => {
 };
 
 const uploadProgress = (progressList: number[]) => {
-  console.log(files.value);
   let count = 0;
   progress.value = files.value.map((item, index) => (typeof item === 'object' ? progressList[count++] : 100));
 
