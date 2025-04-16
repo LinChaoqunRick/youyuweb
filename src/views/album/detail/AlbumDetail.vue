@@ -123,6 +123,10 @@ import dayjs from 'dayjs';
 import type { UploadResult } from '@/components/common/utils/upload/types';
 import type { AlbumImageItem } from '@/views/album/detail/types';
 
+defineOptions({
+  name: 'AlbumDetail'
+})
+
 const { getters, dispatch } = useStore();
 
 const route = useRoute();
@@ -154,6 +158,7 @@ const onClickUpload = async () => {
     maskClosable: false,
     title: '上传照片',
     width: '1200px',
+    centered: true,
     beforeConfirm: (done: Function, data: UploadResult[]) => {
       if (!data) {
         // data为undefined表示都上传成功了

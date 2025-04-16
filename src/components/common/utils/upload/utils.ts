@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { merge } from 'lodash';
 import heic2any from 'heic2any';
 import type { UploadConfig, UploadResult } from './types';
+import { fileTypeFromBuffer, type FileTypeResult } from 'file-type';
 
 export const isImageFile = (file: File) => {
   // 检查图片类型
@@ -30,7 +31,7 @@ export async function uploadToOss(files: File[], config?: UploadConfig): Promise
     accept: '.jpg, .jpeg, .png, .JPG, .PNG',
     maxSize: 20,
     needTip: true,
-    policyPath: 'getOssPolicy',
+    policyPath: 'getOssPolicy'
   };
 
   const mergedConfig = merge({}, defaultConfig, config);
@@ -88,13 +89,13 @@ export async function uploadToOss(files: File[], config?: UploadConfig): Promise
       try {
         const res = await axios.post(data.host, form, {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'multipart/form-data'
           },
           onUploadProgress: (progressEvent: AxiosProgressEvent) => {
             const progress = Number((((progressEvent.loaded / (progressEvent?.total || 1)) * 100) | 0).toFixed(2));
             progressList[index] = progress;
             mergedConfig?.progress?.(progressList);
-          },
+          }
         });
         return { url: `${data.host}/${data.dir}${file_name}`, path: `${data.dir}${file_name}`, file: file };
       } catch (error) {
@@ -135,7 +136,7 @@ export const getXmlTextContent = (xml: string, tag: string) => {
 export const convertHEICFileToBlob = async (heicFile: File) => {
   const blob = await heic2any({
     blob: heicFile,
-    toType: 'image/jpeg',
+    toType: 'image/jpeg'
   });
   return URL.createObjectURL(blob);
 };
@@ -148,7 +149,7 @@ export const convertHEICUrlToBlob = async (url: string) => {
     const convertedBlob = await heic2any({
       blob: HEICBlob,
       toType: 'image/jpeg', // 你也可以选择 'image/png' 等其他格式
-      quality: 0.35,
+      quality: 0.35
     });
 
     return URL.createObjectURL(convertedBlob);
@@ -173,4 +174,9 @@ export const formatSize = (bytes: number, decimals: number = 2) => {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + sizes[i];
+};
+
+export const getFileType = async (file: File): Promise<FileTypeResult | undefined> => {
+  const arrayBuffer = await file.arrayBuffer();
+  return await fileTypeFromBuffer(arrayBuffer);
 };

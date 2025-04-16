@@ -2,7 +2,7 @@
   <div class="upload-image">
     <UploadFile
       v-model="images"
-      accept=".jpg, .jpeg, .png, .JPG, .PNG, .HEIC"
+      accept=".JPEG,.JPG,.PNG,.HEIC,.GIF,.WEBP"
       :max-size="maxFileSize"
       multiple
       :auto-clear="false"
@@ -35,6 +35,10 @@ import { inject, ref } from 'vue';
 import ImageItem from '@/components/common/utils/upload/components/ImageItem.vue';
 import type { FileExtend, UploadResult } from '@/components/common/utils/upload/types';
 import type { OpenModal } from '@/libs/tools/openModal/types';
+
+defineOptions({
+  name: 'UploadImageList'
+})
 
 const props = defineProps({
   albumId: {
@@ -90,6 +94,7 @@ defineExpose({
   flex-wrap: wrap;
   margin-top: 10px;
   overflow: auto;
+  min-height: 65vh;
 
   .upload-image-lead {
     cursor: pointer;

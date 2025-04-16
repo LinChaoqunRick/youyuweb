@@ -30,9 +30,10 @@
 import { ref, nextTick } from 'vue';
 import { message } from 'ant-design-vue';
 import { merge } from 'lodash';
-import { convertHEICFileToBlob, uploadToOss } from '@/components/common/utils/upload/utils';
+import { convertHEICFileToBlob, getFileType, uploadToOss } from '@/components/common/utils/upload/utils';
 import { AxiosError } from 'axios';
 import type { FileExtend, UploadResult } from './types';
+import type { FileTypeResult } from 'file-type';
 
 const inputRef = ref<HTMLInputElement | null>(null);
 
@@ -40,32 +41,32 @@ const files = defineModel<Array<FileExtend | string>>({ default: [] }); // v-mod
 const props = defineProps({
   config: {
     type: Object,
-    default: () => ({}),
+    default: () => ({})
   },
   disabled: {
     type: Boolean,
-    default: false,
+    default: false
   },
   maxSize: {
     type: Number,
-    default: 20,
+    default: 20
   },
   maxNum: {
     type: Number,
-    default: 0,
+    default: 0
   },
   accept: {
     type: String,
-    default: '.jpg, .jpeg, .png, .JPG, .PNG',
+    default: '.jpg, .jpeg, .png, .JPG, .PNG'
   },
   autoUpload: {
     type: Boolean,
-    default: false,
+    default: false
   },
   autoClear: {
     type: Boolean,
-    default: true,
-  },
+    default: true
+  }
 });
 
 const progress = ref<number[]>([]);
@@ -75,37 +76,43 @@ const visible = ref(true);
 const emit = defineEmits(['change', 'uploadSuccess', 'onProgress']);
 
 const handleChange = async (event: Event) => {
-  const inputElement = event.target as HTMLInputElement;
-  const originFiles: Array<FileExtend> = Object.values(inputElement.files);
+  const input = event.target as HTMLInputElement;
+  const originFiles: FileExtend[] = Array.from(input.files ?? []) as FileExtend[];
+  // 判断最大上传限制
   if (props.maxNum !== 0 && files.value.length + originFiles.length > props.maxNum) {
     message.error(`最多可上传${props.maxNum}个文件`);
     return false;
   }
+  // 数据处理
   for (const file of originFiles) {
-    // 校验文件
-    const fileNameArr = file.name.split('.');
-    const suffix = fileNameArr[fileNameArr.length - 1];
-    const nameLegal = props.accept.indexOf(suffix) > -1;
-    if (!nameLegal) {
-      return message.error(`只能上传${props.accept}类型的文件`);
+    // 获取文件真实扩展信息
+    const typeInfo: FileTypeResult | undefined = await getFileType(file);
+    if (typeInfo) {
+      // 校验文件
+      const { ext } = typeInfo;
+      // 文件格式是否合法
+      const isExtLegal = (props.accept.toLowerCase()).indexOf(ext.toLowerCase()) > -1;
+      if (!isExtLegal) {
+        return message.error(`只能上传${props.accept}类型的文件`);
+      }
+      // 文件大小是否合法
+      const isSizeExceed = file.size / 1024 / 1024 < props.maxSize;
+      if (!isSizeExceed) {
+        return message.error(`文件大小不能大于${props.maxSize}MB`);
+      }
+      // 校验成功处理文件
+      if (ext.toLowerCase() === 'heic') {
+        file.thumb = await convertHEICFileToBlob(file);
+      } else {
+        file.thumb = window.URL.createObjectURL(file);
+      }
+      file.progress = -1;
+      files.value.push(file);
+      emit('change', file);
     }
-    const sizeExceed = file.size / 1024 / 1024 < props.maxSize;
-    if (!sizeExceed) {
-      return message.error(`文件大小不能大于${props.maxSize}MB`);
-    }
-
-    // 校验成功处理文件
-    if (suffix.toLowerCase() === 'heic') {
-      file.thumb = await convertHEICFileToBlob(file);
-    } else {
-      file.thumb = URL.createObjectURL(file);
-    }
-    file.progress = -1;
-    files.value.push(file);
-    emit('change', file);
   }
   if (props.autoUpload) {
-    upload();
+    await upload();
   }
   visible.value = false;
 };
@@ -127,7 +134,7 @@ const upload = async () => {
     needTip: false, // 不需要提示
     progress: uploadProgress,
     accept: props.accept,
-    maxSize: props.maxSize,
+    maxSize: props.maxSize
   };
   const mergedConfig = merge(defaultConfig, props.config);
   const res: UploadResult[] = await uploadToOss(uploadFiles as File[], mergedConfig);
@@ -163,7 +170,7 @@ defineExpose({
   files,
   upload,
   progress,
-  triggerInput: onTriggerInput,
+  triggerInput: onTriggerInput
 });
 </script>
 
