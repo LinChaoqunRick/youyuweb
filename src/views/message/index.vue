@@ -1,8 +1,8 @@
 <template>
   <div class="message">
     <div class="barrage-view">
-      <Barrage v-model="dataList" />
-      <div class="locate-button" :class="{ 'is-hide': formVisible }">
+      <barrage-stage @on-empty="handleGetData" ref="barrageRef" />
+      <div class="locate-button">
         <a-button type="primary" shape="round" @click="onLocate">
           <template #icon>
             <i-send-one theme="outline" size="16" fill="currentColor" />
@@ -65,7 +65,7 @@
         </div>
       </a-form>
       <div class="message-list">
-        <div class="list-title">留言({{ total }})</div>
+        <div class="list-title">全部留言({{ total }})</div>
         <ContentList url="listMessage" auto-load data-text="留言" class="message-content-list" ref="ContentListRef">
           <template v-slot="{ list }">
             <MessageItem v-for="item in list" :key="item.id" :data="item" />
@@ -79,41 +79,38 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
 import { useStore } from 'vuex';
-import { useIntersectionObserver } from '@vueuse/core';
+import { useWindowScroll } from '@vueuse/core';
 import { useRequest } from 'vue-request';
-import type { FormInstance } from 'ant-design-vue';
-
 import { insert } from '@/assets/utils/utils';
 import { message } from 'ant-design-vue';
 import { checkEmail } from '@/libs/validate/validate';
 import Emoji from '@/components/common/utils/emoji/index.vue';
-import Barrage from '@/views/message/Barrage.vue';
+import BarrageStage from '@/views/message/BarrageStage.vue';
 import ContentList from '@/components/common/system/ContentList.vue';
 import MessageItem from '@/views/message/components/MessageItem.vue';
-import type { Message } from '@/views/message/types';
+import type { FormInstance } from 'ant-design-vue';
+import type { Barrage } from '@/views/message/types';
 
-const formState = reactive<Message>({
+const formState = reactive<Barrage>({
   avatar: '',
   nickname: '',
   email: '',
   home: '',
-  content: '',
-  userId: undefined,
+  content: ''
 });
 
 const { getters, dispatch } = useStore();
-
+const { y } = useWindowScroll({ behavior: 'smooth' });
 const isLogin = computed(() => getters['isLogin']);
 const userInfo = computed(() => getters['userInfo']);
-
 const FormRef = ref<FormInstance | null>(null);
-const ContentTextareaRef = ref(null);
-const formVisible = ref(false);
+const ContentTextareaRef = ref<HTMLInputElement | null>(null);
+const barrageRef = ref<InstanceType<typeof BarrageStage> | null>(null);
 const btnLoading = ref(false);
 const pageNum = ref(1);
 const totalNum = ref(0);
-const dataList = ref<Array<Message>>([]);
 const total = ref(0);
+const dataOver = computed(() => pageNum.value !== 1 && pageNum.value > totalNum.value);
 const defaultAvatarList = [
   'https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default/female1.png',
   'https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default/female2.png',
@@ -134,8 +131,9 @@ const defaultAvatarList = [
   'https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default/male7.png',
   'https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default/male8.png',
   'https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default/male9.png',
-  'https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default/male10.png',
+  'https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default/male10.png'
 ];
+
 let defaultAvatarIndex = Math.floor(Math.random() * defaultAvatarList.length);
 
 formState.avatar = defaultAvatarList[defaultAvatarIndex];
@@ -144,19 +142,13 @@ const rules = {
   nickname: [{ required: true, message: '请输入昵称' }],
   email: [
     { required: true, message: '请输入邮箱' },
-    { required: true, validator: checkEmail, trigger: 'change' },
+    { required: true, validator: checkEmail, trigger: 'change' }
   ],
-  content: [{ required: true, message: '请输入内容' }],
+  content: [{ required: true, message: '请输入内容' }]
 };
 
-const { stop } = useIntersectionObserver(FormRef, ([{ isIntersecting }], observerElement) => {
-  formVisible.value = isIntersecting;
-});
-
 const onLocate = () => {
-  FormRef?.value?.$el.scrollIntoView({
-    behavior: 'smooth',
-  });
+  y.value = window.innerHeight - 60;
 };
 
 const emojiHandler = (emoji: string) => {
@@ -175,33 +167,25 @@ const onFinish = () => {
     .then(res => {
       message.success('发布成功');
       formState.content = '';
-      dataList.value.push(res.data);
+      barrageRef.value?.add(res.data);
     })
     .finally(() => {
       btnLoading.value = false;
     });
 };
 
-const initData = async () => {
+const handleGetData = async () => {
+  console.log(123, dataOver.value);
+  if (dataOver.value) return;
   await dispatch('listMessage', { pageNum: pageNum.value }).then(res => {
-    total.value = res.data.total;
-    res.data.list.forEach((item: Message, index: number) => {
-      setTimeout(() => dataList.value.push(item), 500 * (index + 1));
-    });
-
-    if (pageNum.value >= totalNum.value) {
-      // 已加载完全部数据
-      loop.cancel();
-      return;
-    }
     totalNum.value = res.data.pages;
+    total.value = res.data.total;
+    barrageRef.value?.add(res.data.list);
     pageNum.value++;
   });
 };
 
-const loop = useRequest(initData, {
-  pollingInterval: 5 * 1000,
-});
+handleGetData();
 
 const onChangeAvatar = () => {
   defaultAvatarIndex = ++defaultAvatarIndex % defaultAvatarList.length;

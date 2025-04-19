@@ -24,8 +24,8 @@ importers:
         specifier: ^9.12.0
         version: 9.13.0(vue@3.5.13(typescript@4.7.4))
       '@vueuse/core':
-        specifier: ^9.12.0
-        version: 9.13.0(vue@3.5.13(typescript@4.7.4))
+        specifier: ^13.1.0
+        version: 13.1.0(vue@3.5.13(typescript@4.7.4))
       animate.css:
         specifier: ^4.1.1
         version: 4.1.1
@@ -89,6 +89,9 @@ importers:
       vue:
         specifier: ^3.5.12
         version: 3.5.13(typescript@4.7.4)
+      vue-danmaku:
+        specifier: 2.0.0-beta.8
+        version: 2.0.0-beta.8(vue@3.5.13(typescript@4.7.4))
       vue-request:
         specifier: ^2.0.4
         version: 2.0.4(vue@3.5.13(typescript@4.7.4))
@@ -929,6 +932,9 @@ packages:
   '@types/web-bluetooth@0.0.16':
     resolution: {integrity: sha512-oh8q2Zc32S6gd/j50GowEjKLoOVOwHP/bWVjKJInBwQqdOYMdPrf1oVlelTlyfFK3CKxL1uahMDAr+vy8T7yMQ==}
 
+  '@types/web-bluetooth@0.0.21':
+    resolution: {integrity: sha512-oIQLCGWtcFZy2JW77j9k8nHzAOpqMHLQejDA48XXMWH6tjCQHz5RCFz1bzsmROyL6PUm+LLnUiI4BCn221inxA==}
+
   '@types/webxr@0.5.21':
     resolution: {integrity: sha512-geZIAtLzjGmgY2JUi6VxXdCrTb99A7yP49lxLr2Nm/uIK0PkkxcEi4OGhoGDO4pxCf3JwGz2GiJL2Ej4K2bKaA==}
 
@@ -1111,11 +1117,24 @@ packages:
   '@vueuse/components@9.13.0':
     resolution: {integrity: sha512-UJ8PjQ4SGb2rsVIy9vhEc6aCu+3+2cc+xEfGNX8/M1NKIuL2Vo6c2Kc2fYFaRzWZkP8HWXu+IcwvnAzL44IEFA==}
 
+  '@vueuse/core@13.1.0':
+    resolution: {integrity: sha512-PAauvdRXZvTWXtGLg8cPUFjiZEddTqmogdwYpnn60t08AA5a8Q4hZokBnpTOnVNqySlFlTcRYIC8OqreV4hv3Q==}
+    peerDependencies:
+      vue: ^3.5.0
+
   '@vueuse/core@9.13.0':
     resolution: {integrity: sha512-pujnclbeHWxxPRqXWmdkKV5OX4Wk4YeK7wusHqRwU0Q7EFusHoqNA/aPhB6KCh9hEqJkLAJo7bb0Lh9b+OIVzw==}
 
+  '@vueuse/metadata@13.1.0':
+    resolution: {integrity: sha512-+TDd7/a78jale5YbHX9KHW3cEDav1lz1JptwDvep2zSG8XjCsVE+9mHIzjTOaPbHUAk5XiE4jXLz51/tS+aKQw==}
+
   '@vueuse/metadata@9.13.0':
     resolution: {integrity: sha512-gdU7TKNAUVlXXLbaF+ZCfte8BjRJQWPCa2J55+7/h+yDtzw3vOoGQDRXzI6pyKyo6bXFT5/QoPE4hAknExjRLQ==}
+
+  '@vueuse/shared@13.1.0':
+    resolution: {integrity: sha512-IVS/qRRjhPTZ6C2/AM3jieqXACGwFZwWTdw5sNTSKk2m/ZpkuuN+ri+WCVUP8TqaKwJYt/KuMwmXspMAw8E6ew==}
+    peerDependencies:
+      vue: ^3.5.0
 
   '@vueuse/shared@9.13.0':
     resolution: {integrity: sha512-UrnhU+Cnufu4S6JLCPZnkWh0WwZGUp72ktOF2DFptMlOs3TOdVv8xJN53zhHGARmVOsz5KqOls09+J1NR6sBKw==}
@@ -2723,6 +2742,11 @@ packages:
       yaml:
         optional: true
 
+  vue-danmaku@2.0.0-beta.8:
+    resolution: {integrity: sha512-/btgYgmZIs3ijd9Evgvppd+Yf2SD2+yeKbox6Jo2keStimQBM83Wxo6ta8DcYRBNqDvuDSYrNgbOQ7z4+UT04g==}
+    peerDependencies:
+      vue: ^3.0.0
+
   vue-demi@0.14.10:
     resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
     engines: {node: '>=12'}
@@ -3729,6 +3753,8 @@ snapshots:
 
   '@types/web-bluetooth@0.0.16': {}
 
+  '@types/web-bluetooth@0.0.21': {}
+
   '@types/webxr@0.5.21': {}
 
   '@typescript-eslint/eslint-plugin@5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.57.1)(typescript@4.7.4))(eslint@8.57.1)(typescript@4.7.4)':
@@ -3988,6 +4014,13 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
+  '@vueuse/core@13.1.0(vue@3.5.13(typescript@4.7.4))':
+    dependencies:
+      '@types/web-bluetooth': 0.0.21
+      '@vueuse/metadata': 13.1.0
+      '@vueuse/shared': 13.1.0(vue@3.5.13(typescript@4.7.4))
+      vue: 3.5.13(typescript@4.7.4)
+
   '@vueuse/core@9.13.0(vue@3.5.13(typescript@4.7.4))':
     dependencies:
       '@types/web-bluetooth': 0.0.16
@@ -3998,7 +4031,13 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
+  '@vueuse/metadata@13.1.0': {}
+
   '@vueuse/metadata@9.13.0': {}
+
+  '@vueuse/shared@13.1.0(vue@3.5.13(typescript@4.7.4))':
+    dependencies:
+      vue: 3.5.13(typescript@4.7.4)
 
   '@vueuse/shared@9.13.0(vue@3.5.13(typescript@4.7.4))':
     dependencies:
@@ -5734,6 +5773,10 @@ snapshots:
       fsevents: 2.3.3
       sass: 1.83.4
       terser: 5.37.0
+
+  vue-danmaku@2.0.0-beta.8(vue@3.5.13(typescript@4.7.4)):
+    dependencies:
+      vue: 3.5.13(typescript@4.7.4)
 
   vue-demi@0.14.10(vue@3.5.13(typescript@4.7.4)):
     dependencies:
