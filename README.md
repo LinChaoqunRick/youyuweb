@@ -7,11 +7,11 @@
 ## 快速开始
 1. 安装依赖
 ```sh
-npm install
+pnpm install
 ```
 2. 启动项目
 ```sh
-npm run dev
+pnpm run dev
 ```
 3. 打包发布
 ```sh
