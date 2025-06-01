@@ -1,8 +1,10 @@
+import { computed } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import { message } from 'ant-design-vue';
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
 import whiteList from './whiteList';
 import store from '@/store';
-import { computed } from 'vue';
-import { message } from 'ant-design-vue';
 import { generateAuthRoutes } from '@/router/config/useGenerateRoutes';
 import { executeConnect, isConnectRoute } from '@/router/config/connect';
 import { RouteStatus } from '@/store/system/login/login';
@@ -51,6 +53,7 @@ export const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
+  NProgress.start();
   try {
     if (routeStatus.value === RouteStatus.Pending) {
       await executeConnect();
@@ -72,6 +75,7 @@ router.beforeEach(async (to, from, next) => {
 });
 
 router.afterEach((to, from): any => {
+  NProgress.done();
   const title = to.meta.title;
   if (title) {
     document.title = <string>title + '-有语';

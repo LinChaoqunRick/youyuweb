@@ -47,7 +47,7 @@ onMounted(() => {
 
 function initTracks() {
   if (barrageWrapperRef.value) {
-    const height = barrageWrapperRef.value.getBoundingClientRect().height - 80; // 80 下方定位按钮高度
+    const height = barrageWrapperRef.value.getBoundingClientRect().height - 120; // 120 下方定位按钮高度
     const trackCount = Math.floor(height / channelHeight);
     idleTracks.value = generateRandomArray(0, trackCount);
   }
@@ -180,10 +180,11 @@ defineExpose({
       color: #ffffff;
       cursor: pointer;
       overflow: hidden;
+      font-size: 16px;
 
       .barrage-avatar {
-        height: 24px;
-        width: 24px;
+        height: 28px;
+        width: 28px;
         border-radius: 50%;
         overflow: hidden;
 

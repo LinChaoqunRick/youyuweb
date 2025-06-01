@@ -76,6 +76,7 @@ const visible = ref(true);
 const emit = defineEmits(['change', 'uploadSuccess', 'onProgress']);
 
 const handleChange = async (event: Event) => {
+  console.log(1111);
   const input = event.target as HTMLInputElement;
   const originFiles: FileExtend[] = Array.from(input.files ?? []) as FileExtend[];
   // 判断最大上传限制
@@ -125,7 +126,9 @@ const onTriggerInput = () => {
 };
 
 const upload = async () => {
+  console.log(files.value);
   const uploadFiles = files.value.filter(item => (item as FileExtend).progress < 0);
+  console.log(uploadFiles);
   if (!uploadFiles.length) {
     return;
   }
