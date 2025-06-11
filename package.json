@@ -1,0 +1,25 @@
+{
+  "name": "youyu-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "prettier": "^2.8.8",
+    "typescript": "~4.7.4",
+    "@vue/tsconfig": "^0.1.3",
+    "@vitejs/plugin-vue": "^3.0.3",
+    "@vitejs/plugin-vue-jsx": "^2.1.1",
+    "@vue/eslint-config-prettier": "^7.0.0",
+    "@vue/eslint-config-typescript": "^11.0.0",
+    "eslint-plugin-vue": "^9.3.0",
+    "vue-tsc": "^0.40.7"
+  },
+  "scripts": {
+    "lint": "pnpm -r lint",
+    "build": "pnpm -r build",
+    "dev": "pnpm -r dev"
+  }
+}

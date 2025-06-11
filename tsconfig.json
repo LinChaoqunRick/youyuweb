@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@youyu/utils": ["packages/utils/src"]
+    }
+  }
+}
