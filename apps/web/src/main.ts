@@ -6,17 +6,10 @@ import Antd from 'ant-design-vue';
 import RelativeTime from 'dayjs/plugin/relativeTime';
 import dayjs from 'dayjs';
 import IconPark from '@/libs/plugins/iconpark';
-import MarkExtension from 'markdown-it-mark';
 import { config } from 'md-editor-v3';
 import { lineNumbers } from '@codemirror/view';
-import ImageFiguresPlugin from 'markdown-it-image-figures';
-import anchor from 'markdown-it-anchor';
-import LinkAttr from 'markdown-it-link-attributes';
 
-import aside from '@/libs/directives/aside.js';
-import aside2 from '@/libs/directives/aside2.js';
-import aside3 from '@/libs/directives/aside3.js';
-import aside4 from '@/libs/directives/aside4.js';
+import vSideFixed from './libs/directives/vSideFixed';
 import login from '@/libs/directives/login';
 import slideIn from '@/libs/directives/vSlideIn';
 import scrollToEl from '@/libs/directives/scrollToEl.js';
@@ -36,10 +29,7 @@ const app = createApp(App);
 app.use(router).use(Antd).use(store);
 IconPark(app);
 
-// app.directive('aside', aside);
-// app.directive('aside2', aside2);
-app.directive('aside3', aside3);
-// app.directive('aside4', aside4);
+app.directive('side-fixed', vSideFixed);
 app.directive('scroll-to-el', scrollToEl);
 app.directive('row', row);
 app.directive('focus', focus);
@@ -53,14 +43,7 @@ dayjs.locale('zh-cn'); // use loaded locale globally
 
 config({
   markdownItConfig(md) {
-    md.use(MarkExtension);
-    md.use(ImageFiguresPlugin, { dataType: true, figcaption: 'alt', lazy: true, async: true });
-    // md.use(LinkAttr, {
-    //   attrs: {
-    //     target: '_blank'
-    //   }
-    // })
-    // md.use(anchor, {permalink: true})
+
   },
   codeMirrorExtensions(theme, extensions) {
     return [...extensions, lineNumbers()];
@@ -77,6 +60,7 @@ config({
   },
 });
 
+//@ts-ignore
 window._AMapSecurityConfig = {
   securityJsCode: '77d3241f7557a36fc3a1f64f967277b3',
 };

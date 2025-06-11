@@ -1,7 +1,7 @@
 <template>
   <div class="user-center">
     <div class="center-aside aside">
-      <div class="menu-items" v-aside3>
+      <div class="menu-items" v-side-fixed>
         <div v-for="item in menus" :key="item.path" class="route-dropdown-item">
           <nav-link :route="item">
             <div class="menu-item">

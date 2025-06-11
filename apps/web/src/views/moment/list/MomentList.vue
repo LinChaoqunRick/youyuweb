@@ -1,7 +1,7 @@
 <template>
   <div class="moment-list">
     <div class="moment-list-left mr-8">
-      <div class="moment-list-left-menu" v-aside3>
+      <div class="moment-list-left-menu" v-side-fixed>
         <div v-for="menu in menuList" class="menu-item">
           <RouterLink :to="menu.path">
             <component :is="menu.icon" theme="filled" size="16" fill="currentColor" />
@@ -15,7 +15,7 @@
       <EmptyPage ref="EmptyPageRef" />
     </div>
     <div class="moment-list-right">
-      <UserPanelMoment v-aside3 />
+      <UserPanelMoment v-side-fixed />
     </div>
   </div>
 </template>

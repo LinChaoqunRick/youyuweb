@@ -2,7 +2,7 @@
   <div class="user-profile">
     <div class="user-main">
       <div class="user-left">
-        <UserInfoPanel v-aside3 :id="userId" @onLoaded="onLoaded" ref="UserInfoRef"></UserInfoPanel>
+        <UserInfoPanel v-side-fixed :id="userId" @onLoaded="onLoaded" ref="UserInfoRef"></UserInfoPanel>
       </div>
       <div class="user-content">
         <div class="user-menu-content">

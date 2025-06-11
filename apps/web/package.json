@@ -1,6 +1,5 @@
 {
-  "name": "@youryuweb/web",
-  "private": true,
+  "name": "youyuweb",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
@@ -45,27 +44,10 @@
     "vuex": "^4.0.2"
   },
   "devDependencies": {
-    "@rushstack/eslint-patch": "^1.1.4",
-    "@types/dat.gui": "^0.7.7",
-    "@types/node": "^16.11.56",
-    "@types/qs": "^6.9.10",
-    "@types/stats.js": "^0.17.0",
-    "@types/three": "^0.149.0",
-    "@vitejs/plugin-vue": "^3.0.3",
-    "@vitejs/plugin-vue-jsx": "^2.1.1",
-    "@vue/eslint-config-prettier": "^7.0.0",
-    "@vue/eslint-config-typescript": "^11.0.0",
-    "@vue/tsconfig": "^0.1.3",
-    "eslint-plugin-vue": "^9.3.0",
-    "markdown-it-link-attributes": "^4.0.1",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.7.1",
     "rollup-plugin-visualizer": "^5.9.0",
     "sass": "^1.83.4",
     "sass-loader": "^13.0.2",
-    "typescript": "~4.7.4",
-    "vite": "^6.0.7",
-    "vite-plugin-cdn-import": "^0.3.5",
-    "vue-tsc": "^0.40.7"
+    "vite": "^6.0.7"
   }
 }

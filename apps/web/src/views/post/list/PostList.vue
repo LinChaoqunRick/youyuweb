@@ -10,7 +10,7 @@
       </YTable>
     </div>
     <div class="article-right">
-      <PostAside v-aside3 />
+      <PostAside v-side-fixed />
     </div>
   </div>
 </template>

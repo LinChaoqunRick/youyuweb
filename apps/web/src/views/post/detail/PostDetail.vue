@@ -1,7 +1,7 @@
 <template>
   <div class="post-detail">
     <div class="post-aside">
-      <div v-aside3 class="post-aside-body">
+      <div v-side-fixed class="post-aside-body">
         <UserInfoPanel v-if="post?.userId" :id="post?.userId" />
       </div>
     </div>
