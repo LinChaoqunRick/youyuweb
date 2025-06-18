@@ -120,7 +120,7 @@ export default defineConfig({
         {
           name: 'md-editor-v3',
           var: 'MdEditorV3',
-          path: 'lib/umd/index.js',
+          path: 'lib/umd/date-utils.ts',
           css: ['lib/preview.css', 'lib/style.css']
         },
         {

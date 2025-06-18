@@ -1,0 +1,9 @@
+dist
+node_modules
+
+**/*.svg
+**/*.sh
+
+public
+.npmrc
+*-lock.yaml

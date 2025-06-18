@@ -1,25 +1,38 @@
 <template>
   <transition-group name="app-mask-fade">
-    <div class="first-loading-mask" v-if="routeStatus !== RouteStatus.Resolved">
+    <div
+      v-if="routeStatus !== RouteStatus.Resolved"
+      class="first-loading-mask"
+    >
       <div v-if="routeStatus === RouteStatus.Pending">
         <span class="blinking">加载中...</span>
-        <div class="loader"></div>
+        <div class="loader" />
       </div>
       <div v-if="routeStatus === RouteStatus.Rejected">
         <svg aria-hidden="true">
-          <use xlink:href="#icon-jiazaishibai"></use>
+          <use xlink:href="#icon-jiazaishibai" />
         </svg>
         <span>加载失败，请稍后再试</span>
       </div>
     </div>
   </transition-group>
-  <a-config-provider :theme="{ algorithm: currentTheme === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm }">
-    <div class="app" id="youyu-app">
+  <a-config-provider :theme="{ algorithm: getTheme() }">
+    <div
+      id="youyu-app"
+      class="app"
+    >
       <a-config-provider :locale="zhCN">
-        <div class="header" id="header">
+        <div
+          id="header"
+          class="header"
+        >
           <YHeader />
         </div>
-        <div class="main-app" id="main-app" v-if="isRouterAlive">
+        <div
+          v-if="isRouterAlive"
+          id="main-app"
+          class="main-app"
+        >
           <router-view />
         </div>
         <YFooter />
@@ -28,7 +41,7 @@
   </a-config-provider>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { nextTick, ref, provide, computed, watch } from 'vue';
 import { useStore } from 'vuex';
 import { theme } from 'ant-design-vue';
@@ -44,9 +57,19 @@ const isRouterAlive = ref<boolean>(true);
 const currentTheme = computed(() => getters.currentTheme);
 const isLogin = computed(() => getters['isLogin']);
 
+/**
+ * 获取主题配置算法
+ */
+function getTheme() {
+  return currentTheme.value === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm;
+}
+
+/**
+ * reload 重新渲染
+ */
 function reload() {
   isRouterAlive.value = false;
-  nextTick(function() {
+  nextTick(function () {
     isRouterAlive.value = true;
   });
 }
@@ -56,11 +79,7 @@ function reload() {
  */
 watch(
   () => isLogin.value,
-  newVal => {
-    if (newVal) {
-      reload();
-    }
-  }
+  newVal => newVal && reload(),
 );
 
 provide('reload', reload);

@@ -5,24 +5,24 @@
         <UserInfoPanel v-if="post?.userId" :id="post?.userId" />
       </div>
     </div>
-    <div class="post-body" id="aside-right">
+    <div id="aside-right" class="post-body">
       <div class="post-main">
-        <div class="post-title" v-html="post?.title"></div>
+        <div class="post-title" v-html="post?.title" />
         <div class="post-info">
           <div class="post-info-detail">
             <div class="post-category">
-              <div class="category-name cp" v-if="post?.categoryName">
+              <div v-if="post?.categoryName" class="category-name cp">
                 {{ post?.categoryName }}
               </div>
             </div>
             <div class="author-info">
               <RouterLink :to="`/user/${post?.user?.id}`">
-                <i-user theme="outline" size="15" fill="currentColor" />
+                <i-user fill="currentColor" size="15" theme="outline" />
                 <span>{{ post?.user?.nickname }}</span>
               </RouterLink>
             </div>
             <div class="view-count">
-              <i-preview-open theme="outline" size="18" fill="currentColor" />
+              <i-preview-open fill="currentColor" size="18" theme="outline" />
               <span>{{ post?.viewCount }} 次查看</span>
             </div>
             <div class="create-time">
@@ -31,28 +31,33 @@
                   <div>首次发布：{{ post?.createTime }}</div>
                   <div>最近更新：{{ post?.updateTime }}</div>
                 </template>
-                <i-time theme="outline" size="15" fill="currentColor" />
+                <i-time fill="currentColor" size="15" theme="outline" />
                 <span>发布于 {{ post?.createTime?.substring(0, 16) }}</span>
               </a-tooltip>
             </div>
             <div class="text-amount">
-              <i-add-text-two theme="outline" size="16" fill="currentColor" />
+              <i-add-text-two fill="currentColor" size="16" theme="outline" />
               <span>{{ post?.content.length }} 字</span>
             </div>
             <div class="operation-btns">
-              <span class="operation-item edit cp" v-if="userInfo.id === post?.userId" @click="handleEdit">编辑</span>
               <span
-                class="operation-item hide cp"
+                v-if="userInfo.id === post?.userId"
+                class="operation-item edit cp"
+                @click="handleEdit"
+                >编辑</span
+              >
+              <span
                 v-if="userInfo.id === post?.userId"
                 :class="{ danger: !post?.status }"
+                class="operation-item hide cp"
                 @click="handleHide"
               >
                 {{ post?.status ? '设为公开' : '设为私密' }}
               </span>
             </div>
           </div>
-          <div class="post-info-copyright" :class="{ unfold: !fold }">
-            <div class="copyright-original" v-if="post?.createType === '0'">
+          <div :class="{ unfold: !fold }" class="post-info-copyright">
+            <div v-if="post?.createType === '0'" class="copyright-original">
               <div class="creative-commons">
                 版权声明：本文为博主原创文章，遵循
                 <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC 4.0 BY-SA </a>
@@ -65,34 +70,38 @@
                 </a>
               </div>
             </div>
-            <div class="copyright-reprint" v-else>
+            <div v-else class="copyright-reprint">
               <div class="creative-commons">
                 原文链接：
                 <a :href="post?.originalLink">{{ post?.originalLink }}</a>
               </div>
             </div>
           </div>
-          <div class="expand-btn" :class="{ 'btn-expand': !fold }" @click="handleFold">
-            <i-down theme="outline" size="14" fill="currentColor" />
+          <div :class="{ 'btn-expand': !fold }" class="expand-btn" @click="handleFold">
+            <i-down fill="currentColor" size="14" theme="outline" />
           </div>
         </div>
         <div class="post-main-content">
           <Spin v-if="!post?.id" height="500px" />
-          <div class="post-summary" v-if="false">
+          <div v-if="false" class="post-summary">
             <div class="post-summary-title">摘要</div>
-            <div class="post-summary-summary" v-html="post?.summary"></div>
+            <div class="post-summary-summary" v-html="post?.summary" />
           </div>
           <div class="post-content">
-            <MdPreview editorId="post-content" :text="post?.content" @onHtmlChanged="onHtmlChanged" />
+            <MdPreview
+              :text="post?.content"
+              editor-id="post-content"
+              @on-html-changed="onHtmlChanged"
+            />
           </div>
           <!--          <a-divider>感谢观看</a-divider>-->
-          <div class="post-tags" v-if="tags?.length">
-            <div class="tag-name cp" v-for="item in tags" :key="item">
-              <i-tag-one theme="outline" size="16" fill="currentColor" />
+          <div v-if="tags?.length" class="post-tags">
+            <div v-for="item in tags" :key="item" class="tag-name cp">
+              <i-tag-one fill="currentColor" size="16" theme="outline" />
               {{ item }}
             </div>
           </div>
-          <div class="post-column-list" v-if="post?.columns?.length">
+          <div v-if="post?.columns?.length" class="post-column-list">
             <div class="include-text">本文已收录至：</div>
             <PostColumn v-for="(item, index) in post?.columns" :key="index" :data="item" />
           </div>
@@ -100,14 +109,14 @@
       </div>
       <div class="post-right">
         <div class="post-category">
-          <MdCatalogPanel editorId="post-content" />
+          <MdCatalogPanel editor-id="post-content" />
         </div>
         <div class="post-operation">
-          <PostOperation v-if="post" @scrollToComment="scrollToComment" />
+          <PostOperation v-if="post" @scroll-to-comment="scrollToComment" />
         </div>
       </div>
       <div class="post-comment">
-        <div class="post-comment-list" ref="commentRef">
+        <div ref="commentRef" class="post-comment-list">
           <PostComment v-if="post" ref="postComment" />
         </div>
       </div>
@@ -118,8 +127,8 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, provide, readonly, watch, inject, nextTick } from 'vue';
+<script lang="ts" setup>
+import { ref, computed, provide, readonly, watch, inject } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { Modal, message } from 'ant-design-vue';
 import { useStore } from 'vuex';
@@ -148,7 +157,9 @@ const { dispatch, getters } = useStore();
 const post = ref<Post>();
 const fold = ref(true);
 const userInfo = computed(() => getters['userInfo']);
-const tags = computed(() => (post?.value?.tags?.length ? (post.value.tags as string).split(',') : []));
+const tags = computed(() =>
+  post?.value?.tags?.length ? (post.value.tags as string).split(',') : [],
+);
 const commentRef = ref<HTMLDivElement | null>(null);
 const postComment = ref<typeof PostComment | null>(null);
 const isLogin = computed(() => getters['isLogin']);
@@ -170,7 +181,7 @@ watch(
     if (newVal) {
       reload && reload();
     }
-  }
+  },
 );
 
 function handleEdit() {

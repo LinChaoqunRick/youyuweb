@@ -1,15 +1,25 @@
 import { getElementTop } from '@/assets/utils/utils';
 import { useResizeObserver } from '@vueuse/core';
 
+interface EventHTMLElement extends HTMLElement {
+  handleFixed: (callback: () => void) => void;
+  stopObserve: () => void;
+}
+
+
 /**
  *  cacheTop: 变化方向时，记录变化时刻的elementTop值
  *  asideParent: aside的外层元素
  *
  */
-
 export default {
-  mounted(el) {
-    let header, footer, aside, asideParent, elInitTop, cacheTop;
+  mounted(el: EventHTMLElement) {
+    const header: HTMLElement = document.getElementById('header')!;
+    const footer: HTMLElement = document.getElementById('footer')!;
+    const aside: HTMLElement = el;
+    const asideParent: HTMLElement = el.parentNode as HTMLElement;
+    let elInitTop: number;
+    let cacheTop: number;
 
     const defaultGap = 8;
 
@@ -19,13 +29,13 @@ export default {
       return () => {
         elInitTop = getElementTop(asideParent);
 
-        let afterScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-        let dir = afterScrollTop - beforeScrollTop >= 0 ? 1 : 0;
+        const afterScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+        const dir = afterScrollTop - beforeScrollTop >= 0 ? 1 : 0;
 
         beforeScrollTop = afterScrollTop;
 
-        let windowScrollBottom = document.documentElement.scrollTop + document.documentElement.clientHeight;
-        let windowScrollTop = document.documentElement.scrollTop;
+        const windowScrollBottom = document.documentElement.scrollTop + document.documentElement.clientHeight;
+        const windowScrollTop = document.documentElement.scrollTop;
 
         // 如果aside高度比较小，直接sticky
         if (elInitTop + aside.clientHeight < window.innerHeight) {
@@ -79,25 +89,21 @@ export default {
       };
     }
 
-    el.onScroll = handleScroll();
+    el.handleFixed = handleScroll();
 
-    header = document.getElementById('header');
-    footer = document.getElementById('footer');
     cacheTop = 0;
-    aside = el;
-    asideParent = el.parentNode;
-    document.addEventListener('scroll', el.onScroll, false);
+    document.addEventListener('scroll', el.handleFixed, false);
     const { stop } = useResizeObserver(document.getElementById('app'), () => {
-      el.onScroll();
+      el.handleFixed();
     });
     el.stopObserve = stop;
   },
 
-  beforeUnmount(el) {
+  beforeUnmount(el: EventHTMLElement) {
     el.stopObserve();
   },
 
-  unmounted(el) {
-    document.removeEventListener('scroll', el.onScroll, false);
-  },
+  unmounted(el: EventHTMLElement) {
+    document.removeEventListener('scroll', el.handleFixed, false);
+  }
 };

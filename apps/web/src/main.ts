@@ -42,9 +42,7 @@ app.config.globalProperties.$dayjs = dayjs;
 dayjs.locale('zh-cn'); // use loaded locale globally
 
 config({
-  markdownItConfig(md) {
-
-  },
+  markdownItConfig(md) {},
   codeMirrorExtensions(theme, extensions) {
     return [...extensions, lineNumbers()];
   },
