@@ -1,36 +1,63 @@
 <template>
   <div class="user-info-panel">
-    <slot name="basic" :user="user" :dataItems="dataItems">
+    <slot name="basic" :user="user" :data-items="dataItems">
       <div class="basic-info ant-card-bordered">
         <div class="user-avatar-nickname">
           <div class="user-avatar">
             <RouterLink :to="`/user/${user.id}`">
-              <img :src="user.avatar" alt="" />
+              <img :src="user.avatar" alt="">
             </RouterLink>
-            <div class="user-gender" v-if="user.sex !== undefined">
-              <i-female v-if="user.sex == 1" theme="outline" size="14" fill="#ffc0cb" />
-              <i-male v-else theme="outline" size="14" fill="#00CFF3" />
+            <div v-if="user.sex !== undefined" class="user-gender">
+              <i-female
+                v-if="user.sex == 1"
+                theme="outline"
+                size="14"
+                fill="#ffc0cb"
+              />
+              <i-male
+                v-else
+                theme="outline"
+                size="14"
+                fill="#00CFF3"
+              />
             </div>
           </div>
           <div class="user-nickname">
             <RouterLink :to="`/user/${user.id}`">
-              <div class="nickname">{{ user.nickname }}</div>
+              <div class="nickname">
+                {{ user.nickname }}
+              </div>
             </RouterLink>
-            <div class="uid">uid: {{ user.id }}</div>
+            <div class="uid">
+              uid: {{ user.id }}
+            </div>
           </div>
         </div>
         <div class="user-statistics">
-          <div class="statis-data" v-for="item in dataItems" @click="handleClickStat(item)">
-            <div class="data-value">{{ user.extraInfo?.[item.value] }}</div>
-            <div class="data-label">{{ item.label }}</div>
+          <div
+            v-for="item in dataItems"
+            :key="item.value"
+            class="statis-data"
+            @click="handleClickStat(item)"
+          >
+            <div class="data-value">
+              {{ user.extraInfo?.[item.value] }}
+            </div>
+            <div class="data-label">
+              {{ item.label }}
+            </div>
           </div>
         </div>
         <div class="user-signature">
-          <div class="sign-title">描述：</div>
+          <div class="sign-title">
+            描述：
+          </div>
           <div>{{ user.signature }}</div>
         </div>
         <div class="user-contact">
-          <div class="contact-title">社交：</div>
+          <div class="contact-title">
+            社交：
+          </div>
           <div class="contact-list">
             <div class="contact-item">
               <!--<i-github theme="outline" size="20" fill="#909090"/>-->
@@ -44,11 +71,16 @@
               Ta的主页
             </RouterLink>
           </a-button>
-          <a-button @click="handleMessage" v-if="!isOwn">
+          <a-button v-if="!isOwn" @click="handleMessage">
             <!--            <i-mail theme="outline" size="14" fill="currentColor"/>-->
             私信
           </a-button>
-          <a-button type="primary" danger v-login="handleFollow" v-if="!isOwn">
+          <a-button
+            v-if="!isOwn"
+            v-login="handleFollow"
+            type="primary"
+            danger
+          >
             <!--            <i-remind theme="outline" size="14" fill="currentColor"/>-->
             {{ user.follow ? '取消关注' : '关注' }}
           </a-button>
@@ -59,12 +91,16 @@
     <div class="column-list mt-8">
       <a-card title="Ta的专栏" style="width: 100%">
         <template #extra>
-          <RouterLink :to="`/user/${user.id}/column`"> 更多</RouterLink>
+          <RouterLink :to="`/user/${user.id}/column`">
+            更多
+          </RouterLink>
         </template>
-        <div class="column-list" v-if="columnList.length">
-          <ColumnItemMini v-for="item in columnList" :data="item" />
+        <div v-if="columnList.length" class="column-list">
+          <ColumnItemMini v-for="item in columnList" :key="item.id" :data="item" />
         </div>
-        <div v-else class="no-data">暂无数据</div>
+        <div v-else class="no-data">
+          暂无数据
+        </div>
       </a-card>
     </div>
     <!--    <div class="hot-posts">
@@ -83,11 +119,15 @@
       <a-card title="最新文章" style="width: 100%">
         <div class="post-list">
           <ul v-if="newPosts.length">
-            <li v-for="item in newPosts">
-              <router-link :to="{ name: 'PostDetail', params: { postId: item.id } }" v-html="item.title"></router-link>
+            <li v-for="item in newPosts" :key="item.id">
+              <router-link :to="{ name: 'PostDetail', params: { postId: item.id } }">
+                {{ item.title }}
+              </router-link>
             </li>
           </ul>
-          <div v-else class="no-data">暂无数据</div>
+          <div v-else class="no-data">
+            暂无数据
+          </div>
         </div>
       </a-card>
     </div>
@@ -110,8 +150,8 @@ const { getters, commit, dispatch } = useStore();
 const props = defineProps({
   id: {
     type: [String, Number],
-    required: true,
-  },
+    required: true
+  }
 });
 
 const userInfo = computed(() => getters['userInfo']);
@@ -121,37 +161,37 @@ const emit = defineEmits(['onLoaded']);
 const dataItems = [
   {
     value: 'postCount',
-    label: '原创',
+    label: '原创'
   },
   {
     value: 'viewCount',
-    label: '阅读',
+    label: '阅读'
   },
   {
     value: 'likeCount',
-    label: '点赞',
+    label: '点赞'
   },
   {
     value: 'fansCount',
-    label: '粉丝',
-  },
+    label: '粉丝'
+  }
 ];
 
 const isOwn = ref(true);
 const user = ref<User | object>({});
 const columnList = ref([]);
-const hotPosts = ref([]);
+// const hotPosts = ref([]);
 const newPosts = ref([]);
 
 function handleClickStat(item: statType) {
   const { value } = item;
   if (value === 'viewCount') {
     Modal.info({
-      content: `Ta的文章已被阅读${user.value.extraInfo[item.value]}次`,
+      content: `Ta的文章已被阅读${user.value.extraInfo[item.value]}次`
     });
   } else if (value === 'likeCount') {
     Modal.info({
-      content: `Ta共收获了${user.value.extraInfo[item.value]}个点赞`,
+      content: `Ta共收获了${user.value.extraInfo[item.value]}个点赞`
     });
   } else if (value === 'postCount') {
     router.push(`/user/${props.id}/post`);
@@ -169,7 +209,7 @@ function handleFollow() {
   const isFollow = user.value.follow;
   dispatch(isFollow ? 'cancelUserFollow' : 'setUserFollow', {
     userId: userInfo.value.id,
-    userIdTo: user.value.id,
+    userIdTo: user.value.id
   }).then(res => {
     if (isFollow) {
       user.value.follow = false;
@@ -211,7 +251,7 @@ watch(
 );
 
 defineExpose({
-  user,
+  user
 });
 </script>
 

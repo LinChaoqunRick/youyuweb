@@ -2,62 +2,64 @@
   <div class="post-detail">
     <div class="post-aside">
       <div v-side-fixed class="post-aside-body">
-        <UserInfoPanel v-if="post?.userId" :id="post?.userId" />
+        <UserInfoPanel v-if="post.userId" :id="post.userId" />
       </div>
     </div>
     <div id="aside-right" class="post-body">
       <div class="post-main">
-        <div class="post-title" v-html="post?.title" />
+        <div v-if="userInfo.id === post.userId" class="post-status">
+          <a-tooltip placement="bottom">
+            <template #title>
+              <span>{{ post.status ? '仅自己可见' : '所有人可见' }}</span>
+            </template>
+            <svg aria-hidden="true" @click="handleHide">
+              <use v-if="post.status" xlink:href="#icon-yincang" />
+              <use v-else xlink:href="#icon-liulan" />
+            </svg>
+          </a-tooltip>
+        </div>
+        <div class="post-title" v-text="post.title" />
         <div class="post-info">
           <div class="post-info-detail">
             <div class="post-category">
-              <div v-if="post?.categoryName" class="category-name cp">
-                {{ post?.categoryName }}
+              <div v-if="post.categoryName" class="category-name cp">
+                {{ post.categoryName }}
               </div>
             </div>
             <div class="author-info">
-              <RouterLink :to="`/user/${post?.user?.id}`">
+              <RouterLink :to="`/user/${post.user.id}`">
                 <i-user fill="currentColor" size="15" theme="outline" />
-                <span>{{ post?.user?.nickname }}</span>
+                <span>{{ post.user.nickname }}</span>
               </RouterLink>
             </div>
             <div class="view-count">
               <i-preview-open fill="currentColor" size="18" theme="outline" />
-              <span>{{ post?.viewCount }} 次查看</span>
+              <span>{{ post.viewCount }} 次查看</span>
             </div>
             <div class="create-time">
               <a-tooltip placement="top">
                 <template #title>
-                  <div>首次发布：{{ post?.createTime }}</div>
-                  <div>最近更新：{{ post?.updateTime }}</div>
+                  <div>首次发布：{{ post.createTime }}</div>
+                  <div>最近更新：{{ post.updateTime }}</div>
                 </template>
                 <i-time fill="currentColor" size="15" theme="outline" />
-                <span>发布于 {{ post?.createTime?.substring(0, 16) }}</span>
+                <span>发布于 {{ post.createTime.substring(0, 16) }}</span>
               </a-tooltip>
             </div>
             <div class="text-amount">
               <i-add-text-two fill="currentColor" size="16" theme="outline" />
-              <span>{{ post?.content.length }} 字</span>
+              <span>{{ post.content.length }} 字</span>
             </div>
             <div class="operation-btns">
               <span
-                v-if="userInfo.id === post?.userId"
+                v-if="userInfo.id === post.userId"
                 class="operation-item edit cp"
                 @click="handleEdit"
-                >编辑</span
-              >
-              <span
-                v-if="userInfo.id === post?.userId"
-                :class="{ danger: !post?.status }"
-                class="operation-item hide cp"
-                @click="handleHide"
-              >
-                {{ post?.status ? '设为公开' : '设为私密' }}
-              </span>
+              >编辑</span>
             </div>
           </div>
           <div :class="{ unfold: !fold }" class="post-info-copyright">
-            <div v-if="post?.createType === '0'" class="copyright-original">
+            <div v-if="post.createType === '0'" class="copyright-original">
               <div class="creative-commons">
                 版权声明：本文为博主原创文章，遵循
                 <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC 4.0 BY-SA </a>
@@ -73,7 +75,7 @@
             <div v-else class="copyright-reprint">
               <div class="creative-commons">
                 原文链接：
-                <a :href="post?.originalLink">{{ post?.originalLink }}</a>
+                <a :href="post.originalLink">{{ post.originalLink }}</a>
               </div>
             </div>
           </div>
@@ -82,14 +84,16 @@
           </div>
         </div>
         <div class="post-main-content">
-          <Spin v-if="!post?.id" height="500px" />
+          <Spin v-if="!post.id" height="500px" />
           <div v-if="false" class="post-summary">
-            <div class="post-summary-title">摘要</div>
-            <div class="post-summary-summary" v-html="post?.summary" />
+            <div class="post-summary-title">
+              摘要
+            </div>
+            <div class="post-summary-summary" v-text="post.summary" />
           </div>
           <div class="post-content">
             <MdPreview
-              :text="post?.content"
+              :text="post.content"
               editor-id="post-content"
               @on-html-changed="onHtmlChanged"
             />
@@ -101,9 +105,11 @@
               {{ item }}
             </div>
           </div>
-          <div v-if="post?.columns?.length" class="post-column-list">
-            <div class="include-text">本文已收录至：</div>
-            <PostColumn v-for="(item, index) in post?.columns" :key="index" :data="item" />
+          <div v-if="post.columns?.length" class="post-column-list">
+            <div class="include-text">
+              本文已收录至：
+            </div>
+            <PostColumn v-for="(item, index) in post.columns" :key="index" :data="item" />
           </div>
         </div>
       </div>
@@ -137,7 +143,7 @@ import { scrollToTop, scrollToAnchor } from '@/assets/utils/utils';
 import type { Post } from '@/views/post/detail/types';
 
 defineOptions({
-  name: 'PostDetail',
+  name: 'PostDetail'
 });
 
 import PercentCounter from '@/components/common/utils/percentCounter/PercentCounter.vue';
@@ -154,12 +160,10 @@ const reload = inject<Function>('reload');
 const route = useRoute();
 const router = useRouter();
 const { dispatch, getters } = useStore();
-const post = ref<Post>();
+const post = ref<Post>({});
 const fold = ref(true);
 const userInfo = computed(() => getters['userInfo']);
-const tags = computed(() =>
-  post?.value?.tags?.length ? (post.value.tags as string).split(',') : [],
-);
+const tags = computed(() => post.value?.tags?.length ? (post.value.tags as string).split(',') : []);
 const commentRef = ref<HTMLDivElement | null>(null);
 const postComment = ref<typeof PostComment | null>(null);
 const isLogin = computed(() => getters['isLogin']);
@@ -181,7 +185,7 @@ watch(
     if (newVal) {
       reload && reload();
     }
-  },
+  }
 );
 
 function handleEdit() {
@@ -198,7 +202,7 @@ const handleHide = () => {
         message.success('设置成功');
         post.value!.status = status ? 0 : 1;
       });
-    },
+    }
   });
 };
 
@@ -246,6 +250,26 @@ provide('setPostAttribute', setPostAttribute);
       border-radius: 4px;
       overflow: hidden;
       background-color: var(--post-detail-background);
+      position: relative;
+
+      .post-status {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 0;
+        height: 0;
+        border-top: 50px solid rgba(24, 144, 255, 0.8); /* 三角形颜色 */
+        border-left: 50px solid transparent;
+
+        svg {
+          height: 22px;
+          width: 22px;
+          position: absolute;
+          top: -46px;
+          left: -27px;
+          cursor: pointer;
+        }
+      }
 
       .post-title {
         min-height: 35px;

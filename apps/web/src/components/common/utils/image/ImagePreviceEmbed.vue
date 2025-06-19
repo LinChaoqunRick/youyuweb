@@ -1,49 +1,114 @@
 <template>
   <div class="image-preview-embed">
     <div class="preview-top">
-      <div class="action-item" @click="onClose">
-        <i-zoom-out theme="outline" size="16" fill="currentColor" />
+      <div
+        class="action-item"
+        @click="onClose"
+      >
+        <i-zoom-out
+          theme="outline"
+          size="16"
+          fill="currentColor"
+        />
         <span class="action-name">收起</span>
       </div>
-      <div class="action-item" @click="onDetail">
-        <i-zoom-in theme="outline" size="16" fill="currentColor" />
+      <div
+        class="action-item"
+        @click="onDetail"
+      >
+        <i-zoom-in
+          theme="outline"
+          size="16"
+          fill="currentColor"
+        />
         <span class="action-name">查看大图</span>
       </div>
-      <div class="action-item" @click="onRotate('left')">
-        <i-undo theme="outline" size="15" fill="currentColor" />
+      <div
+        class="action-item"
+        @click="onRotate('left')"
+      >
+        <i-undo
+          theme="outline"
+          size="15"
+          fill="currentColor"
+        />
         <span class="action-name">向左旋转</span>
       </div>
-      <div class="action-item" @click="onRotate('right')">
-        <i-redo theme="outline" size="15" fill="currentColor" />
+      <div
+        class="action-item"
+        @click="onRotate('right')"
+      >
+        <i-redo
+          theme="outline"
+          size="15"
+          fill="currentColor"
+        />
         <span class="action-name">向右旋转</span>
       </div>
     </div>
-    <div class="preview-body" ref="previewBody">
-      <transition name="toggle" mode="in-out">
-        <a-spin :spinning="loading" :key="currentImage">
-          <img v-if="showImage" :src="currentImage" @load="onLoad" @error="onError" @progress="onProgress"
-               @click="onClose" ref="image" alt="" />
-          <div class="reload-image" v-if="fail">
-            <div class="reload-btn" @click="onReload">
-              <i-refresh theme="outline" size="16" fill="currentColor" />
+    <div
+      ref="previewBody"
+      class="preview-body"
+    >
+      <transition
+        name="toggle"
+        mode="in-out"
+      >
+        <a-spin
+          :key="currentImage"
+          :spinning="loading"
+        >
+          <img
+            v-if="showImage"
+            ref="image"
+            :src="currentImage"
+            alt=""
+            @load="onLoad"
+            @error="onError"
+            @progress="onProgress"
+            @click="onClose"
+          >
+          <div
+            v-if="fail"
+            class="reload-image"
+          >
+            <div
+              class="reload-btn"
+              @click="onReload"
+            >
+              <i-refresh
+                theme="outline"
+                size="16"
+                fill="currentColor"
+              />
               重新加载
             </div>
           </div>
         </a-spin>
       </transition>
-      <div class="change-btn last-btn" title="上一张" v-if="current > 0" @click="onChange('left')"></div>
-      <div class="change-btn next-btn" title="下一张" v-if="current < list.length - 1" @click="onChange('right')"></div>
+      <div
+        v-if="current > 0"
+        class="change-btn last-btn"
+        title="上一张"
+        @click="onChange('left')"
+      />
+      <div
+        v-if="current < list.length - 1"
+        class="change-btn next-btn"
+        title="下一张"
+        @click="onChange('right')"
+      />
     </div>
     <div class="preview-bottom">
       <div class="nav-list">
         <img
           v-for="(item, index) in list"
-          :src="item"
           :key="index"
+          :src="item"
           alt=""
           :class="{ active: index === current }"
           @click="onClick(index)"
-        />
+        >
       </div>
     </div>
   </div>
@@ -68,7 +133,7 @@ const emit = defineEmits(['onClose']);
 
 const showImage = ref<boolean>(true);
 const current = ref<number>(props.current);
-const currentImage = computed(() => props.list[current.value].split('?')[0] + '?x-oss-process=style/detailThumb');
+const currentImage = computed(() => props.list[current.value].split('?')[0]/*+ '?x-oss-process=style/detailThumb'*/);
 const loading = ref<boolean>(true);
 const fail = ref<boolean>(false);
 const image = ref<HTMLImageElement | null>(null);

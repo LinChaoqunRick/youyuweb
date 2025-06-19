@@ -4,7 +4,7 @@ import type { Column } from '@/views/user/profile/column/type';
 export interface Post {
   id: number | string;
   userId: number | null;
-  user?: User | null;
+  user: User;
   title: string;
   content: string;
   categoryId?: number | null;
