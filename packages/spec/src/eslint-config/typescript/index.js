@@ -7,11 +7,7 @@ module.exports = {
   overrides: [
     {
       files: ['*.ts', '*.tsx'],
-      extends: [
-        'plugin:@typescript-eslint/recommended',
-        'plugin:prettier/recommended',
-        'prettier',
-      ],
+      extends: ['plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended', 'prettier'],
       plugins: ['import', 'prettier'],
       parser: '@typescript-eslint/parser',
       parserOptions: {

@@ -8,19 +8,19 @@ module.exports = {
       extends: ['plugin:prettier/recommended', 'prettier'],
       parserOptions: {
         ecmaFeatures: {
-          impliedStrict: true
+          impliedStrict: true,
         },
-        ecmaVersion: 2020
+        ecmaVersion: 2020,
       },
       rules: {
         ...require('../rules').javascript,
         'prettier/prettier': [
           1,
           {
-            ...require('../../prettier-config')
-          }
-        ]
-      }
-    }
-  ]
+            ...require('../../prettier-config'),
+          },
+        ],
+      },
+    },
+  ],
 };
