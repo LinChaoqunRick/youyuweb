@@ -1,4 +1,4 @@
-import http from "@/network/https";
+import http from '@/network/https';
 import {
   CREATE_NOTE,
   LIST_NOTE,
@@ -10,7 +10,7 @@ import {
   GET_NOTE_CHAPTER,
   UPDATE_NOTE_CHAPTER,
   DELETE_NOTE_CHAPTER,
-} from "@/network/apis";
+} from '@youyu/shared/apis';
 
 export default {
   actions: {

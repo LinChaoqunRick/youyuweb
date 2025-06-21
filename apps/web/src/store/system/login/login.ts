@@ -1,4 +1,4 @@
-import http from "@/network/https";
+import http from '@/network/https';
 import {
   ACCOUNT_LOGIN,
   ACCOUNT_LOGOUT,
@@ -7,28 +7,28 @@ import {
   ACCOUNT_REGISTER,
   GET_CURRENT_USER,
   GET_CONNECT_URL,
-  CONNECT_BIND
-} from "@/network/apis";
+  CONNECT_BIND,
+} from '@youyu/shared/apis';
 
 export const RouteStatus = {
   Pending: 'pending',
   Rejected: 'reject',
-  Resolved: 'resolved'
-}
+  Resolved: 'resolved',
+};
 
 export default {
   state: () => ({
     showLogin: false,
-    user: JSON.parse(localStorage.getItem("user") || "{}"),
+    user: JSON.parse(localStorage.getItem('user') || '{}'),
     authorId: 10000, // 本站作者id
-    routeStatus: RouteStatus.Pending
+    routeStatus: RouteStatus.Pending,
   }),
   getters: {
     loginPanelStatus(state: any) {
       return state.showLogin;
     },
     isLogin(state: any) {
-      return JSON.stringify(state.user) !== "{}";
+      return JSON.stringify(state.user) !== '{}';
     },
     userInfo(state: any) {
       return state.user;
@@ -40,26 +40,26 @@ export default {
       return state.authorId;
     },
     getRouteStatus(state: any) {
-      return state.routeStatus
-    }
+      return state.routeStatus;
+    },
   },
   mutations: {
     changeLogin(state: any, status: any) {
       state.showLogin = status;
     },
     changeUser(state: any, user: any) {
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem('user', JSON.stringify(user));
       state.user = user;
     },
     setRouteStatus(state: any, status: string) {
-      state.routeStatus = status
-    }
+      state.routeStatus = status;
+    },
   },
   actions: {
     token(context: any, params: object) {
       return http.post(ACCOUNT_LOGIN, params, {
         headers: {
-          Authorization: "Basic " + btoa("web" + ":" + "654321"),
+          Authorization: 'Basic ' + btoa('web' + ':' + '654321'),
         },
       });
     },

@@ -1,8 +1,8 @@
 <template>
   <div class="moment-list">
     <div class="moment-list-left mr-8">
-      <div class="moment-list-left-menu" v-side-fixed>
-        <div v-for="menu in menuList" class="menu-item">
+      <div v-side-fixed class="moment-list-left-menu">
+        <div v-for="menu in menuList" :key="menu.title" class="menu-item">
           <RouterLink :to="menu.path">
             <component :is="menu.icon" theme="filled" size="16" fill="currentColor" />
             <span>{{ menu.title }}</span>
@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="moment-list-center mr-8">
-      <MomentEditor @saveSuccess="saveSuccess" />
+      <MomentEditor @save-success="saveSuccess" />
       <EmptyPage ref="EmptyPageRef" />
     </div>
     <div class="moment-list-right">

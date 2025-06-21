@@ -4,7 +4,7 @@ import type { RouteRecordRaw } from 'vue-router';
 import permissionList from '../permission';
 import { cloneDeep } from 'lodash';
 import http from '@/network/https';
-import { GET_AUTH_ROUTES } from '@/network/apis';
+import { GET_AUTH_ROUTES } from '@youyu/shared/apis';
 import { router } from '@/router';
 
 interface routeItemType {
@@ -39,7 +39,7 @@ function generateRoutes(
   permissionList: RouteRecordRaw[],
   codeList: routeItemType[],
   _routes: RouteRecordRaw[],
-  parent: RouteRecordRaw | null
+  parent: RouteRecordRaw | null,
 ) {
   permissionList.forEach(route => {
     if (codeList.findIndex(item => item.code === route.meta?.code) > -1) {

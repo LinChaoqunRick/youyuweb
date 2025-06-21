@@ -1,4 +1,4 @@
-import http from "@/network/https";
+import http from '@/network/https';
 import {
   GET_USER_LIST,
   GET_USER_DETAIL,
@@ -33,7 +33,7 @@ import {
   DELETE_FAVORITES,
   LIST_FAVORITES,
   FAVORITES_POST_PAGE,
-} from "@/network/apis";
+} from '@youyu/shared/apis';
 
 export default {
   actions: {
@@ -123,12 +123,12 @@ export default {
     },
     createFavorites(context: any, params: object) {
       return http.post(CREATE_FAVORITES, params, {
-        headers: {"Content-Type": "application/json"},
+        headers: { 'Content-Type': 'application/json' },
       });
     },
     updateFavorites(context: any, params: object) {
       return http.post(UPDATE_FAVORITES, params, {
-        headers: {"Content-Type": "application/json"},
+        headers: { 'Content-Type': 'application/json' },
       });
     },
     deleteFavorites(context: any, params: object) {

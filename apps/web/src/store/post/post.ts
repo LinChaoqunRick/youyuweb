@@ -1,4 +1,4 @@
-import http from "@/network/https";
+import http from '@/network/https';
 import {
   GET_POST_LIST,
   GET_POST_DETAIL,
@@ -23,8 +23,9 @@ import {
   GET_POST_COLLECT_INFO,
   CANCEL_POST_COLLECT,
   OSS_POLICY,
-  OSS_STS, HIDE_POST
-} from '@/network/apis';
+  OSS_STS,
+  HIDE_POST,
+} from '@youyu/shared/apis';
 
 export default {
   actions: {
@@ -70,7 +71,7 @@ export default {
     },
     createPost(context: any, params: any) {
       return http.post(CREATE_POST, params, {
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
       });
     },
     getPostEditDetail(context: any, params: any) {
@@ -78,7 +79,7 @@ export default {
     },
     updatePost(context: any, params: any) {
       return http.post(UPDATE_POST, params, {
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
       });
     },
     deletePost(context: any, params: any) {

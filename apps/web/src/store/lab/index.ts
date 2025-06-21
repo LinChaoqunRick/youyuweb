@@ -1,12 +1,12 @@
-import http from "@/network/https";
+import http from '@/network/https';
 import {
   GET_MICRO_MODULE_CONFIG,
   GET_SECURITY_DEVICE_LIST,
   GET_ALARM_LEVEL_LIST,
   GET_MICRO_CAPACITY_UBIT,
   GET_MICRO_CAPACITY_COOLING,
-  GET_MICRO_CAPACITY_POWER
-} from "@/network/apis";
+  GET_MICRO_CAPACITY_POWER,
+} from '@youyu/shared/apis';
 
 export default {
   actions: {

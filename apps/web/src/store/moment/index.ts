@@ -1,4 +1,4 @@
-import http from "@/network/https";
+import http from '@/network/https';
 import {
   MOMENT_CREATE,
   MOMENT_UPDATE,
@@ -17,18 +17,18 @@ import {
   CANCEL_MOMENT_LIKE,
   SET_MOMENT_COMMENT_LIKE,
   CANCEL_MOMENT_COMMENT_LIKE,
-} from "@/network/apis";
+} from '@youyu/shared/apis';
 
 export default {
   actions: {
     createMoment(context: any, params: object) {
       return http.post(MOMENT_CREATE, params, {
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
       });
     },
     updateMoment(context: any, params: object) {
       return http.post(MOMENT_UPDATE, params, {
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
       });
     },
     deleteMoment(context: any, params: object) {

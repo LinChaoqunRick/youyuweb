@@ -13,7 +13,9 @@
         </RouterLink>
         <div class="user-info-basic">
           <RouterLink :to="`/user/${user.id}/moment`">
-            <div class="user-nickname">{{ user.nickname }}</div>
+            <div class="user-nickname">
+              {{ user.nickname }}
+            </div>
           </RouterLink>
           <div class="user-info-data">
             <span>时刻:{{ user.extraInfo?.momentCount }}</span>
@@ -24,7 +26,9 @@
       </div>
     </div>
     <div class="user-info-body">
-      <div class="user-signature"><span style="font-weight: bold">简介：</span>{{ user.signature }}</div>
+      <div class="user-signature">
+        <span style="font-weight: bold">简介：</span>{{ user.signature }}
+      </div>
       <div class="user-signature">
         <span style="font-weight: bold">主页：</span>
         <a v-if="user.homepage" :href="user.homepage" target="_blank">
@@ -118,7 +122,8 @@ const onMessage = () => {
   width: 320px;
 
   .user-info-banner {
-    background: url('https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/flower.jpg?x-oss-process=style/detailThumb');
+    background: url('https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/flower.jpg?x-oss-process=style/blur');
+    //background-image: linear-gradient(to top, #355c7d, #6c5b7b, #c06c84);
     height: 90px;
     background-size: cover;
     margin-bottom: 30px;

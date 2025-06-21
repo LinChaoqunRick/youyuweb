@@ -15,7 +15,7 @@ import {
   GET_ALBUM_IMAGE_ORIGIN,
   GET_MINE_ALBUM_LIST,
   SET_ALBUM_COVER,
-} from '@/network/apis';
+} from '@youyu/shared/apis';
 
 export default {
   actions: {

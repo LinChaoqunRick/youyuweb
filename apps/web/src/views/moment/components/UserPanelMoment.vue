@@ -3,11 +3,11 @@
     <div class="user-info">
       <div v-if="!isLogin" class="no-login-panel">
         <div class="basic-info">
-          <div class="avatar cp" v-login>
-            <img src="/static/images/avatar/default_avatar.png" alt="默认头像"/>
+          <div v-login class="avatar cp">
+            <img src="/static/images/avatar/default_avatar.png" alt="默认头像" />
           </div>
           <div class="basic-data">
-            <div class="nickname cp" v-login>登录 / 注册</div>
+            <div v-login class="nickname cp">登录 / 注册</div>
             <div class="signature">即刻玩转时刻</div>
           </div>
         </div>
@@ -28,41 +28,54 @@
       </div>
       <div v-else class="login-panel">
         <div class="basic-info">
-          <div class="avatar cp" v-login>
-            <img :src="userMomentInfo.avatar || '/static/images/avatar/default_avatar.png'" alt="默认头像"/>
+          <div v-login class="avatar cp">
+            <img
+              :src="userMomentInfo.avatar || '/static/images/avatar/default_avatar.png'"
+              alt="默认头像"
+            />
           </div>
           <div class="basic-data">
-            <div class="nickname cp" v-login>{{ userMomentInfo.nickname }}</div>
-            <div class="signature">{{ userMomentInfo.signature }}</div>
+            <div v-login class="nickname cp">
+              {{ userMomentInfo.nickname }}
+            </div>
+            <div class="signature">
+              {{ userMomentInfo.signature }}
+            </div>
           </div>
         </div>
         <div class="extra-info">
-          <div class="data-item cp" @click="router.push('/moment/me')">
-            <div class="data-value">{{ userMomentInfo.extraInfo?.momentCount }}</div>
+          <div class="data-item cp" @click="router.push(`/user/${userInfo.id}/moment`)">
+            <div class="data-value">
+              {{ userMomentInfo.extraInfo?.momentCount }}
+            </div>
             <div class="data-title">时刻</div>
           </div>
           <div class="data-item">
-            <div class="data-value cp">{{ userMomentInfo.extraInfo?.likeCount }}</div>
+            <div class="data-value cp">
+              {{ userMomentInfo.extraInfo?.likeCount }}
+            </div>
             <div class="data-title">点赞</div>
           </div>
           <div class="data-item">
-            <div class="data-value cp">{{ userMomentInfo.extraInfo?.fansCount }}</div>
+            <div class="data-value cp">
+              {{ userMomentInfo.extraInfo?.fansCount }}
+            </div>
             <div class="data-title">粉丝</div>
           </div>
         </div>
       </div>
     </div>
-    <Announcement class="mt-8"/>
+    <Announcement class="mt-8" />
   </div>
 </template>
 
 <script setup lang="ts">
-import {ref, computed} from "vue";
-import {useStore} from "vuex";
-import {useRouter} from "vue-router"
-import Announcement from "@/components/common/share/announcement/index.vue";
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import Announcement from '@/components/common/share/announcement/index.vue';
 
-const {getters, dispatch} = useStore();
+const { getters, dispatch } = useStore();
 const router = useRouter();
 
 const isLogin = computed(() => getters['isLogin']);
@@ -71,18 +84,16 @@ const userMomentInfo = ref({});
 
 const initData = () => {
   if (isLogin.value) {
-    dispatch("getMomentUserDetail", {userId: userInfo.value.id}).then(res => {
+    dispatch('getMomentUserDetail', { userId: userInfo.value.id }).then(res => {
       userMomentInfo.value = res.data;
-    })
+    });
   }
-}
+};
 
 initData();
 </script>
 
 <style scoped lang="scss">
-
-
 .user-panel-moment {
   border-radius: 4px;
   width: 300px;
