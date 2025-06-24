@@ -1,9 +1,12 @@
 import { createApp } from 'vue';
+
 import { Modal, Button } from 'ant-design-vue';
 import Antd from 'ant-design-vue';
-import store from '@/store';
-import router from '@/router';
+
 import IconPark from '@/libs/plugins/iconpark';
+import router from '@/router';
+import store from '@/store';
+
 import type { ModalConfig } from './types';
 
 export default function openModal<T>(config: ModalConfig): Promise<T> {
@@ -19,7 +22,7 @@ export default function openModal<T>(config: ModalConfig): Promise<T> {
       componentProps: {},
       beforeConfirm: null,
     },
-    config
+    config,
   );
   if (!config.component) {
     throw new Error('component is required!');
@@ -46,23 +49,23 @@ export default function openModal<T>(config: ModalConfig): Promise<T> {
           };
         },
         template: `
-        <Modal v-model:open="modalVisible" v-bind="$props" class="modal-body" @cancel="handleCancel(false)">
-          <div class="modal-content" style="font-size:14px">
-            <component ref="modalBody" is="${config.component.name}" v-bind="componentProps" />
-          </div>
-          <template v-slot:closeIcon>
-            <i-close theme="outline" size="18" fill="currentColor" />
-          </template>
-          <template v-slot:footer>
-            <Button v-if="cancelText" type="text" @click="handleCancel" :size="buttonSize">
-              {{ cancelText }}
-            </Button>
-            <Button v-if="okText" type="primary" @click="handleOk" :size="buttonSize" :loading="confirmLoading">
-              {{ okText }}
-            </Button>
-          </template>
-        </Modal>
-      `,
+          <Modal v-model:open="modalVisible" v-bind="$props" class="modal-body" @cancel="handleCancel(false)">
+            <div class="modal-content" style="font-size:14px">
+              <component ref="modalBody" is="${config.component.name}" v-bind="componentProps" />
+            </div>
+            <template v-slot:closeIcon>
+              <i-close theme="outline" size="18" fill="currentColor" />
+            </template>
+            <template v-slot:footer>
+              <Button v-if="cancelText" type="text" @click="handleCancel" :size="buttonSize">
+                {{ cancelText }}
+              </Button>
+              <Button v-if="okText" type="primary" @click="handleOk" :size="buttonSize" :loading="confirmLoading">
+                {{ okText }}
+              </Button>
+            </template>
+          </Modal>
+        `,
         props: {
           componentProps: {
             type: Object,
@@ -113,7 +116,7 @@ export default function openModal<T>(config: ModalConfig): Promise<T> {
           },
         },
       },
-      config
+      config,
     )
       .use(store)
       .use(router)

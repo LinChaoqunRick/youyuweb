@@ -3,14 +3,21 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
+    "lint": "pnpm -r lint",
+    "build": "pnpm -r build",
+    "dev": "pnpm -r dev",
     "dev:web": "pnpm --filter ./apps/web dev",
     "dev:manage": "pnpm --filter ./apps/manage dev",
     "lint-staged": "lint-staged",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "lint:apps": "pnpm --filter=@app/* -r run lint:fix",
+    "lint:pkgs": "pnpm --filter=@youyu/* -r run lint:fix",
+    "stylelint:apps": "pnpm --filter=@app/* -r run stylelint:fix",
+    "stylelint:pkgs": "pnpm --filter=@iot/* -r run stylelint:fix",
+    "commitlint": "commitlint"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
-    "@rushstack/eslint-patch": "^1.1.4",
     "@vitejs/plugin-vue": "^3.0.3",
     "@vitejs/plugin-vue-jsx": "^2.1.1",
     "@vue/tsconfig": "^0.1.3",

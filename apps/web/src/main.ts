@@ -1,21 +1,23 @@
 import { createApp } from 'vue';
-import App from './App.vue';
-import router from './router';
-import store from '@/store';
-import Antd from 'ant-design-vue';
-import RelativeTime from 'dayjs/plugin/relativeTime';
-import dayjs from 'dayjs';
-import IconPark from '@/libs/plugins/iconpark';
-import { config } from 'md-editor-v3';
-import { lineNumbers } from '@codemirror/view';
 
-import vSideFixed from './libs/directives/vSideFixed';
-import login from '@/libs/directives/login';
-import slideIn from '@/libs/directives/vSlideIn';
-import scrollToEl from '@/libs/directives/scrollToEl.js';
-import row from '@/libs/directives/row';
-import focus from '@/libs/directives/focus';
+import { lineNumbers } from '@codemirror/view';
+import Antd from 'ant-design-vue';
+import dayjs from 'dayjs';
 import zhcn from 'dayjs/locale/zh-cn';
+import RelativeTime from 'dayjs/plugin/relativeTime';
+import { config } from 'md-editor-v3';
+
+import focus from '@/libs/directives/focus';
+import login from '@/libs/directives/login';
+import row from '@/libs/directives/row';
+import scrollToEl from '@/libs/directives/scrollToEl.js';
+import slideIn from '@/libs/directives/vSlideIn';
+import IconPark from '@/libs/plugins/iconpark';
+import store from '@/store';
+
+import App from './App.vue';
+import vSideFixed from './libs/directives/vSideFixed';
+import router from './router';
 
 import './assets/css/main.scss';
 import './assets/css/theme/dark.scss';
@@ -42,7 +44,9 @@ app.config.globalProperties.$dayjs = dayjs;
 dayjs.locale('zh-cn'); // use loaded locale globally
 
 config({
-  markdownItConfig(md) {},
+  markdownItConfig(md) {
+    // some config ...
+  },
   codeMirrorExtensions(theme, extensions) {
     return [...extensions, lineNumbers()];
   },
@@ -50,7 +54,8 @@ config({
     highlight: {
       css: {
         atom: {
-          light: 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css',
+          light:
+            'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css',
           dark: 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css',
         },
       },

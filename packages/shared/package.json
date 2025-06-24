@@ -9,5 +9,14 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.8.0"
+  "packageManager": "pnpm@10.8.0",
+  "dependencies": {
+    "react": "^19.1.0",
+    "vue": "^3.5.12"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.2",
+    "@youyu/spec": "workspace:^",
+    "stylelint": "^16.21.0"
+  }
 }

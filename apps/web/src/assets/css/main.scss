@@ -7,8 +7,8 @@
 $headerHeight: 60px;
 
 * {
-  margin: 0;
   padding: 0;
+  margin: 0;
 }
 
 .fixed {
@@ -49,8 +49,8 @@ $headerHeight: 60px;
 }
 
 .scrolling-effect-scroll {
-  overflow: hidden;
   width: calc(100% - 17px);
+  overflow: hidden;
 }
 
 .scrolling-effect-noscroll {

@@ -1,10 +1,10 @@
 import { fileURLToPath, URL } from 'node:url';
 
-import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 // import cdn from 'vite-plugin-cdn-import';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -30,8 +30,8 @@ export default defineConfig({
       '/plat': {
         target: 'https://v2.youyul.com/',
         changeOrigin: true,
-        secure: false
-      }
+        secure: false,
+      },
     },
   },
   plugins: [

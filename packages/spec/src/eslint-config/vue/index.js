@@ -1,14 +1,7 @@
 module.exports = {
   root: true,
-  env: {
-    node: true,
-  },
-  extends: [
-    'plugin:vue/recommended',
-    'eslint:recommended',
-    '@vue/eslint-config-typescript',
-    // 'plugin:prettier/recommended' // ✅ 官方推荐用法，兼容 Prettier v3
-  ],
+  plugins: ['import', 'vue'],
+  extends: ['plugin:vue/recommended'],
   parser: 'vue-eslint-parser',
   parserOptions: {
     parser: '@typescript-eslint/parser',
@@ -17,6 +10,7 @@ module.exports = {
     extraFileExtensions: ['.vue'],
   },
   rules: {
+    ...require('../rules').typescript,
     // 可自定义规则
     '@typescript-eslint/no-unused-vars': ['warn'],
     'vue/multi-word-component-names': 'off',
@@ -27,5 +21,40 @@ module.exports = {
         multiline: 1,
       },
     ],
+    // 导入顺序规则
+    'import/order': [
+      'error',
+      {
+        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+        pathGroups: [
+          {
+            pattern: 'vue',
+            group: 'external',
+            position: 'before',
+          },
+          {
+            pattern: '@/**',
+            group: 'internal',
+          },
+        ],
+        pathGroupsExcludedImportTypes: ['builtin'],
+        alphabetize: {
+          order: 'asc', // 按字母排序
+          caseInsensitive: true,
+        },
+        'newlines-between': 'always', // 每组之间空一行
+      },
+    ],
+  },
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.ts', '.vue'],
+      },
+      alias: {
+        map: [['@', './src']],
+        extensions: ['.js', '.ts', '.vue'],
+      },
+    },
   },
 };

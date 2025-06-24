@@ -27,9 +27,9 @@
               </div>
             </div>
             <div class="author-info">
-              <RouterLink :to="`/user/${post.user.id}`">
+              <RouterLink :to="`/user/${post.user?.id}`">
                 <i-user fill="currentColor" size="15" theme="outline" />
-                <span>{{ post.user.nickname }}</span>
+                <span>{{ post.user?.nickname }}</span>
               </RouterLink>
             </div>
             <div class="view-count">
@@ -43,12 +43,12 @@
                   <div>最近更新：{{ post.updateTime }}</div>
                 </template>
                 <i-time fill="currentColor" size="15" theme="outline" />
-                <span>发布于 {{ post.createTime.substring(0, 16) }}</span>
+                <span>发布于 {{ post.createTime?.substring(0, 16) }}</span>
               </a-tooltip>
             </div>
             <div class="text-amount">
               <i-add-text-two fill="currentColor" size="16" theme="outline" />
-              <span>{{ post.content.length }} 字</span>
+              <span>{{ post.content?.length }} 字</span>
             </div>
             <div class="operation-btns">
               <span
@@ -135,25 +135,27 @@
 
 <script lang="ts" setup>
 import { ref, computed, provide, readonly, watch, inject } from 'vue';
-import { RouterLink, useRoute, useRouter } from 'vue-router';
+
 import { Modal, message } from 'ant-design-vue';
-import { useStore } from 'vuex';
 import { debounce } from 'lodash';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+
 import { scrollToTop, scrollToAnchor } from '@/assets/utils/utils';
+import PercentCounter from '@/components/common/utils/percentCounter/PercentCounter.vue';
+import Spin from '@/components/common/utils/spin/Spin.vue';
+import MdPreview from '@/components/content/mdEditor/MdPreview.vue';
 import type { Post } from '@/views/post/detail/types';
 
-defineOptions({
-  name: 'PostDetail'
-});
-
-import PercentCounter from '@/components/common/utils/percentCounter/PercentCounter.vue';
-import MdPreview from '@/components/content/mdEditor/MdPreview.vue';
-import Spin from '@/components/common/utils/spin/Spin.vue';
-import UserInfoPanel from './child/UserInfoPanel.vue';
 import MdCatalogPanel from './child/MdCatalogPanel.vue';
-import PostOperation from './child/PostOperation.vue';
-import PostComment from './child/PostComment.vue';
 import PostColumn from './child/PostColumn.vue';
+import PostComment from './child/PostComment.vue';
+import PostOperation from './child/PostOperation.vue';
+import UserInfoPanel from './child/UserInfoPanel.vue';
+
+defineOptions({
+  name: 'PostDetail',
+});
 
 const reload = inject<Function>('reload');
 
@@ -163,7 +165,9 @@ const { dispatch, getters } = useStore();
 const post = ref<Post>({});
 const fold = ref(true);
 const userInfo = computed(() => getters['userInfo']);
-const tags = computed(() => post.value?.tags?.length ? (post.value.tags as string).split(',') : []);
+const tags = computed(() =>
+  post.value?.tags?.length ? (post.value.tags as string).split(',') : [],
+);
 const commentRef = ref<HTMLDivElement | null>(null);
 const postComment = ref<typeof PostComment | null>(null);
 const isLogin = computed(() => getters['isLogin']);
@@ -185,7 +189,7 @@ watch(
     if (newVal) {
       reload && reload();
     }
-  }
+  },
 );
 
 function handleEdit() {
@@ -202,7 +206,7 @@ const handleHide = () => {
         message.success('设置成功');
         post.value!.status = status ? 0 : 1;
       });
-    }
+    },
   });
 };
 
@@ -228,9 +232,10 @@ provide('setPostAttribute', setPostAttribute);
 <style lang="scss" scoped>
 .post-detail {
   display: flex;
-  padding: 8px 0;
   justify-content: center;
-  /*align-items: flex-start;*/
+  padding: 8px 0;
+
+  /* align-items: flex-start; */
 
   .post-aside {
     position: relative;
@@ -247,10 +252,10 @@ provide('setPostAttribute', setPostAttribute);
     margin-left: 8px;
 
     .post-main {
-      border-radius: 4px;
+      position: relative;
       overflow: hidden;
       background-color: var(--post-detail-background);
-      position: relative;
+      border-radius: 4px;
 
       .post-status {
         position: absolute;
@@ -258,31 +263,31 @@ provide('setPostAttribute', setPostAttribute);
         right: 0;
         width: 0;
         height: 0;
-        border-top: 50px solid rgba(24, 144, 255, 0.8); /* 三角形颜色 */
+        border-top: 50px solid rgb(24, 144, 255, 0.8); /* 三角形颜色 */
         border-left: 50px solid transparent;
 
         svg {
-          height: 22px;
-          width: 22px;
           position: absolute;
           top: -46px;
           left: -27px;
+          width: 22px;
+          height: 22px;
           cursor: pointer;
         }
       }
 
       .post-title {
         min-height: 35px;
-        text-align: left;
+        padding: 12px 24px 6px;
+        overflow: hidden;
         font-size: 24px;
         font-weight: 500;
-        overflow: hidden;
-        padding: 12px 24px 6px 24px;
+        text-align: left;
       }
 
       .post-info {
         position: relative;
-        padding: 8px 0 0 0;
+        padding: 8px 0 0;
         margin: 0 24px;
         border-bottom: 1px solid var(--youyu-border-color);
 
@@ -293,11 +298,11 @@ provide('setPostAttribute', setPostAttribute);
 
           .post-category {
             .category-name {
-              background-color: #e1eeff;
-              color: #61abed;
-              border-radius: 2px;
               padding: 0 12px;
               margin-right: 12px;
+              color: #61abed;
+              background-color: #e1eeff;
+              border-radius: 2px;
             }
           }
 
@@ -305,10 +310,10 @@ provide('setPostAttribute', setPostAttribute);
           .view-count,
           .create-time,
           .text-amount {
-            color: var(--youyu-body-text1) !important;
             margin-right: 12px;
-            transition: 0.3s;
+            color: var(--youyu-body-text1) !important;
             cursor: pointer;
+            transition: 0.3s;
 
             a {
               color: var(--youyu-body-text1) !important;
@@ -347,12 +352,12 @@ provide('setPostAttribute', setPostAttribute);
         }
 
         .post-info-copyright {
-          font-size: 13px;
-          color: #6f6f82;
           width: 100%;
+          max-height: 0;
           padding-left: 10px;
           overflow: hidden;
-          max-height: 0;
+          font-size: 13px;
+          color: #6f6f82;
           transition: 0.3s;
 
           .copyright-original {
@@ -368,11 +373,11 @@ provide('setPostAttribute', setPostAttribute);
           position: absolute;
           right: 0;
           bottom: -18px;
+          height: 18px;
+          padding: 0 12px;
           color: var(--youyu-body-text1);
           border: 1px solid var(--youyu-border-color);
-          padding: 0 12px;
           border-radius: 0 0 4px 4px;
-          height: 18px;
           cursor: pointer;
 
           .i-icon {
@@ -394,7 +399,7 @@ provide('setPostAttribute', setPostAttribute);
       }
 
       .post-main-content {
-        padding: 20px 36px 36px 36px;
+        padding: 20px 36px 36px;
 
         .post-summary {
           padding: 12px;
@@ -423,19 +428,19 @@ provide('setPostAttribute', setPostAttribute);
           margin-top: 12px;
 
           .tag-name {
-            background-color: #e1eeff;
-            color: #61abed;
             padding: 0 8px;
-            border-radius: 2px;
             margin-right: 6px;
+            color: #61abed;
+            background-color: #e1eeff;
+            border-radius: 2px;
           }
         }
 
         .post-column-list {
           .include-text {
-            color: var(--youyu-text1);
             margin-top: 12px;
             margin-left: 8px;
+            color: var(--youyu-text1);
           }
 
           ::v-deep(.post-column) {
@@ -464,15 +469,15 @@ provide('setPostAttribute', setPostAttribute);
 
     .post-comment {
       margin-top: 8px;
-      border-radius: 8px;
       overflow: hidden;
+      border-radius: 8px;
     }
   }
 
   .post-left-aside {
     position: fixed;
-    right: 20px;
     top: 24%;
+    right: 20px;
   }
 }
 </style>

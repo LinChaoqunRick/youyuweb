@@ -1,11 +1,16 @@
 require('./patch');
 
 module.exports = {
+  env: {
+    node: true,
+    browser: true,
+    es2021: true,
+  },
   extends: [],
   overrides: [
     {
       files: ['*.js'],
-      extends: ['plugin:prettier/recommended', 'prettier'],
+      extends: ['eslint:recommended', 'plugin:prettier/recommended', 'prettier'],
       parserOptions: {
         ecmaFeatures: {
           impliedStrict: true,
