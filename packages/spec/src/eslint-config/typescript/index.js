@@ -60,6 +60,16 @@ module.exports = {
         },
       },
     ],
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      {
+        js: 'never',
+        jsx: 'never',
+        ts: 'never',
+        tsx: 'never',
+      },
+    ],
   },
   settings: {
     'import/parsers': {
@@ -67,8 +77,9 @@ module.exports = {
     },
     'import/resolver': {
       // use <root>/tsconfig.json
-      typescript: {
-        alwaysTryTypes: true, // always try to resolve types under `<root>/@types` directory even it doesn't contain any source code, like `@types/unist`
+      typescript: {},
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
       },
     },
   },

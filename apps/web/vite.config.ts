@@ -23,9 +23,9 @@ export default defineConfig({
     open: false, //启动后是否自动打开浏览器,
     proxy: {
       /*'/plat': {
-        target: "http://localhost:8080",
+        target: 'http://localhost:8080',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/plat/, '')
+        rewrite: path => path.replace(/^\/plat/, ''),
       },*/
       '/plat': {
         target: 'https://v2.youyul.com/',

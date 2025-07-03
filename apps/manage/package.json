@@ -9,8 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/icons": "5.x",
     "@youyu/shared": "workspace:^",
+    "antd": "^5.26.2",
     "axios": "1.8.2",
+    "classnames": "^2.5.1",
     "echarts": "^5.6.0",
     "qs": "^6.11.0",
     "react": "^19.1.0",
