@@ -10,6 +10,7 @@ module.exports = {
     extraFileExtensions: ['.vue'],
   },
   rules: {
+    ...require('../rules').javascript,
     ...require('../rules').typescript,
     // 可自定义规则
     '@typescript-eslint/no-unused-vars': ['warn'],

@@ -40,5 +40,6 @@ module.exports = {
   'import/no-named-as-default-member': 0,
   'no-restricted-syntax': 0,
   'no-labels': 0,
-  'camelcase': 'off'
+  'camelcase': 'off',
+  'arrow-parens': ['error', 'as-needed']
 };

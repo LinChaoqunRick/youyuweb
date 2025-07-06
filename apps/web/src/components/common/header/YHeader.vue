@@ -18,23 +18,24 @@ import Logo from '@/components/common/header/logo/Logo.vue';
 import Menu from '@/components/common/header/menu/Menu.vue';
 import ThemeSwitch from '@/components/common/theme/ThemeSwitch.vue';
 import CreateCenter from '@/components/common/header/create/CreateCenter.vue';
-import Login from '@/components/common/header/login/Login.vue';
+import Index from '@/components/common/header/login/Login.vue';
 import Search from '@/components/common/header/search/Search.vue';
 </script>
 
 <style lang="scss" scoped>
 header {
-  background-color: var(--youyu-header-background);
-  border-bottom: var(--youyu-navigation-border);
-  color: #909090;
-  height: 60px;
-  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
+  height: 60px;
   padding-left: 16px;
-  //background-image: radial-gradient(transparent 1px,var(--youyu-background1) 1px);
+  color: #909090;
+  background-color: var(--youyu-header-background);
+
+  // background-image: radial-gradient(transparent 1px,var(--youyu-background1) 1px);
   background-size: 4px 4px;
+  border-bottom: var(--youyu-navigation-border);
   backdrop-filter: saturate(50%) blur(4px);
 
   .menu-nav {

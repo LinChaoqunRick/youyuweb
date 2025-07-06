@@ -1,32 +1,55 @@
-import { JSX, lazy } from 'react';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 
-const Analysis = lazy(() => import('@/views/dashboard/analysis'));
-const Login = lazy(() => import('@/views/login'));
-const NotFound = lazy(() => import('@/views/error/NotFound'));
+import dashboardRoutes from '@/router/modules/dashboard';
+import userRoutes from '@/router/modules/user';
+import { RouteObjectMeta } from '@/types/login';
 
-export interface AppRoute {
-  path: string;
-  element: JSX.Element;
-  meta?: {
-    title?: string;
-    requiresAuth?: boolean;
-    roles?: string[];
-  };
-}
+// 页面组件动态导入
+const BasicLayout = React.lazy(() => import('@/components/layouts/BasicLayout'));
+const Login = React.lazy(() => import('@/pages/login'));
+const NotFound = React.lazy(() => import('@/pages/error/NotFound'));
 
-export const routes: AppRoute[] = [
+// 基础路由（无需权限）
+export const basicRoutes = [
   {
     path: '/login',
     element: <Login />,
-    meta: { title: 'Login' },
+    meta: {
+      title: '登录',
+      hide: true,
+    },
   },
   {
-    path: '/dashboard/analysis',
-    element: <Analysis />,
-    meta: { title: 'Dashboard', requiresAuth: true },
-  },
-  {
-    path: '*',
+    path: '/404',
     element: <NotFound />,
+    meta: {
+      title: '404',
+      hide: true,
+    },
   },
 ];
+
+// 权限路由配置（需要动态过滤）
+export const authRoutes: RouteObjectMeta[] = [
+  {
+    path: '/',
+    element: <BasicLayout />,
+    meta: {
+      title: '有语-管理系统',
+    },
+    children: [
+      // 仪表盘路由组
+      ...dashboardRoutes,
+      // 用户管理路由组
+      ...userRoutes,
+    ],
+  },
+];
+
+// 通配路由放在最后
+export const wildcardRoute = {
+  path: '*',
+  element: <Navigate to="/404" replace />,
+  meta: { hide: true },
+};

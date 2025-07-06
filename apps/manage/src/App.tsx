@@ -1,6 +1,9 @@
 import { ConfigProvider, theme } from 'antd';
-import Logo from './components/menu/Logo.tsx';
-import Menu from './components/menu/index.tsx';
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+
+import { AuthProvider } from '@/context/AuthContext';
+import RouterProvider from '@/providers/RouterProvider.tsx';
 
 import './App.css';
 
@@ -12,10 +15,11 @@ function App() {
       }}
     >
       <div id="app">
-        <div className="app-menu">
-          <Logo />
-          <Menu />
-        </div>
+        <AuthProvider>
+          <BrowserRouter>
+            <RouterProvider />
+          </BrowserRouter>
+        </AuthProvider>
       </div>
     </ConfigProvider>
   );

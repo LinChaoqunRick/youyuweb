@@ -10,6 +10,7 @@ module.exports = {
     ecmaVersion: 2020,
   },
   rules: {
+    ...require('../rules').javascript,
     ...require('../rules').typescript,
     'import/order': [
       'error',

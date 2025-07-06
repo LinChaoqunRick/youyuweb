@@ -33,6 +33,7 @@ module.exports = {
         ecmaVersion: 2020,
       },
       rules: {
+        ...require('../rules').javascript,
         ...require('../rules').javascriptReact,
 
         // Support ts-ignore comment

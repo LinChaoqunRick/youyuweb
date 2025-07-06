@@ -1,0 +1,13 @@
+.main-container {
+    display: flex;
+    height: 100vh;
+
+    .main-menu {
+        display: flex;
+        flex-direction: column;
+
+        .ant-menu {
+            flex: 1;
+        }
+    }
+}

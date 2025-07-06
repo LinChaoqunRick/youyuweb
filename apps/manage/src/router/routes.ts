@@ -1,5 +1,0 @@
-const routes = [
-  {
-    path: '/login',
-  },
-];
