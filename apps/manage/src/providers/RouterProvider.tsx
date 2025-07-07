@@ -1,26 +1,35 @@
-import React, { useMemo } from 'react';
-import { useRoutes } from 'react-router-dom';
+import React, { useEffect, useMemo } from 'react';
+import { useLocation, useNavigate, useRoutes } from 'react-router-dom';
 
 import AppLoading from '@/components/layouts/AppLoading';
 import { useAuth } from '@/context/AuthContext';
-import { generateRoutes } from '@/utils/routeUtils';
+import { findFirstAuthPath, generateRoutes } from '@/utils/routeUtils';
 
 export default function RouterProvider() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const { permissions, authLoaded } = useAuth();
 
   // 根据权限生成路由配置
   const routes = useMemo(() => {
-    // 权限未加载完成时不生成路由
     if (!authLoaded) return [];
-
     return generateRoutes(permissions);
   }, [permissions, authLoaded]);
 
   const element = useRoutes(routes);
 
-  // 处理不同状态
+  // 页面加载后进行重定向逻辑
+  useEffect(() => {
+    if (authLoaded && location.pathname === '/') {
+      const firstPath = findFirstAuthPath(routes);
+      // TODO... 更具体的路由，比如 /dashboard 重定位到 /dashboard/analysis
+      if (firstPath) {
+        navigate(firstPath, { replace: true });
+      }
+    }
+  }, [authLoaded, location.pathname, routes, navigate]);
+
   if (!authLoaded) {
-    // 权限数据加载中
     return <AppLoading />;
   }
 

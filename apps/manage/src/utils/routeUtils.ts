@@ -1,4 +1,13 @@
+import { JSX } from 'react';
+
 import { basicRoutes, authRoutes, wildcardRoute } from '@/router';
+import { RouteObjectMeta } from '@/types/login.ts';
+
+interface RouteConfig {
+  path: string;
+  element?: JSX.Element;
+  children?: RouteConfig[];
+}
 
 /**
  * 递归过滤路由表
@@ -12,7 +21,7 @@ export function filterRoutes(routes: Array<any>, permissions: Array<any>) {
 
   return routes.filter(route => {
     // 1. 公共路由直接保留
-    if (route.meta?.public) return true;
+    // if (route.meta?.public) return true;
 
     // 2. 处理有子路由的情况
     if (route.children) {
@@ -33,23 +42,31 @@ export function filterRoutes(routes: Array<any>, permissions: Array<any>) {
 }
 
 /**
- * 将路由配置转换为React Router需要的格式
- * @param {Array} filteredRoutes 过滤后的路由
- * @returns React Router路由配置
+ * 查找第一个有权限的路由路径
+ * @param {Array<RouteObjectMeta>} routes 过滤后的路由表
+ * @param {String} basePath 基础路径（用于递归）
+ * @returns 第一个有权限的路由路径
  */
-export function createRouterConfig(filteredRoutes: any[]) {
-  return filteredRoutes.map(route => {
-    const config = { path: route.path };
+export function findFirstAuthPath(routes: RouteObjectMeta[], basePath: string = ''): string | null {
+  for (const route of routes) {
+    // 获取当前路径（移除basePath末尾的/，移除route.path开头的/，再拼接）
+    const cleanBase = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+    const cleanPath = route.path?.startsWith('/') ? route.path.slice(1) : route.path || '';
+    const fullPath = `${cleanBase}/${cleanPath}`;
 
-    if (route.element) {
-      config.element = route.element;
+    // 如果是叶子节点且有权限，返回路径
+    if (!route.children && route.meta?.code) {
+      return fullPath;
     }
+
+    // 如果有子路由，递归查找
     if (route.children) {
-      config.children = createRouterConfig(route.children);
+      const childPath = findFirstAuthPath(route.children, fullPath);
+      if (childPath) return childPath;
     }
+  }
 
-    return config;
-  });
+  return null;
 }
 
 /**
