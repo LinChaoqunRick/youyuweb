@@ -7,7 +7,8 @@
     "src/**/*.vue",
     "types/**/*.d.ts",
     "types/**/*.ts",
-    "vite.config.ts"
+    "vite.config.ts",
+    "env.d.ts"
   ],
   "compilerOptions": {
     "baseUrl": ".",

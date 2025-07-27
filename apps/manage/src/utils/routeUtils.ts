@@ -1,13 +1,5 @@
-import { JSX } from 'react';
-
 import { basicRoutes, authRoutes, wildcardRoute } from '@/router';
-import { RouteObjectMeta } from '@/types/login.ts';
-
-interface RouteConfig {
-  path: string;
-  element?: JSX.Element;
-  children?: RouteConfig[];
-}
+import { RouteObjectMeta } from '@/types/login';
 
 /**
  * 递归过滤路由表

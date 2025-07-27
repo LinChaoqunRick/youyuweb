@@ -2,39 +2,50 @@
   <div class="login-account">
     <div class="login-form-container">
       <div class="tip-box">
-        <a-alert type="error" :message="tip.message" banner closable v-if="tip.showTip" @close="tip.showTip = false"/>
+        <a-alert
+          v-if="tip.showTip"
+          :message="tip.message"
+          banner
+          closable
+          type="error"
+          @close="tip.showTip = false"
+        />
       </div>
-      <a-form
-        :model="formState"
-        class="login-form">
+      <a-form :model="formState" class="login-form">
         <a-form-item label="" v-bind="validateInfos.username">
-          <a-input v-model:value="formState.username"
-                   size="large"
-                   :maxlength="30"
-                   placeholder="手机号/邮箱">
+          <a-input
+            v-model:value="formState.username"
+            :maxlength="30"
+            placeholder="手机号/邮箱"
+            size="large"
+          >
             <template #prefix>
-              <i-user fill="#c0c4cc"/>
+              <i-user fill="#c0c4cc" />
             </template>
           </a-input>
         </a-form-item>
         <a-form-item label="" v-bind="validateInfos.password">
-          <a-input-password v-model:value="formState.password"
-                            size="large"
-                            :maxlength="30"
-                            placeholder="密码">
+          <a-input-password
+            v-model:value="formState.password"
+            :maxlength="30"
+            placeholder="密码"
+            size="large"
+          >
             <template #prefix>
-              <i-lock fill="#c0c4cc"/>
+              <i-lock fill="#c0c4cc" />
             </template>
           </a-input-password>
         </a-form-item>
         <a-form-item>
-          <a-button type="primary"
-                    size="large"
-                    block
-                    html-type="submit"
-                    class="login-form-button"
-                    :loading="loading"
-                    @click.prevent="onSubmit">
+          <a-button
+            :loading="loading"
+            block
+            class="login-form-button"
+            html-type="submit"
+            size="large"
+            type="primary"
+            @click.prevent="onSubmit"
+          >
             登录
           </a-button>
           <div class="other-tips">
@@ -44,16 +55,18 @@
         </a-form-item>
       </a-form>
     </div>
-    <div class="social-account-title">社交账号登录</div>
+    <div class="social-account-title">
+      社交账号登录
+    </div>
     <div class="social-account-tag mt-10">
       <!--      <div class="tag-item tag-wechat" title="微信">
               <img src="/static/images/logo/wechat.png" alt="" @click="onSocialConnect('wechat')"/>
             </div>-->
       <div class="tag-item tag-qq" title="QQ">
-        <img src="/static/images/logo/qq.png" alt="" @click="onSocialConnect('qq')"/>
+        <img alt="" src="/static/images/logo/qq.png" @click="onSocialConnect('qq')">
       </div>
       <div class="tag-item tag-github" title="Github">
-        <img src="/static/images/logo/github.png" alt="" @click="onSocialConnect('github')"/>
+        <img alt="" src="/static/images/logo/github.png" @click="onSocialConnect('github')">
       </div>
       <!--      <div class="tag-item tag-alipay" title="支付宝">
               <img src="/static/images/logo/alipay.png" alt="" @click="onSocialConnect('alipay')"/>
@@ -65,102 +78,106 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import {ref, reactive, toRaw, inject} from 'vue';
-import {useStore} from 'vuex';
-import {message} from 'ant-design-vue';
-import {generateAuthRoutes} from "@/router/config/useGenerateRoutes";
+<script lang="ts" setup>
+import { ref, reactive, toRaw, inject } from 'vue';
+import { message, Form } from 'ant-design-vue';
+import { useStore } from 'vuex';
+import { generateAuthRoutes } from '@/router/config/useGenerateRoutes';
 
-const {commit, dispatch} = useStore();
-import {Form} from 'ant-design-vue';
-
-const useForm = Form.useForm;
+const { commit, dispatch } = useStore();
+const { useForm } = Form;
 const handleSwitch = inject('handleSwitch');
 
 interface LoginForm {
-  username: string,
-  password: string,
-  grant_type: string,
-  authType: string,
+  username: string;
+  password: string;
+  grant_type: string;
+  authType: string;
 }
 
 const formState = reactive<LoginForm>({
   username: '',
   password: '',
   grant_type: 'password', // oauth认证方式
-  authType: 'password' // 校验方式设置成密码模式
+  authType: 'password', // 校验方式设置成密码模式
 });
 
 const tip = reactive({
   showTip: false,
-  message: "账号或密码错误"
-})
+  message: '账号或密码错误',
+});
 
 const loading = ref(false);
 
 const rulesRef = reactive({
-  username: [{required: true, message: '请输入账号'}],
-  password: [{required: true, message: '请输入密码'}],
+  username: [{ required: true, message: '请输入账号' }],
+  password: [{ required: true, message: '请输入密码' }],
 });
 
-const {resetFields, validate, validateInfos} = useForm(formState, rulesRef);
-
+const { validate, validateInfos } = useForm(formState, rulesRef);
 const onSubmit = () => {
-  validate().then(() => {
-    tip.showTip = false;
-    loading.value = true;
-    handleLogin(toRaw(formState));
-  }).catch(err => {
-    console.log('error', err);
-  });
+  validate()
+    .then(() => {
+      tip.showTip = false;
+      loading.value = true;
+      handleLogin(toRaw(formState));
+    })
+    .catch(err => {
+      console.log('error', err);
+    });
 };
 
 const handleLogin = (form: LoginForm) => {
-  dispatch('token', form).then(res => {
-    const {userInfo, access_token, refresh_token} = res.data;
-    message.success(`欢迎回来，${userInfo.nickname}`);
-    commit("changeLogin", false);
-    commit("changeUser", userInfo);
-    localStorage.setItem("access_token", access_token);
-    localStorage.setItem("refresh_token", refresh_token);
-    // 生成权限路由
-    generateAuthRoutes();
-  }).catch(e => {
-    tip.showTip = true;
-    tip.message = e.message;
-  }).finally(() => {
-    loading.value = false;
-  })
-}
+  dispatch('token', form)
+    .then(res => {
+      const { userInfo, access_token, refresh_token } = res.data;
+      message.success(`欢迎回来，${userInfo.nickname}`);
+      commit('changeLogin', false);
+      commit('changeUser', userInfo);
+      localStorage.setItem('access_token', access_token);
+      localStorage.setItem('refresh_token', refresh_token);
+      // 生成权限路由
+      generateAuthRoutes();
+    })
+    .catch(e => {
+      console.log(e);
+      tip.showTip = true;
+      tip.message = e.message;
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+};
 
 const onSocialConnect = (type: string) => {
   if (['qq', 'github']) {
-    dispatch('getConnectURL', {type}).then(res => {
+    dispatch('getConnectURL', { type }).then(res => {
       location.href = res.data;
-    })
+    });
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
 .login-account {
-  height: 100%;
-  width: 100%;
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  position: relative;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 
   .login-form-container {
     width: 320px;
-    /*background-color: skyblue;*/
+
+    /* background-color: skyblue; */
   }
 
   .tip-box {
     position: absolute;
-    width: 320px;
     top: 40px;
+    width: 320px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -170,30 +187,30 @@ const onSocialConnect = (type: string) => {
     margin-top: 10px;
 
     .forget-password {
-
     }
   }
 
   .social-account-title {
+    position: relative;
     display: flex;
     justify-content: center;
-    position: relative;
     color: var(--youyu-body-text1);
 
-    &:before, &:after {
-      content: "";
+    &::before,
+    &::after {
       position: absolute;
-      height: 1px;
       width: 30px;
+      height: 1px;
       background-color: var(--youyu-body-text1);
+      content: '';
     }
 
-    &:before {
+    &::before {
       top: 11px;
       left: -35px;
     }
 
-    &:after {
+    &::after {
       top: 11px;
       left: 90px;
     }
@@ -204,19 +221,19 @@ const onSocialConnect = (type: string) => {
 
     .tag-item {
       display: flex;
-      justify-content: center;
       align-items: center;
-      height: 32px;
+      justify-content: center;
       width: 32px;
+      height: 32px;
+      overflow: hidden;
       border-radius: 50%;
       cursor: pointer;
-      overflow: hidden;
 
       img {
         position: relative;
       }
 
-      &:nth-child(n+2) {
+      &:nth-child(n + 2) {
         margin-left: 10px;
       }
 
@@ -245,6 +262,5 @@ const onSocialConnect = (type: string) => {
       }
     }
   }
-
 }
 </style>

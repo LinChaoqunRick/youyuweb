@@ -1,11 +1,11 @@
 import { ref } from 'vue';
 import type { Ref } from 'vue';
-import type { RouteRecordRaw } from 'vue-router';
-import permissionList from '../permission';
-import { cloneDeep } from 'lodash';
-import http from '@/network/https';
 import { GET_AUTH_ROUTES } from '@youyu/shared/apis';
+import http from '@youyu/shared/network';
+import { cloneDeep } from 'lodash';
 import { router } from '@/router';
+import permissionList from '../permission';
+import type { RouteRecordRaw } from 'vue-router';
 
 interface routeItemType {
   code: number;

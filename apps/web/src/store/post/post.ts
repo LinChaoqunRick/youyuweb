@@ -1,4 +1,3 @@
-import http from '@/network/https';
 import {
   GET_POST_LIST,
   GET_POST_DETAIL,
@@ -26,6 +25,7 @@ import {
   OSS_STS,
   HIDE_POST,
 } from '@youyu/shared/apis';
+import http from '@youyu/shared/network';
 
 export default {
   actions: {

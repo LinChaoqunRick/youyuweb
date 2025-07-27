@@ -19,8 +19,6 @@
     "@youyu/shared": "workspace:^",
     "animate.css": "^4.1.1",
     "ant-design-vue": "^4.2.1",
-    "axios": "1.8.2",
-    "axios-auth-refresh": "^3.3.6",
     "dat.gui": "^0.7.9",
     "dayjs": "^1.11.5",
     "file-type": "^20.4.1",
@@ -35,7 +33,6 @@
     "marked": "^4.1.1",
     "md-editor-v3": "^5.5.1",
     "nprogress": "^0.2.0",
-    "qs": "^6.11.0",
     "stats.js": "^0.17.0",
     "three": "^0.163.0",
     "vue": "^3.5.12",
@@ -45,6 +42,7 @@
     "vuex": "^4.0.2"
   },
   "devDependencies": {
+    "@types/nprogress": "^0.2.3",
     "@types/three": "^0.177.0",
     "@youyu/spec": "workspace:^",
     "eslint": "^8.57.1",

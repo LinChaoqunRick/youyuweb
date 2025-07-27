@@ -8,8 +8,8 @@ import { RouteObjectMeta } from '@/types/login';
 const userRoutes: RouteObjectMeta[] = [
   {
     path: 'user',
-    meta: { title: '用户管理', icon: <UserOutlined /> },
     element: <UserLayout />,
+    meta: { title: '用户管理', icon: <UserOutlined />, code: 'dashboard' },
     children: [
       {
         path: 'list',

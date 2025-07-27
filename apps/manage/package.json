@@ -12,7 +12,6 @@
     "@ant-design/icons": "5.x",
     "@youyu/shared": "workspace:^",
     "antd": "^5.26.2",
-    "axios": "1.8.2",
     "classnames": "^2.5.1",
     "echarts": "^5.6.0",
     "lodash": "^4.17.21",

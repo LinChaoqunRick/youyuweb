@@ -41,5 +41,6 @@ module.exports = {
   'no-restricted-syntax': 0,
   'no-labels': 0,
   'camelcase': 'off',
-  'arrow-parens': ['error', 'as-needed']
+  'arrow-parens': ['error', 'as-needed'],
+  "arrow-body-style": "off"
 };

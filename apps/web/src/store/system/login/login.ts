@@ -1,4 +1,3 @@
-import http from '@/network/https';
 import {
   ACCOUNT_LOGIN,
   ACCOUNT_LOGOUT,
@@ -9,6 +8,7 @@ import {
   GET_CONNECT_URL,
   CONNECT_BIND,
 } from '@youyu/shared/apis';
+import http from '@youyu/shared/network';
 
 export const RouteStatus = {
   Pending: 'pending',
@@ -59,7 +59,7 @@ export default {
     token(context: any, params: object) {
       return http.post(ACCOUNT_LOGIN, params, {
         headers: {
-          Authorization: 'Basic ' + btoa('web' + ':' + '654321'),
+          Authorization: 'Basic ' + btoa('youyu-content' + ':' + '12345666666'),
         },
       });
     },

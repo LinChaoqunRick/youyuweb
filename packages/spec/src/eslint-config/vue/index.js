@@ -43,7 +43,7 @@ module.exports = {
           order: 'asc', // 按字母排序
           caseInsensitive: true,
         },
-        'newlines-between': 'always', // 每组之间空一行
+        'newlines-between': 'ignore', // 关闭每组之间空一行
       },
     ],
   },

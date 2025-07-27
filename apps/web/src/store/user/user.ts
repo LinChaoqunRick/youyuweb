@@ -1,4 +1,3 @@
-import http from '@/network/https';
 import {
   GET_USER_LIST,
   GET_USER_DETAIL,
@@ -34,6 +33,7 @@ import {
   LIST_FAVORITES,
   FAVORITES_POST_PAGE,
 } from '@youyu/shared/apis';
+import http from '@youyu/shared/network';
 
 export default {
   actions: {

@@ -11,12 +11,19 @@
   "license": "ISC",
   "packageManager": "pnpm@10.8.0",
   "dependencies": {
+    "axios-auth-refresh": "^3.3.6",
     "react": "^19.1.0",
     "vue": "^3.5.12"
   },
   "devDependencies": {
     "@types/react": "^19.1.2",
     "@youyu/spec": "workspace:^",
+    "axios": "^1.8.2",
+    "qs": "^6.11.0",
     "stylelint": "^16.21.0"
+  },
+  "peerDependencies": {
+    "axios": "^1.8.2",
+    "qs": "^6.11.0"
   }
 }

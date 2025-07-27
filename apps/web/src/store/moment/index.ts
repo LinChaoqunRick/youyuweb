@@ -1,4 +1,3 @@
-import http from '@/network/https';
 import {
   MOMENT_CREATE,
   MOMENT_UPDATE,
@@ -18,6 +17,7 @@ import {
   SET_MOMENT_COMMENT_LIKE,
   CANCEL_MOMENT_COMMENT_LIKE,
 } from '@youyu/shared/apis';
+import http from '@youyu/shared/network';
 
 export default {
   actions: {

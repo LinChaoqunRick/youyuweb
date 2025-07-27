@@ -1,4 +1,3 @@
-import http from '@/network/https';
 import {
   GET_ALBUM_LIST,
   GET_ALBUM_DETAIL,
@@ -16,6 +15,7 @@ import {
   GET_MINE_ALBUM_LIST,
   SET_ALBUM_COVER,
 } from '@youyu/shared/apis';
+import http from '@youyu/shared/network';
 
 export default {
   actions: {

@@ -16,8 +16,13 @@
     "stylelint:pkgs": "pnpm --filter=@iot/* -r run stylelint:fix",
     "commitlint": "commitlint"
   },
+  "dependencies": {
+    "axios": "^1.8.2",
+    "qs": "^6.11.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
+    "@types/qs": "^6.14.0",
     "@vitejs/plugin-vue": "^3.0.3",
     "@vitejs/plugin-vue-jsx": "^2.1.1",
     "@vue/tsconfig": "^0.1.3",

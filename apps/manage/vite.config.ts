@@ -1,7 +1,27 @@
 import * as path from 'path';
 
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { defineConfig, ProxyOptions } from 'vite';
+
+type ProxyList = [string, string][];
+type ProxyTargetList = Record<string, ProxyOptions>;
+
+// 预设本地开发代理配置
+const persistDevConfig: ProxyOptions = {
+  changeOrigin: true,
+  secure: false,
+};
+
+const createProxy = (list: ProxyList = []): ProxyTargetList => {
+  return list.reduce((acc, [prefix, target]) => {
+    acc[`^${prefix}`] = {
+      target,
+      ...persistDevConfig,
+      rewrite: path => path.replace(/^\/plat/, ''),
+    };
+    return acc;
+  }, {} as ProxyTargetList);
+};
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -10,5 +30,11 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
+  },
+  server: {
+    host: '0.0.0.0',
+    port: 3030,
+    open: false,
+    proxy: createProxy([['/plat', 'https://v2.youyul.com' || '']]),
   },
 });

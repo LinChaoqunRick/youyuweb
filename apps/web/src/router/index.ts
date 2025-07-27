@@ -1,13 +1,14 @@
 import { computed } from 'vue';
-import { createRouter, createWebHistory } from 'vue-router';
 import { message } from 'ant-design-vue';
 import NProgress from 'nprogress';
+import { createRouter, createWebHistory } from 'vue-router';
 import 'nprogress/nprogress.css';
-import whiteList from './whiteList';
-import store from '@/store';
-import { generateAuthRoutes } from '@/router/config/useGenerateRoutes';
+
 import { executeConnect, isConnectRoute } from '@/router/config/connect';
+import { generateAuthRoutes } from '@/router/config/useGenerateRoutes';
+import store from '@/store';
 import { RouteStatus } from '@/store/system/login/login';
+import whiteList from './whiteList';
 
 const isLogin = computed(() => store.getters['isLogin']);
 const routeStatus = computed(() => store.getters['getRouteStatus']);
@@ -49,7 +50,7 @@ export const router = createRouter({
     } else {
       return { top: 0 };
     }
-  }
+  },
 });
 
 router.beforeEach(async (to, from, next) => {
@@ -71,12 +72,14 @@ router.beforeEach(async (to, from, next) => {
     setRouteStatus(RouteStatus.Resolved);
   } catch (e) {
     setRouteStatus(RouteStatus.Rejected);
+    console.error('路由守卫错误', e);
+    next(false);
   }
 });
 
 router.afterEach((to, from): any => {
   NProgress.done();
-  const title = to.meta.title;
+  const { title } = to.meta;
   if (title) {
     document.title = <string>title + '-有语';
   }

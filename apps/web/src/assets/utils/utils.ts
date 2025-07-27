@@ -1,7 +1,9 @@
 import { nextTick } from 'vue';
-import store from '@/store/index';
-import type { ClipboardCopyOptions } from '@/assets/utils/types';
+
 import { message } from 'ant-design-vue';
+
+import type { ClipboardCopyOptions } from '@/assets/utils/types';
+import store from '@/store/index';
 
 export function getElementLeft(element: HTMLElement) {
   let actualLeft: number = element.offsetLeft;
@@ -46,7 +48,7 @@ export function scrollToEle(element: HTMLElement, offset: number = 0, behavior: 
 export const setPosition = (
   tarDom: HTMLInputElement | HTMLTextAreaElement,
   startPos = 0,
-  endPos = startPos
+  endPos = startPos,
 ): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     if (tarDom.setSelectionRange) {
@@ -83,7 +85,7 @@ export const insert = (
     direct?: boolean;
     prefixVal?: string; // 前半部分内容
     subfixVal?: string; // 后半部分内容
-  }
+  },
 ) => {
   const { deviationStart = 0, deviationEnd = 0, direct = false, select = false } = params;
   // 返回值
@@ -102,7 +104,7 @@ export const insert = (
       dom,
       // 选中值开始位置为设定开始，否者为结束位置
       select ? startPos + deviationStart : startPos + tarValue.length + deviationEnd,
-      startPos + tarValue.length + deviationEnd
+      startPos + tarValue.length + deviationEnd,
     );
   } else {
     res += tarValue;
@@ -150,7 +152,7 @@ export const removeClass = (el: HTMLElement, ...cn: string[]) => {
 
 // 判断元素是否有某个类名 el:要判断类名的元素 cn:判断的样式名称
 function hasClass(el: HTMLElement, cn: string) {
-  let reg = new RegExp('\\b' + cn + '\\b');
+  const reg = new RegExp('\\b' + cn + '\\b');
   return reg.test(el.className);
 }
 
@@ -168,7 +170,7 @@ export const randomColor = () => {
  */
 export const colorReverse = (color: string): string => {
   const reverseColor: number = Number('0x' + color.replace(/#/g, ''));
-  let str = '000000' + (0xffffff - reverseColor).toString(16);
+  const str = '000000' + (0xffffff - reverseColor).toString(16);
   return '#' + str.substring(str.length - 6, str.length);
 };
 

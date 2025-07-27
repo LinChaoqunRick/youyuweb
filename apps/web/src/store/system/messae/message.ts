@@ -1,5 +1,5 @@
-import http from '@/network/https';
 import { MESSAGE_SEND, MESSAGE_VERIFY } from '@youyu/shared/apis';
+import http from '@youyu/shared/network';
 
 export default {
   actions: {

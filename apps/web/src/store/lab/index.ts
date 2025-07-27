@@ -1,4 +1,3 @@
-import http from '@/network/https';
 import {
   GET_MICRO_MODULE_CONFIG,
   GET_SECURITY_DEVICE_LIST,
@@ -7,6 +6,7 @@ import {
   GET_MICRO_CAPACITY_COOLING,
   GET_MICRO_CAPACITY_POWER,
 } from '@youyu/shared/apis';
+import http from '@youyu/shared/network';
 
 export default {
   actions: {

@@ -3,9 +3,10 @@ import { createApp } from 'vue';
 import { lineNumbers } from '@codemirror/view';
 import Antd from 'ant-design-vue';
 import dayjs from 'dayjs';
-import zhcn from 'dayjs/locale/zh-cn';
+import 'dayjs/locale/zh-cn';
 import RelativeTime from 'dayjs/plugin/relativeTime';
 import { config } from 'md-editor-v3';
+import '@/libs/handlers/event-bus-handler';
 
 import focus from '@/libs/directives/focus';
 import login from '@/libs/directives/login';
@@ -54,8 +55,7 @@ config({
     highlight: {
       css: {
         atom: {
-          light:
-            'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css',
+          light: 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css',
           dark: 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css',
         },
       },
