@@ -42,5 +42,6 @@ module.exports = {
   'no-labels': 0,
   'camelcase': 'off',
   'arrow-parens': ['error', 'as-needed'],
-  "arrow-body-style": "off"
+  "arrow-body-style": "off",
+  'max-len': ['error', { code: 120 }]
 };

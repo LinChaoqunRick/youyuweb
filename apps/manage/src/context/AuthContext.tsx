@@ -1,9 +1,10 @@
-import { GET_AUTH_ROUTES, GET_MANAGE_AUTH_ROUTES } from '@youyu/shared/apis';
+import { GET_MANAGE_AUTH_ROUTES } from '@youyu/shared/apis';
 import http from '@youyu/shared/network';
 import React, {
   createContext, useState, useContext, useEffect, useMemo, ReactNode,
 } from 'react';
 
+import { useLocation } from 'react-router-dom';
 import { AuthResult, Permission } from '@/types/login';
 
 const AuthContext = createContext<AuthResult>({
@@ -27,22 +28,23 @@ interface ComponentProps {
 export function AuthProvider({ children }: ComponentProps) {
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [authLoaded, setAuthLoaded] = useState(false); // 新增：权限加载状态
-  const access_token = localStorage.getItem('access_token');
+  const location = useLocation();
 
   // 初始化权限数据
   useEffect(() => {
+    const access_token = localStorage.getItem('access_token');
     if (access_token) {
       getAuthData().then(res => {
         setPermissions(res);
         setAuthLoaded(true); // 标记权限已加载完成
       });
     }
-  }, [access_token]);
+  }, [location.pathname]);
 
   const value = useMemo(
     () => ({
       permissions,
-      authLoaded, // 暴露加载状态
+      authLoaded,
     }),
     [permissions, authLoaded],
   );

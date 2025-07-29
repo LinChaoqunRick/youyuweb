@@ -4,6 +4,7 @@ import {
   Button, Checkbox, Form, Input, message,
 } from 'antd';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { FormProps } from 'antd';
 
 type FieldType = {
@@ -14,6 +15,7 @@ type FieldType = {
 
 function Login() {
   const [messageApi, contextHolder] = message.useMessage();
+  const navigate = useNavigate();
   const onFinish: FormProps<FieldType>['onFinish'] = values => {
     http.post(ACCOUNT_LOGIN, {
       grant_type: 'password', // oauth认证方式
@@ -31,8 +33,7 @@ function Login() {
       });
       localStorage.setItem('access_token', access_token);
       localStorage.setItem('refresh_token', refresh_token);
-      // 生成权限路由
-      // generateAuthRoutes();
+      navigate('/', { replace: true });
     }).catch(err => {
       console.log(err);
     });

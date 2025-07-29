@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 
+import Header from '@/components/header/Header';
 import AuthMenu from '@/components/menu/AuthMenu';
 import Logo from '@/components/menu/Logo';
 
@@ -12,8 +13,11 @@ function BasicLayout() {
         <Logo />
         <AuthMenu />
       </div>
-      <div className="view-content">
-        <Outlet />
+      <div className="view-wrapper">
+        <Header />
+        <div className="view-content">
+          <Outlet />
+        </div>
       </div>
     </div>
   );

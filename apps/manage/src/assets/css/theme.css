@@ -1,0 +1,10 @@
+/* 使用 data-theme 切换 :root 变量 */
+:root[data-theme='light'] {
+  --bg-color: #fff;
+  --text-color: #000;
+}
+
+:root[data-theme='dark'] {
+  --bg-color: #141414;
+  --text-color: #eee;
+}

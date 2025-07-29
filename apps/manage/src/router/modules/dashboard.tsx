@@ -1,6 +1,7 @@
-import { DashboardOutlined } from '@ant-design/icons';
+import {
+  BarChartOutlined, DashboardOutlined, DesktopOutlined, RadarChartOutlined,
+} from '@ant-design/icons';
 import React from 'react';
-import { Navigate } from 'react-router-dom';
 
 import Dashboard from '@/pages/dashboard';
 import DashboardAnalysis from '@/pages/dashboard/analysis';
@@ -12,17 +13,14 @@ const dashboardRoutes: RouteObjectMeta[] = [
   {
     path: 'dashboard',
     element: <Dashboard />,
-    meta: { title: '仪表盘', icon: <DashboardOutlined />, code: 'dashboard' },
+    meta: { title: '概览', icon: <DashboardOutlined />, code: 'dashboard' },
     children: [
-      {
-        index: true, // 👈 当访问 /dashboard 时匹配
-        element: <Navigate to="analysis" replace />, // 👈 相对路径重定向到 /dashboard/analysis
-      },
       {
         path: 'analysis',
         element: <DashboardAnalysis />,
         meta: {
           title: '分析页',
+          icon: <BarChartOutlined />,
           code: 'dashboard:analysis', // 权限标识
         },
       },
@@ -31,6 +29,7 @@ const dashboardRoutes: RouteObjectMeta[] = [
         element: <DashboardMonitor />,
         meta: {
           title: '监控页',
+          icon: <RadarChartOutlined />,
           code: 'dashboard:monitor',
         },
       },
@@ -39,6 +38,7 @@ const dashboardRoutes: RouteObjectMeta[] = [
         element: <DashboardWorkplace />,
         meta: {
           title: '工作台',
+          icon: <DesktopOutlined />,
           code: 'dashboard:workplace',
         },
       },

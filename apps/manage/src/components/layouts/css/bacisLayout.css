@@ -1,13 +1,27 @@
 .main-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+
+  .main-menu {
     display: flex;
-    height: 100vh;
+    flex-direction: column;
 
-    .main-menu {
-        display: flex;
-        flex-direction: column;
-
-        .ant-menu {
-            flex: 1;
-        }
+    .ant-menu {
+      flex: 1;
     }
+  }
+
+  .view-wrapper {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    overflow: hidden;
+
+    .view-content {
+      flex: 1;
+      padding: 16px;
+      overflow: auto;
+    }
+  }
 }

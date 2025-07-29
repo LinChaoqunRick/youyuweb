@@ -33,7 +33,7 @@ export default function RouterProvider() {
     } else {
       navigate('/login', { replace: true });
     }
-  }, [authLoaded, location.pathname]);
+  }, [authLoaded]);
 
   if (access_token && !authLoaded) {
     return <AppLoading />;

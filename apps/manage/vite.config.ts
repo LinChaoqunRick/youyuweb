@@ -17,7 +17,7 @@ const createProxy = (list: ProxyList = []): ProxyTargetList => {
     acc[`^${prefix}`] = {
       target,
       ...persistDevConfig,
-      rewrite: path => path.replace(/^\/plat/, ''),
+      // rewrite: path => path.replace(/^\/plat/, ''),
     };
     return acc;
   }, {} as ProxyTargetList);
