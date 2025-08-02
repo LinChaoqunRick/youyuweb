@@ -1,7 +1,7 @@
-type EventHandler = (...args: any[]) => void;
+type EventHandler = (...args: any[]) => any | Promise<any>;
 
 class EventBus {
-  private events: Record<string, Set<EventHandler>> = {}; // Set 会自动去重
+  private events: Record<string, Set<EventHandler>> = {};
 
   on(event: string, handler: EventHandler) {
     if (!this.events[event]) {
@@ -16,6 +16,13 @@ class EventBus {
 
   emit(event: string, ...args: any[]) {
     this.events[event]?.forEach(handler => handler(...args));
+  }
+
+  async emitAsync<T = any>(event: string, ...args: any[]): Promise<T[]> {
+    const handlers = this.events[event];
+    if (!handlers || handlers.size === 0) return [];
+    const promises = [...handlers].map(fn => fn(...args));
+    return Promise.all(promises);
   }
 }
 

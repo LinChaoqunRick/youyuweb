@@ -4,25 +4,29 @@
       v-model:open="visible"
       placement="bottomRight"
       trigger="click"
-      overlayClassName="user-info-popover"
-      :getPopupContainer="triggerNode => triggerNode.parentNode"
+      overlay-class-name="user-info-popover"
+      :get-popup-container="triggerNode => triggerNode.parentNode"
     >
       <template #content>
         <div class="user-info">
           <div class="avatar">
             <RouterLink :to="`/user/${userInfo.id}`">
-              <img :src="userInfo.avatar" />
+              <img :src="userInfo.avatar">
             </RouterLink>
           </div>
           <div class="info-right">
             <RouterLink :to="`/user/${userInfo.id}`">
-              <div class="nickname">{{ userInfo.nickname }}</div>
+              <div class="nickname">
+                {{ userInfo.nickname }}
+              </div>
             </RouterLink>
             <div class="info-data">
-              <div class="adname" v-if="userInfo.adname">
+              <div v-if="userInfo.adname" class="adname">
                 {{ userInfo.adname }}
               </div>
-              <div class="uid">uid: {{ userInfo.id }}</div>
+              <div class="uid">
+                uid: {{ userInfo.id }}
+              </div>
             </div>
           </div>
         </div>
@@ -44,8 +48,13 @@
           </div>
         </div>
         <div class="menu-list">
-          <div v-for="item in menuList" :key="item.path" class="menu-item" @click="onItemClick">
-            <RouterLink :to="item.path" v-slot="{ isActive, isExactActive }">
+          <div
+            v-for="item in menuList"
+            :key="item.path"
+            class="menu-item"
+            @click="onItemClick"
+          >
+            <RouterLink v-slot="{ isActive, isExactActive }" :to="item.path">
               <div
                 class="ope-list-item"
                 :class="{
@@ -74,7 +83,7 @@
       </template>
       <div class="user-info-simple">
         <div class="avatar">
-          <img :src="userInfo.avatar" />
+          <img :src="userInfo.avatar">
         </div>
         <div class="nickname">
           {{ userInfo.nickname }}
@@ -86,10 +95,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { useStore } from 'vuex';
+import { cleanCookieLocalStorage } from '@youyu/shared/utils';
 import { Modal, message } from 'ant-design-vue';
 import { RouterLink } from 'vue-router';
-import { cleanCookieLocalStorage } from '@/assets/utils/utils';
+import { useStore } from 'vuex';
 import openSpin from '@/libs/tools/openSpin';
 
 let closeSpin: Function;
@@ -188,29 +197,29 @@ function handleLogout() {
     align-items: center;
 
     .avatar {
-      height: 42px;
       width: 42px;
-      cursor: pointer;
-      border-radius: 50%;
+      height: 42px;
       overflow: hidden;
+      border-radius: 50%;
+      cursor: pointer;
 
       img {
-        height: 100%;
         width: 100%;
+        height: 100%;
         object-fit: cover;
       }
     }
 
     .nickname {
-      max-width: 100px;
       align-items: center;
-      color: var(--youyu-body-text);
-      font-weight: bold;
-      cursor: pointer;
+      max-width: 100px;
       margin-left: 8px;
       overflow: hidden;
+      font-weight: bold;
+      color: var(--youyu-body-text);
       text-overflow: ellipsis;
       white-space: nowrap;
+      cursor: pointer;
     }
   }
 }
@@ -219,20 +228,20 @@ function handleLogout() {
 <style lang="scss">
 .user-info-popover {
   .user-info {
-    width: 224px;
     display: flex;
     align-items: center;
+    width: 224px;
     padding-bottom: 6px;
 
     .avatar {
-      height: 48px;
       width: 48px;
-      border-radius: 50%;
+      height: 48px;
       overflow: hidden;
+      border-radius: 50%;
 
       img {
-        height: 100%;
         width: 100%;
+        height: 100%;
       }
     }
 
@@ -241,14 +250,14 @@ function handleLogout() {
       margin-left: 12px;
 
       .nickname {
-        font-size: 15px;
         width: 100%;
-        font-weight: bold;
+        margin-left: 0;
         overflow: hidden;
+        font-size: 15px;
+        font-weight: bold;
+        color: var(--youyu-text);
         text-overflow: ellipsis;
         white-space: nowrap;
-        color: var(--youyu-text);
-        margin-left: 0;
       }
 
       .info-data {
@@ -258,12 +267,12 @@ function handleLogout() {
         color: var(--youyu-text1);
 
         .adname {
-          background-color: var(--primary-color);
           padding: 0 4px;
-          border-radius: 2px;
           margin-right: 6px;
-          color: #ffffff;
           line-height: 18px;
+          color: #fff;
+          background-color: var(--primary-color);
+          border-radius: 2px;
         }
       }
     }
@@ -271,23 +280,23 @@ function handleLogout() {
 
   .action-notice {
     display: flex;
-    border-top: 1px solid var(--youyu-border-color2);
     padding: 8px 0;
+    border-top: 1px solid var(--youyu-border-color2);
 
     .an-item {
-      flex: 1;
       display: flex;
-      justify-content: center;
+      flex: 1;
       align-items: center;
+      justify-content: center;
       height: 50px;
-      border-radius: 4px;
-      border: 1px solid var(--youyu-border-color2);
       color: var(--youyu-text1);
+      border: 1px solid var(--youyu-border-color2);
+      border-radius: 4px;
       cursor: pointer;
 
       &:hover {
-        background-color: var(--youyu-background2);
         color: var(--youyu-text2);
+        background-color: var(--youyu-background2);
       }
 
       &:nth-child(n + 2) {
@@ -305,24 +314,28 @@ function handleLogout() {
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 4px;
     width: 100%;
-    border-width: 1px 0 1px 0;
-    border-style: solid;
-    border-color: var(--youyu-border-color2);
     padding: 8px 0;
+    border-color: var(--youyu-border-color2);
+    border-style: solid;
+    border-width: 1px 0;
 
     .menu-item {
       width: 112px;
-      /*background-color: skyblue;*/
+
+      /* background-color: skyblue; */
       border-radius: 4px;
-      /*border: 1px solid var(--youyu-border-color2);*/
+
+      /* border: 1px solid var(--youyu-border-color2); */
 
       &.menu-item-separator {
         grid-column-start: span 2;
 
         .ope-list-item {
           padding: 0;
-          /*height: 1px;*/
-          /*background-color: var(--youyu-border-color);*/
+
+          /* height: 1px; */
+
+          /* background-color: var(--youyu-border-color); */
         }
       }
     }
@@ -331,9 +344,9 @@ function handleLogout() {
   .bottom-action {
     display: flex;
     justify-content: space-between;
+    padding-top: 8px;
     font-size: 13px;
     color: var(--youyu-text1);
-    padding-top: 8px;
 
     .action-item {
       cursor: pointer;
@@ -350,19 +363,19 @@ function handleLogout() {
   }
 
   .ope-list-separator {
-    /*border-bottom: 2px solid var(--youyu-border-color2);*/
+    /* border-bottom: 2px solid var(--youyu-border-color2); */
   }
 
   .ope-list-item {
     display: flex;
-    justify-content: center;
     align-items: center;
-    cursor: pointer;
+    justify-content: center;
     padding: 7px 0;
-    color: var(--youyu-body-text1) !important;
     font-weight: normal;
-    transition: 0.3s;
+    color: var(--youyu-body-text1) !important;
     border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s;
 
     &:hover {
       color: #1890ff !important;
@@ -370,20 +383,21 @@ function handleLogout() {
     }
 
     &.router-link-exact-active {
+      font-weight: bold;
       color: #1890ff !important;
       background-color: var(--youyu-background2);
-      font-weight: bold;
     }
 
     .i-icon {
-      fill: #637792;
       margin-right: 4px;
+      fill: #637792;
     }
 
     &:hover {
-      /*background-color: var(--youyu-body-background-ligth);*/
+      /* background-color: var(--youyu-body-background-ligth); */
       color: #1890ff;
-      /*font-weight: bold;*/
+
+      /* font-weight: bold; */
 
       .i-icon {
         fill: #1890ff;

@@ -1,12 +1,12 @@
 <template>
-  <div class="post-item" ref="thisRef">
-    <div class="article-item" :class="{'flex-revert': !!(index % 2)}" v-if="thumbnails.length < 3">
+  <div ref="thisRef" class="post-item">
+    <div v-if="thumbnails.length < 3" class="article-item" :class="{'flex-revert': !!(index % 2)}">
       <div class="image-wrapper">
         <RouterLink class="post-link" :to="{name:'PostDetail',params:{postId:data.id}}">
           <img :src="thumbnails[0]">
           <div class="item-slants">
-            <div class="item-slant item-slant-top"></div>
-            <div class="item-slant item-slant-bottom"></div>
+            <div class="item-slant item-slant-top" />
+            <div class="item-slant item-slant-bottom" />
           </div>
         </RouterLink>
       </div>
@@ -16,13 +16,19 @@
             {{ data.title }}
           </RouterLink>
         </div>
-        <RouterLink class="post-link article-caption" v-html="data.summary"
-                    :to="{name:'PostDetail',params:{postId:data.id}}"/>
+        <RouterLink
+          class="post-link article-caption"
+          :to="{name:'PostDetail',params:{postId:data.id}}"
+          v-html="data.summary"
+        />
         <div class="article-info">
-          <RouterLink class="info-item info-nickname" :to="`/user/${data.user.id}`">{{ data.user.nickname }}
+          <RouterLink class="info-item info-nickname" :to="`/user/${data.user.id}`">
+            {{ data.user.nickname }}
           </RouterLink>
-          <span class="info-item create-type"
-                :class="[`create_type_${data.createType}`]">{{ createTypeList[data.createType] }}</span>
+          <span
+            class="info-item create-type"
+            :class="[`create_type_${data.createType}`]"
+          >{{ createTypeList[data.createType] }}</span>
           <span class="info-item category-name">{{ data.categoryName }}</span>
           <span class="info-item">{{ (data.createTime).substr(0, 10) }}</span>
           <span class="info-item">{{ data.commentCount }}&ensp;评论</span>
@@ -30,7 +36,7 @@
         </div>
       </div>
     </div>
-    <div class="article-item article-item-more-pic" v-else>
+    <div v-else class="article-item article-item-more-pic">
       <div class="content-wrapper">
         <div class="article-title">
           <RouterLink class="post-link" :to="{name:'PostDetail',params:{postId:data.id}}">
@@ -40,34 +46,37 @@
       </div>
       <div class="image-wrapper">
         <RouterLink class="post-link" :to="{name:'PostDetail',params:{postId:data.id}}">
-          <div class="img-container" v-for="img in thumbnails">
+          <div v-for="img in thumbnails" class="img-container">
             <img :src="img">
           </div>
         </RouterLink>
       </div>
       <div class="article-info">
-        <RouterLink class="info-item info-nickname" :to="`/user/${data.user.id}`">{{ data.user.nickname }}</RouterLink>
-        <span class="info-item create-type"
-              :class="[`create_type_${data.createType}`]">{{ createTypeList[data.createType] }}</span>
+        <RouterLink class="info-item info-nickname" :to="`/user/${data.user.id}`">
+          {{ data.user.nickname }}
+        </RouterLink>
+        <span
+          class="info-item create-type"
+          :class="[`create_type_${data.createType}`]"
+        >{{ createTypeList[data.createType] }}</span>
         <span class="info-item category-name">{{ data.categoryName }}</span>
         <span class="info-item">{{ (data.createTime).substr(0, 10) }}</span>
         <span class="info-item">{{ data.commentCount }}&ensp;评论</span>
         <span class="info-item">{{ data.viewCount }}&ensp;阅读</span>
       </div>
     </div>
-    <div class="hover-tag"></div>
+    <div class="hover-tag" />
   </div>
 </template>
 
 <script setup>
-import {ref, computed, onMounted} from 'vue';
+import {ref, computed} from 'vue';
 import {RouterLink} from 'vue-router';
 
 const props = defineProps({
   data: {
     type: Object,
     required: true,
-    default: []
   },
   index: {
     type: Number,
@@ -86,23 +95,24 @@ const thumbnails = computed(() => {
 
 <style lang="scss" scoped>
 .post-item {
+  position: relative;
   display: flex;
   align-items: center;
-  position: relative;
 
   .article-item {
-    height: 170px;
-    width: 100%;
-    margin-bottom: 8px;
-    background-color: var(--youyu-body-background2);
+    position: relative;
     display: flex;
     align-items: center;
+    width: 100%;
+    height: 170px;
+    margin-bottom: 8px;
+    background-color: var(--youyu-body-background2);
     border-radius: 8px;
-    position: relative;
 
     .image-wrapper {
       width: 240px;
-      /*height: 100%;*/
+
+      /* height: 100%; */
       padding: 16px;
       overflow: hidden;
 
@@ -111,12 +121,12 @@ const thumbnails = computed(() => {
         width: 210px;
         height: 140px;
         overflow: hidden;
-        border-radius: 10px;
         color: inherit;
+        border-radius: 10px;
 
         img {
-          height: 100%;
           width: 100%;
+          height: 100%;
           object-fit: cover;
           cursor: pointer;
           transition: .4s;
@@ -125,25 +135,25 @@ const thumbnails = computed(() => {
     }
 
     .content-wrapper {
-      padding: 10px 16px 10px 0;
-      height: 100%;
-      width: 100%;
-      flex: 1;
       display: flex;
+      flex: 1;
       flex-direction: column;
+      width: 100%;
+      height: 100%;
+      padding: 10px 16px 10px 0;
       overflow: hidden;
 
       .article-title {
-        height: 30px;
         width: 100%;
+        height: 30px;
         font-size: 18px;
         font-weight: 700;
         cursor: pointer;
 
         a {
           width: 100%;
-          text-overflow: ellipsis;
           overflow: hidden;
+          text-overflow: ellipsis;
           white-space: nowrap;
         }
 
@@ -155,19 +165,20 @@ const thumbnails = computed(() => {
       .article-caption {
         flex: 1;
         height: 0;
-        text-overflow: ellipsis;
         overflow: hidden;
         font-size: 14px;
         line-height: 1.7;
+        text-overflow: ellipsis;
         cursor: pointer;
       }
 
       .article-info {
         height: 20px;
-        /*border-top: var(--article-border);*/
-        color: var(--article-info-color);
-        font-size: 12px;
         padding-top: 3px;
+        font-size: 12px;
+
+        /* border-top: var(--article-border); */
+        color: var(--article-info-color);
       }
     }
   }
@@ -179,18 +190,18 @@ const thumbnails = computed(() => {
     .content-wrapper {
       width: 100%;
       height: auto;
-      padding: 10px 16px 6px 16px;
+      padding: 10px 16px 6px;
     }
 
     .image-wrapper {
-      padding: 0 16px;
-      width: 100%;
       display: flex;
+      width: 100%;
+      padding: 0 16px;
 
       .post-link {
+        display: flex;
         width: 100%;
         height: 150px;
-        display: flex;
         color: inherit;
 
         .img-container {
@@ -206,18 +217,20 @@ const thumbnails = computed(() => {
     }
 
     .article-info {
-      /*border-top: var(--article-border);*/
-      color: var(--article-info-color);
-      font-size: 12px;
       padding-top: 6px;
-      margin: 2px 16px 0 16px;
+      margin: 2px 16px 0;
+      font-size: 12px;
+
+      /* border-top: var(--article-border); */
+      color: var(--article-info-color);
     }
   }
 
   .hover-tag {
     position: absolute;
     left: 0;
-    /*top: 20%;*/
+
+    /* top: 20%; */
     width: 4px;
     height: 0;
     background-color: #1980ff;
@@ -254,7 +267,7 @@ const thumbnails = computed(() => {
   }
 
   .create-type {
-    /*background-color: #1890ff;*/
+    /* background-color: #1890ff; */
     border-radius: 2px;
   }
 
@@ -276,18 +289,18 @@ const thumbnails = computed(() => {
 
   .info-item {
     &:nth-child(n+2) {
-      &:before {
-        content: '/';
-        color: #bbbbbb;
+      &::before {
         padding: 0 5px;
+        color: #bbb;
+        content: '/';
       }
     }
   }
 }
 
 .post-link {
-  color: inherit;
   display: block;
+  color: inherit;
 }
 </style>
 
@@ -296,26 +309,21 @@ const thumbnails = computed(() => {
   .article-item {
     .item-slants {
       position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
+      inset: 0;
+      box-shadow: inset 0 0 12px rgb(0, 0, 0, 0.2); /* 内阴影效果 */
 
       .item-slant {
         position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
+        inset: 0;
 
         &.item-slant-top {
-          transform: rotate(109deg) translateY(220px);
           transition: .4s;
+          transform: rotate(109deg) translateY(220px);
         }
 
         &.item-slant-bottom {
-          transform: rotate(70deg) translateY(190px);
           transition: .3s;
+          transform: rotate(70deg) translateY(190px);
         }
       }
     }
@@ -323,12 +331,12 @@ const thumbnails = computed(() => {
     &:hover {
       .item-slant {
         &.item-slant-top {
-          background-color: rgba(24, 144, 255, 0.8);
+          background-color: rgb(24, 144, 255, 0.8);
           transform: rotate(109deg) translateY(159px);
         }
 
         &.item-slant-bottom {
-          background-color: rgba(255, 255, 255, 0.6);
+          background-color: rgb(255, 255, 255, 0.6);
           transform: rotate(70deg) translateY(155px);
         }
       }
@@ -346,12 +354,12 @@ const thumbnails = computed(() => {
 
     &:hover {
       .item-slant-top {
-        background-color: rgba(24, 144, 255, 0.8);
+        background-color: rgb(24, 144, 255, 0.8);
         transform: rotate(-109deg) translateY(159px) !important;
       }
 
       .item-slant-bottom {
-        background-color: rgba(255, 255, 255, 0.6);
+        background-color: rgb(255, 255, 255, 0.6);
         transform: rotate(-70deg) translateY(155px) !important;
       }
     }

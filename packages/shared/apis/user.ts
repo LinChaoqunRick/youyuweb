@@ -1,7 +1,7 @@
 import { ApiBase } from '../consts';
 // 用户
 export const GET_AUTH_ROUTES = `${ApiBase}/user/open/getAuthRoutes`; // 获取权限路由
-export const GET_CURRENT_USER = `${ApiBase}/user/getCurrentUser`; // 获取当前登录用户信息
+export const GET_CURRENT_USER = `${ApiBase}/user/me`; // 获取当前登录用户信息
 export const GET_USER_LIST = `${ApiBase}/user/open/list`; // 用户列表
 export const GET_USER_DETAIL = `${ApiBase}/user/detail`; // 用户信息
 export const SET_USER_FOLLOW = `${ApiBase}/user/follow`; // 关注用户
@@ -28,3 +28,5 @@ export const FAVORITES_POST_PAGE = `${ApiBase}/favorites/open/postPage`; // 收�
 
 // manage用户
 export const GET_MANAGE_AUTH_ROUTES = `${ApiBase}/manage/user/getAuthRoutes`; // 获取权限路由
+export const GET_CURRENT_MANAGE_USER = `${ApiBase}/manage/user/me`; // 获取当前登录用户信息
+

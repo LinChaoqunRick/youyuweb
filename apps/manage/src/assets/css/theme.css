@@ -1,10 +1,52 @@
 /* 使用 data-theme 切换 :root 变量 */
 :root[data-theme='light'] {
   --bg-color: #fff;
+  --bg-color-view: #f1f3f6;
   --text-color: #000;
+  --bg-btn-hover: hsl(240deg 5% 96%);
+  --border-color: #f0f0f0;
 }
 
 :root[data-theme='dark'] {
   --bg-color: #141414;
+  --bg-color-view: #14161a;
   --text-color: #eee;
+  --bg-btn-hover: hsl(216deg 5% 19%);
+  --border-color: #313131;
+}
+
+/* 苹方-简 极细体 */
+@font-face {
+  font-family: 'PingFangSC-Ultralight-woff2';
+  src: url('../font/PingFangSC-Ultralight.woff2') format('woff2');
+}
+
+/* 苹方-简 纤细体 */
+@font-face {
+  font-family: 'PingFangSC-Thin-woff2';
+  src: url('../font/PingFangSC-Thin.woff2') format('woff2');
+}
+
+/* 苹方-简 细体 */
+@font-face {
+  font-family: 'PingFangSC-Light-woff2';
+  src: url('../font/PingFangSC-Light.woff2') format('woff2');
+}
+
+/* 苹方-简 常规体 */
+@font-face {
+  font-family: 'PingFangSC-Regular-woff2';
+  src: url('../font/PingFangSC-Regular.woff2') format('woff2');
+}
+
+/* 苹方-简 中黑体 */
+@font-face {
+  font-family: 'PingFangSC-Medium-woff2';
+  src: url('../font/PingFangSC-Medium.woff2') format('woff2');
+}
+
+/* 苹方-简 中粗体 */
+@font-face {
+  font-family: 'PingFangSC-Semibold-woff2';
+  src: url('../font/PingFangSC-Semibold.woff2') format('woff2');
 }

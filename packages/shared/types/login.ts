@@ -6,3 +6,9 @@ export interface MenuItem {
   icon?: JSX.Element;
   children?: MenuItem[];
 }
+
+export interface ResponseResult {
+  message: string;
+  code: number;
+  data: any
+}

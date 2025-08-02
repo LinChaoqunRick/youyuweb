@@ -1,6 +1,7 @@
 * {
   padding: 0;
   margin: 0;
+  font-family: 'PingFangSC-Regular-woff2';
 }
 
 #app {
@@ -36,6 +37,8 @@
   width: 100%;
   height: 50px;
   padding: 0 16px;
+  color: var(--text-color);
+  background-color: var(--bg-color);
   border-bottom: 1px solid rgb(5, 5, 5, 0.06);
 
   .header-right {
@@ -53,9 +56,13 @@
       width: 32px;
       height: 32px;
       font-size: 18px;
-      border: 1px solid rgb(5, 5, 5, 0.06);
       border-radius: 50%;
       cursor: pointer;
+
+      &:hover {
+        background-color: var(--bg-btn-hover);
+        transition: .3s;
+      }
     }
   }
 }
@@ -67,4 +74,37 @@
       text-align: center;
     }
   }
+}
+
+@keyframes l5 {
+  0%   {background-position: 0    0,100% 0   ,100% 100%,0 100%}
+  33%  {width:60px;height: 60px;background-position: 0    0,100% 0   ,100% 100%,0 100%}
+  66%  {width:60px;height: 60px;background-position: 100% 0,100% 100%,0    100%,0 0   }
+  100% {background-position: 100% 0,100% 100%,0    100%,0 0   }
+}
+
+.app-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+
+  .loader {
+    --c:no-repeat linear-gradient(#1890ff 0 0);
+
+    width: 40px;
+    height: 40px;
+    background: var(--c),var(--c),var(--c),var(--c);
+    background-size: 21px 21px;
+    animation: l5 1.5s infinite cubic-bezier(0.3,1,0,1);
+  }
+}
+
+.app-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
 }

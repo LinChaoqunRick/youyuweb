@@ -1,12 +1,13 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import qs from 'qs';
+import { ResponseResult } from '../types';
 import eventBus from '../utils/event-bus';
 
 const instance = axios.create({
   baseURL: '',
   timeout: 200000,
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 });
 
 const showMessageCode = ['403', '508', '509', '510', '530', '600', '800'];
@@ -22,7 +23,7 @@ instance.interceptors.request.use(
   },
   err => {
     // console.log(err);
-  }
+  },
 );
 
 // 响应拦截器
@@ -54,7 +55,7 @@ instance.interceptors.response.use(
       eventBus.emit('showMessage', { type: 'error', text: '系统异常，请联系管理员' });
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 /**
@@ -62,7 +63,7 @@ instance.interceptors.response.use(
  * @param url
  * @param params
  */
-const get = (url: string, params = {}) => instance.get(url, { params });
+const get = (url: string, params = {}): Promise<ResponseResult> => instance.get(url, { params });
 
 /**
  * post方法，对应post请求
@@ -70,9 +71,9 @@ const get = (url: string, params = {}) => instance.get(url, { params });
  * @param data
  * @param config
  */
-const post = (url: string, data = {}, config: AxiosRequestConfig = {}) => {
+const post = (url: string, data = {}, config: AxiosRequestConfig = {}): Promise<ResponseResult> => {
   const headers = config?.headers || {
-    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
   };
   const isJson = headers['Content-Type'] === 'application/json';
   const payload = isJson ? data : qs.stringify(data);
@@ -80,13 +81,13 @@ const post = (url: string, data = {}, config: AxiosRequestConfig = {}) => {
 };
 
 const refreshAuthLogic = async (failedRequest: AxiosError) => {
-  eventBus.emit('refreshToken', failedRequest);
-  return Promise.resolve();
+  const [res] = await eventBus.emitAsync('refreshToken', failedRequest);
+  return res ? Promise.resolve() : Promise.reject();
 };
 
 createAuthRefreshInterceptor(instance, refreshAuthLogic);
 
 export default {
   get,
-  post
+  post,
 };

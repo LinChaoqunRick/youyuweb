@@ -1,11 +1,10 @@
 .logo {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   height: 50px;
   color: var(--text-color);
   background-color: var(--bg-color);
-  border-color: rgb(5, 5, 5, 0.06);
-  border-style: solid;
-  border-width: 0 1px 1px 0;
+  border-right: 1px solid var(--border-color);
 }

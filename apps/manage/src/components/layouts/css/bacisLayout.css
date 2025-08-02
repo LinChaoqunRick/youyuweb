@@ -17,11 +17,13 @@
     flex: 1;
     flex-direction: column;
     overflow: hidden;
+    color: var(--text-color);
 
     .view-content {
       flex: 1;
       padding: 16px;
       overflow: auto;
+      background-color: var(--bg-color-view);
     }
   }
 }

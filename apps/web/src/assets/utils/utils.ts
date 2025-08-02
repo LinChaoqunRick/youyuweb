@@ -174,10 +174,6 @@ export const colorReverse = (color: string): string => {
   return '#' + str.substring(str.length - 6, str.length);
 };
 
-export const cleanCookieLocalStorage = () => {
-  localStorage.clear();
-};
-
 /**
  * 判断body是否存在滚动条
  */

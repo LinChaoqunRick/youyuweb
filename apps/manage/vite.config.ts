@@ -17,7 +17,7 @@ const createProxy = (list: ProxyList = []): ProxyTargetList => {
     acc[`^${prefix}`] = {
       target,
       ...persistDevConfig,
-      // rewrite: path => path.replace(/^\/plat/, ''),
+      rewrite: path => path.replace(/^\/plat/, ''),
     };
     return acc;
   }, {} as ProxyTargetList);
@@ -35,6 +35,7 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 3030,
     open: false,
-    proxy: createProxy([['/plat', 'https://v2.youyul.com' || '']]),
+    // proxy: createProxy([['/plat', 'https://v2.youyul.com' || '']]),
+    proxy: createProxy([['/plat', 'http://localhost:8080' || '']]),
   },
 });

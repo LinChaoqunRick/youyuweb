@@ -1,8 +1,8 @@
 <template>
-  <YTable :listUrl="listUrl" :params="props.tableParams" ref="YTableRef">
+  <YTable ref="YTableRef" :list-url="listUrl" :params="props.tableParams">
     <template #default="{ dataList }">
       <div class="list-wrapper">
-        <div v-for="item in dataList" class="album-item-body" :key="item.id">
+        <div v-for="item in dataList" :key="item.id" class="album-item-body">
           <AlbumItem :data="item" />
         </div>
       </div>
@@ -11,9 +11,9 @@
 </template>
 
 <script setup lang="ts">
-import AlbumItem from '@/views/album/components/AlbumItem.vue';
-import YTable from '@/components/common/table/YTable.vue';
 import { ref } from 'vue';
+import YTable from '@/components/common/table/YTable.vue';
+import AlbumItem from '@/views/album/components/AlbumItem.vue';
 
 const YTableRef = ref<typeof YTable | null>(null);
 
@@ -58,10 +58,10 @@ defineExpose({
       }
 
       .table-pagination {
-        margin-top: 20px;
-        height: 80px;
         position: sticky;
         top: 88%;
+        height: 80px;
+        margin-top: 20px;
         background-color: transparent !important;
       }
     }
@@ -69,12 +69,10 @@ defineExpose({
 
   .list-wrapper {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    justify-content: flex-start;
-    justify-items: center;
-    align-items: center;
-    align-content: space-evenly;
+    grid-template-columns: repeat(4, 1fr);
+    place-content: space-evenly flex-start;
+    place-items: center center;
 
     ::v-deep(.album-item) {
       width: 270px;

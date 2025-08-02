@@ -1,18 +1,18 @@
 import {
   BarChartOutlined, DashboardOutlined, DesktopOutlined, RadarChartOutlined,
 } from '@ant-design/icons';
-import React from 'react';
-
-import Dashboard from '@/pages/dashboard';
-import DashboardAnalysis from '@/pages/dashboard/analysis';
-import DashboardMonitor from '@/pages/dashboard/monitor';
-import DashboardWorkplace from '@/pages/dashboard/workplace';
+import { lazy } from 'react';
 import { RouteObjectMeta } from '@/types/login';
+
+const OutletLayout = lazy(() => import('@/components/layouts/OutletLayout'));
+const DashboardAnalysis = lazy(() => import('@/pages/dashboard/analysis'));
+const DashboardMonitor = lazy(() => import('@/pages/dashboard/monitor'));
+const DashboardWorkplace = lazy(() => import('@/pages/dashboard/workplace'));
 
 const dashboardRoutes: RouteObjectMeta[] = [
   {
     path: 'dashboard',
-    element: <Dashboard />,
+    element: <OutletLayout />,
     meta: { title: '概览', icon: <DashboardOutlined />, code: 'dashboard' },
     children: [
       {

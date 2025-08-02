@@ -10,7 +10,7 @@ export interface Permission {
 
 export interface AuthResult {
   permissions: Permission[];
-  authLoaded: boolean;
+  authStatus: number; // 0: 获取中，1: 成功，2: 失败
 }
 
 // 类型拓展：支持 meta
