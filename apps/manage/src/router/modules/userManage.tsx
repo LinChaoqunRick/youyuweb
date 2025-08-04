@@ -1,21 +1,30 @@
 import { UserOutlined, UserSwitchOutlined } from '@ant-design/icons';
-import { lazy } from 'react';
+import intl from 'react-intl-universal';
+import { lazyLoad } from '@/components/enhance/lazyLoad';
 import { RouteObjectMeta } from '@/types/login';
 
-const OutletLayout = lazy(() => import('@/components/layouts/OutletLayout'));
-const UserList = lazy(() => import('@/pages/user/list'));
+const OutletLayout = lazyLoad(() => import('@/components/layouts/OutletLayout'));
+const UserList = lazyLoad(() => import('@/pages/user/list'));
 
 const userRoutes: RouteObjectMeta[] = [
   {
     path: 'user',
     element: <OutletLayout />,
-    meta: { title: '用户管理', icon: <UserOutlined />, code: 'user' },
+    meta: {
+      get title() {
+        return intl.get('menu.userManage');
+      },
+      icon: <UserOutlined />,
+      code: 'user',
+    },
     children: [
       {
         path: 'list',
         element: <UserList />,
         meta: {
-          title: '用户列表',
+          get title() {
+            return intl.get('menu.userList');
+          },
           icon: <UserSwitchOutlined />,
           code: 'user:list',
         },

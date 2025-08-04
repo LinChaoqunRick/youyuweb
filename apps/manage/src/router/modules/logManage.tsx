@@ -1,22 +1,31 @@
 import { FileSearchOutlined, LaptopOutlined, ToolOutlined } from '@ant-design/icons';
-import { lazy } from 'react';
+import intl from 'react-intl-universal';
+import { lazyLoad } from '@/components/enhance/lazyLoad';
 import { RouteObjectMeta } from '@/types/login';
 
-const OutletLayout = lazy(() => import('@/components/layouts/OutletLayout'));
-const LoginInOut = lazy(() => import('@/pages/logManage/loginInOut'));
-const LogOperation = lazy(() => import('@/pages/logManage/logOperation'));
+const OutletLayout = lazyLoad(() => import('@/components/layouts/OutletLayout'));
+const LoginInOut = lazyLoad(() => import('@/pages/logManage/loginInOut'));
+const LogOperation = lazyLoad(() => import('@/pages/logManage/logOperation'));
 
 const userRoutes: RouteObjectMeta[] = [
   {
     path: 'log',
     element: <OutletLayout />,
-    meta: { title: '日志管理', icon: <FileSearchOutlined />, code: 'user' },
+    meta: {
+      get title() {
+        return intl.get('menu.logManage');
+      },
+      icon: <FileSearchOutlined />,
+      code: 'user',
+    },
     children: [
       {
         path: 'inout',
         element: <LoginInOut />,
         meta: {
-          title: '登录登出日志',
+          get title() {
+            return intl.get('menu.logLoginOut');
+          },
           icon: <LaptopOutlined />,
           code: 'log:inout',
         },
@@ -25,7 +34,9 @@ const userRoutes: RouteObjectMeta[] = [
         path: 'operation',
         element: <LogOperation />,
         meta: {
-          title: '操作日志',
+          get title() {
+            return intl.get('menu.logOperation');
+          },
           icon: <ToolOutlined />,
           code: 'log:operation',
         },

@@ -25,3 +25,13 @@ export type RouteObjectMeta = {
   };
   children?: RouteObjectMeta[];
 };
+
+export interface ManageUser {
+  avatar: string;
+  email: string;
+  id: number;
+  nickname: string;
+  sex: number;
+  signature: string;
+  username: string;
+}

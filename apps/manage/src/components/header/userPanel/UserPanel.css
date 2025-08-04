@@ -1,0 +1,65 @@
+.user-panel-popover {
+  .ant-popover-inner {
+    padding: 4px;
+  }
+}
+
+.user-panel {
+  width: 240px;
+
+  > div {
+    &:nth-child(n+2) {
+      border-top: 1px solid var(--border-color);
+    }
+  }
+
+  .basic-info {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+
+    img {
+      width: 48px;
+      height: 48px;
+      margin-right: 10px;
+      border: 2px solid var(--border-color);
+      border-radius: 50%;
+    }
+
+    .user-nickname {
+      font-weight: bold;
+    }
+
+    .user-email {
+      font-size: 12px;
+      color: var(--text-color-gray);
+    }
+  }
+
+  .user-operations {
+    padding-top: 4px;
+  }
+
+  .user-btn {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    padding: 0 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: .3s;
+
+    &:hover {
+      background-color: var(--bg-btn-hover);
+    }
+
+    .anticon {
+      margin-right: 6px;
+      font-size: 16px;
+
+      &.anticon-upload {
+        transform: rotateZ(90deg);
+      }
+    }
+  }
+}

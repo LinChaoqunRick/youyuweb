@@ -1,5 +1,6 @@
 function Analysis() {
   const arr = Array.from({ length: 200 });
+  console.log(111);
   return (
     <div>
       {arr.map((item: any, index: number) => {

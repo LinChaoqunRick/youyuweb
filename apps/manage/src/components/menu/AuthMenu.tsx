@@ -2,14 +2,15 @@ import { Menu } from 'antd';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMenu } from '@/hooks/useMenu';
+import { useAppSettings } from '@/store/useAppSettings';
 import type { MenuItem } from '@youyu/shared/types';
 
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const authMenus: MenuItem[] = useMenu();
+  const { menuCollapsed } = useAppSettings();
 
-  const [collapsed, setCollapsed] = useState(false);
   const [openKeys, setOpenKeys] = useState<string[]>([]);
 
   const items = useMemo(() => {
@@ -38,10 +39,10 @@ function App() {
       onClick={onClick}
       style={{ width: 256 }}
       selectedKeys={selectedKeys}
-      openKeys={collapsed ? [] : openKeys}
+      openKeys={menuCollapsed ? [] : openKeys}
       onOpenChange={onOpenChange}
       mode="inline"
-      inlineCollapsed={collapsed}
+      inlineCollapsed={menuCollapsed}
       items={items}
     />
   );

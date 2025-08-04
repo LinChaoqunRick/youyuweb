@@ -6,18 +6,10 @@
 
 #app {
   height: 100vh;
+}
 
-  .app-menu {
-    display: flex;
-    flex-direction: column;
-    width: 256px;
-    height: 100%;
-  }
-
-  .ant-menu {
-    flex: 1;
-    user-select: none;
-  }
+.cp {
+  cursor: pointer;
 }
 
 .language-switch-dropdown {
@@ -36,10 +28,33 @@
   justify-content: space-between;
   width: 100%;
   height: 50px;
-  padding: 0 16px;
+  padding: 0 20px 0 8px;
   color: var(--text-color);
   background-color: var(--bg-color);
   border-bottom: 1px solid rgb(5, 5, 5, 0.06);
+
+  .header-left {
+    display: flex;
+    align-items: center;
+
+    .anticon {
+      font-size: 16px;
+      color: var(--text-color-icon);
+
+      &.anticon-menu, &.anticon-reload {
+        padding: 6px;
+        margin: 0 4px;
+        font-size: 15px;
+        border-radius: 4px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: var(--bg-btn-hover);
+          transition: .3s;
+        }
+      }
+    }
+  }
 
   .header-right {
     display: flex;
@@ -63,6 +78,16 @@
         background-color: var(--bg-btn-hover);
         transition: .3s;
       }
+    }
+
+    .header-avatar {
+      width: 32px;
+      height: 32px;
+      margin-left: 8px;
+      object-fit: cover;
+      border: 1px solid var(--border-color);
+      border-radius: 50%;
+      cursor: pointer;
     }
   }
 }
@@ -89,16 +114,16 @@
   justify-content: center;
   width: 100vw;
   height: 100vh;
+}
 
-  .loader {
-    --c:no-repeat linear-gradient(#1890ff 0 0);
+.loader {
+  --c:no-repeat linear-gradient(#1890ff 0 0);
 
-    width: 40px;
-    height: 40px;
-    background: var(--c),var(--c),var(--c),var(--c);
-    background-size: 21px 21px;
-    animation: l5 1.5s infinite cubic-bezier(0.3,1,0,1);
-  }
+  width: 40px;
+  height: 40px;
+  background: var(--c),var(--c),var(--c),var(--c);
+  background-size: 21px 21px;
+  animation: l5 1.5s infinite cubic-bezier(0.3,1,0,1);
 }
 
 .app-error {
@@ -107,4 +132,26 @@
   justify-content: center;
   width: 100vw;
   height: 100vh;
+}
+
+.header-breadcrumbs {
+  margin-left: 6px;
+
+  li {
+    span {
+      margin-right: 6px;
+    }
+  }
+}
+
+.component-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.sub-view-wrapper {
+  height: 100%;
 }

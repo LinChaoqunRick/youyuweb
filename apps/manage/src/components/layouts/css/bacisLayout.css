@@ -7,8 +7,14 @@
     display: flex;
     flex-direction: column;
 
-    .ant-menu {
+    .ant-menu-root {
       flex: 1;
+      overflow: auto;
+      user-select: none;
+
+      &.ant-menu-inline-collapsed {
+        width: 70px !important;
+      }
     }
   }
 
