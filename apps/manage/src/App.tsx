@@ -7,6 +7,8 @@ import EventBus from '@youyu/shared/utils/event-bus';
 import {
   ConfigProvider, theme as themeConfig, message, Modal,
 } from 'antd';
+import enUs from 'antd/locale/en_US';
+import zhCN from 'antd/locale/zh_CN';
 import React, { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '@/context/AuthContext';
@@ -15,6 +17,7 @@ import RouterProvider from '@/providers/RouterProvider';
 import '@/assets/css/theme.css';
 import { useAppSettings } from '@/store/useAppSettings';
 import type { AxiosError } from 'axios';
+import 'dayjs/locale/zh-cn';
 
 type MessageType = 'success' | 'error' | 'info' | 'warning' | 'loading';
 function App() {
@@ -75,6 +78,7 @@ function App() {
       theme={{
         algorithm: theme === 'dark' ? themeConfig.darkAlgorithm : themeConfig.defaultAlgorithm,
       }}
+      locale={language === 'zh' ? zhCN : enUs}
     >
       <div id="app">
         {contextHolder}

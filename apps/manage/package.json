@@ -1,6 +1,7 @@
 {
   "name": "manage",
   "private": true,
+  "type": "module",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
@@ -10,10 +11,12 @@
   },
   "dependencies": {
     "@ant-design/icons": "5.x",
+    "@tailwindcss/vite": "^4.1.11",
     "@youyu/shared": "workspace:^",
     "ahooks": "^3.9.0",
     "antd": "^5.26.2",
     "classnames": "^2.5.1",
+    "dayjs": "^1.11.5",
     "echarts": "^5.6.0",
     "framer-motion": "^12.23.12",
     "lodash": "^4.17.21",
@@ -23,6 +26,7 @@
     "react-dom": "^19.1.0",
     "react-intl-universal": "^2.12.0",
     "react-router-dom": "^7.6.2",
+    "tailwindcss": "^4.1.11",
     "zustand": "^5.0.5"
   },
   "devDependencies": {
@@ -33,8 +37,9 @@
     "@youyu/spec": "workspace:^",
     "eslint": "^8.57.1",
     "globals": "^16.0.0",
+    "less": "^4.4.0",
     "prettier": "^3.5.3",
-    "stylelint": "^16.21.0",
+    "stylelint": "^16.3.0",
     "vite": "^6.3.5"
   }
 }

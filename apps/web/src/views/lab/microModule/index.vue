@@ -310,14 +310,14 @@ const handleLintelChange = async (newConfig, oldConfig, frontDoorMesh, backDoorM
     if (newLintelLogoType !== '1') {
       if (lintelFront && lintelBack) {
         const item = !isLogoLintel && lintelLogoType.find(item => item.code === newLintelLogoType);
-        const texture = await TextureLoaderPromise(isLogoLintel ? newLintelLogoFilePath : '/static/micro/map/' + item.image);
+        const texture = await TextureLoaderPromise(isLogoLintel ? newLintelLogoFilePath : '/static/micro/echart/' + item.image);
         setLintelTexture(texture);
       }
     } else {
       if (oldConfig) {
         // 如果存在oldConfig则是更新，而不是初始化执行
         const defaultItem = lintelLogoType[0];
-        const texture = await TextureLoaderPromise('/static/micro/map/' + defaultItem.image);
+        const texture = await TextureLoaderPromise('/static/micro/echart/' + defaultItem.image);
         setLintelTexture(texture);
       }
     }
@@ -354,7 +354,7 @@ const handleLcdChange = async (newConfig, oldConfig, frontDoorMesh) => {
     } else {
       if (oldConfig) {
         let defaultItem = isHighEnd ? lcdHighEndDisplayType[0] : lcdStandardDisplayType[0];
-        const texture = await TextureLoaderPromise('/static/micro/map/' + defaultItem.image);
+        const texture = await TextureLoaderPromise('/static/micro/echart/' + defaultItem.image);
         lcdFront && setMeshMaterial(lcdFront, isHighEnd ? 'menban_daping_ping' : 'menban_biaoping_ping', texture);
       }
     }
@@ -393,7 +393,7 @@ const handleGlassLogoChange = async (newConfig, oldConfig, frontDoorMesh, backDo
     } else {
       if (oldConfig) {
         const defaultItem = doorLogoType[0];
-        const texture = await TextureLoaderPromise('/static/micro/map/' + defaultItem.image);
+        const texture = await TextureLoaderPromise('/static/micro/echart/' + defaultItem.image);
         setGlassDoorLogoTexture(texture);
       }
     }

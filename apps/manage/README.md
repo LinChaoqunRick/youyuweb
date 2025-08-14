@@ -39,7 +39,7 @@ and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/p
 for React-specific lint rules:
 
 ```js
-// .eslintrc.js
+// .eslintrc.cjs
 import reactX from 'eslint-plugin-react-x'
 import reactDom from 'eslint-plugin-react-dom'
 

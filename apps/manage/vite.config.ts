@@ -1,6 +1,8 @@
 import * as path from 'path';
 
+import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
+
 import { defineConfig, ProxyOptions } from 'vite';
 
 type ProxyList = [string, string][];
@@ -25,7 +27,10 @@ const createProxy = (list: ProxyList = []): ProxyTargetList => {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
@@ -36,6 +41,9 @@ export default defineConfig({
     port: 3030,
     open: false,
     // proxy: createProxy([['/plat', 'https://v2.youyul.com' || '']]),
-    proxy: createProxy([['/plat', 'http://localhost:8080' || '']]),
+    proxy: createProxy([
+      ['/plat', 'http://localhost:8080' || ''],
+      ['/ws', 'https://apis.map.qq.com'],
+    ]),
   },
 });

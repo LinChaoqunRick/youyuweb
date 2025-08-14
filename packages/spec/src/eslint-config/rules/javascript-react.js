@@ -21,4 +21,5 @@ module.exports = {
   'react/no-unescaped-entities': 0,
   // Hook 依赖校验
   'react-hooks/exhaustive-deps': 1,
+  'react/jsx-one-expression-per-line': 'off',
 };

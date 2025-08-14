@@ -27,7 +27,7 @@
                   v-if="item.code != 99"
                   class="lintel-logo"
                   :class="['lintel-logo-' + i]"
-                  :src="'/static/micro/map/' + item.image"
+                  :src="'/static/micro/echart/' + item.image"
                   :alt="item.desc"
                 />
                 <div v-else class="lintel-logo lintel-logo-self">
@@ -55,7 +55,7 @@
                   <img
                     v-if="item.code !== '99'"
                     class="lcd-image"
-                    :src="'/static/micro/map/' + item.image"
+                    :src="'/static/micro/echart/' + item.image"
                     :alt="item.desc"
                   />
                   <UploadFile v-else auto-upload @uploadSuccess="onUploadLcdSuccess">
@@ -93,7 +93,7 @@
                   <img
                     class="glass-image"
                     :class="['lcd-image-' + i]"
-                    :src="'/static/micro/map/' + item.image"
+                    :src="'/static/micro/echart/' + item.image"
                     :alt="item.desc"
                   />
                   <div class="glass-name">({{ item.desc }})</div>

@@ -187,7 +187,7 @@ const initModels = () => {
   //
   // const circleGeometry = new CircleGeometry(10, 50);
   // const circleMaterial = new MeshLambertMaterial({
-  //   map: earthTexture,
+  //   echart: earthTexture,
   //   side: DoubleSide
   // });
   // const circle = new Mesh(circleGeometry, circleMaterial);
