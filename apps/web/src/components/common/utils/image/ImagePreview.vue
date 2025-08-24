@@ -3,21 +3,31 @@
     <div class="image-preview-close" @click="onClose">
       <i-close theme="outline" size="20" fill="currentColor" />
     </div>
-    <div class="image-preview-body" ref="imagePreviewBodyRef">
-      <div class="ope-icon last-icon" v-if="current !== 0" @click="handleChange('last')">
+    <div ref="imagePreviewBodyRef" class="image-preview-body">
+      <div v-if="current !== 0" class="ope-icon last-icon" @click="handleChange('last')">
         <i-left theme="outline" size="30" fill="#fff" />
       </div>
-      <div class="ope-icon next-icon" v-if="current !== props.list?.length - 1" @click="handleChange('next')">
-        <i-left theme="outline" size="30" fill="#fff" style="transform: scale3d(-1, 1, 1)" />
+      <div v-if="current !== props.list?.length - 1" class="ope-icon next-icon" @click="handleChange('next')">
+        <i-left
+          theme="outline"
+          size="30"
+          fill="#fff"
+          style="transform: scale3d(-1, 1, 1)"
+        />
       </div>
       <div id="preview-image">
-        <img :src="currentOriginUrl" @load="onLoad" v-show="!loading" alt="photo" />
-        <div class="drag-mask"></div>
+        <img
+          v-show="!loading"
+          :src="currentOriginUrl"
+          alt="photo"
+          @load="onLoad"
+        >
+        <div class="drag-mask" />
       </div>
     </div>
-    <spin size="large" class="a-spin" v-show="loading" />
+    <spin v-show="loading" size="large" class="a-spin" />
     <Transition name="fade">
-      <div class="image-preview-operations" v-if="!idle">
+      <div v-if="!idle" class="image-preview-operations">
         <div class="operation-item">
           <i-left
             :class="{ disabled: current === 0 }"
@@ -26,7 +36,9 @@
             fill="currentColor"
             @click="handleChange('last')"
           />
-          <div class="image-preview-progress">{{ current + 1 }} / {{ props.list.length }}</div>
+          <div class="image-preview-progress">
+            {{ current + 1 }} / {{ props.list.length }}
+          </div>
           <i-right
             :class="{ disabled: current === props.list?.length - 1 }"
             class="separator"
@@ -44,7 +56,9 @@
             fill="currentColor"
             @click="handleScale('large')"
           />
-          <div class="image-preview-scale">{{ (scale * 100).toFixed(0) }}%</div>
+          <div class="image-preview-scale">
+            {{ (scale * 100).toFixed(0) }}%
+          </div>
           <i-zoom-out
             :class="{ disabled: scale <= minScale }"
             theme="outline"
@@ -52,28 +66,49 @@
             fill="currentColor"
             @click="handleScale('small')"
           />
-          <i-one-to-one theme="outline" size="19" fill="currentColor" @click="handleScale('reset')" />
+          <i-one-to-one
+            theme="outline"
+            size="19"
+            fill="currentColor"
+            @click="handleScale('reset')"
+          />
         </div>
-        <div class="operation-item" v-if="false">
-          <i-sort-two theme="outline" size="17" fill="currentColor" @click="handleFlip('x')" />
-          <i-switch theme="outline" size="17" fill="currentColor" @click="handleFlip('y')" />
+        <div v-if="false" class="operation-item">
+          <i-sort-two
+            theme="outline"
+            size="17"
+            fill="currentColor"
+            @click="handleFlip('x')"
+          />
+          <i-switch
+            theme="outline"
+            size="17"
+            fill="currentColor"
+            @click="handleFlip('y')"
+          />
         </div>
         <div class="operation-item">
-          <i-rotate class="icon-rotate-left" theme="outline" size="18" fill="currentColor" @click="handleRotate('c')" />
+          <i-rotate
+            class="icon-rotate-left"
+            theme="outline"
+            size="18"
+            fill="currentColor"
+            @click="handleRotate('c')"
+          />
           <i-rotate
             class="icon-rotate-right"
             theme="outline"
             size="18"
             fill="currentColor"
-            @click="handleRotate('ac')"
             style="transform: scale3d(-1, 1, 1)"
+            @click="handleRotate('ac')"
           />
           <!--        <i-more theme="outline" size="19"/>-->
         </div>
       </div>
     </Transition>
-    <div class="image-preview-footer" v-if="!isSingleImage">
-      <div class="image-thumbnails" :class="{ 'flex-box': isThumbsOverScreen }" ref="imageThumbnailRef">
+    <div v-if="!isSingleImage" class="image-preview-footer">
+      <div ref="imageThumbnailRef" class="image-thumbnails" :class="{ 'flex-box': isThumbsOverScreen }">
         <div
           v-for="(item, index) in props.list"
           :key="item"
@@ -81,7 +116,7 @@
           :class="{ active: index === current }"
           @click="onClickThumbnail(index)"
         >
-          <img :src="item" alt="" draggable="false" />
+          <img :src="item" alt="" draggable="false">
         </div>
       </div>
     </div>
@@ -90,9 +125,9 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
-import { disabledBodyScroll, enabledBodyScroll } from '@/assets/utils/utils';
-import { Spin } from 'ant-design-vue';
 import { useEventListener, useIdle, usePointerSwipe } from '@vueuse/core';
+import { Spin } from 'ant-design-vue';
+import { disabledBodyScroll, enabledBodyScroll } from '@/assets/utils/utils';
 import { convertHEICUrlToBlob } from '@/components/common/utils/upload/utils';
 
 const props = defineProps({
@@ -102,13 +137,14 @@ const props = defineProps({
   },
   originTransfer: {
     type: Function,
+    default: null,
   },
 });
 const emit = defineEmits(['onClose']);
 const current = defineModel('current', { type: Number, default: 0 });
 const { idle } = useIdle(2 * 1000);
 
-let image: HTMLDivElement,
+let image: HTMLElement,
   x: number = 0,
   y: number = 0,
   minScale: number = 0.2,
@@ -129,6 +165,7 @@ const imagePreviewBodyRef = ref<HTMLElement | null>(null);
 const imageThumbnailRef = ref<HTMLElement | null>(null);
 const documentClientWidth = document.body.clientWidth;
 let imageThumbnailWidth = ref(0);
+const isSwiping = ref<boolean>(false);
 const isThumbsOverScreen = computed(() => {
   return props.list?.length * imageThumbnailWidth.value < documentClientWidth;
 });
@@ -142,46 +179,22 @@ const handleFooterScroll = () => {
   if (props.list?.length <= 1) return;
   const halfDocumentClientWidth = documentClientWidth / 2;
   const currentOffset = current.value * imageThumbnailWidth.value;
+  if (!imageThumbnailRef.value) {
+    return;
+  }
   if (currentOffset > halfDocumentClientWidth) {
-    imageThumbnailRef.value &&
-      (imageThumbnailRef.value.scrollLeft = currentOffset + imageThumbnailWidth.value / 2 - halfDocumentClientWidth);
+    imageThumbnailRef.value.scrollLeft = currentOffset + imageThumbnailWidth.value / 2 - halfDocumentClientWidth;
   } else {
-    imageThumbnailRef.value && (imageThumbnailRef.value.scrollLeft = 0);
+    imageThumbnailRef.value.scrollLeft = 0;
   }
 };
 
-watch(
-  () => current.value,
-  async () => {
-    loading.value = true;
-    currentOriginUrl.value = props.originTransfer
-      ? await props.originTransfer(current.value)
-      : props.list[current.value].split('?')[0];
-
-    const fileNameArr = currentOriginUrl.value!.split('.');
-    const suffix = fileNameArr[fileNameArr.length - 1];
-
-    if (suffix.toLowerCase() === 'heic') {
-      currentOriginUrl.value = await convertHEICUrlToBlob(currentOriginUrl.value as string);
-    }
-
-    handleFooterScroll();
-  },
-  { immediate: true }
-);
-
-function initListen() {
-  image = document.getElementById('preview-image');
-  listenWheel();
-  listenDrag();
-}
-
-function onLoad() {
-  loading.value = false;
-  if (!image) {
-    initListen();
+function refreshTransform() {
+  if (image) {
+    image.style.transform = `translate3d(${x}px, ${y}px, 0px) scale3d(${flipY ? -scale.value : scale.value}, ${
+      flipX ? -scale.value : scale.value
+    }, 1) rotate(${rotate}deg)`;
   }
-  refreshData();
 }
 
 function listenWheel() {
@@ -206,7 +219,7 @@ function listenWheel() {
       // 图片的中心坐标
       const origin = {
         x: window.innerWidth * 0.5 + x,
-        y: (window.innerHeight - 80) * 0.5 + y,
+        y: (window.innerHeight - (imageThumbnailRef.value ? 80 : 0)) * 0.5 + y,
       };
 
       // 滚动前的x长度，y长度
@@ -268,12 +281,51 @@ function listenDrag() {
   });
 }
 
-function refreshTransform() {
-  if (image) {
-    image.style.transform = `translate3d(${x}px, ${y}px, 0px) scale3d(${flipY ? -scale.value : scale.value}, ${
-      flipX ? -scale.value : scale.value
-    }, 1) rotate(${rotate}deg)`;
+function refreshData() {
+  x = 0;
+  y = 0;
+  flipX = false;
+  flipY = false;
+  rotate = 0;
+  moveDiff = { x: 0, y: 0 }; // 相对于上一次pointermove移动差值
+  lastPointermove = { x: 0, y: 0 }; // 用于计算diff;
+  scale.value = 1;
+
+  refreshTransform();
+}
+
+watch(
+  () => current.value,
+  async () => {
+    loading.value = true;
+    currentOriginUrl.value = props.originTransfer
+      ? await props.originTransfer(current.value)
+      : props.list[current.value].split('?')[0];
+
+    const fileNameArr = currentOriginUrl.value!.split('.');
+    const suffix = fileNameArr[fileNameArr.length - 1];
+
+    if (suffix.toLowerCase() === 'heic') {
+      currentOriginUrl.value = await convertHEICUrlToBlob(currentOriginUrl.value as string);
+    }
+
+    handleFooterScroll();
+  },
+  { immediate: true },
+);
+
+function initListen() {
+  image = document.getElementById('preview-image')!;
+  listenWheel();
+  listenDrag();
+}
+
+function onLoad() {
+  loading.value = false;
+  if (!image) {
+    initListen();
   }
+  refreshData();
 }
 
 function handleFlip(dir: string) {
@@ -325,31 +377,26 @@ function handleChange(type: string) {
   }
 }
 
-function refreshData() {
-  x = 0;
-  y = 0;
-  flipX = false;
-  flipY = false;
-  rotate = 0;
-  moveDiff = { x: 0, y: 0 }; // 相对于上一次pointermove移动差值
-  lastPointermove = { x: 0, y: 0 }; // 用于计算diff;
-  scale.value = 1;
-
-  refreshTransform();
-}
-
 function onClose() {
   emit('onClose');
 }
 
 const onClickThumbnail = (index: number) => {
-  imageThumbnailRef.value && (imageThumbnailRef.value.style.scrollBehavior = 'smooth');
+  console.log(isSwiping.value);
+
+  if (isSwiping.value) {
+    return;
+  }
+  if (imageThumbnailRef.value) {
+    imageThumbnailRef.value.style.scrollBehavior = 'smooth';
+  }
   current.value = index;
 };
 
 let swipeStartScrollLeft = 0;
-const { distanceX, isSwiping } = usePointerSwipe(imageThumbnailRef, {
+const { distanceX } = usePointerSwipe(imageThumbnailRef, {
   onSwipe() {
+    isSwiping.value = true;
     if (imageThumbnailRef.value) {
       imageThumbnailRef.value.scrollLeft = swipeStartScrollLeft + distanceX.value;
     }
@@ -359,6 +406,11 @@ const { distanceX, isSwiping } = usePointerSwipe(imageThumbnailRef, {
       imageThumbnailRef.value.style.scrollBehavior = 'unset';
       swipeStartScrollLeft = imageThumbnailRef.value.scrollLeft;
     }
+  },
+  onSwipeEnd() {
+    setTimeout(() => {
+      isSwiping.value = false;
+    }, 50);
   },
 });
 
@@ -370,56 +422,53 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
-$icon-hover-background: rgba(89, 82, 82, 0.8);
+$icon-hover-background: rgb(89, 82, 82, 0.8);
 $footerHeight: 80px;
 
 .image-preview {
   position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  inset: 0;
   z-index: 1000;
 
   .image-preview-close {
     position: absolute;
     top: 20px;
     right: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 48px;
-    width: 48px;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.2);
-    cursor: pointer;
     z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: rgb(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
 
     &:hover {
       background: $icon-hover-background;
     }
 
     .i-icon {
-      color: #fff;
       font-weight: bold;
+      color: #fff;
     }
   }
 
   .image-preview-body {
-    height: 100%;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    height: 100%;
 
     #preview-image {
       position: relative;
       top: calc(-#{$footerHeight} / 2);
-      transform: scale3d(1, 1, 1);
+      line-height: 0;
+      touch-action: none;
+      user-select: none;
       //cursor: grab;
       transition: transform 0.3s cubic-bezier(0.215, 0.61, 0.355, 1) 0s;
-      user-select: none;
-      touch-action: none;
-      line-height: 0;
+      transform: scale3d(1, 1, 1);
 
       img {
         max-width: 100vw;
@@ -428,25 +477,22 @@ $footerHeight: 80px;
 
       .drag-mask {
         position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
+        inset: 0;
       }
     }
 
     .ope-icon {
-      height: 40px;
-      width: 40px;
       position: absolute;
       top: calc(50% - #{$footerHeight} / 2 - 20px);
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
       z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: rgb(0, 0, 0, 0.2);
+      border-radius: 50%;
+      cursor: pointer;
 
       &:hover {
         background-color: $icon-hover-background;
@@ -473,45 +519,45 @@ $footerHeight: 80px;
 
   .a-spin {
     position: absolute;
-    left: calc(50% - 16px);
     top: calc(50% - 16px);
+    left: calc(50% - 16px);
   }
 
   .image-preview-operations {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
     position: absolute;
     bottom: 90px;
-    height: 46px;
-    background: rgba(0, 0, 0, 0.3);
-    z-index: 1;
-    color: #fff;
-    border-radius: 6px;
-    transform: translateX(-50%);
     left: 50%;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 46px;
+    color: #fff;
+    background: rgb(0, 0, 0, 0.3);
+    border-radius: 6px;
     user-select: none;
+    transform: translateX(-50%);
 
     .operation-item {
       display: flex;
       align-items: center;
 
       &:nth-child(n + 2) {
-        &:before {
-          content: '';
-          border-left: 1px solid hsla(0, 0%, 100%, 0.3);
-          cursor: default;
+        &::before {
           height: 20px;
+          border-left: 1px solid hsl(0deg, 0%, 100%, 0.3);
+          cursor: default;
+          content: '';
         }
       }
     }
 
     .i-icon {
-      cursor: pointer;
-      transition: 0.3s;
+      padding: 3px;
       margin: 0 12px;
       border-radius: 4px;
-      padding: 3px;
+      cursor: pointer;
+      transition: 0.3s;
 
       &:hover {
         background: $icon-hover-background;
@@ -519,8 +565,8 @@ $footerHeight: 80px;
 
       &.disabled {
         color: #9e9e9e;
-        cursor: not-allowed;
         background-color: transparent;
+        cursor: not-allowed;
       }
 
       &.i-icon-one-to-one,
@@ -538,18 +584,17 @@ $footerHeight: 80px;
 
   .image-preview-footer {
     position: absolute;
-    left: 0;
     right: 0;
     bottom: 0;
+    left: 0;
     height: $footerHeight;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgb(0, 0, 0, 0.2);
     user-select: none;
 
     .image-thumbnails {
-      white-space: nowrap;
       height: 100%;
-      overflow-x: auto;
-      overflow-y: hidden;
+      overflow: auto hidden;
+      white-space: nowrap;
       scroll-behavior: smooth;
 
       &.flex-box {
@@ -569,10 +614,10 @@ $footerHeight: 80px;
 
         img {
           box-sizing: border-box;
-          height: 100%;
           width: 105px;
-          cursor: pointer;
+          height: 100%;
           object-fit: cover;
+          cursor: pointer;
         }
 
         &.active {

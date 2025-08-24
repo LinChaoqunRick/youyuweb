@@ -1,14 +1,14 @@
 <template>
   <div class="moment-editor" :class="{ active: active }">
     <div class="editor-body">
-      <div class="login-mask" @click="toLogin" v-if="!isLogin"></div>
+      <div v-if="!isLogin" class="login-mask" @click="toLogin" />
       <div class="editor-content-wrapper">
         <ContentEditableDiv
-          v-model="form.content"
-          showLimit
-          placeholder="此刻在想什么？快来分享一些新鲜事或发表一些看法吧！"
-          @onPasteImage="onPasteImage"
           ref="richEditor"
+          v-model="form.content"
+          show-limit
+          placeholder="此刻在想什么？快来分享一些新鲜事或发表一些看法吧！"
+          @on-paste-image="onPasteImage"
         >
           <template #bottom>
             <div class="topic-wrapper">
@@ -17,54 +17,75 @@
                   <i-local-two theme="multi-color" size="12" :fill="['#ffffff', '#ffffff', '#3b8fff', '#3b8fff']" />
                 </div>
                 <span class="position-text">{{ form.location || '添加位置' }}</span>
-                <div class="icon-wrapper-close" v-if="form.location" @click.stop="onClearLocation">
-                  <i-close-small theme="outline" size="13" fill="#fff" :strokeWidth="3" />
+                <div v-if="form.location" class="icon-wrapper-close" @click.stop="onClearLocation">
+                  <i-close-small
+                    theme="outline"
+                    size="13"
+                    fill="#fff"
+                    :stroke-width="3"
+                  />
                 </div>
-                <i-right v-else theme="outline" size="13" fill="currentColor" />
+                <i-right
+                  v-else
+                  theme="outline"
+                  size="13"
+                  fill="currentColor"
+                />
               </div>
             </div>
           </template>
         </ContentEditableDiv>
       </div>
     </div>
-    <div class="image-wrapper" v-if="form.images?.length">
+    <div v-if="form.images?.length" class="image-wrapper">
       <draggable
+        v-model="form.images"
         class="list-group"
         :component-data="{
           type: 'transition-group',
           name: !drag ? 'flip-list' : null,
         }"
-        v-model="form.images"
         v-bind="dragOptions"
+        :item-key="element => element"
         @start="drag = true"
         @end="drag = false"
-        :item-key="element => element"
       >
         <template #item="{ element, index }">
           <ImageItem :data="element" :progress="progressList[index]" @on-image-delete="onImageDelete(index)" />
         </template>
       </draggable>
-      <div class="upload-image" @click="onAddImage" v-if="!uploadDisabled">
-        <i-plus theme="outline" size="40" fill="currentColor" :strokeWidth="1" />
+      <div v-if="!uploadDisabled" class="upload-image" @click="onAddImage">
+        <i-plus
+          theme="outline"
+          size="40"
+          fill="currentColor"
+          :stroke-width="1"
+        />
       </div>
     </div>
     <div class="editor-bottom">
       <div class="tool-items">
         <a-popover
           placement="bottomLeft"
-          overlayClassName="emoji-picker-popover"
-          :getPopupContainer="triggerNode => triggerNode.parentNode"
+          overlay-class-name="emoji-picker-popover"
+          :get-popup-container="triggerNode => triggerNode.parentNode"
           :open="emojiVisible"
         >
           <template #content>
-            <EmojiPicker @onImagePick="onImagePick" @onEmojiPick="onEmojiPick" v-on-click-outside="onEmojiClose" />
+            <EmojiPicker v-on-click-outside="onEmojiClose" @on-image-pick="onImagePick" @on-emoji-pick="onEmojiPick" />
           </template>
-          <div class="tool-item" v-login="onClickEmoji">
-            <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3" />
+          <div v-login="onClickEmoji" class="tool-item">
+            <i-emotion-happy
+              theme="outline"
+              size="16"
+              fill="currentColor"
+              :stroke-width="3"
+            />
             <span class="tool-title">表情</span>
           </div>
         </a-popover>
         <UploadFile
+          ref="UploadFileRef"
           v-model="form.images"
           accept=".jpg, .jpeg, .png, .JPG, .PNG, .HEIC"
           :max-size="maxFileSize"
@@ -73,11 +94,15 @@
           multiple
           :config="{ data: { base: 'moment/images' } }"
           :auto-clear="false"
-          @onProgress="onUploadProgress"
-          ref="UploadFileRef"
+          @on-progress="onUploadProgress"
         >
-          <div class="tool-item item-upload-image" v-login>
-            <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3" />
+          <div v-login class="tool-item item-upload-image">
+            <i-add-picture
+              theme="outline"
+              size="16"
+              fill="currentColor"
+              :stroke-width="3"
+            />
             <span class="tool-title">图片</span>
           </div>
         </UploadFile>
@@ -90,28 +115,28 @@
       >
         发布
       </a-button>
-      <slot name="bottom"></slot>
+      <slot name="bottom" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, toRefs } from 'vue';
-import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
-import { message } from 'ant-design-vue';
-import { cloneDeep } from 'lodash';
 import { vOnClickOutside } from '@vueuse/components';
-import draggable from 'vuedraggable';
-import openModal from '@/libs/tools/openModal';
-import { transformHTMLToTag } from '@/components/common/utils/emoji/youyu_emoji';
-import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
-import EmojiPicker from '@/components/common/utils/emoji/EmojiPicker.vue';
-import ContentEditableDiv from '@/components/common/utils/contenteditable/ContentEditableDiv.vue';
-import LocationSelector from '@/components/common/utils/aMap/LocationSelector.vue';
+import { message } from 'ant-design-vue';
 import { AxiosError } from 'axios';
-import { getXmlTextContent } from '@/components/common/utils/upload/utils';
+import { cloneDeep } from 'lodash';
+import { useRouter } from 'vue-router';
+import draggable from 'vuedraggable';
+import { useStore } from 'vuex';
+import LocationSelector from '@/components/common/utils/aMap/LocationSelector.vue';
+import ContentEditableDiv from '@/components/common/utils/contenteditable/ContentEditableDiv.vue';
+import EmojiPicker from '@/components/common/utils/emoji/EmojiPicker.vue';
+import { transformHTMLToTag } from '@/components/common/utils/emoji/youyu_emoji';
 import ImageItem from '@/components/common/utils/upload/components/ImageItem.vue';
+import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
+import { getXmlTextContent } from '@/components/common/utils/upload/utils';
+import openModal from '@/libs/tools/openModal';
 
 const props = defineProps({
   form: {
@@ -168,11 +193,15 @@ const onImageDelete = (index: number) => {
 
 const onSubmit = async () => {
   submitLoading.value = true;
-  const isEdit = props.isEdit;
+  const {isEdit} = props;
   const formData = cloneDeep(props.form);
-
-  const imagesListRes = await UploadFileRef.value.upload();
-
+  let imagesListRes;
+  try {
+    imagesListRes = await UploadFileRef.value.upload();
+  } catch (e) {
+    submitLoading.value = false;
+    return false;
+  }
   if (imagesListRes?.length) {
     const firstErrorItem = imagesListRes.find(item => item instanceof AxiosError);
     if (firstErrorItem) {
@@ -312,18 +341,15 @@ const onUploadProgress = (progress: number[]) => {
 
   .editor-body {
     position: relative;
-    background: var(--youyu-background5);
-    border-radius: 4px;
     overflow: hidden;
+    background: var(--youyu-background5);
     border: 1px solid transparent;
+    border-radius: 4px;
     transition: 0s;
 
     .login-mask {
       position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
+      inset: 0;
       z-index: 1;
     }
 
@@ -334,7 +360,7 @@ const onUploadProgress = (progress: number[]) => {
 
       ::v-deep(.editable-div) {
         .editor-bottom {
-          padding: 4px 8px 5px 8px;
+          padding: 4px 8px 5px;
         }
       }
     }
@@ -346,32 +372,32 @@ const onUploadProgress = (progress: number[]) => {
       font-size: 12px;
 
       .add-position {
-        padding: 0 6px 0 8px;
-        border-radius: 50px;
-        border-bottom-left-radius: 0;
-        background: var(--youyu-body-background2);
-        color: #3b8fff;
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 0 6px 0 8px;
+        color: #3b8fff;
+        background: var(--youyu-body-background2);
+        border-radius: 50px;
+        border-bottom-left-radius: 0;
         cursor: pointer;
 
         .icon-wrapper {
-          background-color: #3b8fff;
-          line-height: 0;
-          border-radius: 50%;
-          padding: 1.6px;
           display: flex;
+          padding: 1.6px;
+          line-height: 0;
+          background-color: #3b8fff;
+          border-radius: 50%;
         }
 
         .icon-wrapper-close {
-          background-color: rgba(0, 0, 0, 0.5);
-          line-height: 0;
-          border-radius: 50%;
           margin-left: 2px;
+          line-height: 0;
+          background-color: rgb(0, 0, 0, 0.5);
+          border-radius: 50%;
 
           &:hover {
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgb(0, 0, 0, 0.7);
           }
         }
 
@@ -386,9 +412,9 @@ const onUploadProgress = (progress: number[]) => {
       }
 
       .word-counter {
+        padding-right: 10px;
         font-size: 13px;
         color: var(--youyu-text1);
-        padding-right: 10px;
       }
     }
   }
@@ -403,34 +429,34 @@ const onUploadProgress = (progress: number[]) => {
     }
 
     .image-item {
-      display: flex;
-      justify-content: center;
-      align-items: center;
       position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin-right: 8px;
 
       img {
-        height: 80px;
         width: 80px;
+        height: 80px;
         object-fit: cover;
       }
 
       .image-delete {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        width: 16px;
-        height: 16px;
         position: absolute;
         top: 12px;
         right: 4px;
-        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 16px;
+        height: 16px;
+        background: rgb(0, 0, 0, 0.4);
         border: 1px solid #c5c5c5;
-        background: rgba(0, 0, 0, 0.4);
+        border-radius: 50%;
+        cursor: pointer;
 
         &:hover {
-          background: rgba(0, 0, 0, 0.3);
+          background: rgb(0, 0, 0, 0.3);
         }
 
         .i-icon {
@@ -444,18 +470,18 @@ const onUploadProgress = (progress: number[]) => {
     }
 
     .upload-image {
-      cursor: pointer;
       display: flex;
-      justify-content: center;
       align-items: center;
-      height: 80px;
+      justify-content: center;
       width: 80px;
+      height: 80px;
+      background: rgb(248, 248, 249, 0.2);
       border: 1px dashed #c5c5c5;
-      background: rgba(248, 248, 249, 0.2);
+      cursor: pointer;
       transition: 0.3s;
 
       &:hover {
-        background: rgba(248, 248, 249, 0.3);
+        background: rgb(248, 248, 249, 0.3);
       }
     }
   }
@@ -474,8 +500,8 @@ const onUploadProgress = (progress: number[]) => {
       .tool-item {
         display: flex;
         align-items: center;
-        cursor: pointer;
         margin-right: 16px;
+        cursor: pointer;
         transition: 0.3s;
 
         .i-icon {
@@ -484,8 +510,8 @@ const onUploadProgress = (progress: number[]) => {
         }
 
         .tool-title {
-          font-size: 13px;
           padding-left: 4px;
+          font-size: 13px;
         }
 
         &:hover {
@@ -503,8 +529,8 @@ const onUploadProgress = (progress: number[]) => {
 .active {
   .editor-body {
     background: var(--youyu-background1) !important;
-    transition: 0s;
     border-color: #1890ff;
+    transition: 0s;
 
     .add-position {
       background: #eaf2ff !important;
@@ -520,7 +546,7 @@ const onUploadProgress = (progress: number[]) => {
   cursor: not-allowed !important;
 
   .item-upload-image {
-    /*color: #8a919f !important;*/
+    /* color: #8a919f !important; */
   }
 }
 </style>

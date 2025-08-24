@@ -7,8 +7,8 @@ export interface MenuItem {
   children?: MenuItem[];
 }
 
-export interface ResponseResult {
+export interface ResponseResult<T = any> {
   message: string;
   code: number;
-  data: any
+  data: T
 }

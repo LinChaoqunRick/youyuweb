@@ -17,8 +17,10 @@
     "commitlint": "commitlint"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.8.2",
-    "qs": "^6.11.0"
+    "qs": "^6.11.0",
+    "tailwindcss": "^4.1.11"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",

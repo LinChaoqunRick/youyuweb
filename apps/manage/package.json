@@ -17,7 +17,7 @@
     "antd": "^5.26.2",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.5",
-    "echarts": "^5.6.0",
+    "echarts": "^6.0.0",
     "framer-motion": "^12.23.12",
     "lodash": "^4.17.21",
     "qs": "^6.11.0",

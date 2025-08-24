@@ -3,7 +3,7 @@ import { getMapOptions } from '@youyu/shared/components-react/echart/presetOptio
 import ReactEChart from '@youyu/shared/components-react/echart/ReactEChart';
 import http from '@youyu/shared/network';
 import { AreaAccessOutput } from '@youyu/shared/types/vo/overview';
-import { getAreaNameByCode } from '@youyu/shared/utils/locate-utils';
+import { getAreaNameByCode, getAreaNameByCodeLevel } from '@youyu/shared/utils/locate-utils';
 import {
   Card, Form, DatePicker, Button,
 } from 'antd';
@@ -12,17 +12,8 @@ import { EChartsOption } from 'echarts';
 import React, { useEffect, useState } from 'react';
 import './index.css';
 import DataItem from '@youyu/shared/components-react/content/DataItem';
-
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 6 },
-    sm: { span: 6 },
-  },
-  wrapperCol: {
-    xs: { span: 18 },
-    sm: { span: 18 },
-  },
-};
+import { cloneDeep } from 'lodash';
+import { formItemLayout, rangePresets } from '@/libs/config/formConfig';
 
 const { RangePicker } = DatePicker;
 
@@ -37,7 +28,7 @@ function mergeToProvince(data: Array<AreaAccessOutput>) {
       const provinceCode = `${areaCode.slice(0, 2)}0000`;
       // 聚合统计
       if (!acc[provinceCode]) {
-        acc[provinceCode] = { areaCode: provinceCode, count: 0, areaName: getAreaNameByCode(provinceCode) };
+        acc[provinceCode] = { areaCode: provinceCode, count: 0, areaName: getAreaNameByCode(provinceCode, false) };
       }
       acc[provinceCode].count += count;
       return acc;
@@ -63,9 +54,13 @@ function Monitor() {
       delete values.RangePicker;
     }
     http
-      .get(GET_AREA_ACCESS_DATA, values)
+      .get<Array<AreaAccessOutput>>(GET_AREA_ACCESS_DATA, values)
       .then(res => {
-        setAccessData(res.data);
+        const strictData = cloneDeep(res.data).map(item => {
+          item.areaName = getAreaNameByCodeLevel(item.areaCode, 3) || item.areaName;
+          return item;
+        });
+        setAccessData(strictData);
         const areaData = mergeToProvince(res.data);
         const data = areaData.map(item => ({
           name: item.areaName,
@@ -96,7 +91,7 @@ function Monitor() {
             initialValue={[dayjs().startOf('day'), dayjs().endOf('day')]}
             rules={[{ required: true, message: '请选择时间范围' }]}
           >
-            <RangePicker />
+            <RangePicker presets={rangePresets} />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
@@ -109,10 +104,10 @@ function Monitor() {
         <div className="bg-white rounded-sm h-full flex-1 mr-3">
           <ReactEChart options={options} spinning={loading} />
         </div>
-        <Card title="访问量排行" extra={<a href="#">全部</a>} style={{ width: 300 }}>
+        <Card title="访问量排行" extra={<a href="#">全部</a>} style={{ width: 320 }}>
           {
             accessData.map(item => (
-              <DataItem keyName="areaCode" data={item} propName="areaName" valueName="count" />
+              <DataItem key={item.areaCode} keyName="areaCode" data={item} propName="areaName" valueName="count" />
             ))
           }
         </Card>

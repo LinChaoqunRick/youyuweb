@@ -6,8 +6,8 @@ function DataItem(props: any) {
   } = props;
   return (
     <div className="date-item-bt rounded-sm" key={data[idName]}>
-      <span className="data-item-bt-title">{data[propName]}:</span>
-      <span className="data-item-bt-value">{data[valueName]}</span>
+      <div className="data-item-bt-title max-w-[180px] truncate" title={data[propName]}>{data[propName]}</div>
+      <span className="data-item-bt-value" title={data[valueName]}>{data[valueName]}</span>
     </div>
   );
 }

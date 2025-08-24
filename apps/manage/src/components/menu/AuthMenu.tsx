@@ -27,6 +27,9 @@ function App() {
   }, [location.pathname, items]);
 
   const onClick = ({ key }: { key: string }) => {
+    if (menuCollapsed) {
+      return;
+    }
     navigate(key);
   };
 

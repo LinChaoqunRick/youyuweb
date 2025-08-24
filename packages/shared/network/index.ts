@@ -63,21 +63,22 @@ instance.interceptors.response.use(
  * @param url
  * @param params
  */
-const get = (url: string, params = {}): Promise<ResponseResult> => instance.get(url, { params });
-
+const get = <T>(url: string, params = {}): Promise<ResponseResult<T>> => {
+  return instance.get<any, ResponseResult<T>>(url, { params });
+};
 /**
  * post方法，对应post请求
  * @param url
  * @param data
  * @param config
  */
-const post = (url: string, data = {}, config: AxiosRequestConfig = {}): Promise<ResponseResult> => {
+const post = <T>(url: string, data = {}, config: AxiosRequestConfig = {}): Promise<ResponseResult<T>> => {
   const headers = config?.headers || {
     'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
   };
   const isJson = headers['Content-Type'] === 'application/json';
   const payload = isJson ? data : qs.stringify(data);
-  return instance.post(url, payload, { ...config, headers });
+  return instance.post<any, ResponseResult<T>>(url, payload, { ...config, headers });
 };
 
 const refreshAuthLogic = async (failedRequest: AxiosError) => {

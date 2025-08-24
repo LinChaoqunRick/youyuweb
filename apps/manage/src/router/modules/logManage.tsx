@@ -1,10 +1,13 @@
-import { FileSearchOutlined, LaptopOutlined, ToolOutlined } from '@ant-design/icons';
+import {
+  FileSearchOutlined, LaptopOutlined, SolutionOutlined, ToolOutlined,
+} from '@ant-design/icons';
 import intl from 'react-intl-universal';
 import { lazyLoad } from '@/components/enhance/lazyLoad';
 import { RouteObjectMeta } from '@/types/login';
 
 const OutletLayout = lazyLoad(() => import('@/components/layouts/OutletLayout'));
 const LoginInOut = lazyLoad(() => import('@/pages/logManage/loginInOut'));
+const AccessLog = lazyLoad(() => import('@/pages/logManage/accessLog'));
 const LogOperation = lazyLoad(() => import('@/pages/logManage/logOperation'));
 
 const userRoutes: RouteObjectMeta[] = [
@@ -27,6 +30,17 @@ const userRoutes: RouteObjectMeta[] = [
             return intl.get('menu.logLoginOut');
           },
           icon: <LaptopOutlined />,
+          code: 'log:inout',
+        },
+      },
+      {
+        path: 'access',
+        element: <AccessLog />,
+        meta: {
+          get title() {
+            return '访问日志';
+          },
+          icon: <SolutionOutlined />,
           code: 'log:inout',
         },
       },

@@ -92,6 +92,18 @@
   }
 }
 
+.react-table {
+  .ant-table-tbody {
+    background-color: var(--bg-color);
+  }
+
+  .ant-pagination {
+    padding: 16px;
+    margin: 0 !important;
+    background-color: var(--bg-color);
+  }
+}
+
 @keyframes l5 {
   0% {
     background-position: 0 0, 100% 0, 100% 100%, 0 100%
@@ -170,6 +182,18 @@
   .ant-form-item-additional {
     height: 0;
   }
+
+  .ant-form {
+    .ant-form-item {
+      .ant-form-item-label {
+        width: 85px;
+      }
+
+      .ant-form-item-control {
+        width: 245px;
+      }
+    }
+  }
 }
 
 .date-item-bt {
@@ -202,10 +226,6 @@
   > div {
     width: 100%;
     height: 100%;
-
-    &:first-child {
-      position: absolute;
-    }
   }
 }
 
@@ -222,4 +242,10 @@
     padding: 18px !important;
     overflow: auto;
   }
+}
+
+.ant-select-tree-switcher {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

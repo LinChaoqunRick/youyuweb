@@ -1,6 +1,6 @@
 <template>
   <div class="message">
-    <div class="barrage-view">
+    <!--    <div class="barrage-view">
       <barrage-stage @on-empty="handleGetData" ref="barrageRef" />
       <div class="locate-button">
         <a-button type="primary" shape="round" @click="onLocate">
@@ -10,53 +10,84 @@
           我也说一句
         </a-button>
       </div>
-    </div>
+    </div>-->
     <div class="message-view">
       <a-form
+        ref="FormRef"
         layout="inline"
         :model="formState"
         :rules="rules"
         name="basic"
         autocomplete="off"
         @finish="onFinish"
-        ref="FormRef"
       >
         <div class="avatar">
-          <img v-if="!isLogin" :src="formState.avatar" alt="默认头像" title="点击切换" @click="onChangeAvatar" />
-          <img v-else :src="userInfo.avatar" alt="头像" />
+          <img
+            v-if="!isLogin"
+            :src="formState.avatar"
+            alt="默认头像"
+            title="点击切换"
+            @click="onChangeAvatar"
+          >
+          <img v-else :src="userInfo.avatar" alt="头像">
         </div>
         <div class="form-box">
-          <div class="form-top" v-if="!isLogin">
+          <div v-if="!isLogin" class="form-top">
             <a-form-item class="nickname-item" label="昵称" name="nickname">
-              <a-input v-model:value="formState.nickname" :maxlength="12" size="large" placeholder="必填：请输入昵称" />
+              <a-input
+                v-model:value="formState.nickname"
+                :maxlength="12"
+                size="large"
+                placeholder="必填：请输入昵称"
+              />
             </a-form-item>
 
             <a-form-item class="email-item" label="邮箱" name="email">
-              <a-input v-model:value="formState.email" size="large" :maxlength="50" placeholder="必填：请输入邮箱" />
+              <a-input
+                v-model:value="formState.email"
+                size="large"
+                :maxlength="50"
+                placeholder="必填：请输入邮箱"
+              />
             </a-form-item>
 
             <a-form-item class="home-item" label="主页" name="home">
-              <a-input v-model:value="formState.home" size="large" :maxlength="50" placeholder="选填：请输入主页" />
+              <a-input
+                v-model:value="formState.home"
+                size="large"
+                :maxlength="50"
+                placeholder="选填：请输入主页"
+              />
             </a-form-item>
           </div>
           <div class="form-bottom">
             <a-form-item class="content-item" label="内容" name="content">
               <a-input
+                ref="ContentTextareaRef"
                 v-model:value="formState.content"
                 :maxlength="100"
                 size="large"
                 placeholder="必填：请输入内容"
-                ref="ContentTextareaRef"
               />
-              <a-popover placement="leftBottom" overlayClassName="message-content-emoji-popover" trigger="click">
+              <a-popover placement="leftBottom" overlay-class-name="message-content-emoji-popover" trigger="click">
                 <template #content>
-                  <Emoji @emojiHandler="emojiHandler" />
+                  <Emoji @emoji-handler="emojiHandler" />
                 </template>
-                <i-smiling-face theme="outline" size="22" fill="currentColor" style="cursor: pointer" />
+                <i-smiling-face
+                  theme="outline"
+                  size="22"
+                  fill="currentColor"
+                  style="cursor: pointer"
+                />
               </a-popover>
             </a-form-item>
             <a-form-item>
-              <a-button type="primary" :loading="btnLoading" size="large" html-type="submit">
+              <a-button
+                type="primary"
+                :loading="btnLoading"
+                size="large"
+                html-type="submit"
+              >
                 <i-send-one theme="outline" size="16" fill="currentColor" />
                 提交
               </a-button>
@@ -65,9 +96,17 @@
         </div>
       </a-form>
       <div class="message-list">
-        <div class="list-title">全部留言({{ total }})</div>
-        <ContentList url="listMessage" auto-load data-text="留言" class="message-content-list" ref="ContentListRef">
-          <template v-slot="{ list }">
+        <div class="list-title">
+          全部留言({{ total }})
+        </div>
+        <ContentList
+          ref="ContentListRef"
+          url="listMessage"
+          auto-load
+          data-text="留言"
+          class="message-content-list"
+        >
+          <template #default="{ list }">
             <MessageItem v-for="item in list" :key="item.id" :data="item" />
           </template>
         </ContentList>
@@ -78,18 +117,18 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
-import { useStore } from 'vuex';
 import { useWindowScroll } from '@vueuse/core';
-import { useRequest } from 'vue-request';
-import { insert } from '@/assets/utils/utils';
 import { message } from 'ant-design-vue';
-import { checkEmail } from '@/libs/validate/validate';
-import Emoji from '@/components/common/utils/emoji/index.vue';
-import BarrageStage from '@/views/message/BarrageStage.vue';
+import { useRequest } from 'vue-request';
+import { useStore } from 'vuex';
+import { insert } from '@/assets/utils/utils';
 import ContentList from '@/components/common/system/ContentList.vue';
+import Emoji from '@/components/common/utils/emoji/index.vue';
+import { checkEmail } from '@/libs/validate/validate';
+import BarrageStage from '@/views/message/BarrageStage.vue';
 import MessageItem from '@/views/message/components/MessageItem.vue';
-import type { FormInstance } from 'ant-design-vue';
 import type { Barrage } from '@/views/message/types';
+import type { FormInstance } from 'ant-design-vue';
 
 const formState = reactive<Barrage>({
   avatar: '',
@@ -206,9 +245,9 @@ const onChangeAvatar = () => {
       position: absolute;
       bottom: 20px;
       left: calc(50%);
-      transform: translateX(-50%);
       opacity: 1;
       transition: 0.3s;
+      transform: translateX(-50%);
 
       &.is-hide {
         opacity: 0;
@@ -223,7 +262,7 @@ const onChangeAvatar = () => {
   }
 
   .message-view {
-    padding: 24px 50px 0 50px;
+    padding: 24px 50px 0;
     background-color: var(--youyu-background1);
 
     ::v-deep(.ant-form) {
@@ -255,8 +294,8 @@ const onChangeAvatar = () => {
       }
 
       .form-bottom {
-        display: flex;
         position: relative;
+        display: flex;
 
         .content-item {
           flex: 1;
@@ -268,30 +307,30 @@ const onChangeAvatar = () => {
 
         .i-icon-smiling-face {
           position: absolute;
-          right: 12px;
           top: 8px;
+          right: 12px;
           display: flex;
-          justify-content: center;
           align-items: center;
+          justify-content: center;
           height: 24px;
           color: var(--youyu-text2);
         }
       }
 
       .avatar {
-        height: 40px;
-        width: 40px;
-        border-radius: 50%;
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
         margin-right: 10px;
-        cursor: pointer;
         overflow: hidden;
+        border-radius: 50%;
+        cursor: pointer;
 
         img {
-          height: 100%;
           width: 100%;
+          height: 100%;
         }
       }
 

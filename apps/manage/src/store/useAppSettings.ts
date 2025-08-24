@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import EventBus from '@youyu/shared/utils/event-bus';
 
 type Theme = 'light' | 'dark';
 export type Language = 'en' | 'zh';
@@ -25,6 +26,7 @@ export const useAppSettings = create<AppSettingsState>(set => {
         const next = state.theme === 'dark' ? 'light' : 'dark';
         localStorage.setItem('theme', next);
         document.documentElement.setAttribute('data-theme', next);
+        EventBus.emit('changeTheme', next);
         return { theme: next };
       });
     },
