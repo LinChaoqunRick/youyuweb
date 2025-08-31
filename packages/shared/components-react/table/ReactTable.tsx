@@ -1,5 +1,7 @@
 import { Table } from 'antd';
-import { useState, useEffect, useCallback } from 'react';
+import {
+  useState, useEffect, useCallback, useRef,
+} from 'react';
 import http from '../../network';
 import { PageResult } from '../../types/vo/common';
 import type { TablePaginationConfig, ColumnsType } from 'antd/es/table';
@@ -15,6 +17,8 @@ export function ReactTable<T>(props: ReactTableProps<T>) {
     url, columns, params, ...rest
   } = props;
 
+  const tableRef = useRef<HTMLElement | null>(null);
+  const [y, setY] = useState(0);
   const [tableData, setTableData] = useState<T[]>([]);
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState<TablePaginationConfig>({
@@ -49,6 +53,35 @@ export function ReactTable<T>(props: ReactTableProps<T>) {
     }
   }, [url, params, pagination.current, pagination.pageSize]);
 
+  // 计算表格可视区域（x/y）
+  useEffect(() => {
+    const recalc = () => {
+      console.log(111);
+      if (!tableRef.current) return;
+      const rect = tableRef.current.getBoundingClientRect();
+      const nextY = window.innerHeight - rect.top - 55 - 56 - 12; // 55: table-header | 56: pagination | 12 :padding
+      setY(nextY);
+    };
+
+    // 初始计算
+    recalc();
+
+    // 监听窗口尺寸变化
+    const onResize = () => recalc();
+    window.addEventListener('resize', onResize);
+
+    // 监听容器尺寸变化（包括打开控制台导致布局变化等）
+    const observer = new ResizeObserver(() => recalc());
+    if (tableRef.current) {
+      observer.observe(tableRef.current);
+    }
+
+    return () => {
+      window.removeEventListener('resize', onResize);
+      observer.disconnect();
+    };
+  }, []);
+
   // 依赖驱动请求
   useEffect(() => {
     getTableData();
@@ -72,7 +105,8 @@ export function ReactTable<T>(props: ReactTableProps<T>) {
   };
 
   return (
-    <div className="react-table">
+    // @ts-ignore
+    <div className="react-table" ref={tableRef}>
       <Table<T>
         rowKey="id"
         dataSource={tableData}
@@ -80,6 +114,10 @@ export function ReactTable<T>(props: ReactTableProps<T>) {
         pagination={pagination}
         loading={loading}
         onChange={handleChange}
+        rowClassName={(_, index) => (index % 2 === 0 ? 'table-row-even' : 'table-row-odd')}
+        scroll={{
+          y,
+        }}
         {...rest}
       />
     </div>

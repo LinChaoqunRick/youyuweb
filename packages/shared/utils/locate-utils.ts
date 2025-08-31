@@ -1,8 +1,9 @@
 import areaJson from '../assets/map/area.json';
 import nationData from '../assets/map/nation.json';
-import type { AreaItem } from '../types/vo/common';
+import type { Area, Nation } from '../types/vo/common';
 
-const AreaData = areaJson as unknown as Record<string, AreaItem>;
+const AreaData = areaJson as unknown as Record<string, Area>;
+const NationData = nationData as unknown as Record<string, Nation>;
 
 interface AntOptions {
   value: string | number;
@@ -15,27 +16,17 @@ interface AntOptions {
  * @param code 行政编码
  * @param fullName 是否使用全称
  */
-function getAreaNameByCode(code: string, fullName: boolean = true) {
+export function getRegionNameByCode(code: string, fullName: boolean = true) {
   const area = AreaData[code];
   return area?.[fullName ? 'fullName' : 'name'];
 }
 
 /**
- * 根据行政编码获取区域名称
- * @param code 行政编码
- * @param fullName 是否使用全称
+ * 根据国家代码获取国家名称
+ * @param code 国家代码+
  */
-function getRegionNameByCode(code: string, fullName: boolean = true) {
-  const area = AreaData[code];
-  return area?.[fullName ? 'fullName' : 'name'];
-}
-
-/**
- * 根据行政编码获取区域名称
- * @param code 行政编码
- */
-function getNationNameByCode(code: string) {
-  const area = (nationData as Record<string, Record<string, any>>)[code];
+export function getNationNameByCode(code: string) {
+  const area = NationData[code];
   return area?.name;
 }
 
@@ -71,15 +62,21 @@ function splitAdminCodes(code: string): string[] {
  * @param code 行政区划码（6 位）
  * @param level 1|2|3，默认 1
  * @param separator 可选分隔符，默认 ""（不加分隔）
+ * @param fullName 使用全称
  */
-function getAreaNameByCodeLevel(code: string, level: number = 1, separator: string = ''): string {
+function getAreaNameByCodeLevel(
+  code: string,
+  level: number = 1,
+  separator: string = '',
+  fullName: boolean = true,
+): string {
   if (code.length === 3) {
     return getNationNameByCode(code);
   }
   const chain = splitAdminCodes(code);
   const lvl = Math.max(1, Math.floor(level)); // 兜底为 >=1 的整数
   const picked = chain.slice(Math.max(0, chain.length - lvl));
-  const names = picked.map(c => getAreaNameByCode(c) ?? c);
+  const names = picked.map(c => getRegionNameByCode(c, fullName) ?? c);
   return names.join(separator);
 }
 
@@ -90,6 +87,16 @@ function getAreaNameByCodeLevel(code: string, level: number = 1, separator: stri
 function getAreaCodeByName(name: string) {
   const area = Object.values(AreaData).find(area => area.name === name);
   return area?.name;
+}
+
+/**
+ * 根据行政编码获取区域名称
+ * @param code 行政编码
+ * @param fullName 使用全称
+ */
+function getAreaNameByCode(code: string, fullName: boolean = true) {
+  const strCode = `${code}`;
+  return strCode.length === 3 ? getNationNameByCode(strCode) : getAreaNameByCodeLevel(strCode, 3, '/', fullName);
 }
 
 /**

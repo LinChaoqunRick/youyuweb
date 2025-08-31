@@ -15,6 +15,7 @@ import { AuthProvider } from '@/context/AuthContext';
 import { initI18n } from '@/locales';
 import RouterProvider from '@/providers/RouterProvider';
 import '@/assets/css/theme.css';
+import '@youyu/shared/assets/css/shared-base.css';
 import { useAppSettings } from '@/store/useAppSettings';
 import type { AxiosError } from 'axios';
 import 'dayjs/locale/zh-cn';

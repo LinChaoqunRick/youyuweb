@@ -3,48 +3,52 @@
     <div class="moment-item-content">
       <div class="content-top">
         <a-popover
-          overlayClassName="user-info-moment-popover"
+          overlay-class-name="user-info-moment-popover"
           placement="top"
-          :mouseEnterDelay="0.6"
-          :mouseLeaveDelay="0.3"
-          @visibleChange="onUserVisibleChange"
+          :mouse-enter-delay="0.6"
+          :mouse-leave-delay="0.3"
+          @visible-change="onUserVisibleChange"
         >
           <template #content>
-            <UserCardMoment overlayClassName="user-info-moment-popover" :user="data.user" />
+            <UserCardMoment overlay-class-name="user-info-moment-popover" :user="data.user" />
           </template>
           <div class="user-avatar cp">
             <RouterLink :to="`/user/${data.user.id}/moment`">
-              <img :src="data.user.avatar" alt="" />
+              <img :src="data.user.avatar" alt="">
             </RouterLink>
           </div>
         </a-popover>
         <div class="user-nickname-time">
           <a-popover
-            overlayClassName="user-info-moment-popover"
+            overlay-class-name="user-info-moment-popover"
             placement="top"
-            :mouseEnterDelay="0.6"
-            :mouseLeaveDelay="0.3"
-            @visibleChange="onUserVisibleChange"
+            :mouse-enter-delay="0.6"
+            :mouse-leave-delay="0.3"
+            @visible-change="onUserVisibleChange"
           >
             <template #content>
-              <UserCardMoment overlayClassName="user-info-moment-popover" :user="data.user" />
+              <UserCardMoment overlay-class-name="user-info-moment-popover" :user="data.user" />
             </template>
             <RouterLink :to="`/user/${data.user.id}/moment`">
-              <div class="user-nickname">{{ data.user.nickname }}</div>
+              <div class="user-nickname">
+                {{ data.user.nickname }}
+              </div>
             </RouterLink>
           </a-popover>
           <div class="info-data">
             <div class="publish-time" :title="data.createTime">
               {{ $dayjs().to(data.createTime) }}
             </div>
-            <div class="adname" v-if="data.adname">・{{ data.adname }}</div>
+            <div v-if="data.adname" class="adname">
+              ・{{ data.adname }}
+            </div>
           </div>
         </div>
         <a-popover
           v-model:open="visible"
           placement="bottomRight"
-          overlayClassName="moment-item-top-popover"
-          :getPopupContainer="triggerNode => triggerNode.parentNode"
+          overlay-class-name="moment-item-top-popover"
+          :get-popup-container="triggerNode => triggerNode.parentNode"
         >
           <template #content>
             <div class="operation-items">
@@ -77,37 +81,54 @@
       </div>
       <div class="content-body">
         <div
+          v-row="{ set: set }"
           class="content-text"
           :class="{ 'content-expand': expand }"
           v-html="transformTagToHTML(data.content)"
-          v-row="{ set: set }"
-        ></div>
-        <div class="limit-btn" @click="expand = true" v-show="row > 7 && !expand">展开</div>
-        <div class="limit-btn" @click="expand = false" v-show="row > 7 && expand">收起</div>
-        <div class="content-images" :class="[imageClass]" v-if="images?.length && !preview">
-          <img :src="item" v-for="(item, index) in images" :key="index" @click="onPreview(index)" alt="" />
+        />
+        <div v-show="row > 10 && !expand" class="limit-btn" @click="expand = true">
+          展开
         </div>
-        <div class="content-image-preview" v-if="images?.length && preview">
-          <ImagePreviewEmbed :list="images" :current="current" @onClose="onClose" />
+        <div v-show="row > 10 && expand" class="limit-btn" @click="expand = false">
+          收起
+        </div>
+        <div v-if="images?.length && !preview" class="content-images" :class="[imageClass]">
+          <img
+            v-for="(item, index) in images"
+            :key="index"
+            :src="item"
+            alt=""
+            @click="onPreview(index)"
+          >
+        </div>
+        <div v-if="images?.length && preview" class="content-image-preview">
+          <ImagePreviewEmbed :list="images" :current="current" @on-close="onClose" />
         </div>
       </div>
       <div class="content-bottom">
-        <div class="location-data" v-if="data?.location" @click="onLocationPreview">
+        <div v-if="data?.location" class="location-data" @click="onLocationPreview">
           <div class="icon-wrapper">
             <i-local-two theme="multi-color" size="12" :fill="['#ffffff', '#ffffff', '#3b8fff', '#3b8fff']" />
           </div>
           <span class="position-text">{{ data?.location }}</span>
         </div>
-        <div class="like-users" v-if="data.likeUsers?.length">
+        <div v-if="data.likeUsers?.length" class="like-users">
           <div class="user-avatars">
-            <img v-for="(item, index) in data.likeUsers" :src="item.avatar" :style="{ 'z-index': index }" />
+            <img
+              v-for="(item, index) in data.likeUsers"
+              :key="item.id"
+              :src="item.avatar"
+              :style="{ 'z-index': index }"
+            >
           </div>
-          <div class="like-text"><span v-if="data.supportCount > 3">等人</span>赞过</div>
+          <div class="like-text">
+            <span v-if="data.supportCount > 3">等人</span>赞过
+          </div>
         </div>
       </div>
     </div>
     <div class="moment-item-actions">
-      <a-popover trigger="click" overlayClassName="share-actions-popover">
+      <a-popover trigger="click" overlay-class-name="share-actions-popover">
         <template #content>
           <div class="share-action-item copy-link" @click="onCopyLink">
             <svg
@@ -124,63 +145,81 @@
                 d="M483.84 560.298667c24.234667 24.149333 24.234667 60.330667 0 84.48s-66.304 30.122667-90.453333 5.973333a229.461333 229.461333 0 0 1 0-325.802667L634.88 83.626667c90.453333-90.538667 235.264-90.538667 325.802667 0s96.512 229.290667 5.973333 319.744l-72.362667 72.448c-24.149333 24.149333-60.330667 24.149333-90.453333-6.058667s-24.149333-60.330667 0-84.48l72.362667-72.362667c42.24-42.24 36.181333-108.629333 0-144.896S767.488 119.808 725.333333 162.133333L483.925333 403.370667a112.981333 112.981333 0 0 0 0 156.928z m90.624-90.538667c-24.149333-24.149333-24.149333-60.330667 5.973333-90.453333s60.330667-24.149333 84.48 0a229.461333 229.461333 0 0 1 0 325.802666L423.594667 946.346667c-90.453333 90.453333-241.408 96.597333-331.946667 5.973333s-84.48-241.322667 6.058667-331.776l72.448-72.448c24.149333-24.149333 66.389333-30.122667 90.453333-5.973333s18.176 66.304-5.973333 90.453333l-72.448 72.448c-42.24 42.24-42.24 114.602667 0 156.842667s108.629333 36.181333 150.869333-5.973334l241.408-241.408c42.154667-42.24 42.154667-102.570667 0-144.810666z"
                 fill="#1890ff"
                 p-id="5153"
-              ></path>
+              />
             </svg>
-            <div class="share-action-item-text">复制链接</div>
+            <div class="share-action-item-text">
+              复制链接
+            </div>
           </div>
         </template>
         <div class="item-operation">
           <div class="item-icon">
             <i-share-one theme="outline" size="14" fill="currentColor" />
           </div>
-          <div class="item-text">分享</div>
+          <div class="item-text">
+            分享
+          </div>
         </div>
       </a-popover>
-      <div class="item-operation comment-operation" @click="onClickReply" :class="{ 'action-active': replyShow }">
-        <div class="pointer-arrow" v-if="replyShow"></div>
+      <div class="item-operation comment-operation" :class="{ 'action-active': replyShow }" @click="onClickReply">
+        <div v-if="replyShow" class="pointer-arrow" />
         <div class="item-icon">
           <i-comment :theme="replyShow ? 'filled' : 'outline'" size="14" fill="currentColor" />
         </div>
-        <div class="item-text">{{ data.commentCount || '评论' }}</div>
+        <div class="item-text">
+          {{ data.commentCount || '评论' }}
+        </div>
       </div>
-      <div class="item-operation" :class="{ 'like-active': likeActive }" v-login="onLike">
+      <div v-login="onLike" class="item-operation" :class="{ 'like-active': likeActive }">
         <div class="item-icon">
           <i-good-two :theme="likeActive ? 'filled' : 'outline'" size="14" fill="currentColor" />
         </div>
-        <div class="item-text">{{ data.supportCount || '点赞' }}</div>
+        <div class="item-text">
+          {{ data.supportCount || '点赞' }}
+        </div>
       </div>
     </div>
-    <div class="moment-item-bottom" v-if="commentListShowVisibleIf" v-show="commentListShowVisibleShow">
+    <div v-if="commentListShowVisibleIf" v-show="commentListShowVisibleShow" class="moment-item-bottom">
       <div class="moment-comment-editor">
         <div class="user-avatar">
-          <img v-if="isLogin" :src="userInfo.avatar" :alt="userInfo.nickname + '的头像'" />
+          <img v-if="isLogin" :src="userInfo.avatar" :alt="userInfo.nickname + '的头像'">
           <img
             v-else
             alt="默认头像"
             src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png"
-          />
+          >
         </div>
         <div class="reply-box-wrapper">
-          <MomentReplyEditor :params="replyParams" :placeholder="replyEditorPlaceholder"
-                             @saveSuccess="onCommentSuccess" />
+          <MomentReplyEditor
+            :params="replyParams"
+            :placeholder="replyEditorPlaceholder"
+            @save-success="onCommentSuccess"
+          />
         </div>
       </div>
       <div class="moment-comment-list">
         <div class="comment-list-top">
-          <div class="comment-count">全部评论（{{ data.commentCount || 0 }}）</div>
-          <SortSwitch v-model="sort" @onChange="onChange" />
+          <div class="comment-count">
+            全部评论（{{ data.commentCount || 0 }}）
+          </div>
+          <SortSwitch v-model="sort" @on-change="onChange" />
         </div>
         <div class="comment-list">
-          <ContentData url="listMomentCommentPage" :params="listParams" v-slot="{ data }" ref="ContentDataRef">
+          <ContentData
+            v-slot="{ data }"
+            ref="ContentDataRef"
+            url="listMomentCommentPage"
+            :params="listParams"
+          >
             <MomentCommentItem
               v-for="item in data?.list"
               :key="item.id"
               class="comment-item"
               :data="item"
               :moment="props.data"
-              @deleteSuccess="deleteSuccess"
+              @delete-success="deleteSuccess"
             />
-            <div class="comment-load-all" v-if="data?.pages > 1">
+            <div v-if="data?.pages > 1" class="comment-load-all">
               <div class="more-btn" @click="onDetail">
                 查看全部
                 <span class="comment-count">{{ props.data.commentCount }}</span>
@@ -197,21 +236,21 @@
 <script lang="ts" setup>
 import { ref, computed, nextTick } from 'vue';
 import type { PropType } from 'vue';
+import { message, Modal } from 'ant-design-vue';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
 import { useStore } from 'vuex';
-import type { momentListType } from '@/views/moment/types';
-import { message, Modal } from 'ant-design-vue';
-import openModal from '@/libs/tools/openModal';
+import { copyToClipboard } from '@/assets/utils/utils';
+import ContentData from '@/components/common/system/ContentData.vue';
+import LocationPreview from '@/components/common/utils/aMap/LocationPreview.vue';
 import { transformTagToHTML } from '@/components/common/utils/emoji/youyu_emoji';
 import ImagePreviewEmbed from '@/components/common/utils/image/ImagePreviceEmbed.vue';
-import MomentReplyEditor from '@/views/moment/components/MomentReplyEditor.vue';
-import UserCardMoment from '../components/UserCardMoment.vue';
-import MomentCommentItem from '../components/MomentCommentItem.vue';
-import ContentData from '@/components/common/system/ContentData.vue';
 import SortSwitch from '@/components/common/utils/sortSwitch/SortSwitch.vue';
-import LocationPreview from '@/components/common/utils/aMap/LocationPreview.vue';
-import { copyToClipboard } from '@/assets/utils/utils';
 import { DOMAIN } from '@/libs/consts';
+import openModal from '@/libs/tools/openModal';
+import MomentReplyEditor from '@/views/moment/components/MomentReplyEditor.vue';
+import type { momentListType } from '@/views/moment/types';
+import MomentCommentItem from '../components/MomentCommentItem.vue';
+import UserCardMoment from '../components/UserCardMoment.vue';
 
 const { getters, dispatch } = useStore();
 
@@ -415,23 +454,23 @@ defineExpose({
   background-color: var(--youyu-body-background2);
 
   .moment-item-content {
-    padding: 16px 16px 10px 16px;
+    padding: 16px 16px 10px;
 
     .content-top {
       display: flex;
       align-items: center;
 
       .user-avatar {
-        height: 42px;
         width: 42px;
-        border-radius: 50%;
-        cursor: pointer;
+        height: 42px;
         overflow: hidden;
         border: var(--youyu-avatar-border);
+        border-radius: 50%;
+        cursor: pointer;
 
         img {
-          height: 100%;
           width: 100%;
+          height: 100%;
           object-fit: cover;
         }
       }
@@ -444,28 +483,28 @@ defineExpose({
         }
 
         .user-nickname {
-          font-weight: 500;
           font-size: 15px;
+          font-weight: 500;
           cursor: pointer;
         }
 
         .info-data {
           display: flex;
           align-items: center;
+          margin-top: 1px;
           font-size: 12px;
           color: #909090;
-          margin-top: 1px;
         }
       }
 
       .content-top-operation {
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
         height: 24px;
         margin-left: auto;
-        cursor: pointer;
         border-radius: 3px;
+        cursor: pointer;
         transition: 0.3s;
 
         &:hover {
@@ -487,26 +526,26 @@ defineExpose({
       margin-left: 50px;
 
       a {
-        color: inherit !important;
         font-weight: inherit !important;
+        color: inherit !important;
       }
 
       ::v-deep(.content-text) {
+        max-height: 18rem;
         margin: 4px 0;
-        white-space: pre-wrap;
-        line-height: 1.8rem;
-        max-height: 10.8rem;
         overflow: hidden;
+        line-height: 1.8rem;
+        white-space: pre-wrap;
 
         &.content-expand {
           max-height: none !important;
         }
 
         img {
-          vertical-align: sub;
           width: auto;
           height: 20px;
           margin: 0 2px;
+          vertical-align: sub;
         }
       }
 
@@ -523,60 +562,60 @@ defineExpose({
 
         &.col-1 {
           img {
-            height: 160px;
             width: 160px;
+            height: 160px;
           }
         }
 
         img {
-          height: 110px;
           width: 110px;
+          height: 110px;
           margin: 0 4px 4px 0;
           object-fit: cover;
-          cursor: zoom-in;
           filter: brightness(0.94);
+          cursor: zoom-in;
         }
       }
 
       .limit-btn {
         position: relative;
         top: -4px;
-        cursor: pointer;
+        margin-right: 20px;
         font-size: 14px;
         line-height: 22px;
         color: #1e80ff;
-        margin-right: 20px;
+        cursor: pointer;
       }
     }
 
     .content-bottom {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       margin-left: 45px;
 
       .location-data {
         display: flex;
         align-items: center;
+        height: 24px;
         padding: 1px 4px;
+        margin-top: 4px;
         border: 1.8px solid var(--youyu-border-color2);
         border-radius: 30px;
         cursor: pointer;
-        height: 24px;
-        margin-top: 4px;
 
         .icon-wrapper {
-          background-color: #3b8fff;
-          line-height: 0;
-          border-radius: 50%;
-          padding: 2px;
           display: flex;
+          padding: 2px;
+          line-height: 0;
+          background-color: #3b8fff;
+          border-radius: 50%;
         }
 
         .position-text {
           padding: 0 2px 0 4px;
-          color: var(--youyu-text3);
           font-size: 12px;
+          color: var(--youyu-text3);
         }
 
         .i-icon-triangle {
@@ -588,10 +627,10 @@ defineExpose({
       .like-users {
         display: flex;
         align-items: center;
-        margin-left: auto;
-        cursor: pointer;
         height: 26px;
         margin-top: 4px;
+        margin-left: auto;
+        cursor: pointer;
 
         .user-avatars {
           display: flex;
@@ -599,17 +638,17 @@ defineExpose({
           margin-right: 10px;
 
           img {
+            position: relative;
+            display: inline-block;
             width: 24px;
             height: 24px;
-            background-color: #fff;
-            border: 2px solid #fff;
-            border-radius: 50%;
             margin-right: -6px;
-            display: inline-block;
-            position: relative;
+            background-color: #fff;
+            background-repeat: no-repeat;
             background-position: 50%;
             background-size: cover;
-            background-repeat: no-repeat;
+            border: 2px solid #fff;
+            border-radius: 50%;
           }
         }
 
@@ -626,10 +665,10 @@ defineExpose({
 
     .item-operation {
       position: relative;
-      flex: 1;
       display: flex;
-      justify-content: center;
+      flex: 1;
       align-items: center;
+      justify-content: center;
       height: 36px;
       font-size: 13px;
       color: var(--youyu-text1);
@@ -637,8 +676,8 @@ defineExpose({
       user-select: none;
 
       &.action-active {
-        background-color: var(--youyu-background4);
         color: #1890ff;
+        background-color: var(--youyu-background4);
       }
 
       &.like-active {
@@ -666,38 +705,38 @@ defineExpose({
         position: absolute;
         bottom: -6px;
         left: 50%;
-        margin: -6px 0 0 -6px;
-        pointer-events: none;
+        display: inline-block;
         width: 12px;
         height: 12px;
+        margin: -6px 0 0 -6px;
+        background-color: var(--youyu-background1);
         border-top: 1px solid var(--youyu-border-color3);
         border-left: 1px solid var(--youyu-border-color3);
+        pointer-events: none;
         transform: rotate(45deg);
-        display: inline-block;
-        background-color: var(--youyu-background1);
       }
     }
   }
 
   .moment-item-bottom {
     .moment-comment-editor {
-      margin: 0 24px;
-      padding: 16px 0;
-      border-top: 1px solid var(--youyu-border-color3);
       display: flex;
       align-items: flex-start;
+      padding: 16px 0;
+      margin: 0 24px;
+      border-top: 1px solid var(--youyu-border-color3);
 
       .user-avatar {
-        height: 36px;
         width: 36px;
-        border-radius: 100%;
-        overflow: hidden;
+        height: 36px;
         margin: 0 12px 0 4px;
+        overflow: hidden;
         border: var(--youyu-avatar-border);
+        border-radius: 100%;
 
         img {
-          height: 100%;
           width: 100%;
+          height: 100%;
         }
       }
 
@@ -707,8 +746,8 @@ defineExpose({
       }
 
       ::v-deep(.editable-div) {
-        border-radius: 2px;
         border: 1px solid transparent;
+        border-radius: 2px;
         transition: 0.3s;
 
         #box {
@@ -718,14 +757,14 @@ defineExpose({
     }
 
     .moment-comment-list {
-      border-top: 1px solid var(--youyu-border-color);
       padding: 8px 24px;
+      border-top: 1px solid var(--youyu-border-color);
 
       .comment-list-top {
-        margin-top: 8px;
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
+        margin-top: 8px;
 
         .comment-count {
           font-size: 16px;
@@ -735,20 +774,20 @@ defineExpose({
         .sort-type {
           display: inline-flex;
           align-items: center;
+          padding: 3px;
           font-size: 14px;
-          color: #4e5969;
           font-weight: 400;
-          cursor: pointer;
+          color: #4e5969;
           background: var(--youyu-body-background-ligth);
           border-radius: 2px;
-          padding: 3px;
+          cursor: pointer;
 
           .sort-item {
             display: flex;
             align-items: center;
             padding: 2px 12px;
-            line-height: 22px;
             font-size: 14px;
+            line-height: 22px;
             color: #8a919f;
 
             ::v-deep(svg) {
@@ -758,8 +797,8 @@ defineExpose({
 
           .active {
             color: #1890ff;
-            border-radius: 2px;
             background: var(--youyu-body-background2);
+            border-radius: 2px;
 
             ::v-deep(svg) {
               margin-right: 4px;
@@ -782,9 +821,9 @@ defineExpose({
 
       .comment-load-all {
         .more-btn {
-          padding: 10px 0 4px 0;
-          cursor: pointer;
+          padding: 10px 0 4px;
           text-align: center;
+          cursor: pointer;
 
           .comment-count {
             color: #1890ff;
@@ -808,9 +847,9 @@ defineExpose({
 
       .operation-items {
         .operation-item {
-          cursor: pointer;
           padding: 3px 8px;
           border-radius: 4px;
+          cursor: pointer;
 
           &:hover {
             background-color: var(--youyu-background2);
@@ -835,13 +874,13 @@ defineExpose({
 
 .share-actions-popover {
   .share-action-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100px;
     height: 24px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
     color: var(--youyu-text2);
+    cursor: pointer;
 
     &-text {
       margin-left: 6px;

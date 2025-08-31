@@ -6,7 +6,9 @@
   --text-color-gray: #71717a;
   --text-color-icon: #323639cc;
   --bg-btn-hover: hsl(240deg 5% 96%);
-  --border-color: #f0f0f0;
+  --border-color: hsl(240deg 5.9% 90%);
+  --bg-table-row-odd: #fafafa;
+  --bg-table-row-even: #fff;
   --shadow: 0 0 6px rgb(0, 0, 0, 0.03);
 }
 
@@ -17,7 +19,9 @@
   --text-color-gray: #a1a1aa;
   --text-color-icon: #a1a1aa;
   --bg-btn-hover: hsl(216deg 5% 19%);
-  --border-color: #313131;
+  --border-color: hsl(240deg 3.7% 22%);
+  --bg-table-row-odd: #040404;
+  --bg-table-row-even: #1d1d1d;
   --shadow: 0 1px 2px 0 rgb(0, 0, 0, 0.03), 0 1px 6px -1px rgb(0, 0, 0, 0.02), 0 2px 4px 0 rgb(0, 0, 0, 0.02);
 }
 

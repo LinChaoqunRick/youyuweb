@@ -6,11 +6,27 @@
   .main-menu {
     display: flex;
     flex-direction: column;
+    padding: 6px;
+    background: var(--bg-color);
+    border-right: 1px solid var(--border-color);
+
+    .ant-menu {
+      background: transparent;
+    }
 
     .ant-menu-root {
       flex: 1;
       overflow: auto;
+      border: none;
       user-select: none;
+
+      .ant-menu-sub {
+        background: none;
+
+        .ant-menu-item-selected {
+          background: rgb(24 144 255 / 26%);
+        }
+      }
 
       &.ant-menu-inline-collapsed {
         width: 70px !important;

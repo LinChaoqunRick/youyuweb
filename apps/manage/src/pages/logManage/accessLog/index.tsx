@@ -1,52 +1,74 @@
 import {
-  Button, Form, DatePicker, TreeSelect, TreeSelectProps, GetProp, Input, TableProps,
+  Button, Form, DatePicker, TreeSelect, TreeSelectProps, GetProp, Input, Tag, Tooltip, Select,
 } from 'antd';
 import dayjs from 'dayjs';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { rangePresets } from '@/libs/config/formConfig';
 import { getAreaNameByCode, getSubAreaOptions, updateChildrenByCode } from '@youyu/shared/utils/locate-utils';
 import { cloneDeep } from 'lodash';
 import { ReactTable } from '@youyu/shared/components-react';
 import { GET_LOGS_PAGE } from '@youyu/shared/apis/logManage.ts';
 import { Logs } from '@youyu/shared/types/vo/logManage';
+import { ColumnsType } from 'antd/es/table';
 
 type DefaultOptionType = GetProp<TreeSelectProps, 'treeData'>[number];
 
 const { RangePicker } = DatePicker;
-const columns: TableProps<Logs>['columns'] = [
+const columns: ColumnsType<Logs> = [
   {
     title: '名称',
     dataIndex: 'name',
     key: 'name',
+    width: '15%',
+  },
+  {
+    title: '请求地址',
+    dataIndex: 'path',
+    key: 'path',
+    width: '17%',
   },
   {
     title: 'IP地址',
     dataIndex: 'ip',
     key: 'ip',
+    width: '10%',
+    render: data => {
+      return <Tag color="#108ee9">{data}</Tag>;
+    },
   },
   {
     title: '区域',
     dataIndex: 'adcode',
     key: 'adcode',
+    width: '20%',
     render: data => {
       return getAreaNameByCode(data);
     },
   },
   {
-    title: '持续时间',
+    title: '持续时间(ms)',
     dataIndex: 'duration',
     key: 'duration',
+    width: '10%',
   },
   {
     title: '结果',
     dataIndex: 'result',
     key: 'result',
-    render: (data: string) => {
-      return data ? '成功' : '失败';
+    width: '10%',
+    render: (data: string, row) => {
+      return data
+        ? <Tag color='#87d068'>成功</Tag>
+        : (
+          <Tooltip placement="bottom" title={row.error}>
+            <Tag color='#f50'>失败</Tag>
+          </Tooltip>
+        );
     },
   },
   {
     title: '请求时间',
+    width: '18%',
     dataIndex: 'createTime',
     key: 'createTime',
   },
@@ -83,7 +105,7 @@ function AccessLog() {
   }, []);
 
   return (
-    <div className="access-logs">
+    <div className="access-logs flex-view">
       <div className="header-search rounded-sm">
         <Form
           layout="inline"
@@ -112,12 +134,24 @@ function AccessLog() {
               loadData={onLoadData}
             />
           </Form.Item>
+          <Form.Item label="状态" name="status">
+            <Select
+              placeholder="请选择状态"
+              allowClear
+              options={[
+                { value: '1', label: '成功' },
+                { value: '0', label: '失败' },
+              ]}
+            />
+          </Form.Item>
           <Form.Item label="关键词" name="keyword">
             <Input placeholder="名称/IP/请求方式" />
           </Form.Item>
-          <Button type="primary" htmlType="submit">
-            查询
-          </Button>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              查询
+            </Button>
+          </Form.Item>
         </Form>
       </div>
       <div className="access-content">

@@ -40,7 +40,7 @@ function App() {
   return (
     <Menu
       onClick={onClick}
-      style={{ width: 256 }}
+      style={{ width: 220 }}
       selectedKeys={selectedKeys}
       openKeys={menuCollapsed ? [] : openKeys}
       onOpenChange={onOpenChange}
