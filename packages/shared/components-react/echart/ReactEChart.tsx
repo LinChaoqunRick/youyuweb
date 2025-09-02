@@ -1,19 +1,20 @@
 import * as echarts from 'echarts';
-import { debounce, merge } from 'lodash';
+import { debounce, merge, set } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import EventBus from '../../utils/event-bus';
 import Loading from '../loading/Loading';
 import type { EChartsOption } from 'echarts';
 
 function ReactEChart({ options, spinning = true }: { options: EChartsOption; spinning: boolean }) {
-  const [lastOptions, setLastOptions] = useState();
+  const latestOptionsRef = useRef<EChartsOption | null>(null);
   const containerRef = useRef(null);
   const chartRef = useRef<echarts.ECharts | null>(null);
 
   function setTheme(theme: string) {
     chartRef.current?.setTheme(theme === 'light' ? 'default' : theme);
-    console.log(lastOptions);
-    chartRef.current?.setOption(lastOptions);
+    if (latestOptionsRef.current) {
+      chartRef.current?.setOption(latestOptionsRef.current);
+    }
   }
 
   // 初始化 echarts 实例
@@ -41,10 +42,9 @@ function ReactEChart({ options, spinning = true }: { options: EChartsOption; spi
 
   // options 变化时更新图表
   useEffect(() => {
+    latestOptionsRef.current = options;
     if (chartRef.current && options) {
       chartRef.current.setOption(options);
-      console.log(merge({}, lastOptions, options));
-      setLastOptions(merge({}, lastOptions, options));
     }
   }, [options]);
 

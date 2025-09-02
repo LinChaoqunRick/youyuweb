@@ -8,13 +8,18 @@ import type { AxiosError } from 'axios';
 type MessageType = 'success' | 'error' | 'info' | 'warning' | 'loading';
 
 EventBus.on('showMessage', (config: { text: string; type: MessageType; duration?: number }) => {
-  console.log(config);
+  // console.log(config);
   const { text, type, duration } = config;
   message[type](text, duration);
 });
 
 EventBus.on('redirectTo404', () => {
   router.replace({ name: 'NotFound' });
+});
+
+EventBus.on('redirectToLogin', () => {
+  cleanCookieLocalStorage();
+  router.replace("/");
 });
 
 EventBus.on('refreshToken', async (failedRequest: AxiosError) => {

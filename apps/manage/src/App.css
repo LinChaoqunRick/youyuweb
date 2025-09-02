@@ -263,6 +263,13 @@
   }
 }
 
+.request-params-tooltip {
+  .ant-tooltip-content {
+    width: fit-content;
+    max-width: 700px;
+  }
+}
+
 /* 覆盖 */
 .ant-spin-nested-loading, .ant-spin-container {
   width: 100%;

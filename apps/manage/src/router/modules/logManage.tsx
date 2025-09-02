@@ -1,5 +1,5 @@
 import {
-  FileSearchOutlined, LaptopOutlined, SolutionOutlined, ToolOutlined,
+  FileSearchOutlined, LaptopOutlined, NotificationOutlined, SolutionOutlined, ToolOutlined,
 } from '@ant-design/icons';
 import intl from 'react-intl-universal';
 import { lazyLoad } from '@/components/enhance/lazyLoad';
@@ -9,6 +9,7 @@ const OutletLayout = lazyLoad(() => import('@/components/layouts/OutletLayout'))
 const LoginInOut = lazyLoad(() => import('@/pages/logManage/loginInOut'));
 const AccessLog = lazyLoad(() => import('@/pages/logManage/accessLog'));
 const LogOperation = lazyLoad(() => import('@/pages/logManage/logOperation'));
+const NotificationLog = lazyLoad(() => import('@/pages/logManage/notificationLog'));
 
 const userRoutes: RouteObjectMeta[] = [
   {
@@ -53,6 +54,17 @@ const userRoutes: RouteObjectMeta[] = [
           },
           icon: <ToolOutlined />,
           code: 'log:operation',
+        },
+      },
+      {
+        path: 'notification',
+        element: <NotificationLog />,
+        meta: {
+          get title() {
+            return '通知日志';
+          },
+          icon: <NotificationOutlined />,
+          code: 'log:notification',
         },
       },
     ],

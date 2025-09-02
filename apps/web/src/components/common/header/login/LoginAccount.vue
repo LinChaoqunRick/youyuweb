@@ -140,7 +140,6 @@ const handleLogin = (form: LoginForm) => {
       generateAuthRoutes();
     })
     .catch(e => {
-      console.log(e);
       tip.showTip = true;
       tip.message = e.message;
     })

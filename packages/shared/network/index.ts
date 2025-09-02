@@ -31,7 +31,6 @@ instance.interceptors.response.use(
   res => {
     const { data } = res;
     if (data.code === '200') return Promise.resolve(data);
-
     if (data.code === '404') {
       // 注意这里的404不是指接口返回的http状态码，而是请求了一些需要重定向到404的接口
       eventBus.emit('redirectTo404');
@@ -51,6 +50,8 @@ instance.interceptors.response.use(
       eventBus.emit('showMessage', { type: 'error', text: '请求失败，接口资源不存在' });
     } else if (data && showMessageCode.includes(data.code)) {
       eventBus.emit('showMessage', { type: 'error', text: data.message });
+    } else if (data.code === 'A0002') { // token已被禁止访问
+      eventBus.emit('redirectToLogin', { type: 'error', text: data.message });
     } else {
       eventBus.emit('showMessage', { type: 'error', text: '系统异常，请联系管理员' });
     }

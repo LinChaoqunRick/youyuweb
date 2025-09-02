@@ -1,5 +1,5 @@
 import { ExclamationCircleOutlined, LockOutlined, UploadOutlined } from '@ant-design/icons';
-import { ACCOUNT_LOGOUT } from '@youyu/shared/apis';
+import { MANAGE_LOGOUT } from '@youyu/shared/apis';
 import http from '@youyu/shared/network';
 import { cleanCookieLocalStorage } from '@youyu/shared/utils';
 import { Modal } from 'antd';
@@ -18,7 +18,7 @@ function UserPanel({ user }: { user: ManageUser }) {
       okText: '确认',
       cancelText: '取消',
       onOk() {
-        return http.post(ACCOUNT_LOGOUT).then(res => {
+        return http.post(MANAGE_LOGOUT).then(res => {
           cleanCookieLocalStorage();
           setTimeout(() => {
             location.reload();

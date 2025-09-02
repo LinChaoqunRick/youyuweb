@@ -3,7 +3,7 @@ import { getMapOptions } from '@youyu/shared/components-react/echart/presetOptio
 import ReactEChart from '@youyu/shared/components-react/echart/ReactEChart';
 import http from '@youyu/shared/network';
 import { AreaAccessOutput } from '@youyu/shared/types/vo/overview';
-import { getAreaNameByCode, getAreaNameByCodeLevel } from '@youyu/shared/utils/locate-utils';
+import { getAreaNameByCodeLevel } from '@youyu/shared/utils/locate-utils';
 import {
   Card, Form, DatePicker, Button,
 } from 'antd';
@@ -14,27 +14,9 @@ import './index.css';
 import DataItem from '@youyu/shared/components-react/content/DataItem';
 import { cloneDeep } from 'lodash';
 import { formItemLayout, rangePresets } from '@/libs/config/formConfig';
+import { mergeAreaToProvince } from '@/utils/dataUtils.ts';
 
 const { RangePicker } = DatePicker;
-
-/**
- * 详细数据转化为省级数据
- * @param data
- */
-function mergeToProvince(data: Array<AreaAccessOutput>) {
-  return Object.values(
-    data.reduce<Record<string, AreaAccessOutput>>((acc, { areaCode, count }) => {
-      // 截取前两位+补0000得到省份代码
-      const provinceCode = `${areaCode.slice(0, 2)}0000`;
-      // 聚合统计
-      if (!acc[provinceCode]) {
-        acc[provinceCode] = { areaCode: provinceCode, count: 0, areaName: getAreaNameByCode(provinceCode, false) };
-      }
-      acc[provinceCode].count += count;
-      return acc;
-    }, {}),
-  );
-}
 
 function Monitor() {
   const [form] = Form.useForm();
@@ -61,7 +43,7 @@ function Monitor() {
           return item;
         });
         setAccessData(strictData);
-        const areaData = mergeToProvince(res.data);
+        const areaData = mergeAreaToProvince(res.data);
         const data = areaData.map(item => ({
           name: item.areaName,
           value: item.count,

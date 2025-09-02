@@ -35,25 +35,25 @@ const columns: ColumnsType<Logs> = [
     title: '请求地址',
     dataIndex: 'path',
     key: 'path',
-    width: '17%',
+    width: '11%',
   },
   {
-    title: 'IP地址',
-    dataIndex: 'ip',
-    key: 'ip',
-    width: '10%',
-    render: data => {
-      return <Tag color="#108ee9">{data}</Tag>;
-    },
-  },
-  {
-    title: '区域',
-    dataIndex: 'adcode',
-    key: 'adcode',
+    title: '请求参数',
+    dataIndex: 'requestData',
+    key: 'requestData',
     width: '18%',
-    render: data => {
-      return getAreaNameByCode(data);
+    ellipsis: {
+      showTitle: false,
     },
+    render: data => (
+      <Tooltip
+        placement="bottomLeft"
+        title={data}
+        rootClassName="request-params-tooltip"
+      >
+        {data}
+      </Tooltip>
+    ),
   },
   {
     title: '持续时间(ms)',
@@ -67,13 +67,13 @@ const columns: ColumnsType<Logs> = [
     key: 'result',
     width: '10%',
     render: (data: string, row) => {
-      return data
-        ? <Tag color='#87d068'>成功</Tag>
-        : (
-          <Tooltip placement="bottom" title={row.error}>
-            <Tag color='#f50'>失败</Tag>
-          </Tooltip>
-        );
+      return data ? (
+        <Tag color="#87d068">成功</Tag>
+      ) : (
+        <Tooltip placement="bottom" title={row.error}>
+          <Tag color="#f50">失败</Tag>
+        </Tooltip>
+      );
     },
   },
   {
@@ -84,7 +84,7 @@ const columns: ColumnsType<Logs> = [
   },
 ];
 
-function AccessLog() {
+function NotificationLog() {
   const [form] = Form.useForm();
   const [params, setParams] = useState<Record<string, unknown> | undefined>();
   const [treeData, setTreeData] = useState<Omit<DefaultOptionType, 'label'>[]>();
@@ -97,7 +97,7 @@ function AccessLog() {
     }
     values.areaCodes = (values.areas || []).join(',');
     delete values.areas;
-    values.type = LogType.ACCESS;
+    values.type = LogType.NOTIFY;
     setParams(values);
   };
 
@@ -132,19 +132,6 @@ function AccessLog() {
           >
             <RangePicker presets={rangePresets} />
           </Form.Item>
-          <Form.Item label="区域" name="areas">
-            <TreeSelect
-              showSearch
-              styles={{
-                popup: { root: { maxHeight: 400, overflow: 'auto' } },
-              }}
-              placeholder="请选择区域"
-              allowClear
-              treeCheckable
-              treeData={treeData}
-              loadData={onLoadData}
-            />
-          </Form.Item>
           <Form.Item label="状态" name="status">
             <Select
               placeholder="请选择状态"
@@ -172,4 +159,4 @@ function AccessLog() {
   );
 }
 
-export default AccessLog;
+export default NotificationLog;

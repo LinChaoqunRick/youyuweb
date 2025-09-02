@@ -38,7 +38,7 @@ export function ReactTable<T>(props: ReactTableProps<T>) {
   });
 
   // 请求数据
-  const getTableData = useCallback(async () => {
+  const getTableData = async () => {
     setLoading(true);
     try {
       const res = await http.post<PageResult<T>>(url, {
@@ -51,12 +51,11 @@ export function ReactTable<T>(props: ReactTableProps<T>) {
     } finally {
       setLoading(false);
     }
-  }, [url, params, pagination.current, pagination.pageSize]);
+  };
 
   // 计算表格可视区域（x/y）
   useEffect(() => {
     const recalc = () => {
-      console.log(111);
       if (!tableRef.current) return;
       const rect = tableRef.current.getBoundingClientRect();
       const nextY = window.innerHeight - rect.top - 55 - 56 - 12; // 55: table-header | 56: pagination | 12 :padding
@@ -85,7 +84,7 @@ export function ReactTable<T>(props: ReactTableProps<T>) {
   // 依赖驱动请求
   useEffect(() => {
     getTableData();
-  }, [getTableData]);
+  }, [params]);
 
   // 当 params 改变时，重置到第一页
   useEffect(() => {
