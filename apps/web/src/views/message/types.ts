@@ -12,3 +12,21 @@ export interface Barrage {
   userId?: number;
   userInfo?: BasicUserInfo;
 }
+
+export interface Message {
+  id: number;
+  rootId: number;
+  userId: number;
+  userIdTo: number;
+  nickname: string;
+  email: string;
+  avatar: string;
+  content: string;
+  adcode: number;
+  supportCount: number;
+  opposeCount: number;
+  createTime: string;
+  updateTime: string;
+  adname: string;
+  userInfo: BasicUserInfo;
+}

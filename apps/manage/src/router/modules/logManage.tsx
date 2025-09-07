@@ -8,7 +8,7 @@ import { RouteObjectMeta } from '@/types/login';
 const OutletLayout = lazyLoad(() => import('@/components/layouts/OutletLayout'));
 const LoginInOut = lazyLoad(() => import('@/pages/logManage/loginInOut'));
 const AccessLog = lazyLoad(() => import('@/pages/logManage/accessLog'));
-const LogOperation = lazyLoad(() => import('@/pages/logManage/logOperation'));
+const LogOperation = lazyLoad(() => import('@/pages/logManage/operationLog'));
 const NotificationLog = lazyLoad(() => import('@/pages/logManage/notificationLog'));
 
 const userRoutes: RouteObjectMeta[] = [

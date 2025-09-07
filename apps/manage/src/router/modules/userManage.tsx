@@ -1,10 +1,11 @@
-import { UserOutlined, UserSwitchOutlined } from '@ant-design/icons';
+import { MessageOutlined, UserOutlined, UserSwitchOutlined } from '@ant-design/icons';
 import intl from 'react-intl-universal';
 import { lazyLoad } from '@/components/enhance/lazyLoad';
 import { RouteObjectMeta } from '@/types/login';
 
 const OutletLayout = lazyLoad(() => import('@/components/layouts/OutletLayout'));
 const UserList = lazyLoad(() => import('@/pages/user/list'));
+const UserMessage = lazyLoad(() => import('@/pages/user/message'));
 
 const userRoutes: RouteObjectMeta[] = [
   {
@@ -27,6 +28,17 @@ const userRoutes: RouteObjectMeta[] = [
           },
           icon: <UserSwitchOutlined />,
           code: 'user:list',
+        },
+      },
+      {
+        path: 'message',
+        element: <UserMessage />,
+        meta: {
+          get title() {
+            return '留言管理';
+          },
+          icon: <MessageOutlined />,
+          code: 'user:message',
         },
       },
     ],

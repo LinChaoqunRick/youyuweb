@@ -1,17 +1,32 @@
 <template>
   <div class="message">
-    <!--    <div class="barrage-view">
-      <barrage-stage @on-empty="handleGetData" ref="barrageRef" />
-      <div class="locate-button">
-        <a-button type="primary" shape="round" @click="onLocate">
-          <template #icon>
-            <i-send-one theme="outline" size="16" fill="currentColor" />
-          </template>
-          我也说一句
-        </a-button>
-      </div>
-    </div>-->
+    <div class="top-content">
+      <a-card title="申请友链">
+        <p style="color: red;">
+          请按以下格式申请友链，谢谢！
+        </p>
+        <div ref="templateRef">
+          <span>站点名称：</span>
+          <span>描述：</span>
+          <span>头像：</span>
+          <span>网址：</span>
+        </div>
+        <a @click="onCopyTemplate">复制</a>
+      </a-card>
+      <a-card title="本站信息">
+        <div ref="mineRef">
+          <span>站点名称：有语</span>
+          <span>描述：一个人是可以做到他想做的一切的，需要的只是坚韧不拔的毅力和持久不懈的努力。</span>
+          <span>头像：https://v2.youyul.com/favicon.ico</span>
+          <span>网址：https://v2.youyul.com</span>
+        </div>
+        <a @click="onCopyMime">复制</a>
+      </a-card>
+    </div>
     <div class="message-view">
+      <p class="message-tip">
+        🥳注意：所有留言为手动审核后显示，请勿重复操作，谢谢配合！😘
+      </p>
       <a-form
         ref="FormRef"
         layout="inline"
@@ -41,7 +56,6 @@
                 placeholder="必填：请输入昵称"
               />
             </a-form-item>
-
             <a-form-item class="email-item" label="邮箱" name="email">
               <a-input
                 v-model:value="formState.email"
@@ -50,7 +64,6 @@
                 placeholder="必填：请输入邮箱"
               />
             </a-form-item>
-
             <a-form-item class="home-item" label="主页" name="home">
               <a-input
                 v-model:value="formState.home"
@@ -58,28 +71,6 @@
                 :maxlength="50"
                 placeholder="选填：请输入主页"
               />
-            </a-form-item>
-          </div>
-          <div class="form-bottom">
-            <a-form-item class="content-item" label="内容" name="content">
-              <a-input
-                ref="ContentTextareaRef"
-                v-model:value="formState.content"
-                :maxlength="100"
-                size="large"
-                placeholder="必填：请输入内容"
-              />
-              <a-popover placement="leftBottom" overlay-class-name="message-content-emoji-popover" trigger="click">
-                <template #content>
-                  <Emoji @emoji-handler="emojiHandler" />
-                </template>
-                <i-smiling-face
-                  theme="outline"
-                  size="22"
-                  fill="currentColor"
-                  style="cursor: pointer"
-                />
-              </a-popover>
             </a-form-item>
             <a-form-item>
               <a-button
@@ -93,6 +84,19 @@
               </a-button>
             </a-form-item>
           </div>
+          <div class="form-bottom">
+            <a-form-item class="content-item" label="内容" name="content">
+              <a-textarea
+                ref="ContentTextareaRef"
+                v-model:value="formState.content"
+                type="textarea"
+                :rows="4"
+                :maxlength="500"
+                size="large"
+                placeholder="必填：请输入内容"
+              />
+            </a-form-item>
+          </div>
         </div>
       </a-form>
       <div class="message-list">
@@ -101,13 +105,14 @@
         </div>
         <ContentList
           ref="ContentListRef"
+          v-model:total="total"
           url="listMessage"
           auto-load
           data-text="留言"
           class="message-content-list"
         >
           <template #default="{ list }">
-            <MessageItem v-for="item in list" :key="item.id" :data="item" />
+            <MessageItem v-for="item in list as Message[]" :key="item.id" :data="item" />
           </template>
         </ContentList>
       </div>
@@ -117,18 +122,15 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
-import { useWindowScroll } from '@vueuse/core';
 import { message } from 'ant-design-vue';
-import { useRequest } from 'vue-request';
 import { useStore } from 'vuex';
-import { insert } from '@/assets/utils/utils';
+import { copyToClipboard } from '@/assets/utils/utils';
 import ContentList from '@/components/common/system/ContentList.vue';
-import Emoji from '@/components/common/utils/emoji/index.vue';
 import { checkEmail } from '@/libs/validate/validate';
-import BarrageStage from '@/views/message/BarrageStage.vue';
 import MessageItem from '@/views/message/components/MessageItem.vue';
 import type { Barrage } from '@/views/message/types';
-import type { FormInstance } from 'ant-design-vue';
+import type {Message} from '@/views/message/types';
+import type { FormInstance, Input } from 'ant-design-vue';
 
 const formState = reactive<Barrage>({
   avatar: '',
@@ -139,17 +141,14 @@ const formState = reactive<Barrage>({
 });
 
 const { getters, dispatch } = useStore();
-const { y } = useWindowScroll({ behavior: 'smooth' });
 const isLogin = computed(() => getters['isLogin']);
 const userInfo = computed(() => getters['userInfo']);
 const FormRef = ref<FormInstance | null>(null);
-const ContentTextareaRef = ref<HTMLInputElement | null>(null);
-const barrageRef = ref<InstanceType<typeof BarrageStage> | null>(null);
+const ContentTextareaRef = ref<InstanceType<typeof Input> | null>(null);
+const templateRef = ref<HTMLDivElement>();
+const mineRef = ref<HTMLDivElement>();
 const btnLoading = ref(false);
-const pageNum = ref(1);
-const totalNum = ref(0);
 const total = ref(0);
-const dataOver = computed(() => pageNum.value !== 1 && pageNum.value > totalNum.value);
 const defaultAvatarList = [
   'https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default/female1.png',
   'https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default/female2.png',
@@ -186,84 +185,73 @@ const rules = {
   content: [{ required: true, message: '请输入内容' }]
 };
 
-const onLocate = () => {
-  y.value = window.innerHeight - 60;
-};
-
-const emojiHandler = (emoji: string) => {
-  const textarea = ContentTextareaRef?.value?.$el;
-  if (textarea) {
-    formState.content = insert(textarea, emoji, {});
-  }
-};
-
 const onFinish = () => {
   btnLoading.value = true;
   if (isLogin.value) {
     formState.userId = userInfo.value.id;
   }
   dispatch('createMessage', formState)
-    .then(res => {
+    .then(_ => {
       message.success('发布成功');
       formState.content = '';
-      barrageRef.value?.add(res.data);
     })
     .finally(() => {
       btnLoading.value = false;
     });
 };
 
-const handleGetData = async () => {
-  console.log(123, dataOver.value);
-  if (dataOver.value) return;
-  await dispatch('listMessage', { pageNum: pageNum.value }).then(res => {
-    totalNum.value = res.data.pages;
-    total.value = res.data.total;
-    barrageRef.value?.add(res.data.list);
-    pageNum.value++;
-  });
-};
-
-handleGetData();
-
 const onChangeAvatar = () => {
   defaultAvatarIndex = ++defaultAvatarIndex % defaultAvatarList.length;
   formState.avatar = defaultAvatarList[defaultAvatarIndex];
 };
+
+const onCopyTemplate = () =>{
+  copyToClipboard(templateRef.value!.innerText);
+}
+
+const onCopyMime = () =>{
+  copyToClipboard(mineRef.value!.innerText);
+}
 </script>
 
 <style scoped lang="scss">
 .message {
   width: 100%;
+  padding-top: 30px;
   overflow: hidden;
+  background-color: var(--youyu-body-background1);
 
-  .barrage-view {
-    position: relative;
-    height: calc(100vh - 60px);
+  .top-content {
+    display: flex;
+    justify-content: center;
 
-    .locate-button {
-      position: absolute;
-      bottom: 20px;
-      left: calc(50%);
-      opacity: 1;
-      transition: 0.3s;
-      transform: translateX(-50%);
+    ::v-deep(.ant-card) {
+      width: 36vw;
 
-      &.is-hide {
-        opacity: 0;
+      &:nth-child(n+2) {
+        margin-left: 30px;
       }
 
-      ::v-deep(.i-icon) {
-        position: relative;
-        top: 1px;
-        margin-right: 3px;
+      .ant-card-body {
+        font-size: 16px;
+
+        span {
+          display: block;
+          margin: 4px 0;
+        }
       }
     }
   }
 
   .message-view {
-    padding: 24px 50px 0;
-    background-color: var(--youyu-background1);
+    padding: 30px 50px 0;
+
+    .message-tip {
+      margin-bottom: 30px;
+      font-size: 24px;
+      color: red;
+      text-align: center;
+    }
 
     ::v-deep(.ant-form) {
       display: flex;

@@ -246,6 +246,7 @@ const defaultCopyOptions: ClipboardCopyOptions = {
 export async function copyToClipboard(text: string, config?: ClipboardCopyOptions) {
   const copyOptions: ClipboardCopyOptions = Object.assign({}, defaultCopyOptions, config);
   let success: boolean = false;
+  console.log(text);
   try {
     // 使用writeText方法复制文本
     await navigator.clipboard.writeText(text);

@@ -1,25 +1,34 @@
 <template>
   <div class="message-item">
     <div class="message-avatar">
-      <img :src="data.userId ? data.userInfo.avatar : data.avatar" alt="头像" />
+      <img :src="data.userId ? data.userInfo.avatar : data.avatar" alt="头像">
     </div>
     <div class="message-right">
-      <div class="message-nickname">{{ data.userId ? data.userInfo.nickname : data.nickname }}</div>
+      <div class="message-nickname">
+        {{ data.userId ? data.userInfo.nickname : data.nickname }}
+      </div>
       <div class="message-time-area">
         <div class="create-time" :title="data.createTime">
-          {{ $dayjs().to(data.createTime) }}
+          {{ data.createTime ? $dayjs().to(data.createTime) : '-' }}
         </div>
-        <div class="create-area" v-if="data.adname">・{{ data.adname }}</div>
+        <div v-if="data.adname" class="create-area">
+          ・{{ data.adname }}
+        </div>
       </div>
-      <div class="message-content">{{ data.content }}</div>
+      <div class="message-content">
+        {{ data.content }}
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
+import type { PropType } from 'vue';
+import type { Message } from '@/views/message/types';
+
+defineProps({
   data: {
-    type: Object,
+    type: Object as PropType<Message>,
     required: true,
   },
 });
@@ -30,16 +39,16 @@ const props = defineProps({
   display: flex;
 
   .message-avatar {
-    margin-top: 4px;
-    height: 36px;
     width: 36px;
-    border-radius: 50%;
-    overflow: hidden;
+    height: 36px;
+    margin-top: 4px;
     margin-right: 12px;
+    overflow: hidden;
+    border-radius: 50%;
 
     img {
-      height: 100%;
       width: 100%;
+      height: 100%;
     }
   }
 

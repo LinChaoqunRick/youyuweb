@@ -5,7 +5,8 @@ import { authRoutes } from '@/router';
 function itemRender(currentRoute: any, params: any, items: any, paths: any) {
   const { path, meta } = currentRoute;
   const { icon, title } = meta;
-  const isLast = path === items[items.length - 1]?.path;
+  // const isLast = path === items[items.length - 1]?.path;
+  const isLast = true;
   return isLast
     ? (
       <span>

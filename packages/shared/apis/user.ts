@@ -29,4 +29,4 @@ export const FAVORITES_POST_PAGE = `${ApiBase}/favorites/open/postPage`; // 收�
 // manage用户
 export const GET_MANAGE_AUTH_ROUTES = `${ApiBase}/manage/user/getAuthRoutes`; // 获取权限路由
 export const GET_CURRENT_MANAGE_USER = `${ApiBase}/manage/user/me`; // 获取当前登录用户信息
-
+export const GET_MANAGE_MESSAGE_PAGE = `${ApiBase}/manage/message/page`; // 获取留言分页

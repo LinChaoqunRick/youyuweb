@@ -74,15 +74,20 @@
           <template #content>
             <EmojiPicker v-on-click-outside="onEmojiClose" @on-image-pick="onImagePick" @on-emoji-pick="onEmojiPick" />
           </template>
-          <div v-login="onClickEmoji" class="tool-item">
+          <a-button
+            type="link"
+            :disabled="!isLogin"
+            class="tool-item"
+            @click="onClickEmoji"
+          >
             <i-emotion-happy
               theme="outline"
-              size="16"
+              size="18"
               fill="currentColor"
               :stroke-width="3"
             />
             <span class="tool-title">表情</span>
-          </div>
+          </a-button>
         </a-popover>
         <UploadFile
           ref="UploadFileRef"
@@ -96,15 +101,15 @@
           :auto-clear="false"
           @on-progress="onUploadProgress"
         >
-          <div v-login class="tool-item item-upload-image">
+          <a-button type="link" :disabled="uploadDisabled" class="tool-item item-upload-image">
             <i-add-picture
               theme="outline"
-              size="16"
+              size="18"
               fill="currentColor"
               :stroke-width="3"
             />
             <span class="tool-title">图片</span>
-          </div>
+          </a-button>
         </UploadFile>
       </div>
       <a-button
@@ -489,13 +494,30 @@ const onUploadProgress = (progress: number[]) => {
   .editor-bottom {
     position: relative;
     display: flex;
+    align-items: center;
     justify-content: space-between;
     padding: 10px 0;
 
     .tool-items {
       display: flex;
       align-items: center;
+      height: 20px;
       color: var(--youyu-text2);
+
+      ::v-deep(button) {
+        height: 20px;
+        padding: 0 !important;
+        color: var(--text-color);
+
+        &:disabled {
+          color: gray !important;
+          cursor: not-allowed !important;
+        }
+
+        &:hover {
+          color: #1890ff;
+        }
+      }
 
       .tool-item {
         display: flex;
@@ -511,11 +533,6 @@ const onUploadProgress = (progress: number[]) => {
 
         .tool-title {
           padding-left: 4px;
-          font-size: 13px;
-        }
-
-        &:hover {
-          color: #1890ff !important;
         }
       }
 

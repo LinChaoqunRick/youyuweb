@@ -1,27 +1,27 @@
 <template>
   <div class="content-list" :class="{ 'content-list-expand': !fold }">
-    <div class="data-list-wrapper" v-if="!!dataList?.length" ref="dataListWrapperRef">
+    <div v-if="!!dataList?.length" ref="dataListWrapperRef" class="data-list-wrapper">
       <div class="data-list">
         <slot :list="dataList" />
       </div>
     </div>
-    <div class="bottom-operation mt-8" ref="bottomOperation">
-      <div class="failed-box" v-if="showFailed && failed" @click="onRetry">
+    <div ref="bottomOperation" class="bottom-operation mt-8">
+      <div v-if="showFailed && failed" class="failed-box" @click="onRetry">
         <slot name="failedBox">
           <i-refresh theme="outline" size="15" fill="currentColor" />
           <span class="ml-8">加载失败，重新加载</span>
         </slot>
       </div>
-      <div class="success-box" v-else>
+      <div v-else class="success-box">
         <div
-          class="view-all-data"
           v-if="
             showViewAll &&
-            (total != null ? !!total : true) &&
-            !fold &&
-            (pageNum <= totalPageNum || totalPageNum === 0) &&
-            (firstLoading ? true : restNum > 0)
+              (total != null ? !!total : true) &&
+              !fold &&
+              (pageNum <= totalPageNum || totalPageNum === 0) &&
+              (firstLoading ? true : restNum > 0)
           "
+          class="view-all-data"
           @click="onLoadData"
         >
           <slot name="loadMoreBox" :loading="restLoading" :total="totalNum">
@@ -31,24 +31,38 @@
                   pageNum === 1 ? `${firstLoading && !totalNum ? '加载中' : total + unit + dataText}` : `查看更多${dataText}`
                 }}
               </div>
-              <i-down v-if="!restLoading" theme="outline" size="14" fill="currentColor" />
-              <i-loading-four v-else theme="outline" size="14" fill="currentColor" />
+              <i-down
+                v-if="!restLoading"
+                theme="outline"
+                size="14"
+                fill="currentColor"
+              />
+              <i-loading-four
+                v-else
+                theme="outline"
+                size="14"
+                fill="currentColor"
+              />
             </div>
           </slot>
         </div>
-        <div class="no-data" v-else-if="showNoData && (totalNum === 0 || total === 0)">
-          <slot name="noDataBox">暂无数据</slot>
+        <div v-else-if="showNoData && (totalNum === 0 || total === 0)" class="no-data">
+          <slot name="noDataBox">
+            暂无数据
+          </slot>
         </div>
-        <div class="loaded-all-data" v-else-if="showLoadedAll && pageNum > totalPageNum">
-          <slot name="loadedAllBox">已加载全部{{ totalNum ?? 0 }}{{ unit + dataText }} ~</slot>
+        <div v-else-if="showLoadedAll && pageNum > totalPageNum" class="loaded-all-data">
+          <slot name="loadedAllBox">
+            已加载全部{{ totalNum ?? 0 }}{{ unit + dataText }} ~
+          </slot>
         </div>
-        <div class="loaded-fold" v-if="foldable && !!dataList?.length">
+        <div v-if="foldable && !!dataList?.length" class="loaded-fold">
           <slot name="loadedAllFold">
-            <div class="fold" v-show="!fold" @click="onFold(true)">
+            <div v-show="!fold" class="fold" @click="onFold(true)">
               <span>收起</span>
               <i-up theme="outline" size="14" fill="currentColor" />
             </div>
-            <div class="unfold" v-show="fold" @click="onFold(false)">
+            <div v-show="fold" class="unfold" @click="onFold(false)">
               <span>展开更多{{ dataText }}</span>
               <i-down theme="outline" size="14" fill="currentColor" />
             </div>
@@ -85,7 +99,7 @@ const { dispatch } = useStore();
 const emit = defineEmits(['update:total']);
 
 const firstLoading = computed(() => !dataList.value.length && restLoading.value);
-const pageNum = ref<number>(1);
+const pageNum = ref<number>(0);
 const totalPageNum = ref<number>(0);
 const totalNum = ref<number>(props.total ?? 0);
 const restLoading = ref<boolean>(false);
@@ -98,19 +112,17 @@ const bottomOperation = ref<HTMLElement | null>(null);
 const dataListWrapperRef = ref<HTMLElement | null>(null);
 
 const getListData = () => {
-  if ((totalPageNum.value !== -1 && pageNum > totalPageNum) || failed.value || restLoading.value) return;
+  if (restLoading.value || failed.value || pageNum.value > totalPageNum.value) {
+    return;
+  }
   const params = {
     pageSize: 10,
-    pageNum: pageNum.value,
+    pageNum: pageNum.value + 1,
   };
   restLoading.value = true;
   dispatch(props.url, Object.assign({}, params, props.params))
     .then(res => {
-      if (pageNum.value === 1) {
-        dataList.value = res.data.list;
-      } else {
-        dataList.value.push(...res.data.list);
-      }
+      dataList.value.push(...res.data.list);
       totalPageNum.value = res.data.pages;
       pageNum.value++;
       totalNum.value = res.data.total;
@@ -220,10 +232,10 @@ defineExpose({
 
   .bottom-operation {
     display: flex;
-    justify-content: center;
     align-items: center;
-    border-radius: 4px;
+    justify-content: center;
     overflow: hidden;
+    border-radius: 4px;
 
     .i-icon {
       margin-left: 2px;
@@ -231,10 +243,10 @@ defineExpose({
 
     > div {
       display: flex;
-      justify-content: center;
       align-items: center;
-      color: #1890ff;
+      justify-content: center;
       height: 100%;
+      color: #1890ff;
       cursor: pointer;
 
       span {

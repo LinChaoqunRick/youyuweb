@@ -7,7 +7,7 @@
     </div>
     <div id="aside-right" class="post-body">
       <div class="post-main">
-        <div v-if="userInfo.id === post.userId" class="post-status">
+        <div v-if="userInfo.id === post.userId" :class="['post-status', post.status ? 'post-private' : 'post-public']">
           <a-tooltip placement="bottom">
             <template #title>
               <span>{{ post.status ? '仅自己可见' : '所有人可见' }}</span>
@@ -197,7 +197,7 @@ function handleEdit() {
 }
 
 const handleHide = () => {
-  const status = post.value!.status;
+  const {status} = (post.value!);
   Modal.confirm({
     title: status ? '公开文章' : '隐藏文章',
     content: status ? `确定将本文设置为公开?` : '确定将本文设置为私密？',
@@ -265,6 +265,10 @@ provide('setPostAttribute', setPostAttribute);
         height: 0;
         border-top: 50px solid rgb(24, 144, 255, 0.8); /* 三角形颜色 */
         border-left: 50px solid transparent;
+
+        &.post-private {
+          border-top: 50px solid rgb(136, 24, 255, 0.8); /* 三角形颜色 */
+        }
 
         svg {
           position: absolute;

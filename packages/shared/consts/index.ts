@@ -1,6 +1,6 @@
 export const ApiBase = '/plat';
 
-export const enum LogType {
+export enum LogType {
   INSERT = 1, // 插入日志
   UPDATE = 2, // 修改日志
   QUERY = 3, // 查询日志

@@ -13,7 +13,7 @@ import React, { useEffect, useState } from 'react';
 import './index.css';
 import DataItem from '@youyu/shared/components-react/content/DataItem';
 import { cloneDeep } from 'lodash';
-import { formItemLayout, rangePresets } from '@/libs/config/formConfig';
+import { rangePresets } from '@/libs/config/formConfig';
 import { mergeAreaToProvince } from '@/utils/dataUtils.ts';
 
 const { RangePicker } = DatePicker;
@@ -62,7 +62,6 @@ function Monitor() {
       <div className="header-search rounded-sm">
         <Form
           layout="inline"
-          {...formItemLayout}
           form={form}
           initialValues={{ variant: 'filled', layout: 'inline' }}
           onFinish={handleSearch}

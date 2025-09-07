@@ -1,18 +1,17 @@
-import { Table } from 'antd';
+import { Table, TableProps } from 'antd';
 import {
-  useState, useEffect, useCallback, useRef,
+  useState, useEffect, useRef,
 } from 'react';
 import http from '../../network';
 import { PageResult } from '../../types/vo/common';
-import type { TablePaginationConfig, ColumnsType } from 'antd/es/table';
+import type { TablePaginationConfig } from 'antd/es/table';
 
-interface ReactTableProps<T> {
+interface ReactTableProps extends TableProps {
   url: string;
-  columns: ColumnsType<T>;
   params: Record<string, any>; // 查询条件
 }
 
-export function ReactTable<T>(props: ReactTableProps<T>) {
+export function ReactTable<T>(props: ReactTableProps) {
   const {
     url, columns, params, ...rest
   } = props;
@@ -101,6 +100,7 @@ export function ReactTable<T>(props: ReactTableProps<T>) {
       current: pager.current!,
       pageSize: pager.pageSize!,
     }));
+    getTableData();
   };
 
   return (

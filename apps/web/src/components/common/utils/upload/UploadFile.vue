@@ -1,24 +1,26 @@
 <template>
   <div class="upload-file" :class="{ disabled: disabled }">
     <input
+      v-if="visible"
+      v-bind="$attrs"
+      ref="inputRef"
       type="file"
       multiple
-      v-bind="$attrs"
       :accept="accept"
       :disabled="disabled"
       :capture="null"
-      v-if="visible"
       style="display: none"
       @change="handleChange"
-      ref="inputRef"
-    />
+    >
     <div class="input-trigger" @click="onTriggerInput">
       <slot :progress="progress">
         <div class="upload-box">
-          <div class="progress-box" :style="{ width: `${totalProgress}%` }"></div>
+          <div class="progress-box" :style="{ width: `${totalProgress}%` }" />
           <div class="upload-button">
             <i-upload-one theme="outline" size="18" fill="currentColor" />
-            <div class="ant-upload-text">点击上传</div>
+            <div class="ant-upload-text">
+              点击上传
+            </div>
           </div>
         </div>
       </slot>
@@ -31,8 +33,8 @@ import { ref, nextTick } from 'vue';
 import { message } from 'ant-design-vue';
 import { merge } from 'lodash';
 import { convertHEICFileToBlob, getFileType, uploadToOss } from '@/components/common/utils/upload/utils';
-import { AxiosError } from 'axios';
 import type { FileExtend, UploadResult } from './types';
+import type { AxiosError } from 'axios';
 import type { FileTypeResult } from 'file-type';
 
 const inputRef = ref<HTMLInputElement | null>(null);
@@ -76,7 +78,6 @@ const visible = ref(true);
 const emit = defineEmits(['change', 'uploadSuccess', 'onProgress']);
 
 const handleChange = async (event: Event) => {
-  console.log(1111);
   const input = event.target as HTMLInputElement;
   const originFiles: FileExtend[] = Array.from(input.files ?? []) as FileExtend[];
   // 判断最大上传限制
@@ -126,9 +127,7 @@ const onTriggerInput = () => {
 };
 
 const upload = async () => {
-  console.log(files.value);
   const uploadFiles = files.value.filter(item => (item as FileExtend).progress < 0);
-  console.log(uploadFiles);
   if (!uploadFiles.length) {
     return;
   }
@@ -184,23 +183,23 @@ defineExpose({
   .upload-box {
     position: relative;
     display: inline-flex;
-    height: 36px;
-    width: 120px;
-    justify-content: center;
     align-items: center;
-    border-radius: 2px;
+    justify-content: center;
+    width: 120px;
+    height: 36px;
     overflow: hidden;
-    background-color: rgba(217, 217, 217, 0.6);
+    background-color: rgb(217, 217, 217, 0.6);
+    border-radius: 2px;
 
     .upload-button {
       position: absolute;
-      left: 0;
       top: 0;
-      height: 100%;
-      width: 100%;
+      left: 0;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
       color: white;
       cursor: pointer;
 
@@ -211,22 +210,19 @@ defineExpose({
 
     .progress-box {
       position: absolute;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
+      inset: 0;
       background-color: #1890ff;
       transition: 0.2s;
     }
   }
 
   &.disabled {
-    cursor: not-allowed !important;
     color: #00000040 !important;
+    cursor: not-allowed !important;
 
     .upload-button {
-      cursor: not-allowed !important;
       color: #00000040 !important;
+      cursor: not-allowed !important;
     }
 
     .progress-box {
