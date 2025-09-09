@@ -1,18 +1,16 @@
 import {
-  Button, Form, DatePicker, TreeSelect, TreeSelectProps, GetProp, Input, Tag, Tooltip, Select,
+  Button, Form, DatePicker, Input, Tag, Select, Space,
 } from 'antd';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { rangePresets } from '@/libs/config/formConfig';
-import { getAreaNameByCode, getSubAreaOptions, updateChildrenByCode } from '@youyu/shared/utils/locate-utils';
-import { cloneDeep } from 'lodash';
+import { getAreaNameByCode } from '@youyu/shared/utils/locate-utils';
 import { ReactTable } from '@youyu/shared/components-react';
 import { GET_MANAGE_MESSAGE_PAGE } from '@youyu/shared/apis';
 import { Logs } from '@youyu/shared/types/vo/logManage';
 import { ColumnsType } from 'antd/es/table';
 import { LogType } from '@youyu/shared/consts';
-
-type DefaultOptionType = GetProp<TreeSelectProps, 'treeData'>[number];
+import type { TableProps } from 'antd';
 
 const { RangePicker } = DatePicker;
 const columns: ColumnsType<Logs> = [
@@ -29,13 +27,13 @@ const columns: ColumnsType<Logs> = [
     title: '昵称',
     dataIndex: 'nickname',
     key: 'nickname',
-    width: '10%',
+    width: '12%',
   },
   {
     title: '内容',
     dataIndex: 'content',
     key: 'content',
-    width: '10%',
+    width: '19%',
   },
   {
     title: 'IP地址',
@@ -50,7 +48,7 @@ const columns: ColumnsType<Logs> = [
     title: '区域',
     dataIndex: 'adcode',
     key: 'adcode',
-    width: '18%',
+    width: '14%',
     render: data => {
       return getAreaNameByCode(data);
     },
@@ -63,16 +61,52 @@ const columns: ColumnsType<Logs> = [
   },
   {
     title: '留言时间',
-    width: '16%',
+    width: '14%',
     dataIndex: 'createTime',
     key: 'createTime',
+  },
+  {
+    title: '操作',
+    key: 'action',
+    width: '10%',
+    render: (_, record) => (
+      <Space size="middle">
+        <a>显示</a>
+      </Space>
+    ),
+  },
+];
+
+const batchButtons = [
+  {
+    name: '显示',
+    color: 'primary',
+    onClick: () => {
+      console.log(123);
+    },
+  },
+  {
+    name: '隐藏',
+    color: 'danger',
+    onClick: () => {
+      console.log(456);
+    },
   },
 ];
 
 function UserMessage() {
   const [form] = Form.useForm();
   const [params, setParams] = useState<Record<string, unknown> | undefined>();
-  const [treeData, setTreeData] = useState<Omit<DefaultOptionType, 'label'>[]>();
+
+  const rowSelection: TableProps<Logs>['rowSelection'] = {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: Logs[]) => {
+      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    },
+    getCheckboxProps: (record: Logs) => ({
+      disabled: record.name === 'Disabled User', // Column configuration not to be checked
+      name: record.name,
+    }),
+  };
 
   const handleSearch = (values: Record<string, any>) => {
     if (values.RangePicker?.length === 2) {
@@ -86,17 +120,7 @@ function UserMessage() {
     setParams(values);
   };
 
-  const onLoadData: TreeSelectProps['loadData'] = data => new Promise(resolve => {
-    const subAreas = getSubAreaOptions(`${data.value}`);
-    setTimeout(() => {
-      // @ts-ignore
-      setTreeData(updateChildrenByCode(`${data.value}`, cloneDeep(treeData), subAreas));
-      resolve(true);
-    }, 100);
-  });
-
   useEffect(() => {
-    setTreeData(getSubAreaOptions());
     form.submit();
   }, []);
 
@@ -116,19 +140,6 @@ function UserMessage() {
             rules={[{ required: true, message: '请选择时间范围' }]}
           >
             <RangePicker presets={rangePresets} />
-          </Form.Item>
-          <Form.Item label="区域" name="areas">
-            <TreeSelect
-              showSearch
-              styles={{
-                popup: { root: { maxHeight: 400, overflow: 'auto' } },
-              }}
-              placeholder="请选择区域"
-              allowClear
-              treeCheckable
-              treeData={treeData}
-              loadData={onLoadData}
-            />
           </Form.Item>
           <Form.Item label="状态" name="status">
             <Select
@@ -151,7 +162,17 @@ function UserMessage() {
         </Form>
       </div>
       <div className="access-content">
-        {params && <ReactTable url={GET_MANAGE_MESSAGE_PAGE} rowSelection={{}} columns={columns} params={params} />}
+        {params && (
+          <ReactTable
+            url={GET_MANAGE_MESSAGE_PAGE}
+            // @ts-ignore
+            rowSelection={rowSelection}
+            showBatchDelete
+            batchButtons={batchButtons}
+            columns={columns}
+            params={params}
+          />
+        )}
       </div>
     </div>
   );

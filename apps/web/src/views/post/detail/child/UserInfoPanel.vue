@@ -103,18 +103,6 @@
         </div>
       </a-card>
     </div>
-    <!--    <div class="hot-posts">
-          <a-card title="热门文章" style="width: 100%">
-            <div class="post-list">
-              <ul v-if="hotPosts.length">
-                <li v-for="item in hotPosts">
-                  <router-link :to="{ name: 'PostDetail', params: { postId: item.id } }" v-html="item.title"></router-link>
-                </li>
-              </ul>
-              <div v-else class="no-data">暂无数据</div>
-            </div>
-          </a-card>
-        </div>-->
     <div class="new-posts">
       <a-card title="最新文章" style="width: 100%">
         <div class="post-list">
@@ -136,12 +124,12 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter, RouterLink } from 'vue-router';
 import { message, Modal } from 'ant-design-vue';
-import type { statType, User } from '@/types/user';
-import ColumnItemMini from '@/components/content/user/column/ColumnItemMini.vue';
+import { useRouter, RouterLink } from 'vue-router';
+import { useStore } from 'vuex';
 import Announcement from '@/components/common/share/announcement/index.vue';
+import ColumnItemMini from '@/components/content/user/column/ColumnItemMini.vue';
+import type { statType, User } from '@/types/user';
 
 const router = useRouter();
 
@@ -149,7 +137,7 @@ const { getters, commit, dispatch } = useStore();
 
 const props = defineProps({
   id: {
-    type: [String, Number],
+    type: [String, Number, undefined],
     required: true
   }
 });
@@ -264,62 +252,62 @@ defineExpose({
     flex-direction: column;
     align-items: center;
     padding: 26px 8px;
-    border-radius: 4px;
     background-color: var(--youyu-body-background2);
+    border-radius: 4px;
 
     .user-avatar-nickname {
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
 
       .user-avatar {
-        width: 90px;
-        height: 90px;
         position: relative;
+        width: 80px;
+        height: 80px;
         cursor: pointer;
 
         img {
           width: 100%;
           height: 100%;
-          border-radius: 50px;
-          border: 6px solid var(--youyu-border-color);
           overflow: hidden;
+          border: 6px solid var(--youyu-border-color);
+          border-radius: 50px;
         }
 
         .user-gender {
-          height: 22px;
-          width: 22px;
           position: absolute;
           top: 3px;
           right: 3px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 22px;
+          height: 22px;
+          text-align: center;
+          background-color: var(--youyu-body-background2);
           border: 3px solid var(--youyu-border-color);
           border-radius: 50%;
-          text-align: center;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          background-color: var(--youyu-body-background2);
         }
       }
 
       .user-nickname {
-        width: 120px;
+        width: 160px;
         height: 100%;
         margin-left: 20px;
 
         .nickname {
           width: 100%;
           overflow: hidden;
+          font-size: 18px;
+          font-weight: bold;
+          color: var(--youyu-text) !important;
           text-overflow: ellipsis;
           white-space: nowrap;
-          font-size: 16px;
-          font-weight: bold;
           cursor: pointer;
-          color: var(--youyu-text) !important;
         }
 
         .uid {
-          font-size: 12px;
+          font-size: 14px;
           color: var(--youyu-body-text1);
         }
       }
@@ -327,25 +315,25 @@ defineExpose({
 
     .user-statistics {
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       width: 100%;
       padding: 10px 0;
 
       .statis-data {
-        flex: 1;
         position: relative;
+        flex: 1;
         text-align: center;
         cursor: pointer;
 
         &:nth-child(n + 2) {
-          &:before {
+          &::before {
             position: absolute;
-            content: '';
-            border-left: 1px solid #ebebeb;
-            height: 20px;
             top: calc(60% - 10px);
             left: 0;
+            height: 20px;
+            border-left: 1px solid #ebebeb;
+            content: '';
           }
         }
 
@@ -361,9 +349,9 @@ defineExpose({
     }
 
     .user-signature {
-      width: 100%;
-      padding: 0 16px 10px 16px;
       display: flex;
+      width: 100%;
+      padding: 0 16px 10px;
 
       .sign-title {
         flex-shrink: 0;
@@ -374,26 +362,26 @@ defineExpose({
       display: flex;
       align-items: center;
       width: 100%;
-      padding: 0 16px 10px 16px;
+      padding: 0 16px 10px;
 
       .contact-list {
         display: flex;
         align-items: center;
 
         .contact-item {
-          cursor: pointer;
           display: flex;
           align-items: center;
           height: 24px;
+          cursor: pointer;
         }
       }
     }
 
     .user-operation {
-      width: 100%;
-      padding: 0 10px;
       display: flex;
       justify-content: space-around;
+      width: 100%;
+      padding: 0 10px;
 
       button {
         flex: 1;
@@ -424,9 +412,9 @@ defineExpose({
 
   .post-list {
     ul {
-      list-style: none;
       padding-left: 0 !important;
       margin: 0;
+      list-style: none;
 
       li {
         margin-bottom: 6px;
@@ -447,10 +435,13 @@ defineExpose({
 
   ::v-deep(.ant-card) {
     .ant-card-head {
-      /*position: sticky;*/
-      /*top: 60px;*/
-      /*background: var(--antd-background);*/
-      /*box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);*/
+      /* position: sticky; */
+
+      /* top: 60px; */
+
+      /* background: var(--antd-background); */
+
+      /* box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04); */
     }
 
     .ant-card-body {

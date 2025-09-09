@@ -2,20 +2,31 @@
   <div class="user-profile">
     <div class="user-main">
       <div class="user-left">
-        <UserInfoPanel v-side-fixed :id="userId" @onLoaded="onLoaded" ref="UserInfoRef"></UserInfoPanel>
+        <UserInfoPanel
+          :id="userId"
+          ref="UserInfoRef"
+          v-side-fixed
+          @on-loaded="onLoaded"
+        />
       </div>
       <div class="user-content">
         <div class="user-menu-content">
           <div class="content-menu">
-            <nav-link v-for="item in showMenuItems" :route="item" :key="item.path">
+            <nav-link v-for="item in showMenuItems" :key="item.path" :route="item">
               {{ item.title }}
-              <div class="lock" v-if="item.hide">
+              <div v-if="item.hide" class="lock">
                 <i-protect theme="filled" size="10" fill="#1890ff" />
               </div>
             </nav-link>
             <div class="menu-right">
-              <div class="menu-setting" v-if="isOwn">
-                <i-setting-two theme="outline" size="18" fill="currentColor" title="设置" @click="onSetting" />
+              <div v-if="isOwn" class="menu-setting">
+                <i-setting-two
+                  theme="outline"
+                  size="18"
+                  fill="currentColor"
+                  title="设置"
+                  @click="onSetting"
+                />
               </div>
             </div>
           </div>
@@ -30,16 +41,16 @@
 
 <script setup lang="ts">
 import { ref, watch, provide, inject, computed } from 'vue';
+import { message, Modal } from 'ant-design-vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import UserInfoPanel from '@/views/post/detail/child/UserInfoPanel.vue';
-import type { User, statType } from '@/types/user';
-import { message, Modal } from 'ant-design-vue';
-import openModal from '@/libs/tools/openModal';
-import EmptyPage from '@/components/common/system/EmptyPage.vue';
-import MenuSetting from './components/menu/MenuSetting.vue';
-import type { MenuItem } from '@/views/user/profile/types';
 import NavLink from '@/components/common/header/menu/child/NavLink.vue';
+import EmptyPage from '@/components/common/system/EmptyPage.vue';
+import openModal from '@/libs/tools/openModal';
+import type { User, statType } from '@/types/user';
+import UserInfoPanel from '@/views/post/detail/child/UserInfoPanel.vue';
+import type { MenuItem } from '@/views/user/profile/types';
+import MenuSetting from './components/menu/MenuSetting.vue';
 
 const { getters, dispatch } = useStore();
 const reload = inject('reload');
@@ -53,7 +64,7 @@ const pathPermit = ref<boolean>(false);
 
 provide('user', user);
 
-const userId = router.currentRoute.value.params.userId;
+const {userId} = router.currentRoute.value.params;
 const menuItems = ref<Array<MenuItem>>([]);
 const showMenuItems = ref<Array<MenuItem>>([]); // 做展示用的
 const menuPermit = ref({});
@@ -67,7 +78,7 @@ async function getProfileMenu() {
 
 const handlePathPermit = () => {
   // 判读该用户是否开通了这个目录
-  const name = route.matched[2].name;
+  const {name} = route.matched[2];
   if (isOwn.value) {
     return (pathPermit.value = true);
   }
@@ -95,7 +106,7 @@ async function onLoaded(userData: User) {
     { title: '动态', path: `/user/${user.value.id}`, exact: true, value: 'showHome' },
     { title: '时刻', path: `/user/${user.value.id}/moment`, value: 'showMoment' },
     { title: '文章', path: `/user/${user.value.id}/post`, value: 'showPost' },
-    { title: '笔记', path: `/user/${user.value.id}/note`, value: 'showNote' },
+    // { title: '笔记', path: `/user/${user.value.id}/note`, value: 'showNote' },
     { title: '专栏', path: `/user/${user.value.id}/column`, value: 'showColumn' },
     { title: '相册', path: `/user/${user.value.id}/album`, value: 'showAlbum' },
     { title: '收藏', path: `/user/${user.value.id}/favorites`, value: 'showFavorites' },
@@ -172,14 +183,14 @@ watch(
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 60px 16px 8px 16px;
+        padding: 60px 16px 8px;
         background-color: var(--youyu-body-background2);
 
         .user-avatar-nickname {
           position: relative;
           display: flex;
-          justify-content: center;
           align-items: center;
+          justify-content: center;
 
           .user-avatar {
             width: 140px;
@@ -189,24 +200,24 @@ watch(
             img {
               width: 100%;
               height: 100%;
-              border-radius: 50%;
-              border: 6px solid var(--youyu-border-color);
               overflow: hidden;
+              border: 6px solid var(--youyu-border-color);
+              border-radius: 50%;
             }
 
             .user-gender {
-              height: 30px;
-              width: 30px;
               position: absolute;
               top: 9px;
               right: 7px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 30px;
+              height: 30px;
+              text-align: center;
+              background-color: var(--youyu-body-background2);
               border: 3px solid var(--youyu-border-color);
               border-radius: 50%;
-              text-align: center;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              background-color: var(--youyu-body-background2);
             }
           }
 
@@ -218,10 +229,10 @@ watch(
             .nickname {
               width: 100%;
               overflow: hidden;
-              text-overflow: ellipsis;
-              white-space: nowrap;
               font-size: 16px;
               font-weight: bold;
+              text-overflow: ellipsis;
+              white-space: nowrap;
               cursor: pointer;
             }
 
@@ -233,25 +244,25 @@ watch(
 
         .user-statistics {
           display: flex;
-          justify-content: center;
           align-items: center;
+          justify-content: center;
           width: 100%;
           padding: 16px 0;
 
           .statis-data {
-            flex: 1;
             position: relative;
+            flex: 1;
             text-align: center;
             cursor: pointer;
 
             &:nth-child(n + 2) {
-              &:before {
+              &::before {
                 position: absolute;
-                content: '';
-                border-left: 1px solid #ebebeb;
-                height: 20px;
                 top: calc(60% - 10px);
                 left: 0;
+                height: 20px;
+                border-left: 1px solid #ebebeb;
+                content: '';
               }
             }
 
@@ -267,9 +278,9 @@ watch(
         }
 
         .user-signature {
+          display: flex;
           width: 100%;
           padding: 0 16px;
-          display: flex;
 
           .sign-title {
             flex-shrink: 0;
@@ -289,26 +300,26 @@ watch(
             cursor: auto;
 
             img {
-              height: 120px;
               width: 120px;
-              border-radius: 60px;
+              height: 120px;
               vertical-align: middle;
+              border-radius: 60px;
             }
 
             .user-gender {
-              height: 26px;
-              width: 26px;
               top: 2px;
               right: -25px;
+              width: 26px;
+              height: 26px;
             }
           }
 
           .user-nickname {
             .nickname {
               position: relative;
-              font-size: 24px;
               top: -70px;
               left: 30px;
+              font-size: 24px;
             }
 
             .uid {
@@ -327,32 +338,32 @@ watch(
 
     .user-content {
       display: flex;
-      max-width: 950px;
       width: 60%;
-      margin-left: 8px;
+      max-width: 950px;
       padding-top: 90px;
+      margin-left: 8px;
 
       .user-menu-content {
         width: 100%;
         overflow: hidden;
 
         .content-menu {
-          height: 38px;
           position: relative;
-          padding: 0 10px;
           display: flex;
+          height: 38px;
+          padding: 0 10px;
           background-color: var(--youyu-body-background2);
           border-bottom: var(--youyu-border);
 
           ::v-deep(.nav-link) {
             position: relative;
-            height: 100%;
             box-sizing: content-box;
+            height: 100%;
+            margin: 0 10px;
+            font-weight: normal;
+            color: var(--youyu-text2) !important;
             cursor: pointer;
             transition: 0s;
-            margin: 0 10px;
-            color: var(--youyu-text2) !important;
-            font-weight: normal;
 
             .nav-link-item {
               display: flex;
@@ -362,8 +373,8 @@ watch(
             }
 
             .router-link-exact-active {
-              border-bottom: 2px solid #1890ff;
               color: #1890ff !important;
+              border-bottom: 2px solid #1890ff;
             }
 
             .lock {
@@ -374,16 +385,16 @@ watch(
           }
 
           .menu-right {
-            margin-left: auto;
-            margin-right: 4px;
             display: flex;
             align-items: center;
+            margin-right: 4px;
+            margin-left: auto;
 
             .menu-setting {
+              line-height: 0;
               color: var(--youyu-text1);
               cursor: pointer;
               transition: 0.3s;
-              line-height: 0;
 
               &:hover {
                 color: var(--youyu-text2);

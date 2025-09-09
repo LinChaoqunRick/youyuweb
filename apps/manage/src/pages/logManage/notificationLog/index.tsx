@@ -1,47 +1,46 @@
 import {
-  Button, Form, DatePicker, TreeSelect, TreeSelectProps, GetProp, Input, Tag, Tooltip, Select,
+  Button, Form, DatePicker, Input, Tag, Tooltip, Select,
 } from 'antd';
 import dayjs from 'dayjs';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { rangePresets } from '@/libs/config/formConfig';
-import { getAreaNameByCode, getSubAreaOptions, updateChildrenByCode } from '@youyu/shared/utils/locate-utils';
-import { cloneDeep } from 'lodash';
 import { ReactTable } from '@youyu/shared/components-react';
 import { GET_LOGS_PAGE } from '@youyu/shared/apis/logManage.ts';
 import { Logs } from '@youyu/shared/types/vo/logManage';
 import { ColumnsType } from 'antd/es/table';
 import { LogType } from '@youyu/shared/consts';
-
-type DefaultOptionType = GetProp<TreeSelectProps, 'treeData'>[number];
+import { getSMSTitle } from '@youyu/shared/utils/common-utils.ts';
 
 const { RangePicker } = DatePicker;
 const columns: ColumnsType<Logs> = [
   {
-    title: '用户ID',
-    dataIndex: 'userId',
-    key: 'userId',
-    width: '8%',
-    render: data => {
-      return data || '-';
-    },
-  },
-  {
     title: '名称',
     dataIndex: 'name',
     key: 'name',
-    width: '11%',
+    width: '15%',
+    render: (data, row) => {
+      const { type, requestDataObject } = row;
+      const { type: SMS_TYPE } = requestDataObject ?? {};
+      return <div>{type === 9 ? `${data}(${getSMSTitle(SMS_TYPE)})` : data}</div>;
+    },
   },
   {
-    title: '请求地址',
-    dataIndex: 'path',
-    key: 'path',
-    width: '11%',
+    title: '目标',
+    dataIndex: 'target',
+    key: 'target',
+    width: '15%',
+  },
+  {
+    title: '内容',
+    dataIndex: 'content',
+    key: 'content',
+    width: '20%',
   },
   {
     title: '请求参数',
     dataIndex: 'requestData',
     key: 'requestData',
-    width: '18%',
+    width: '17%',
     ellipsis: {
       showTitle: false,
     },
@@ -65,7 +64,7 @@ const columns: ColumnsType<Logs> = [
     title: '结果',
     dataIndex: 'result',
     key: 'result',
-    width: '10%',
+    width: '8%',
     render: (data: string, row) => {
       return data ? (
         <Tag color="#87d068">成功</Tag>
@@ -78,7 +77,7 @@ const columns: ColumnsType<Logs> = [
   },
   {
     title: '请求时间',
-    width: '16%',
+    width: '15%',
     dataIndex: 'createTime',
     key: 'createTime',
   },
@@ -87,7 +86,6 @@ const columns: ColumnsType<Logs> = [
 function NotificationLog() {
   const [form] = Form.useForm();
   const [params, setParams] = useState<Record<string, unknown> | undefined>();
-  const [treeData, setTreeData] = useState<Omit<DefaultOptionType, 'label'>[]>();
 
   const handleSearch = (values: Record<string, any>) => {
     if (values.RangePicker?.length === 2) {
@@ -97,21 +95,26 @@ function NotificationLog() {
     }
     values.areaCodes = (values.areas || []).join(',');
     delete values.areas;
-    values.type = LogType.NOTIFY;
+    values.type = [LogType.NOTIFY_SMS, LogType.NOTIFY_MAIL].join(',');
     setParams(values);
   };
 
-  const onLoadData: TreeSelectProps['loadData'] = data => new Promise(resolve => {
-    const subAreas = getSubAreaOptions(`${data.value}`);
-    setTimeout(() => {
-      // @ts-ignore
-      setTreeData(updateChildrenByCode(`${data.value}`, cloneDeep(treeData), subAreas));
-      resolve(true);
-    }, 100);
-  });
+  const onDataLoaded = useCallback((data: Array<Logs>) => {
+    data.forEach(item => {
+      const { type, requestData, responseData } = item;
+      item.requestDataObject = requestData && JSON.parse(requestData).input;
+      item.responseDataObject = responseData && JSON.parse(responseData);
+      if (type === 9) { // 短信通知
+        item.target = item.requestDataObject?.telephone;
+        item.content = item.responseDataObject?.SMSCode;
+      } else if (type === 10) { // 邮件通知
+        item.target = item.requestDataObject?.userTo?.email;
+        item.content = item.requestDataObject?.content;
+      }
+    });
+  }, []);
 
   useEffect(() => {
-    setTreeData(getSubAreaOptions());
     form.submit();
   }, []);
 
@@ -127,7 +130,7 @@ function NotificationLog() {
           <Form.Item
             label="时间范围"
             name="RangePicker"
-            initialValue={[dayjs().startOf('day'), dayjs().endOf('day')]}
+            initialValue={[dayjs().startOf('day').subtract(7, 'day'), dayjs().endOf('day')]}
             rules={[{ required: true, message: '请选择时间范围' }]}
           >
             <RangePicker presets={rangePresets} />
@@ -153,7 +156,7 @@ function NotificationLog() {
         </Form>
       </div>
       <div className="access-content">
-        {params && <ReactTable url={GET_LOGS_PAGE} columns={columns} params={params} />}
+        {params && <ReactTable url={GET_LOGS_PAGE} columns={columns} params={params} onDataLoaded={onDataLoaded} />}
       </div>
     </div>
   );

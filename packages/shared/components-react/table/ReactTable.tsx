@@ -1,19 +1,49 @@
-import { Table, TableProps } from 'antd';
+import { Button, Table, TableProps } from 'antd';
+import { AnyObject } from 'antd/es/_util/type';
+import { ButtonColorType } from 'antd/lib/button';
 import {
-  useState, useEffect, useRef,
+  useState, useEffect, useRef, useMemo,
 } from 'react';
 import http from '../../network';
 import { PageResult } from '../../types/vo/common';
-import type { TablePaginationConfig } from 'antd/es/table';
+import type { TablePaginationConfig, ColumnsType } from 'antd/es/table';
 
-interface ReactTableProps extends TableProps {
-  url: string;
-  params: Record<string, any>; // 查询条件
+interface BatchButton<T> {
+  name: string;
+  color?: ButtonColorType;
+  onClick: (data: Array<T>) => void;
 }
 
-export function ReactTable<T>(props: ReactTableProps) {
+interface ReactTableProps<T extends AnyObject> extends TableProps {
+  url: string;
+  columns: ColumnsType<T>;
+  params: Record<string, any>; // 查询条件
+  onDataLoaded?: (data: Array<T>) => void;
+  showBatchDelete?: boolean;
+  batchButtons?: Array<BatchButton<T>>;
+}
+
+function ReactTableFooter<T extends AnyObject>(props: Partial<ReactTableProps<T>>) {
+  const { showBatchDelete, batchButtons } = props;
+  return (
+    <div className="react-table-footer">
+      {showBatchDelete && (
+        <Button color="danger" variant="filled">
+          删除
+        </Button>
+      )}
+      {batchButtons?.map(button => (
+        <Button key={button.name} color={button.color} variant="filled" onClick={() => button.onClick([1])}>
+          {button.name}
+        </Button>
+      ))}
+    </div>
+  );
+}
+
+export function ReactTable<T extends AnyObject>(props: ReactTableProps<T>) {
   const {
-    url, columns, params, ...rest
+    url, columns, params, onDataLoaded, showBatchDelete, batchButtons, ...rest
   } = props;
 
   const tableRef = useRef<HTMLElement | null>(null);
@@ -28,6 +58,10 @@ export function ReactTable<T>(props: ReactTableProps) {
     showSizeChanger: true,
     size: 'small',
   });
+
+  const showFooter = useMemo(() => {
+    return showBatchDelete || batchButtons !== undefined;
+  }, [showBatchDelete, batchButtons]);
 
   // 居中对齐
   columns?.forEach(column => {
@@ -45,7 +79,10 @@ export function ReactTable<T>(props: ReactTableProps) {
         pageNum: pagination.current,
         pageSize: pagination.pageSize,
       });
-      setTableData(res.data.list as T[]);
+      if (onDataLoaded) {
+        onDataLoaded(res.data.list);
+      }
+      setTableData(res.data.list);
       setPagination(prev => ({ ...prev, total: res.data.total }));
     } finally {
       setLoading(false);
@@ -113,6 +150,7 @@ export function ReactTable<T>(props: ReactTableProps) {
         pagination={pagination}
         loading={loading}
         onChange={handleChange}
+        footer={showFooter ? () => ReactTableFooter<T>(props) : undefined}
         rowClassName={(_, index) => (index % 2 === 0 ? 'table-row-even' : 'table-row-odd')}
         scroll={{
           y,
