@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { rangePresets } from '@/libs/config/formConfig';
 import { ReactTable } from '@youyu/shared/components-react';
 import { GET_LOGS_PAGE } from '@youyu/shared/apis/logManage.ts';
-import { Logs } from '@youyu/shared/types/vo/logManage';
+import type { Logs } from '@youyu/shared/types/vo';
 import { ColumnsType } from 'antd/es/table';
 import { LogType } from '@youyu/shared/consts';
 import { getSMSTitle } from '@youyu/shared/utils/common-utils.ts';

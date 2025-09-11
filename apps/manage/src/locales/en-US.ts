@@ -9,6 +9,9 @@ export default {
     logManage: 'Log Manage',
     logLoginOut: 'Log LoginOut',
     logOperation: 'Log Operation',
+    contentManage: 'Content Manage',
+    messageManage: 'Message Manage',
+    linkManage: 'Link Manage',
   },
   user: {
     changePassword: 'Change Password',

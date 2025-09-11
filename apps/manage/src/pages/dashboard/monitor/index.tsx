@@ -2,7 +2,7 @@ import { GET_AREA_ACCESS_DATA } from '@youyu/shared/apis/overview';
 import { getMapOptions } from '@youyu/shared/components-react/echart/presetOptions';
 import ReactEChart from '@youyu/shared/components-react/echart/ReactEChart';
 import http from '@youyu/shared/network';
-import { AreaAccessOutput } from '@youyu/shared/types/vo/overview';
+import type { AreaAccessOutput } from '@youyu/shared/types/vo';
 import { getAreaNameByCodeLevel } from '@youyu/shared/utils/locate-utils';
 import {
   Card, Form, DatePicker, Button,

@@ -128,8 +128,7 @@ import { copyToClipboard } from '@/assets/utils/utils';
 import ContentList from '@/components/common/system/ContentList.vue';
 import { checkEmail } from '@/libs/validate/validate';
 import MessageItem from '@/views/message/components/MessageItem.vue';
-import type { Barrage } from '@/views/message/types';
-import type {Message} from '@/views/message/types';
+import type { Barrage, Message } from '@youyu/shared/types/vo';
 import type { FormInstance, Input } from 'ant-design-vue';
 
 const formState = reactive<Barrage>({
@@ -192,7 +191,7 @@ const onFinish = () => {
   }
   dispatch('createMessage', formState)
     .then(_ => {
-      message.success('发布成功');
+      message.success('发布成功！你的留言将在审核通过后显示');
       formState.content = '';
     })
     .finally(() => {

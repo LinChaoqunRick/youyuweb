@@ -7,6 +7,7 @@ export interface Logs {
   path: string;
   method: string;
   adcode: string;
+  status: number;
   duration: number;
   requestData: string;
   responseData: string;

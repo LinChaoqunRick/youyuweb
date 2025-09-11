@@ -12,3 +12,13 @@ export interface ResponseResult<T = any> {
   code: number;
   data: T
 }
+
+export interface BasicUserInfo {
+  id: number;
+  avatar: string;
+  follow: boolean;
+  level: number;
+  nickname: string;
+  sex: number;
+  signature: string;
+}

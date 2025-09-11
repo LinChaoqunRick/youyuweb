@@ -30,3 +30,5 @@ export const FAVORITES_POST_PAGE = `${ApiBase}/favorites/open/postPage`; // 收�
 export const GET_MANAGE_AUTH_ROUTES = `${ApiBase}/manage/user/getAuthRoutes`; // 获取权限路由
 export const GET_CURRENT_MANAGE_USER = `${ApiBase}/manage/user/me`; // 获取当前登录用户信息
 export const GET_MANAGE_MESSAGE_PAGE = `${ApiBase}/manage/message/page`; // 获取留言分页
+export const SET_MANAGE_MESSAGE_STATUS = `${ApiBase}/manage/message/showHide`; // 显示/隐藏留言
+export const DELETE_MANAGE_MESSAGE = `${ApiBase}/manage/message/delete`; // 删除留言

@@ -1,4 +1,4 @@
-import type { BasicUserInfo } from '@/views/album/detail/types';
+import type { BasicUserInfo } from '../common';
 
 export interface Barrage {
   id?: number;
@@ -23,6 +23,7 @@ export interface Message {
   avatar: string;
   content: string;
   adcode: number;
+  status: number;
   supportCount: number;
   opposeCount: number;
   createTime: string;

@@ -1,55 +1,63 @@
-import { Button, Table, TableProps } from 'antd';
-import { AnyObject } from 'antd/es/_util/type';
-import { ButtonColorType } from 'antd/lib/button';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
-  useState, useEffect, useRef, useMemo,
+  Button, Table, Modal, type TableProps,
+} from 'antd';
+import { AnyObject } from 'antd/es/_util/type';
+import React, {
+  useState, useEffect, useRef, useMemo, forwardRef, useImperativeHandle,
 } from 'react';
 import http from '../../network';
-import { PageResult } from '../../types/vo/common';
-import type { TablePaginationConfig, ColumnsType } from 'antd/es/table';
+import { ReactTableProps, ReactTableRef, ColumnButton } from '../../types/components-react';
+import type { PageResult } from '../../types/vo';
+import type { TablePaginationConfig } from 'antd/es/table';
 
-interface BatchButton<T> {
-  name: string;
-  color?: ButtonColorType;
-  onClick: (data: Array<T>) => void;
-}
-
-interface ReactTableProps<T extends AnyObject> extends TableProps {
-  url: string;
-  columns: ColumnsType<T>;
-  params: Record<string, any>; // 查询条件
-  onDataLoaded?: (data: Array<T>) => void;
-  showBatchDelete?: boolean;
-  batchButtons?: Array<BatchButton<T>>;
-}
-
-function ReactTableFooter<T extends AnyObject>(props: Partial<ReactTableProps<T>>) {
-  const { showBatchDelete, batchButtons } = props;
+function ReactTableFooter<T extends AnyObject>(
+  props: Partial<ReactTableProps<T>>,
+  selectedRowKeys: React.Key[],
+  selectedRows: T[],
+  onDelete: (ids: string) => void,
+) {
+  const { showAdd, showDelete, batchButtons } = props;
+  const disabled = useMemo(() => selectedRows.length === 0, [selectedRows]);
   return (
     <div className="react-table-footer">
-      {showBatchDelete && (
-        <Button color="danger" variant="filled">
+      {showAdd && (
+        <Button color="primary" variant="filled" onClick={() => console.log('add')}>
+          新增
+        </Button>
+      )}
+      {showDelete && (
+        <Button color="danger" variant="filled" disabled={disabled} onClick={() => onDelete(selectedRowKeys.join(','))}>
           删除
         </Button>
       )}
       {batchButtons?.map(button => (
-        <Button key={button.name} color={button.color} variant="filled" onClick={() => button.onClick([1])}>
-          {button.name}
+        <Button
+          key={button.title}
+          color={button.color}
+          variant="filled"
+          disabled={disabled}
+          onClick={() => button.onClick(selectedRowKeys, selectedRows)}
+        >
+          {button.title}
         </Button>
       ))}
     </div>
   );
 }
 
-export function ReactTable<T extends AnyObject>(props: ReactTableProps<T>) {
+function InnerReactTable<T extends AnyObject>(props: ReactTableProps<T>, ref: React.Ref<ReactTableRef>) {
   const {
-    url, columns, params, onDataLoaded, showBatchDelete, batchButtons, ...rest
+    url, columns, params, deleteUrl, showSelection, showAdd, showEdit, showDelete, batchButtons,
+    onDataLoaded, ...rest
   } = props;
-
-  const tableRef = useRef<HTMLElement | null>(null);
+  const [modal, contextHolder] = Modal.useModal();
+  const tableRef = useRef<HTMLDivElement | null>(null);
   const [y, setY] = useState(0);
   const [tableData, setTableData] = useState<T[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [selectedRows, setSelectedRows] = useState<T[]>([]);
   const [pagination, setPagination] = useState<TablePaginationConfig>({
     current: 1,
     pageSize: 10,
@@ -59,16 +67,86 @@ export function ReactTable<T extends AnyObject>(props: ReactTableProps<T>) {
     size: 'small',
   });
 
-  const showFooter = useMemo(() => {
-    return showBatchDelete || batchButtons !== undefined;
-  }, [showBatchDelete, batchButtons]);
+  function onDelete(ids: string) {
+    const idsArray = ids.split(',');
+    modal.confirm({
+      title: '删除',
+      icon: <ExclamationCircleOutlined />,
+      content: idsArray.length > 1 ? '你确定要删除这些数据？' : '你确定要删除该数据？',
+      okText: '确认',
+      cancelText: '取消',
+      centered: true,
+      onOk: () => {
+        if (deleteUrl) {
+          return http.post(deleteUrl, { ids }, { successTip: '操作成功' }).then(() => {
+            getTableData();
+          });
+        }
+        return Promise.reject();
+      },
+    });
+  }
 
-  // 居中对齐
-  columns?.forEach(column => {
-    if (!column.align) {
-      column.align = 'center';
-    }
-  });
+  const rowSelection: TableProps<T>['rowSelection'] = {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: T[]) => {
+      setSelectedRowKeys(selectedRowKeys);
+      setSelectedRows(selectedRows);
+    },
+  };
+
+  const showFooter = useMemo(() => {
+    return showAdd || showDelete || batchButtons !== undefined;
+  }, [showAdd, showDelete, batchButtons]);
+
+  const innerColumns = useMemo(() => {
+    return columns?.map(column => {
+      // 默认居中对齐
+      if (!column.align) {
+        column.align = 'center';
+      }
+      // 设置操作按钮
+      if (column.key === 'action') {
+        column.render = (value, record, index) => {
+          const columnButtons: ColumnButton<T>[] = [];
+          if (showEdit) {
+            columnButtons.push({
+              title: '编辑',
+              color: 'primary',
+              onClick: data => {
+                console.log('edit:', data);
+              },
+            });
+          }
+          if (showDelete) {
+            columnButtons.push({
+              title: '删除',
+              color: 'danger',
+              onClick: data => onDelete(`${data.id}`),
+            });
+          }
+          // 自定义按钮
+          if (column.actions) {
+            const columnActions: ColumnButton<T>[] = typeof column.actions === 'function'
+              ? column.actions(value) : column.actions;
+            columnButtons.push(...columnActions);
+          }
+          return columnButtons.map(button => {
+            return (
+              <Button
+                color={button.color}
+                variant="link"
+                key={button.title}
+                onClick={() => button.onClick && button.onClick(value, index)}
+              >
+                {button.title}
+              </Button>
+            );
+          });
+        };
+      }
+      return column;
+    });
+  }, [columns]);
 
   // 请求数据
   const getTableData = async () => {
@@ -117,13 +195,9 @@ export function ReactTable<T extends AnyObject>(props: ReactTableProps<T>) {
     };
   }, []);
 
-  // 依赖驱动请求
+  // 依赖驱动请求, 当 params 改变时，重置到第一页
   useEffect(() => {
     getTableData();
-  }, [params]);
-
-  // 当 params 改变时，重置到第一页
-  useEffect(() => {
     setPagination(prev => ({
       ...prev,
       current: 1,
@@ -140,25 +214,39 @@ export function ReactTable<T extends AnyObject>(props: ReactTableProps<T>) {
     getTableData();
   };
 
+  // 暴露方法给父组件
+  useImperativeHandle(ref, () => ({
+    refresh() {
+      getTableData();
+    },
+  }));
+
   return (
-    // @ts-ignore
     <div className="react-table" ref={tableRef}>
+      {contextHolder}
       <Table<T>
         rowKey="id"
         dataSource={tableData}
-        columns={columns}
+        columns={innerColumns}
         pagination={pagination}
         loading={loading}
-        onChange={handleChange}
-        footer={showFooter ? () => ReactTableFooter<T>(props) : undefined}
+        rowSelection={showSelection ? rowSelection : undefined}
+        footer={showFooter ? () => ReactTableFooter<T>(props, selectedRowKeys, selectedRows, onDelete) : undefined}
         rowClassName={(_, index) => (index % 2 === 0 ? 'table-row-even' : 'table-row-odd')}
         scroll={{
           y,
         }}
+        onChange={handleChange}
         {...rest}
       />
     </div>
   );
 }
+
+InnerReactTable.ReactTableFooter = ReactTableFooter;
+
+const ReactTable = forwardRef(InnerReactTable) as <T extends object>(
+  props: ReactTableProps<T> & { ref?: React.Ref<ReactTableRef> },
+) => ReturnType<typeof InnerReactTable>;
 
 export default ReactTable;

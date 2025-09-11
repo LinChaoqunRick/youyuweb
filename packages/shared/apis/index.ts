@@ -7,3 +7,4 @@ export * from './album';
 export * from './norify';
 export * from './file';
 export * from './lab';
+export * from './link';

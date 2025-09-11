@@ -9,6 +9,9 @@ export default {
     logManage: '日志管理',
     logLoginOut: '登录登出日志',
     logOperation: '操作日志',
+    contentManage: '内容管理',
+    messageManage: '留言管理',
+    linkManage: '有链管理',
   },
   user: {
     changePassword: '修改密码',

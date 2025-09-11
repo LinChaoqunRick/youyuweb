@@ -17,6 +17,7 @@
     "vue": "^3.5.12"
   },
   "devDependencies": {
+    "@ant-design/icons": "5.x",
     "@types/lodash": "^4.17.20",
     "@types/react": "^19.1.2",
     "@youyu/spec": "workspace:^",
@@ -27,6 +28,7 @@
     "stylelint": "^16.21.0"
   },
   "peerDependencies": {
+    "@ant-design/icons": "5.x",
     "antd": "^5.26.2",
     "axios": "^1.8.2",
     "qs": "^6.11.0",

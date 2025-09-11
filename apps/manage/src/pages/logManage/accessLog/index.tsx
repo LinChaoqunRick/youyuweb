@@ -8,7 +8,7 @@ import { getAreaNameByCode, getSubAreaOptions, updateChildrenByCode } from '@you
 import { cloneDeep } from 'lodash';
 import { ReactTable } from '@youyu/shared/components-react';
 import { GET_LOGS_PAGE } from '@youyu/shared/apis/logManage.ts';
-import { Logs } from '@youyu/shared/types/vo/logManage';
+import type { Logs } from '@youyu/shared/types/vo';
 import { ColumnsType } from 'antd/es/table';
 import { LogType } from '@youyu/shared/consts';
 
