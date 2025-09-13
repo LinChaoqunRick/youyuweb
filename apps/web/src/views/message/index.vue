@@ -6,19 +6,19 @@
           请按以下格式申请友链，谢谢！
         </p>
         <div ref="templateRef">
-          <span>站点名称：</span>
-          <span>描述：</span>
-          <span>头像：</span>
-          <span>网址：</span>
+          <span>站点名称：(必填)</span>
+          <span>网址：(必填)</span>
+          <span>头像：(必填)</span>
+          <span>间接：(选填)</span>
         </div>
         <a @click="onCopyTemplate">复制</a>
       </a-card>
       <a-card title="本站信息">
         <div ref="mineRef">
           <span>站点名称：有语</span>
-          <span>描述：一个人是可以做到他想做的一切的，需要的只是坚韧不拔的毅力和持久不懈的努力。</span>
-          <span>头像：https://v2.youyul.com/favicon.ico</span>
           <span>网址：https://v2.youyul.com</span>
+          <span>头像：https://v2.youyul.com/favicon.ico</span>
+          <span>简介：一个人是可以做到他想做的一切的，需要的只是坚韧不拔的毅力和持久不懈的努力。</span>
         </div>
         <a @click="onCopyMime">复制</a>
       </a-card>

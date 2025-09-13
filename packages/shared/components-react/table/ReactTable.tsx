@@ -17,12 +17,14 @@ function ReactTableFooter<T extends AnyObject>(
   selectedRows: T[],
   onDelete: (ids: string) => void,
 ) {
-  const { showAdd, showDelete, batchButtons } = props;
-  const disabled = useMemo(() => selectedRows.length === 0, [selectedRows]);
+  const {
+    showAdd, showDelete, batchButtons, onAdd,
+  } = props;
+  const disabled = useMemo(() => selectedRowKeys.length === 0, [selectedRowKeys]);
   return (
     <div className="react-table-footer">
       {showAdd && (
-        <Button color="primary" variant="filled" onClick={() => console.log('add')}>
+        <Button color="primary" variant="filled" onClick={() => onAdd?.()}>
           新增
         </Button>
       )}
@@ -49,7 +51,7 @@ function ReactTableFooter<T extends AnyObject>(
 function InnerReactTable<T extends AnyObject>(props: ReactTableProps<T>, ref: React.Ref<ReactTableRef>) {
   const {
     url, columns, params, deleteUrl, showSelection, showAdd, showEdit, showDelete, batchButtons,
-    onDataLoaded, ...rest
+    onEdit, onDataLoaded, ...rest
   } = props;
   const [modal, contextHolder] = Modal.useModal();
   const tableRef = useRef<HTMLDivElement | null>(null);
@@ -87,12 +89,13 @@ function InnerReactTable<T extends AnyObject>(props: ReactTableProps<T>, ref: Re
     });
   }
 
-  const rowSelection: TableProps<T>['rowSelection'] = {
+  const rowSelection: TableProps<T>['rowSelection'] = useMemo(() => ({
+    selectedRowKeys,
     onChange: (selectedRowKeys: React.Key[], selectedRows: T[]) => {
       setSelectedRowKeys(selectedRowKeys);
       setSelectedRows(selectedRows);
     },
-  };
+  }), [selectedRowKeys]);
 
   const showFooter = useMemo(() => {
     return showAdd || showDelete || batchButtons !== undefined;
@@ -112,9 +115,7 @@ function InnerReactTable<T extends AnyObject>(props: ReactTableProps<T>, ref: Re
             columnButtons.push({
               title: '编辑',
               color: 'primary',
-              onClick: data => {
-                console.log('edit:', data);
-              },
+              onClick: value => onEdit?.(value),
             });
           }
           if (showDelete) {
@@ -151,6 +152,8 @@ function InnerReactTable<T extends AnyObject>(props: ReactTableProps<T>, ref: Re
   // 请求数据
   const getTableData = async () => {
     setLoading(true);
+    setSelectedRowKeys([]);
+    setSelectedRows([]);
     try {
       const res = await http.post<PageResult<T>>(url, {
         ...params,

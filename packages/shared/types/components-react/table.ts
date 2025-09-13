@@ -10,7 +10,7 @@ interface TableButton {
 }
 
 export interface ColumnButton<T> extends TableButton {
-  onClick: (value: T, index: number) => void;
+  onClick: (value: T, index?: number) => void;
 }
 
 export interface BatchButton<T> extends TableButton {
@@ -34,6 +34,8 @@ export interface ReactTableProps<T extends AnyObject> extends Omit<TableProps, '
   showDelete?: boolean;
   batchButtons?: BatchButton<T>[];
   onDataLoaded?: (data: T[]) => void;
+  onAdd?: () => void;
+  onEdit?: (data: T) => void;
 }
 
 export interface ReactTableRef {
