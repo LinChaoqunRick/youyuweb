@@ -47,7 +47,7 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           source: "apps/web/dist/*"
           target: "/data/volumes/nginx/html/web"
-          strip_components: 2
+          strip_components: 3
 
       # 上传 manage 到服务器
       - name: 上传 Manage
@@ -58,4 +58,4 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           source: "apps/manage/dist/*"
           target: "/data/volumes/nginx/html/manage"
-          strip_components: 2
+          strip_components: 3
