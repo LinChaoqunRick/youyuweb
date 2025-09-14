@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMenu } from '@/hooks/useMenu';
 import { useAppSettings } from '@/store/useAppSettings';
-import type { MenuItem } from '@youyu/shared/types';
+import type { MenuItem } from '@youyu/shared/types/common';
 
 function App() {
   const navigate = useNavigate();

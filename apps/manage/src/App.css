@@ -109,11 +109,35 @@
     .ant-table-container, .ant-table-content {
       max-height: 100%;
 
+      colgroup {
+        .ant-table-selection-col {
+          width: 65px !important;
+        }
+      }
+
       .ant-table-tbody {
         background-color: var(--bg-color);
 
         .ant-tag {
           margin: 0;
+        }
+      }
+    }
+
+    .ant-table-footer {
+      position: absolute;
+      right: 0;
+      left: 0;
+      height: 56px;
+      background-color: var(--bg-color);
+
+      .react-table-footer {
+        position: absolute;
+        top: 12px;
+        z-index: 2;
+
+        button {
+          margin-right: 8px;
         }
       }
     }
@@ -267,6 +291,20 @@
   .ant-tooltip-content {
     width: fit-content;
     max-width: 700px;
+  }
+}
+
+.use-modal-wrapper {
+  .ant-modal {
+    .ant-modal-body {
+      padding: 16px 24px 0;
+    }
+
+    .ant-form {
+      .ant-form-item {
+        width: 100%;
+      }
+    }
   }
 }
 

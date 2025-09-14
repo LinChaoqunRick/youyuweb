@@ -1,4 +1,4 @@
-import { AreaAccessOutput } from '@youyu/shared/types';
+import { AreaAccessOutput } from '@youyu/shared/types/vo';
 import { getAreaNameByCode } from '@youyu/shared/utils/locate-utils.ts';
 
 /**

@@ -2,8 +2,9 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 
 import dashboardRoutes from '@/router/modules/dashboard';
-import logRoutes from '@/router/modules/logManage';
+import contentRoutes from '@/router/modules/contentManage';
 import userRoutes from '@/router/modules/userManage';
+import logRoutes from '@/router/modules/logManage';
 import { RouteObjectMeta } from '@/types/login';
 
 // 页面组件动态导入
@@ -42,6 +43,8 @@ export const authRoutes: RouteObjectMeta[] = [
     children: [
       // 仪表盘路由组
       ...dashboardRoutes,
+      // 内容管理路由组
+      ...contentRoutes,
       // 用户管理路由组
       ...userRoutes,
       // 日志管理路由组

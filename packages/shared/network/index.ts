@@ -1,8 +1,14 @@
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import axios, {
+  AxiosError, AxiosRequestConfig, AxiosResponse,
+} from 'axios';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import qs from 'qs';
-import { ResponseResult } from '../types';
+import { ResponseResult } from '../types/common';
 import eventBus from '../utils/event-bus';
+
+interface PostAxiosRequestConfig extends AxiosRequestConfig {
+  successTip?: string; // 成功提示
+}
 
 const instance = axios.create({
   baseURL: '',
@@ -29,8 +35,15 @@ instance.interceptors.request.use(
 // 响应拦截器
 instance.interceptors.response.use(
   res => {
-    const { data } = res;
-    if (data.code === '200') return Promise.resolve(data);
+    const { config, data } = res as AxiosResponse & {
+      config: PostAxiosRequestConfig;
+    };
+    if (data.code === '200') {
+      if (config.successTip) {
+        eventBus.emit('showMessage', { type: 'success', text: config.successTip });
+      }
+      return Promise.resolve(data);
+    }
     if (data.code === '404') {
       // 注意这里的404不是指接口返回的http状态码，而是请求了一些需要重定向到404的接口
       eventBus.emit('redirectTo404');
@@ -73,7 +86,7 @@ const get = <T>(url: string, params = {}): Promise<ResponseResult<T>> => {
  * @param data
  * @param config
  */
-const post = <T>(url: string, data = {}, config: AxiosRequestConfig = {}): Promise<ResponseResult<T>> => {
+const post = <T>(url: string, data = {}, config: PostAxiosRequestConfig = {}): Promise<ResponseResult<T>> => {
   const headers = config?.headers || {
     'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
   };

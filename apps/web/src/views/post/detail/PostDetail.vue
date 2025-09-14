@@ -2,7 +2,7 @@
   <div class="post-detail">
     <div class="post-aside">
       <div v-side-fixed class="post-aside-body">
-        <UserInfoPanel v-if="post.userId" :id="post.userId" />
+        <UserInfoPanel :id="post.userId" />
       </div>
     </div>
     <div id="aside-right" class="post-body">

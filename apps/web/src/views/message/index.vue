@@ -6,19 +6,19 @@
           请按以下格式申请友链，谢谢！
         </p>
         <div ref="templateRef">
-          <span>站点名称：</span>
-          <span>描述：</span>
-          <span>头像：</span>
-          <span>网址：</span>
+          <span>站点名称：(必填)</span>
+          <span>网址：(必填)</span>
+          <span>头像：(必填)</span>
+          <span>间接：(选填)</span>
         </div>
         <a @click="onCopyTemplate">复制</a>
       </a-card>
       <a-card title="本站信息">
         <div ref="mineRef">
           <span>站点名称：有语</span>
-          <span>描述：一个人是可以做到他想做的一切的，需要的只是坚韧不拔的毅力和持久不懈的努力。</span>
-          <span>头像：https://v2.youyul.com/favicon.ico</span>
           <span>网址：https://v2.youyul.com</span>
+          <span>头像：https://v2.youyul.com/favicon.ico</span>
+          <span>简介：一个人是可以做到他想做的一切的，需要的只是坚韧不拔的毅力和持久不懈的努力。</span>
         </div>
         <a @click="onCopyMime">复制</a>
       </a-card>
@@ -128,8 +128,7 @@ import { copyToClipboard } from '@/assets/utils/utils';
 import ContentList from '@/components/common/system/ContentList.vue';
 import { checkEmail } from '@/libs/validate/validate';
 import MessageItem from '@/views/message/components/MessageItem.vue';
-import type { Barrage } from '@/views/message/types';
-import type {Message} from '@/views/message/types';
+import type { Barrage, Message } from '@youyu/shared/types/vo';
 import type { FormInstance, Input } from 'ant-design-vue';
 
 const formState = reactive<Barrage>({
@@ -192,7 +191,7 @@ const onFinish = () => {
   }
   dispatch('createMessage', formState)
     .then(_ => {
-      message.success('发布成功');
+      message.success('发布成功！你的留言将在审核通过后显示');
       formState.content = '';
     })
     .finally(() => {
