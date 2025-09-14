@@ -46,7 +46,8 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
           source: "apps/web/dist/*"
-          target: "/var/www/web"
+          target: "/data/volumes/nginx/html/web"
+          strip_components: 2
 
       # 上传 manage 到服务器
       - name: 上传 Manage
@@ -56,4 +57,5 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
           source: "apps/manage/dist/*"
-          target: "/var/www/manage"
+          target: "/data/volumes/nginx/html/manage"
+          strip_components: 2
