@@ -204,9 +204,11 @@ const onSubmit = async () => {
   try {
     imagesListRes = await UploadFileRef.value.upload();
   } catch (e) {
+    console.log(e);
     submitLoading.value = false;
     return false;
   }
+  console.log("imagesListRes:", imagesListRes);
   if (imagesListRes?.length) {
     const firstErrorItem = imagesListRes.find(item => item instanceof AxiosError);
     if (firstErrorItem) {
@@ -234,8 +236,9 @@ const onSubmit = async () => {
   } else {
     formData.images = '';
   }
-
+  console.log("formData.content:", formData.content);
   formData.content = transformHTMLToTag(formData.content);
+  console.log("formData.content", formData.content);
   dispatch(isEdit ? 'updateMoment' : 'createMoment', formData)
     .then(res => {
       message.success(isEdit ? '修改成功' : '发布成功');

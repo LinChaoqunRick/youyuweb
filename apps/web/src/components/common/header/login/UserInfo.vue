@@ -22,10 +22,7 @@
             </RouterLink>
             <div class="info-data">
               <div v-if="userInfo.adname" class="adname">
-                {{ userInfo.adname }}
-              </div>
-              <div class="uid">
-                uid: {{ userInfo.id }}
+                IP：{{ userInfo.adname }}
               </div>
             </div>
           </div>
@@ -234,8 +231,8 @@ function handleLogout() {
     padding-bottom: 6px;
 
     .avatar {
-      width: 48px;
-      height: 48px;
+      width: 54px;
+      height: 54px;
       overflow: hidden;
       border-radius: 50%;
 
@@ -253,7 +250,7 @@ function handleLogout() {
         width: 100%;
         margin-left: 0;
         overflow: hidden;
-        font-size: 15px;
+        font-size: 16px;
         font-weight: bold;
         color: var(--youyu-text);
         text-overflow: ellipsis;
@@ -267,12 +264,11 @@ function handleLogout() {
         color: var(--youyu-text1);
 
         .adname {
-          padding: 0 4px;
+          padding: 2px 6px;
           margin-right: 6px;
-          line-height: 18px;
           color: #fff;
           background-color: var(--primary-color);
-          border-radius: 2px;
+          border-radius: 4px;
         }
       }
     }

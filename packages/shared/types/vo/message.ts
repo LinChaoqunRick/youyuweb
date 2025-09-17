@@ -24,10 +24,10 @@ export interface Message {
   content: string;
   adcode: number;
   status: number;
+  homepage: string;
   supportCount: number;
   opposeCount: number;
   createTime: string;
   updateTime: string;
   adname: string;
-  userInfo: BasicUserInfo;
 }

@@ -25,6 +25,7 @@ export const UPDATE_FAVORITES = `${ApiBase}/favorites/update`; // 更新收藏�
 export const DELETE_FAVORITES = `${ApiBase}/favorites/delete`; // 删除收藏夹
 export const LIST_FAVORITES = `${ApiBase}/favorites/open/list`; // 收藏夹列表
 export const FAVORITES_POST_PAGE = `${ApiBase}/favorites/open/postPage`; // 收藏夹文章列表
+export const GET_VISITOR_BY_EMAIL = `${ApiBase}/message/open/getVisitorByEmail`;
 
 // manage用户
 export const GET_MANAGE_AUTH_ROUTES = `${ApiBase}/manage/user/getAuthRoutes`; // 获取权限路由

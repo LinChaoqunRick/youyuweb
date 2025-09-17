@@ -1,22 +1,31 @@
 <template>
   <div class="map-wrapper">
-    <div id="mapContainer"></div>
-    <div class="search-box" v-if="search">
+    <div id="mapContainer" />
+    <div v-if="search" class="search-box">
       <a-auto-complete
         v-model="keyword"
-        allowClear
+        allow-clear
         :options="options"
         :virtual="false"
         placeholder="输入地点搜索"
-        dropdownClassName="a-map-autocomplete-selector"
-        @search="handleSearch"
+        dropdown-class-name="a-map-autocomplete-selector"
         style="width: 360px"
+        @search="handleSearch"
       >
         <template #option="data">
           <div class="options-item" @click="handleSelect(data.name, data)">
-            <i-local-two theme="outline" size="18" fill="#666" :strokeWidth="3" />
-            <div class="item-name">{{ data.name }}</div>
-            <div class="address-text">{{ data.district }}</div>
+            <i-local-two
+              theme="outline"
+              size="18"
+              fill="#666"
+              :stroke-width="3"
+            />
+            <div class="item-name">
+              {{ data.name }}
+            </div>
+            <div class="address-text">
+              {{ data.district }}
+            </div>
           </div>
         </template>
       </a-auto-complete>
@@ -100,14 +109,15 @@ const initMap = () => {
   }).then(AMap => {
     AMapObj = AMap;
     map = new AMap.Map('mapContainer', {
-      viewMode: '3D', // 默认使用 2D 模式
+      viewMode: '2D', // 默认使用 2D 模式
       zoom: 11, //初始化地图层级
       center, //初始化地图中心点
       mapStyle: theme.value === 'light' ? 'amap://styles/normal' : 'amap://styles/dark', //设置地图的显示样式
     });
     // 添加点击事件
-    props.clickable && map.on('click', onMapClick);
-
+    if (props.clickable) {
+      map.on('click', onMapClick)
+    }
     AMap.plugin(
       [
         'AMap.ToolBar',
@@ -155,10 +165,9 @@ const initMap = () => {
           // AutoComplete主要用于即时的用户输入建议，而PlaceSearch用于获取更多关于特定地点的详细信息。
           // 选择使用哪个API取决于你的应用需求，如果你需要快速的用户输入建议，那么AutoComplete是一个不错的选择；
           // 如果你需要获取更多地点详细信息，那么PlaceSearch更适合。
-
           // 输入提示与POI搜索
           auto = new AMap.AutoComplete({
-            city: currentLocation.value.adcode, // addressComponent是哪里用的，还是高德的接口又变了？
+            // city: currentLocation.value.adcode, // addressComponent是哪里用的，还是高德的接口又变了？
             datatype: 'all',
           });
 
@@ -204,13 +213,9 @@ const initMap = () => {
             currentLocation.value = data;
             const { lng, lat } = data.position;
             createMarkerByLngLat(lng, lat);
-            initAutoAndPlaceSearch();
           });
 
-          // 监听定位失败事件
-          AMapObj.Event.addListener(geolocation, 'error', function (err) {
-            initAutoAndPlaceSearch();
-          });
+          initAutoAndPlaceSearch();
         }
       }
     );
@@ -383,16 +388,16 @@ onUnmounted(() => {
     }
 
     .item-name {
+      max-width: 235px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      max-width: 235px;
     }
 
     .address-text {
-      font-size: 12px;
-      color: #999999;
       margin-left: 12px;
+      font-size: 12px;
+      color: #999;
     }
   }
 

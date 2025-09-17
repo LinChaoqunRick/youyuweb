@@ -31,7 +31,7 @@ initData();
   gap: 12px; /* 行列间距 */
   place-items: center center;
   height: calc(100vh - 100px);
-  padding: 0 50px;
+  padding: 20px 50px 0;
   overflow: auto;
   background-color: var(--youyu-body-background1);
 }
