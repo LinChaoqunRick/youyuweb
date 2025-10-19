@@ -99,7 +99,7 @@ function NotificationLog() {
     setParams(values);
   };
 
-  const onDataLoaded = useCallback((data: Array<Logs>) => {
+  const onLoaded = useCallback((data: Array<Logs>) => {
     data.forEach(item => {
       const { type, requestData, responseData } = item;
       item.requestDataObject = requestData && JSON.parse(requestData).input;
@@ -156,7 +156,7 @@ function NotificationLog() {
         </Form>
       </div>
       <div className="access-content">
-        {params && <ReactTable url={GET_LOGS_PAGE} columns={columns} params={params} onDataLoaded={onDataLoaded} />}
+        {params && <ReactTable url={GET_LOGS_PAGE} columns={columns} params={params} onLoaded={onLoaded} />}
       </div>
     </div>
   );

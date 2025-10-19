@@ -194,8 +194,8 @@ function handleLogout() {
     align-items: center;
 
     .avatar {
-      width: 42px;
-      height: 42px;
+      width: 36px;
+      height: 36px;
       overflow: hidden;
       border-radius: 50%;
       cursor: pointer;
@@ -231,8 +231,8 @@ function handleLogout() {
     padding-bottom: 6px;
 
     .avatar {
-      width: 54px;
-      height: 54px;
+      width: 48px;
+      height: 48px;
       overflow: hidden;
       border-radius: 50%;
 

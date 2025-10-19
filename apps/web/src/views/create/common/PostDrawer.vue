@@ -1,10 +1,22 @@
 <template>
   <div class="create-post-info">
-    <a-drawer title="发布文章" width="500" :open="visible" @close="onClose" class="create-post-drawer">
+    <a-drawer
+      title="发布文章"
+      width="500"
+      :open="visible"
+      class="create-post-drawer"
+      @close="onClose"
+    >
       <template #closeIcon>
         <i-close theme="outline" size="20" fill="#909090" />
       </template>
-      <a-form :model="formValidate" :rules="rulesRef" :label-col="labelCol" :wrapper-col="wrapperCol" ref="formRef">
+      <a-form
+        ref="formRef"
+        :model="formValidate"
+        :rules="rulesRef"
+        :label-col="labelCol"
+        :wrapper-col="wrapperCol"
+      >
         <a-form-item label="文章分类" name="categoryId">
           <a-tree-select
             v-model:value="formValidate.categoryId"
@@ -15,11 +27,13 @@
             allow-clear
             tree-default-expand-all
             :tree-data="treeData"
-            :fieldNames="{ value: 'id' }"
+            :field-names="{ value: 'id' }"
           >
             <template #title="{ value: val, title }">
               <b v-if="val === 'parent 1-1'" style="color: #08c">sss</b>
-              <template v-else>{{ title }}</template>
+              <template v-else>
+                {{ title }}
+              </template>
             </template>
           </a-tree-select>
         </a-form-item>
@@ -39,9 +53,7 @@
             @blur="handleInputConfirm"
             @keyup.enter="handleInputConfirm"
           />
-          <a-tag v-if="!state.inputVisible && formValidate.tags.length<3"
-                 @click="showInput"
-                 class="new-tag">
+          <a-tag v-if="!state.inputVisible && formValidate.tags.length < 3" class="new-tag" @click="showInput">
             <i-plus theme="outline" size="14" fill="currentColor" />
             新建
           </a-tag>
@@ -50,25 +62,37 @@
           <div class="select-from-post">
             <div>
               从
-              <a-button type="link" :disabled="restNum<=0" @click="openCoverSelectModal('post')">文章</a-button>
+              <a-button type="link" :disabled="restNum <= 0" @click="openCoverSelectModal('post')">
+                文章
+              </a-button>
               或
-              <a-button type="link" :disabled="restNum<=0" @click="openCoverSelectModal('default')">预设</a-button>
+              <a-button type="link" :disabled="restNum <= 0" @click="openCoverSelectModal('default')">
+                预设
+              </a-button>
               中选取
             </div>
           </div>
-          <UploadFile :disabled="formValidate.thumbnail.length>=3" auto-upload @uploadSuccess="uploadSuccess" />
+          <UploadFile :disabled="formValidate.thumbnail.length >= 3" auto-upload @upload-success="uploadSuccess" />
           <div class="file-list">
-            <div v-for="(file, index) in formValidate.thumbnail" :key="file"
-                 :style="{left: 40 * index + 'px',  top: 8 * index + 'px'}" class="image-preview">
-              <img :src="file" alt="" />
+            <div
+              v-for="(file, index) in formValidate.thumbnail"
+              :key="file"
+              :style="{ left: 40 * index + 'px', top: 8 * index + 'px' }"
+              class="image-preview"
+            >
+              <img :src="file" alt="">
               <div class="image-mask">
                 <div class="image-mask-content content-preview" @click="handlePreview(file, index)">
                   <i-preview-open theme="outline" size="16" fill="currentColor" />
-                  <div class="content-name">预览</div>
+                  <div class="content-name">
+                    预览
+                  </div>
                 </div>
                 <div class="image-mask-content content-delete" @click="handleDelete(index)">
                   <i-delete-four theme="outline" size="16" fill="currentColor" />
-                  <div class="content-name">删除</div>
+                  <div class="content-name">
+                    删除
+                  </div>
                 </div>
               </div>
             </div>
@@ -83,24 +107,37 @@
           />
         </a-form-item>
         <a-form-item label="收录至专栏" name="columnIds">
-          <a-select v-model:value="formValidate.columnIds" allow-clear mode="multiple" placeholder="最多可选择3个专栏"
-                    @select="onColumnSelect">
-            <a-select-option :value="item.id" v-for="item in columnList">{{ item.title }}</a-select-option>
+          <a-select
+            v-model:value="formValidate.columnIds"
+            allow-clear
+            mode="multiple"
+            placeholder="最多可选择3个专栏"
+            @select="onColumnSelect"
+          >
+            <a-select-option v-for="item in columnList" :value="item.id">
+              {{ item.title }}
+            </a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="文章类型" name="createType">
           <a-radio-group v-model:value="formValidate.createType" button-style="solid">
-            <a-radio-button v-for="item in createTypes" :value="item.code">{{ item.desc }}</a-radio-button>
+            <a-radio-button v-for="item in createTypes" :value="item.code">
+              {{ item.desc }}
+            </a-radio-button>
           </a-radio-group>
         </a-form-item>
-        <a-form-item label="原文连接" name="originalLink" v-if="formValidate.createType!=='0'">
+        <a-form-item v-if="formValidate.createType !== '0'" label="原文连接" name="originalLink">
           <a-input v-model:value="formValidate.originalLink" />
         </a-form-item>
       </a-form>
       <template #footer>
         <div class="drawer-footer">
-          <a-button style="margin-right: 8px" @click="onClose">取消</a-button>
-          <a-button type="primary" :loading="loading" @click="onSubmit">发布</a-button>
+          <a-button style="margin-right: 8px" @click="onClose">
+            取消
+          </a-button>
+          <a-button type="primary" :loading="loading" @click="onSubmit">
+            发布
+          </a-button>
         </div>
       </template>
     </a-drawer>
@@ -109,38 +146,38 @@
 
 <script lang="ts">
 export default {
-  name: 'PostDrawer'
+  name: 'PostDrawer',
 };
 </script>
 
 <script setup lang="ts">
 import { nextTick, reactive, ref, watch, computed } from 'vue';
 import type { PropType } from 'vue';
-import type { TreeSelectProps } from 'ant-design-vue';
 import { message } from 'ant-design-vue';
 import { useStore } from 'vuex';
-import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
-import type { Post } from '@/views/post/detail/types';
 import { getMarkDownImages } from '@/assets/utils/utils';
-import openImage from '@/libs/tools/openImage';
+import type { UploadResult } from '@/components/common/utils/upload/types';
+import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
 import openModal from '@/libs/tools/openModal';
+import type { Column } from '@/views/column/detail/types';
 import CoverSelect from '@/views/create/common/CoverSelect.vue';
 import defaultImages from '@/views/create/common/defaultImages';
-import type { Column } from '@/views/column/detail/types';
 import type { Category, CreateType } from '@/views/create/common/types';
-import type { UploadResult } from '@/components/common/utils/upload/types';
+import type { Post } from '@/views/post/detail/types';
+import openImage from '../../../../../../packages/shared/vue-hooks/openImage';
+import type { TreeSelectProps } from 'ant-design-vue';
 
 const { dispatch } = useStore();
 
 const props = defineProps({
   formValidate: {
     type: Object as PropType<Post>,
-    required: true
+    required: true,
   },
   visible: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
 const emit = defineEmits(['handleSubmit', 'update:visible']);
@@ -153,39 +190,39 @@ const rulesRef = reactive({
   categoryId: [
     {
       required: true,
-      message: '请选择文章分类'
-    }
+      message: '请选择文章分类',
+    },
   ],
   summary: [
     {
       required: true,
-      message: '请输入文章摘要'
-    }
+      message: '请输入文章摘要',
+    },
   ],
   createType: [
     {
       required: true,
-      message: '请选择文章类型'
-    }
+      message: '请选择文章类型',
+    },
   ],
   originalLink: [
     {
       required: true,
-      message: '请输入原文链接'
-    }
+      message: '请输入原文链接',
+    },
   ],
   thumbnail: [
     {
       required: true,
-      message: '请至少上传一张首图'
-    }
-  ]
+      message: '请至少上传一张首图',
+    },
+  ],
 });
 const formRef = ref();
 const inputRef = ref();
 const state = reactive({
   inputVisible: false,
-  inputValue: ''
+  inputValue: '',
 });
 const postImages = ref([]);
 const columnList = ref<Array<Column>>([]);
@@ -217,7 +254,7 @@ function getCreateTypes() {
 function getColumnList() {
   dispatch('getColumnList', { userId: props.formValidate.userId }).then(res => {
     columnList.value = res.data;
-    columnList.value.forEach(item => item.id = item.id + '');
+    columnList.value.forEach(item => (item.id = item.id + ''));
   });
 }
 
@@ -228,12 +265,15 @@ function uploadSuccess(fileList: UploadResult[]) {
 getCategoryList();
 getCreateTypes();
 
-
-watch(() => props.formValidate.userId, (newVal) => {
-  if (newVal) {
-    getColumnList();
-  }
-}, { immediate: true });
+watch(
+  () => props.formValidate.userId,
+  newVal => {
+    if (newVal) {
+      getColumnList();
+    }
+  },
+  { immediate: true },
+);
 
 function transferData(data: Array<Category>) {
   data.forEach(item => {
@@ -267,13 +307,13 @@ function onClose() {
 }
 
 const handleInputConfirm = () => {
-  const inputValue = state.inputValue;
+  const {inputValue} = state;
   if (inputValue && props.formValidate.tags.indexOf(inputValue) === -1) {
     props.formValidate.tags = [...props.formValidate.tags, inputValue];
   }
   Object.assign(state, {
     inputVisible: false,
-    inputValue: ''
+    inputValue: '',
   });
 };
 
@@ -282,8 +322,8 @@ const handlePreview = (item: string, index: number): void => {
   openImage({
     componentProps: {
       list,
-      current: index
-    }
+      current: index,
+    },
   });
 };
 
@@ -312,8 +352,8 @@ const openCoverSelectModal = (type: string) => {
     wrapClassName: 'post-image-select-modal',
     componentProps: {
       maxNum: restNum.value,
-      images: images
-    }
+      images: images,
+    },
   }).then((res: string[] | string) => {
     if (res) {
       props.formValidate.thumbnail.push(...res);
@@ -322,14 +362,14 @@ const openCoverSelectModal = (type: string) => {
 };
 
 const onColumnSelect = (value: Column) => {
-  const columnIds = props.formValidate.columnIds;
+  const {columnIds} = props.formValidate;
   if (columnIds && columnIds.length > 3) {
     (columnIds as Array<string | number>).pop();
   }
 };
 
 defineExpose({
-  onSubmit
+  onSubmit,
 });
 </script>
 
@@ -338,13 +378,14 @@ defineExpose({
   ::v-deep(.ant-form) {
     .ant-form-item-control-input-content {
       display: flex;
-      align-items: center;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     .ant-tag {
       padding: 1px 7px;
-      /*margin-bottom: 6px;*/
+
+      /* margin-bottom: 6px; */
     }
 
     .ant-input-textarea {
@@ -352,9 +393,9 @@ defineExpose({
     }
 
     .new-tag {
+      height: 24px;
       background: #fff;
       border-style: dashed;
-      height: 24px;
       cursor: pointer;
     }
   }
@@ -377,19 +418,19 @@ defineExpose({
     }
 
     .file-list {
+      position: relative;
       width: 180px;
       height: 120px;
-      position: relative;
 
       .image-preview {
-        height: 100%;
-        width: 100%;
         position: absolute;
-        transition: .3s;
+        width: 100%;
+        height: 100%;
+        transition: 0.3s;
 
         &:hover {
-          transform: scale(1.05);
           z-index: 10;
+          transform: scale(1.05);
 
           .image-mask {
             opacity: 1;
@@ -397,33 +438,30 @@ defineExpose({
         }
 
         img {
-          height: 100%;
           width: 100%;
+          height: 100%;
           object-fit: cover;
         }
 
         .image-mask {
           position: absolute;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          left: 0;
+          inset: 0;
           display: flex;
           align-items: center;
           justify-content: center;
           color: #fff;
-          background: rgba(0, 0, 0, .5);
+          background: rgb(0, 0, 0, 0.5);
           opacity: 0;
-          transition: opacity .2s;
+          transition: opacity 0.2s;
 
           .image-mask-content {
             display: flex;
             align-items: center;
             color: #fff;
             cursor: pointer;
-            transition: .3s;
+            transition: 0.3s;
 
-            &:nth-child(n+2) {
+            &:nth-child(n + 2) {
               margin-left: 10px;
             }
 

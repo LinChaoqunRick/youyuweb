@@ -1,8 +1,13 @@
 <template>
   <div class="message-item">
     <div class="message-avatar">
-      <a-avatar v-if="data.avatar" :src="data.avatar" />
-      <a-avatar v-else size="large" :style="{ backgroundColor: '#1890ff', verticalAlign: 'middle' }">
+      <a-avatar v-if="data.avatar" :src="data.avatar" :size="40" />
+      <a-avatar
+        v-else
+        size="large"
+        :size="40"
+        :style="{ backgroundColor: '#1890ff', verticalAlign: 'middle' }"
+      >
         {{ data.nickname?.substring(0, 3) }}
       </a-avatar>
     </div>
@@ -21,12 +26,13 @@
       <div class="message-content">
         {{ data.content }}
       </div>
-      <div class="message-bottom">
+      <div class="message-action">
         <span class="reply-text cp" @click="showForm = !showForm">
           {{ showForm ? '取消回复' : '回复' }}
         </span>
-        <MessageForm v-if="showForm" />
+        <MessageForm v-if="showForm" :refer-message="data" />
       </div>
+      <div class="message-replies" />
     </div>
   </div>
 </template>
@@ -49,7 +55,7 @@ const showForm = ref(false);
 <style scoped lang="scss">
 .message-item {
   display: flex;
-  padding: 12px;
+  padding: 16px;
   border: 1px dashed var(--youyu-body-text1);
   border-radius: 16px;
 
@@ -88,7 +94,7 @@ const showForm = ref(false);
       white-space: pre-wrap;
     }
 
-    .message-bottom {
+    .message-action {
       .reply-text {
         display: inline-block;
         margin-top: 4px;

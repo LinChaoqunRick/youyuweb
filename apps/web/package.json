@@ -49,6 +49,7 @@
     "prettier": "^3.5.3",
     "stylelint": "^16.21.0",
     "vite": "^6.0.7",
+    "vue-component-type-helpers": "^3.0.8",
     "vue-tsc": "^0.40.7"
   }
 }

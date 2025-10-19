@@ -3,7 +3,7 @@
     <div class="editor-body">
       <div v-if="!isLogin" class="login-mask" @click="toLogin" />
       <div class="editor-content-wrapper">
-        <ContentEditableDiv
+        <VueContentEditor
           ref="richEditor"
           v-model="form.content"
           show-limit
@@ -34,7 +34,7 @@
               </div>
             </div>
           </template>
-        </ContentEditableDiv>
+        </VueContentEditor>
       </div>
     </div>
     <div v-if="form.images?.length" class="image-wrapper">
@@ -128,6 +128,8 @@
 <script setup lang="ts">
 import { ref, reactive, computed, toRefs } from 'vue';
 import { vOnClickOutside } from '@vueuse/components';
+import VueContentEditor from '@youyu/shared/components-vue/contenteditable/VueContentEditor.vue';
+import EmojiPicker from '@youyu/shared/components-vue/emoji/EmojiPicker.vue';
 import { message } from 'ant-design-vue';
 import { AxiosError } from 'axios';
 import { cloneDeep } from 'lodash';
@@ -135,13 +137,11 @@ import { useRouter } from 'vue-router';
 import draggable from 'vuedraggable';
 import { useStore } from 'vuex';
 import LocationSelector from '@/components/common/utils/aMap/LocationSelector.vue';
-import ContentEditableDiv from '@/components/common/utils/contenteditable/ContentEditableDiv.vue';
-import EmojiPicker from '@/components/common/utils/emoji/EmojiPicker.vue';
-import { transformHTMLToTag } from '@/components/common/utils/emoji/youyu_emoji';
 import ImageItem from '@/components/common/utils/upload/components/ImageItem.vue';
 import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
 import { getXmlTextContent } from '@/components/common/utils/upload/utils';
 import openModal from '@/libs/tools/openModal';
+import { transformHTMLToTag } from '../../../../../../packages/shared/components-vue/emoji/youyu_emoji';
 
 const props = defineProps({
   form: {
@@ -149,14 +149,14 @@ const props = defineProps({
     default() {
       return reactive({
         content: '',
-        images: []
+        images: [],
       });
-    }
+    },
   },
   isEdit: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
 const emit = defineEmits(['saveSuccess']);
@@ -164,7 +164,7 @@ const dragOptions = reactive({
   animation: 200,
   group: 'description',
   disabled: false,
-  ghostClass: 'ghost'
+  ghostClass: 'ghost',
 });
 
 const maxFileNum = 9;
@@ -176,7 +176,7 @@ const currentLength = computed(() => richEditor.value?.totalStrLength);
 const contentLengthExceed = computed(() => richEditor.value?.contentLengthExceed);
 const uploadDisabled = computed(() => props.form.images?.length >= maxFileNum || !isLogin.value);
 
-const richEditor = ref<InstanceType<typeof ContentEditableDiv> | null>(null);
+const richEditor = ref<InstanceType<typeof VueContentEditor> | null>(null);
 const UploadFileRef = ref<InstanceType<typeof UploadFile> | null>(null);
 const active = computed(() => richEditor.value?.active);
 const emojiVisible = ref(false);
@@ -198,7 +198,7 @@ const onImageDelete = (index: number) => {
 
 const onSubmit = async () => {
   submitLoading.value = true;
-  const {isEdit} = props;
+  const { isEdit } = props;
   const formData = cloneDeep(props.form);
   let imagesListRes;
   try {
@@ -208,7 +208,7 @@ const onSubmit = async () => {
     submitLoading.value = false;
     return false;
   }
-  console.log("imagesListRes:", imagesListRes);
+  console.log('imagesListRes:', imagesListRes);
   if (imagesListRes?.length) {
     const firstErrorItem = imagesListRes.find(item => item instanceof AxiosError);
     if (firstErrorItem) {
@@ -216,7 +216,7 @@ const onSubmit = async () => {
       return message.error(
         `发布失败：${
           firstErrorItem.response ? getXmlTextContent(firstErrorItem.response.data, 'Message') : firstErrorItem.message
-        }`
+        }`,
       );
     }
   }
@@ -236,9 +236,9 @@ const onSubmit = async () => {
   } else {
     formData.images = '';
   }
-  console.log("formData.content:", formData.content);
+  console.log('formData.content:', formData.content);
   formData.content = transformHTMLToTag(formData.content);
-  console.log("formData.content", formData.content);
+  console.log('formData.content', formData.content);
   dispatch(isEdit ? 'updateMoment' : 'createMoment', formData)
     .then(res => {
       message.success(isEdit ? '修改成功' : '发布成功');
@@ -247,7 +247,7 @@ const onSubmit = async () => {
       if (isEdit) {
         router.replace({
           name: 'MomentDetail',
-          params: { momentId: props.formData.id }
+          params: { momentId: props.formData.id },
         });
       }
     })
@@ -287,14 +287,14 @@ const onAddPosition = () => {
   openModal({
     component: LocationSelector,
     componentProps: {
-      data: props.form
+      data: props.form,
     },
     title: '添加位置',
     width: '88vw',
     maskClosable: false,
     keyboard: false,
     centered: true,
-    wrapClassName: 'select-position-modal-wrapper'
+    wrapClassName: 'select-position-modal-wrapper',
   })
     .then(res => {
       props.form.location = res.name;
@@ -328,7 +328,7 @@ const onPasteImage = (files: File[]) => {
         name: file.name,
         size: file.size,
         type: file.type,
-        originFileObj: file
+        originFileObj: file,
       });
     }
   }

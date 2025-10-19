@@ -27,8 +27,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { youyuEmojis } from '@/components/common/utils/emoji/youyu_emoji';
-import emojis from '@/components/common/utils/emoji/data';
+import { youyuEmojis } from './youyu_emoji.ts';
+import emojis from './data.ts';
 
 const emojiList = emojis.map(item => item.emojis).reduce((a, b) => a.concat(b));
 
@@ -63,19 +63,19 @@ const onEmojiPick = (event: MouseEvent) => {
   .emoji-picker-header {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid var(--youyu-border-color);
     padding: 8px;
+    border-bottom: 1px solid var(--youyu-border-color);
 
     .emoji-switch {
-      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       width: 48px;
       height: 32px;
-      border-radius: 4px;
-      transition: background-color 0.3s;
       margin-right: 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
 
       &.item-active {
         background-color: var(--youyu-background2);
@@ -90,16 +90,16 @@ const onEmojiPick = (event: MouseEvent) => {
       }
 
       img {
-        max-height: 24px;
         max-width: 24px;
+        max-height: 24px;
       }
     }
   }
 
   .emoji-picker-body-wrapper {
     height: 270px;
-    overflow: auto;
     padding: 6px 0 6px 12px;
+    overflow: auto;
 
     .emoji-picker-body {
       .list-youyu-emoji {
@@ -108,12 +108,12 @@ const onEmojiPick = (event: MouseEvent) => {
 
         .emoji-image {
           display: flex;
-          justify-content: center;
           align-items: center;
-          height: 32px;
+          justify-content: center;
           width: 32px;
-          cursor: pointer;
+          height: 32px;
           margin: 0 7px 7px 0;
+          cursor: pointer;
           transition: 0.3s;
 
           &.emoji-item {

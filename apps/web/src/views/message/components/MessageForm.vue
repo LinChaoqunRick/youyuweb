@@ -11,7 +11,13 @@
       @finish="onFinish"
     >
       <div class="avatar">
-        <a-avatar size="large" :style="{ backgroundColor: '#1890ff', verticalAlign: 'middle' }">
+        <a-avatar v-if="isLogin" :src="userInfo.avatar" :size="40" />
+        <a-avatar
+          v-else
+          size="large"
+          :size="40"
+          :style="{ backgroundColor: '#1890ff', verticalAlign: 'middle' }"
+        >
           {{ formState.nickname ? formState.nickname?.substring(0, 3) : '游客' }}
         </a-avatar>
       </div>
@@ -71,6 +77,17 @@
               placeholder="必填：请输入内容"
             />
           </a-form-item>
+          <a-form-item v-if="isLogin" class="inner-submit">
+            <a-button
+              type="primary"
+              :loading="btnLoading"
+              size="large"
+              html-type="submit"
+            >
+              <i-send-one theme="outline" size="16" fill="currentColor" />
+              提交
+            </a-button>
+          </a-form-item>
         </div>
       </div>
     </a-form>
@@ -78,11 +95,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
+import { computed, type PropType, reactive, ref } from 'vue';
 import { type FormInstance, type Input, message } from 'ant-design-vue';
 import { useStore } from 'vuex';
 import { checkEmail } from '@/libs/validate/validate';
 import type { Message } from '@youyu/shared/types/vo';
+
+const props = defineProps({
+  referMessage: {
+    type: Object as PropType<Message>,
+    default: null,
+  },
+});
 
 const btnLoading = ref(false);
 
@@ -104,6 +128,7 @@ const rules = {
 };
 
 const formState = reactive<Partial<Message>>({
+  rootId: props.referMessage?.id ?? -1,
   avatar: '',
   nickname: '',
   email: '',
@@ -131,17 +156,19 @@ const onFindVisitor = () => {
   if (email) {
     FormRef.value!.validateFields('email').then(() => {
       spinning.value = true;
-      dispatch('getVisitorByEmail', {email}).then(res => {
-        const {data} = res;
-        if (data) {
-          Object.keys(formState).forEach(key => {
-            formState[key] = data[key];
-          })
-        }
-      }).finally(() => {
-        spinning.value = false;
-      })
-    })
+      dispatch('getVisitorByEmail', { email })
+        .then(res => {
+          const { data } = res;
+          if (data) {
+            Object.keys(formState).forEach(key => {
+              formState[key] = data[key];
+            });
+          }
+        })
+        .finally(() => {
+          spinning.value = false;
+        });
+    });
   }
 };
 </script>
@@ -178,6 +205,7 @@ const onFindVisitor = () => {
   .form-bottom {
     position: relative;
     display: flex;
+    align-items: flex-end;
 
     .content-item {
       flex: 1;
@@ -185,6 +213,13 @@ const onFindVisitor = () => {
       input {
         padding-right: 35px;
       }
+    }
+
+    .inner-submit {
+      margin-inline-end: 0 !important;
+      //position: absolute;
+      //right: 12px;
+      //bottom: 12px;
     }
 
     .i-icon-smiling-face {

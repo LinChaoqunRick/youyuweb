@@ -1,34 +1,31 @@
 $avatar-bc: #ebebeb;
 
 :root {
-  --youyu-background1: #ffffff;
-  --youyu-background2: #eeeeee;
+  --youyu-background1: #fff;
+  --youyu-background2: #eee;
   --youyu-background3: #e5e6eb;
   --youyu-background4: #fafafa;
   --youyu-background5: #f2f3f5;
-
-  --youyu-backgroud-fill: rgba(255, 255, 255, 0.2);
-
-  --youyu-text: #000000;
-  --youyu-text1: #909090;
-  --youyu-text2: #333333;
+  --youyu-backgroud-fill: rgb(255, 255, 255, 0.2);
+  --youyu-text: #000;
+  --youyu-text1: #8a919f;
+  --youyu-text2: #333;
   --youyu-text3: #656565;
-  --youyu-text4: #FFFFFF;
+  --youyu-text4: #FFF;
   --youyu-text5: #283d57;
   --youyu-text6: #8a919f;
   --youyu-text7: #515767;
 
-  /*globe*/
-  --youyu-body-background: rgba(244, 245, 245, 0.5);
-  --youyu-body-background1: rgba(255, 255, 255, 0.68);
-  --youyu-body-background2: rgba(255, 255, 255, 1);
-  --youyu-body-background3: rgba(255, 255, 255, 0.85);
-  --youyu-body-background-ligth: rgba(229, 227, 227, 1);
+  /* globe */
+  --youyu-body-background: rgb(244, 245, 245, 0.5);
+  --youyu-body-background1: rgb(255, 255, 255, 0.68);
+  --youyu-body-background2: rgb(255, 255, 255, 1);
+  --youyu-body-background3: rgb(255, 255, 255, 0.85);
+  --youyu-body-background-ligth: rgb(229, 227, 227, 1);
   --youyu-body-background-4: #f7f8fa;
   --youyu-body-background-5: #eaf2ff;
-  --youyu-body-background5: rgba(113, 113, 113, 0.1);
+  --youyu-body-background5: rgb(113, 113, 113, 0.1);
   --youyu-body-background6: whitesmoke;
-
   --youyu-body-text: #000;
   --youyu-body-text1: #909090;
   --youyu-body-text2: #4e5969;
@@ -38,60 +35,56 @@ $avatar-bc: #ebebeb;
   --youyu-border-color4: #d7d7d7;
   --youyu-border: 1px solid #f1f1f1;
   --youyu-border2: 1px solid #f0f0f0;
-
   --youyu-avatar-bc: #{$avatar-bc};
   --youyu-avatar-border: 1px solid #{$avatar-bc};
-
   --primary-color: #1890ff;
 
-  /*navigation*/
-  --youyu-header-background: rgba(255, 255, 255, 0.9);
-  --youyu-navigation: rgba(255, 255, 255, 0.98);
+  /* navigation */
+  --youyu-header-background: rgb(255, 255, 255, 0.9);
+  --youyu-navigation: rgb(255, 255, 255, 0.98);
   --youyu-navigation-border: 1px solid #3c3c3c1f;
 
-  /*login*/
+  /* login */
   --youyu-login-background: #fff;
   --youyu-login-color: #000;
   --youyu-login-icon-background: #eaf2ff;
 
-  /*theme-switch*/
+  /* theme-switch */
   --theme-switch-border: 1px solid #1890ff;
 
-  /*article*/
-  --article-background: rgba(255, 255, 255, 0.68);
+  /* article */
+  --article-background: rgb(255, 255, 255, 0.68);
   --article-border: 1px solid #bfbfbf;
   --article-info-color: #666;
   --post-detail-background: #fff;
   --post-info-background: #f8f8f8;
   --post-summary-background: #dff6ff;
 
-  /*pagination*/
-  --pagination-background: rgba(255, 255, 255, 1);
+  /* pagination */
+  --pagination-background: rgb(255, 255, 255, 1);
   --pagination-border: 1px solid #d9d9d9;
   --pagination-text: #000;
 
-  /*comment*/
-  --subcomment-background: rgba(154, 154, 154, 0.08);
+  /* comment */
+  --subcomment-background: rgb(154, 154, 154, 0.08);
 
-  /*shadow*/
-  --youyu-shadow1: 0 0 10px rgba(0, 0, 0, .36);
-  --youyu-shadow2: 0 0 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+  /* shadow */
+  --youyu-shadow1: 0 0 10px rgb(0, 0, 0, .36);
+  --youyu-shadow2: 0 0 4px rgb(0, 0, 0, .12), 0 0 6px rgb(0, 0, 0, .04);
 
-  /*mask*/
-  --mask-background: rgba(0, 0, 0, 0.8);
+  /* mask */
+  --mask-background: rgb(0, 0, 0, 0.8);
 
-  /*antd*/
+  /* antd */
   --antd-background: #fff;
 
-  /*md-editor*/
+  /* md-editor */
   --editor-icon-color: #3F4A54;
-
-
-  --bg-transparent: rgba(239, 240, 242, 0.95);
+  --bg-transparent: rgb(239, 240, 242, 0.95);
 }
 
 @mixin lightGlassFilter {
-  background-color: hsla(0, 0%, 100%, 0.4) !important;
+  background-color: hsl(0deg, 0%, 100%, 0.4) !important;
   backdrop-filter: blur(5px) !important;
 }
 

@@ -33,7 +33,7 @@ export interface ReactTableProps<T extends AnyObject> extends Omit<TableProps, '
   showEdit?: boolean;
   showDelete?: boolean;
   batchButtons?: BatchButton<T>[];
-  onDataLoaded?: (data: T[]) => void;
+  onLoaded?: (data: T[]) => void;
   onAdd?: () => void;
   onEdit?: (data: T) => void;
 }

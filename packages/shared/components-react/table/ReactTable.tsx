@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import http from '../../network';
 import { ReactTableProps, ReactTableRef, ColumnButton } from '../../types/components-react';
-import type { PageResult } from '../../types/vo';
+import type { PageResult } from '../../types/common';
 import type { TablePaginationConfig } from 'antd/es/table';
 
 function ReactTableFooter<T extends AnyObject>(
@@ -50,8 +50,18 @@ function ReactTableFooter<T extends AnyObject>(
 
 function InnerReactTable<T extends AnyObject>(props: ReactTableProps<T>, ref: React.Ref<ReactTableRef>) {
   const {
-    url, columns, params, deleteUrl, showSelection, showAdd, showEdit, showDelete, batchButtons,
-    onEdit, onDataLoaded, ...rest
+    url,
+    columns,
+    params,
+    deleteUrl,
+    showSelection,
+    showAdd,
+    showEdit,
+    showDelete,
+    batchButtons,
+    onEdit,
+    onLoaded,
+    ...rest
   } = props;
   const [modal, contextHolder] = Modal.useModal();
   const tableRef = useRef<HTMLDivElement | null>(null);
@@ -89,13 +99,16 @@ function InnerReactTable<T extends AnyObject>(props: ReactTableProps<T>, ref: Re
     });
   }
 
-  const rowSelection: TableProps<T>['rowSelection'] = useMemo(() => ({
-    selectedRowKeys,
-    onChange: (selectedRowKeys: React.Key[], selectedRows: T[]) => {
-      setSelectedRowKeys(selectedRowKeys);
-      setSelectedRows(selectedRows);
-    },
-  }), [selectedRowKeys]);
+  const rowSelection: TableProps<T>['rowSelection'] = useMemo(
+    () => ({
+      selectedRowKeys,
+      onChange: (selectedRowKeys: React.Key[], selectedRows: T[]) => {
+        setSelectedRowKeys(selectedRowKeys);
+        setSelectedRows(selectedRows);
+      },
+    }),
+    [selectedRowKeys],
+  );
 
   const showFooter = useMemo(() => {
     return showAdd || showDelete || batchButtons !== undefined;
@@ -127,8 +140,7 @@ function InnerReactTable<T extends AnyObject>(props: ReactTableProps<T>, ref: Re
           }
           // 自定义按钮
           if (column.actions) {
-            const columnActions: ColumnButton<T>[] = typeof column.actions === 'function'
-              ? column.actions(value) : column.actions;
+            const columnActions: ColumnButton<T>[] = typeof column.actions === 'function' ? column.actions(value) : column.actions;
             columnButtons.push(...columnActions);
           }
           return columnButtons.map(button => {
@@ -150,24 +162,28 @@ function InnerReactTable<T extends AnyObject>(props: ReactTableProps<T>, ref: Re
   }, [columns]);
 
   // 请求数据
-  const getTableData = async () => {
+  const getTableData = (newParams: Record<string, any> = {}) => {
     setLoading(true);
     setSelectedRowKeys([]);
     setSelectedRows([]);
-    try {
-      const res = await http.post<PageResult<T>>(url, {
-        ...params,
+
+    http
+      .post<PageResult<T>>(url, {
         pageNum: pagination.current,
         pageSize: pagination.pageSize,
+        ...params,
+        ...newParams,
+      })
+      .then(res => {
+        if (onLoaded) {
+          onLoaded(res.data.list);
+        }
+        setTableData(res.data.list);
+        setPagination(prev => ({ ...prev, total: res.data.total }));
+      })
+      .finally(() => {
+        setLoading(false);
       });
-      if (onDataLoaded) {
-        onDataLoaded(res.data.list);
-      }
-      setTableData(res.data.list);
-      setPagination(prev => ({ ...prev, total: res.data.total }));
-    } finally {
-      setLoading(false);
-    }
   };
 
   // 计算表格可视区域（x/y）
@@ -209,19 +225,17 @@ function InnerReactTable<T extends AnyObject>(props: ReactTableProps<T>, ref: Re
 
   // 处理分页变化
   const handleChange = (pager: TablePaginationConfig) => {
-    setPagination(prev => ({
-      ...prev,
-      current: pager.current!,
-      pageSize: pager.pageSize!,
-    }));
-    getTableData();
+    const { current, pageSize } = pager;
+    setPagination(prev => ({ ...prev, current, pageSize }));
+    getTableData({
+      pageNum: current,
+      pageSize,
+    });
   };
 
   // 暴露方法给父组件
   useImperativeHandle(ref, () => ({
-    refresh() {
-      getTableData();
-    },
+    refresh: getTableData,
   }));
 
   return (

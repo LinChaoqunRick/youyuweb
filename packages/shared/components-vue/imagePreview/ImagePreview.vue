@@ -8,20 +8,10 @@
         <i-left theme="outline" size="30" fill="#fff" />
       </div>
       <div v-if="current !== props.list?.length - 1" class="ope-icon next-icon" @click="handleChange('next')">
-        <i-left
-          theme="outline"
-          size="30"
-          fill="#fff"
-          style="transform: scale3d(-1, 1, 1)"
-        />
+        <i-left theme="outline" size="30" fill="#fff" style="transform: scale3d(-1, 1, 1)" />
       </div>
       <div id="preview-image">
-        <img
-          v-show="!loading"
-          :src="currentOriginUrl"
-          alt="photo"
-          @load="onLoad"
-        >
+        <img v-show="!loading" :src="currentOriginUrl" alt="photo" @load="onLoad" />
         <div class="drag-mask" />
       </div>
     </div>
@@ -36,9 +26,7 @@
             fill="currentColor"
             @click="handleChange('last')"
           />
-          <div class="image-preview-progress">
-            {{ current + 1 }} / {{ props.list.length }}
-          </div>
+          <div class="image-preview-progress">{{ current + 1 }} / {{ props.list.length }}</div>
           <i-right
             :class="{ disabled: current === props.list?.length - 1 }"
             class="separator"
@@ -56,9 +44,7 @@
             fill="currentColor"
             @click="handleScale('large')"
           />
-          <div class="image-preview-scale">
-            {{ (scale * 100).toFixed(0) }}%
-          </div>
+          <div class="image-preview-scale">{{ (scale * 100).toFixed(0) }}%</div>
           <i-zoom-out
             :class="{ disabled: scale <= minScale }"
             theme="outline"
@@ -66,35 +52,14 @@
             fill="currentColor"
             @click="handleScale('small')"
           />
-          <i-one-to-one
-            theme="outline"
-            size="19"
-            fill="currentColor"
-            @click="handleScale('reset')"
-          />
+          <i-one-to-one theme="outline" size="19" fill="currentColor" @click="handleScale('reset')" />
         </div>
         <div v-if="false" class="operation-item">
-          <i-sort-two
-            theme="outline"
-            size="17"
-            fill="currentColor"
-            @click="handleFlip('x')"
-          />
-          <i-switch
-            theme="outline"
-            size="17"
-            fill="currentColor"
-            @click="handleFlip('y')"
-          />
+          <i-sort-two theme="outline" size="17" fill="currentColor" @click="handleFlip('x')" />
+          <i-switch theme="outline" size="17" fill="currentColor" @click="handleFlip('y')" />
         </div>
         <div class="operation-item">
-          <i-rotate
-            class="icon-rotate-left"
-            theme="outline"
-            size="18"
-            fill="currentColor"
-            @click="handleRotate('c')"
-          />
+          <i-rotate class="icon-rotate-left" theme="outline" size="18" fill="currentColor" @click="handleRotate('c')" />
           <i-rotate
             class="icon-rotate-right"
             theme="outline"
@@ -116,7 +81,7 @@
           :class="{ active: index === current }"
           @click="onClickThumbnail(index)"
         >
-          <img :src="item" alt="" draggable="false">
+          <img :src="item" alt="" draggable="false" />
         </div>
       </div>
     </div>
@@ -125,10 +90,9 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
-import { useEventListener, useIdle, usePointerSwipe } from '@vueuse/core';
+import { useEventListener, useIdle, usePointerSwipe, useScrollLock } from '@vueuse/core';
 import { Spin } from 'ant-design-vue';
-import { disabledBodyScroll, enabledBodyScroll } from '@/assets/utils/utils';
-import { convertHEICUrlToBlob } from '@/components/common/utils/upload/utils';
+import { convertHEICUrlToBlob } from '../../utils';
 
 const props = defineProps({
   list: {
@@ -143,6 +107,7 @@ const props = defineProps({
 const emit = defineEmits(['onClose']);
 const current = defineModel('current', { type: Number, default: 0 });
 const { idle } = useIdle(2 * 1000);
+const isLocked = useScrollLock(document.body);
 
 let image: HTMLElement,
   x: number = 0,
@@ -414,10 +379,10 @@ const { distanceX } = usePointerSwipe(imageThumbnailRef, {
   },
 });
 
-disabledBodyScroll();
+isLocked.value = true;
 
 onUnmounted(() => {
-  enabledBodyScroll();
+  isLocked.value = false;
 });
 </script>
 

@@ -1,6 +1,6 @@
 import areaJson from '../assets/map/area.json';
 import nationData from '../assets/map/nation.json';
-import type { Area, Nation } from '../types/vo/common';
+import type { Area, Nation } from '../types/common';
 
 const AreaData = areaJson as unknown as Record<string, Area>;
 const NationData = nationData as unknown as Record<string, Nation>;

@@ -1,51 +1,66 @@
 <template>
   <div class="reply-editor">
     <div class="editor-box">
-      <div class="login-mask" @click="toLogin" v-if="!isLogin"></div>
-      <ContentEditableDiv
+      <div v-if="!isLogin" class="login-mask" @click="toLogin" />
+      <VueContentEditor
+        ref="richEditorRef"
         v-model="reply.content"
         :row="1"
-        :maxLength="300"
+        :max-length="300"
         :placeholder="placeholder"
         :auto-focus="autoFocus"
-        @onPasteImage="onPasteImage"
-        ref="richEditorRef"
+        @on-paste-image="onPasteImage"
       />
     </div>
-    <div class="image-wrapper" v-if="reply.images?.length">
+    <div v-if="reply.images?.length" class="image-wrapper">
       <div v-for="(item, index) in reply.images" :key="item" class="image-item">
-        <img :src="item.thumb || item" :alt="item.name" />
+        <img :src="item.thumb || item" :alt="item.name">
         <div class="image-delete" @click="onImageDelete(index)">
-          <i-close theme="outline" size="10" fill="currentColor" :strokeWidth="2" />
+          <i-close
+            theme="outline"
+            size="10"
+            fill="currentColor"
+            :stroke-width="2"
+          />
         </div>
       </div>
     </div>
     <div class="reply-box-bottom">
       <a-popover
         placement="bottomLeft"
-        overlayClassName="emoji-picker-popover"
-        :getPopupContainer="(triggerNode: Element) => triggerNode.parentNode"
+        overlay-class-name="emoji-picker-popover"
+        :get-popup-container="(triggerNode: Element) => triggerNode.parentNode"
         :visible="emojiVisible"
       >
         <template #content>
-          <EmojiPicker @onImagePick="onImagePick" @onEmojiPick="onEmojiPick" v-on-click-outside="onEmojiClose" />
+          <EmojiPicker v-on-click-outside="onEmojiClose" @on-image-pick="onImagePick" @on-emoji-pick="onEmojiPick" />
         </template>
-        <div class="tool-item" v-login="onClickEmoji" style="cursor: pointer">
-          <i-emotion-happy theme="outline" size="16" fill="currentColor" :strokeWidth="3" />
+        <div v-login="onClickEmoji" class="tool-item" style="cursor: pointer">
+          <i-emotion-happy
+            theme="outline"
+            size="16"
+            fill="currentColor"
+            :stroke-width="3"
+          />
           <span class="tool-title">表情</span>
         </div>
       </a-popover>
       <UploadFile
+        ref="UploadFileRef"
         v-model="reply.images"
         accept=".jpg, .jpeg, .png, .JPG, .PNG"
         :max-size="maxFileSize"
         :max-num="maxFileNum"
         :disabled="uploadDisabled"
         :config="{ data: { base: 'moment/images' } }"
-        ref="UploadFileRef"
       >
         <div class="tool-item item-upload-image" @click="onCheckLogin">
-          <i-add-picture theme="outline" size="16" fill="currentColor" :strokeWidth="3" />
+          <i-add-picture
+            theme="outline"
+            size="16"
+            fill="currentColor"
+            :stroke-width="3"
+          />
           <span class="tool-title">图片</span>
         </div>
       </UploadFile>
@@ -53,8 +68,8 @@
         type="primary"
         :loading="loading"
         :disabled="!isLogin || !currentLength || contentLengthExceed"
-        @click="onSubmit"
         class="submit-btn"
+        @click="onSubmit"
       >
         发表评论
       </a-button>
@@ -70,16 +85,16 @@ export default {
 
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue';
-import { useStore } from 'vuex';
+import { vOnClickOutside } from '@vueuse/components';
+import VueContentEditor from '@youyu/shared/components-vue/contenteditable/VueContentEditor.vue';
+import EmojiPicker from '@youyu/shared/components-vue/emoji/EmojiPicker.vue';
 import { message } from 'ant-design-vue';
 import { cloneDeep } from 'lodash';
+import { useStore } from 'vuex';
 import { onCheckLogin } from '@/assets/utils/utils';
-import { vOnClickOutside } from '@vueuse/components';
-import ContentEditableDiv from '@/components/common/utils/contenteditable/ContentEditableDiv.vue';
-import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
-import EmojiPicker from '@/components/common/utils/emoji/EmojiPicker.vue';
-import { transformHTMLToTag } from '@/components/common/utils/emoji/youyu_emoji';
 import type { FileExtend } from '@/components/common/utils/upload/types';
+import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
+import { transformHTMLToTag } from '../../../../../../packages/shared/components-vue/emoji/youyu_emoji';
 
 const { getters, commit, dispatch } = useStore();
 
@@ -89,12 +104,12 @@ const props = defineProps({
   },
   autoFocus: {
     type: Boolean,
-    default: true
+    default: true,
   },
   params: {
     type: Object,
-    default: () => ({})
-  }
+    default: () => ({}),
+  },
 });
 const emit = defineEmits(['saveSuccess']);
 
@@ -110,7 +125,7 @@ interface MomentReply {
 const maxFileNum = 1;
 const maxFileSize = 20;
 const emojiVisible = ref(false);
-const richEditorRef = ref<InstanceType<typeof ContentEditableDiv> | null>(null);
+const richEditorRef = ref<InstanceType<typeof VueContentEditor> | null>(null);
 const UploadFileRef = ref<InstanceType<typeof UploadFile> | null>(null);
 const reply: MomentReply = reactive({
   userId: userInfo.value.id,
@@ -125,7 +140,7 @@ const loading = ref<boolean>(false);
 
 const onClickEmoji = () => {
   emojiVisible.value = true;
-}
+};
 
 const onEmojiClose = () => {
   emojiVisible.value = false;
@@ -152,7 +167,7 @@ const onSubmit = async () => {
   const form = cloneDeep(reply);
   const imagesListRes = await UploadFileRef.value?.upload();
   if (form.images?.length) {
-    form.images = (imagesListRes as Object[]).map(item => item.url + '?x-oss-process=style/smallThumb');
+    form.images = (imagesListRes as object[]).map(item => item.url + '?x-oss-process=style/smallThumb');
     form.images = form.images.length ? form.images.join(',') : null;
   } else {
     form.images = '';
@@ -209,10 +224,7 @@ defineExpose({
 
     .login-mask {
       position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
+      inset: 0;
       z-index: 1;
     }
 
@@ -232,27 +244,27 @@ defineExpose({
       margin: 8px 8px 0 0;
 
       img {
-        height: 80px;
         width: 80px;
+        height: 80px;
         object-fit: cover;
       }
 
       .image-delete {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        width: 18px;
-        height: 18px;
         position: absolute;
         top: 4px;
         right: 4px;
-        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        background: rgb(0, 0, 0, 0.4);
         border: 1px solid #c5c5c5;
-        background: rgba(0, 0, 0, 0.4);
+        border-radius: 50%;
+        cursor: pointer;
 
         &:hover {
-          background: rgba(0, 0, 0, 0.3);
+          background: rgb(0, 0, 0, 0.3);
         }
 
         .i-icon {
@@ -262,33 +274,33 @@ defineExpose({
     }
 
     .upload-image {
-      cursor: pointer;
       display: flex;
-      justify-content: center;
       align-items: center;
-      height: 80px;
+      justify-content: center;
       width: 80px;
-      border: 1px dashed #c5c5c5;
+      height: 80px;
       margin: 8px 8px 8px 0;
-      background: rgba(248, 248, 249, 0.2);
+      background: rgb(248, 248, 249, 0.2);
+      border: 1px dashed #c5c5c5;
+      cursor: pointer;
       transition: 0.3s;
 
       &:hover {
-        background: rgba(248, 248, 249, 0.3);
+        background: rgb(248, 248, 249, 0.3);
       }
     }
   }
 
   .reply-box-bottom {
-    margin-top: 12px;
     display: flex;
     align-items: center;
+    margin-top: 12px;
 
     .tool-item {
       display: flex;
       align-items: center;
-      cursor: inherit;
       margin-right: 16px;
+      cursor: inherit;
       transition: 0.3s;
 
       .i-icon {
@@ -297,8 +309,8 @@ defineExpose({
       }
 
       .tool-title {
-        font-size: 13px;
         padding-left: 4px;
+        font-size: 13px;
       }
 
       &:hover {

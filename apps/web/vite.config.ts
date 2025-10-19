@@ -27,11 +27,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: path => path.replace(/^\/plat/, ''),
       },
-      /*'/plat': {
-        target: 'https://v2.youyul.com/',
-        changeOrigin: true,
-        secure: false,
-      },*/
+      // '/plat': {
+      //   target: 'https://v2.youyul.com/',
+      //   changeOrigin: true,
+      //   secure: false,
+      // },
     },
   },
   plugins: [

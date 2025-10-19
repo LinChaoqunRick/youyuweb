@@ -92,6 +92,7 @@ const props = defineProps({
   dataText: { type: String, default: '数据' },
   autoLoad: { type: Boolean, default: false }, // 滚动到底后自动加载
   loadTrigger: { type: Boolean, default: false }, // 配合autoLoad使用，如果是true，则需要点击后触发autoLoad
+  presetData: { type: Array<object>, default: null },
 });
 
 const { dispatch } = useStore();
@@ -104,7 +105,7 @@ const totalPageNum = ref<number>(0);
 const totalNum = ref<number>(props.total ?? 0);
 const restLoading = ref<boolean>(false);
 const failed = ref<boolean>(false);
-const dataList = ref<Array<unknown>>([]);
+const dataList = ref<Array<unknown>>(props.presetData ?? []);
 const fold = ref<boolean>(false);
 const restNum = computed(() => (props.total ?? totalNum.value) - dataList.value.length);
 
@@ -122,6 +123,9 @@ const getListData = () => {
   restLoading.value = true;
   dispatch(props.url, Object.assign({}, params, props.params))
     .then(res => {
+      if (pageNum.value === 1) {
+        dataList.value = [];
+      }
       dataList.value.push(...res.data.list);
       totalPageNum.value = res.data.pages;
       pageNum.value++;

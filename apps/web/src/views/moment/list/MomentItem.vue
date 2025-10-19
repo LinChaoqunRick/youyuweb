@@ -52,11 +52,11 @@
         >
           <template #content>
             <div class="operation-items">
-              <div v-if="data.userId === userInfo.id" class="operation-item delete-moment" @click="onDelete">
+              <div v-if="isOwn" class="operation-item delete-moment" @click="onDelete">
                 <i-delete theme="outline" size="14" fill="currentColor" />
                 删除
               </div>
-              <div v-if="data.userId === userInfo.id" class="operation-item edit-moment" @click="onEdit">
+              <div v-if="isOwn" class="operation-item edit-moment" @click="onEdit">
                 <i-editor theme="outline" size="14" fill="currentColor" />
                 编辑
               </div>
@@ -64,17 +64,9 @@
                 <i-doc-detail theme="outline" size="14" fill="currentColor" />
                 详情
               </div>
-              <div class="operation-item">
-                <i-people-unknown theme="outline" size="14" fill="currentColor" />
-                屏蔽作者
-              </div>
-              <div class="operation-item">
-                <i-caution theme="outline" size="14" fill="currentColor" />
-                举报
-              </div>
             </div>
           </template>
-          <div class="content-top-operation">
+          <div v-if="isOwn || showDetail" class="content-top-operation">
             <i-more-one theme="outline" size="22" fill="currentColor" />
           </div>
         </a-popover>
@@ -211,12 +203,12 @@
             url="listMomentCommentPage"
             :params="listParams"
           >
-            <MomentCommentItem
+            <VueCommentItem
               v-for="item in data?.list"
               :key="item.id"
-              class="comment-item"
               :data="item"
               :moment="props.data"
+              class="comment-item"
               @delete-success="deleteSuccess"
             />
             <div v-if="data?.pages > 1" class="comment-load-all">
@@ -236,20 +228,20 @@
 <script lang="ts" setup>
 import { ref, computed, nextTick } from 'vue';
 import type { PropType } from 'vue';
+import { ImagePreviewEmbed } from '@youyu/shared/components-vue';
+import { VueCommentItem } from '@youyu/shared/components-vue';
 import { message, Modal } from 'ant-design-vue';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
 import { useStore } from 'vuex';
 import { copyToClipboard } from '@/assets/utils/utils';
 import ContentData from '@/components/common/system/ContentData.vue';
 import LocationPreview from '@/components/common/utils/aMap/LocationPreview.vue';
-import { transformTagToHTML } from '@/components/common/utils/emoji/youyu_emoji';
-import ImagePreviewEmbed from '@/components/common/utils/image/ImagePreviceEmbed.vue';
 import SortSwitch from '@/components/common/utils/sortSwitch/SortSwitch.vue';
 import { DOMAIN } from '@/libs/consts';
 import openModal from '@/libs/tools/openModal';
 import MomentReplyEditor from '@/views/moment/components/MomentReplyEditor.vue';
 import type { momentListType } from '@/views/moment/types';
-import MomentCommentItem from '../components/MomentCommentItem.vue';
+import { transformTagToHTML } from '../../../../../../packages/shared/components-vue/emoji/youyu_emoji';
 import UserCardMoment from '../components/UserCardMoment.vue';
 
 const { getters, dispatch } = useStore();
@@ -260,12 +252,12 @@ const router = useRouter();
 const props = defineProps({
   data: {
     type: Object as PropType<momentListType>,
-    required: true
+    required: true,
   },
   showDetail: {
     type: Boolean,
-    default: true
-  }
+    default: true,
+  },
 });
 
 const emit = defineEmits(['deleteSuccess', 'onEdit', 'onCommentSaveSuccess', 'onCommentDeleteSuccess']);
@@ -279,7 +271,6 @@ const commentListShowVisibleIf = ref<boolean>(false);
 const commentListShowVisibleShow = ref<boolean>(false);
 const visible = ref<boolean>(false);
 const sort = ref<string>('new'); // true:最新 false:最热
-const loading = ref<boolean>(false);
 const likeLoading = ref<boolean>(false);
 const order = computed(() => (sort.value === 'new' ? 'create_time' : 'support_count'));
 const images = computed(() => {
@@ -301,16 +292,17 @@ const likeActive = computed(() => props.data.momentLike);
 const listParams = computed(() => ({
   momentId: props.data.id,
   pageSize: 5,
-  orderBy: order.value
+  orderBy: order.value,
 }));
 const replyEditorPlaceholder = computed(() => (props.data ? '回复@' + props.data.user.nickname : ''));
 const replyParams = computed(() => {
   return {
     momentId: props.data.id,
-    userIdTo: props.data.userId
+    userIdTo: props.data.userId,
   };
 });
 const ContentDataRef = ref<InstanceType<typeof ContentData> | null>(null);
+const isOwn = computed(() => props.data.user.id === userInfo.value.id);
 
 function set(value: number) {
   row.value = value;
@@ -360,14 +352,14 @@ const onDelete = () => {
     content: '确定删除这条时刻吗？',
     onOk() {
       return dispatch('deleteMoment', {
-        momentId: props.data.id
+        momentId: props.data.id,
       })
         .then(res => {
           message.success('删除成功');
           emit('deleteSuccess', props.data);
         })
         .catch(console.log);
-    }
+    },
   });
 };
 
@@ -378,7 +370,7 @@ const onEdit = () => {
     router.push({
       name: 'MomentDetail',
       params: { momentId: props.data.id },
-      query: { type: 'edit' }
+      query: { type: 'edit' },
     });
   }
 };
@@ -390,7 +382,7 @@ const onLike = () => {
   dispatch(isLike ? 'cancelMomentLike' : 'setMomentLike', {
     momentId: props.data.id,
     userId: userInfo.value.id,
-    userIdTo: props.data.userId
+    userIdTo: props.data.userId,
   })
     .then(res => {
       if (isLike) {
@@ -423,19 +415,19 @@ const onLocationPreview = () => {
   const location = {
     longitude: props.data.longitude,
     latitude: props.data.latitude,
-    name: props.data.location
+    name: props.data.location,
   };
   openModal({
     component: LocationPreview,
     componentProps: {
-      data: location
+      data: location,
     },
     title: `位置详情`,
     width: '80vw',
     maskClosable: false,
     keyboard: false,
     centered: true,
-    wrapClassName: 'select-position-modal-wrapper'
+    wrapClassName: 'select-position-modal-wrapper',
   });
 };
 
@@ -445,13 +437,15 @@ const onCopyLink = () => {
 
 defineExpose({
   // onCommentSubmit,
-  deleteSuccess
+  deleteSuccess,
 });
 </script>
 
 <style lang="scss" scoped>
 .moment-item {
+  margin-bottom: 8px;
   background-color: var(--youyu-body-background2);
+  border-radius: 4px;
 
   .moment-item-content {
     padding: 16px 16px 10px;
@@ -553,23 +547,23 @@ defineExpose({
         display: grid;
 
         &.col-3 {
-          grid-template-columns: repeat(3, 114px);
+          grid-template-columns: repeat(3, 134px);
         }
 
         &.col-2 {
-          grid-template-columns: repeat(2, 114px);
+          grid-template-columns: repeat(2, 134px);
         }
 
         &.col-1 {
           img {
-            width: 160px;
-            height: 160px;
+            width: 180px;
+            height: 180px;
           }
         }
 
         img {
-          width: 110px;
-          height: 110px;
+          width: 130px;
+          height: 130px;
           margin: 0 4px 4px 0;
           object-fit: cover;
           filter: brightness(0.94);

@@ -1,20 +1,13 @@
+import Antd, { Image } from 'ant-design-vue';
+
 import { createApp } from 'vue';
-import { Image } from 'ant-design-vue';
-import Antd from 'ant-design-vue';
-import IconPark from '@/libs/plugins/iconpark';
-import ImagePreview from '@/components/common/utils/image/ImagePreview.vue';
+import { ImagePreview } from '../../components-vue';
+import IconPark from '../../plugins/iconpark';
 import type { ImageModalConfig } from './types';
 
 export default function openImage(config: ImageModalConfig) {
   const imageProps = { ...Image.props };
   // 删除visible、confirmLoading用自定义
-  config = Object.assign(
-    {},
-    {
-      componentProps: {},
-    },
-    config
-  );
   if (!config.componentProps.list) {
     throw new Error('list is required!');
   }
@@ -36,10 +29,10 @@ export default function openImage(config: ImageModalConfig) {
           };
         },
         template: `
-        <transition name="fade">
-          <ImagePreview v-if="visible" v-bind="componentProps" @onClose="close" />
-        </transition>
-      `,
+          <transition name="fade">
+            <ImagePreview v-if="visible" v-bind="componentProps" @onClose="close" />
+          </transition>
+        `,
         props: {
           componentProps: {
             type: Object,
@@ -61,11 +54,11 @@ export default function openImage(config: ImageModalConfig) {
           this.visible = true;
         },
       },
-      config
+      config as Record<string, any>,
     ).use(Antd);
     IconPark(Comp);
     const preview = document.createElement('div');
-    const instance = Comp.mount(preview);
+    Comp.mount(preview);
     document.body.appendChild(preview);
   });
 }

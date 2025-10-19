@@ -5,31 +5,42 @@
         <div class="moment-detail-item">
           <MomentItem
             v-if="!isEdit"
+            ref="MomentRef"
             :data="moment"
             :show-detail="false"
-            @deleteSuccess="onMomentDeleteSuccess"
-            @onCommentDeleteSuccess="onCommentDeleteSuccess"
-            @onEdit="onEdit"
-            ref="MomentRef"
+            @delete-success="onMomentDeleteSuccess"
+            @on-comment-delete-success="onCommentDeleteSuccess"
+            @on-edit="onEdit"
           />
-          <MomentEditor v-else isEdit :form="formData" @saveSuccess="saveSuccess">
-            <template v-slot:bottom>
-              <a-button type="link" class="cancel-btn" @click="onEditCancel"> 取消</a-button>
+          <MomentEditor
+            v-else
+            is-edit
+            :form="formData"
+            @save-success="saveSuccess"
+          >
+            <template #bottom>
+              <a-button type="link" class="cancel-btn" @click="onEditCancel">
+                取消
+              </a-button>
             </template>
           </MomentEditor>
         </div>
         <div class="moment-comment-editor-wrapper mt-8">
-          <div class="editor-title">评论</div>
+          <div class="editor-title">
+            评论
+          </div>
           <MomentReplyEditor
             :params="replyParams"
-            @saveSuccess="onSaveCommentSuccess"
             :placeholder="replyEditorPlaceholder"
             :auto-focus="false"
+            @save-success="onSaveCommentSuccess"
           />
         </div>
         <div id="comment" class="moment-comment-list mt-8 mb-8">
           <div class="comment-list-top">
-            <div class="comment-count">全部评论（{{ moment.commentCount || 0 }}）</div>
+            <div class="comment-count">
+              全部评论（{{ moment.commentCount || 0 }}）
+            </div>
             <div class="sort-type">
               <div class="sort-item" :class="{ active: sort }" @click="handleSort(true)">
                 <i-time theme="filled" size="13" fill="currentColor" />
@@ -42,34 +53,24 @@
             </div>
           </div>
           <div class="comment-list">
-            <ContentList
-              url="listMomentCommentPage"
-              :params="listParams"
-              :total="moment.commentCount"
-              auto-load
-              load-trigger
-              unit="条"
-              data-text="评论"
+            <!-- @vue-generic {import('@youyu/shared/types/components-vue').Comment} -->
+            <vue-content-page
               ref="ContentListRef"
+              :url="LIST_MOMENT_COMMENT_PAGE"
+              :params="listParams"
+              unit-text="条"
+              data-text="评论"
             >
-              <template v-slot="{ list }">
-                <MomentCommentItem
+              <template #default="{ list }">
+                <VueCommentItem
                   v-for="item in list"
                   :key="item.id"
-                  class="comment-item"
                   :data="item"
-                  :moment="moment"
-                  @deleteSuccess="MomentRef?.deleteSuccess"
+                  :data-author-id="moment.userId"
+                  :login-user-id="userInfo.id"
                 />
               </template>
-              <template #loadMoreBox="{ loading, total }">
-                <span class="mr-8">
-                  查看全部<span class="comment-count">{{ moment.commentCount ?? total }} </span>条评论</span
-                >
-                <i-down v-if="!loading" theme="outline" size="14" fill="#1890ff" />
-                <i-loading-four v-else theme="outline" size="14" fill="#1890ff" />
-              </template>
-            </ContentList>
+            </vue-content-page>
           </div>
         </div>
       </div>
@@ -79,21 +80,20 @@
 
 <script lang="ts" setup>
 import { computed, ref, nextTick } from 'vue';
-import type { PropType } from 'vue';
-import { useStore } from 'vuex';
-import { useRoute, useRouter } from 'vue-router';
+import { LIST_MOMENT_COMMENT_PAGE } from '@youyu/shared/apis';
+import { VueContentPage } from '@youyu/shared/components-vue';
+import { VueCommentItem } from '@youyu/shared/components-vue';
 import { cloneDeep } from 'lodash';
-import type { momentListType } from '@/views/moment/types';
-import MomentItem from '../list/MomentItem.vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 import MomentReplyEditor from '@/views/moment/components/MomentReplyEditor.vue';
-import MomentCommentItem from '../components/MomentCommentItem.vue';
+import { transformTagToHTML } from '../../../../../../packages/shared/components-vue/emoji/youyu_emoji';
 import MomentEditor from '../components/MomentEditor.vue';
-import ContentList from '@/components/common/system/ContentList.vue';
-import { transformTagToHTML } from '@/components/common/utils/emoji/youyu_emoji';
+import MomentItem from '../list/MomentItem.vue';
 
 const route = useRoute();
 const router = useRouter();
-const { dispatch } = useStore();
+const { getters, dispatch } = useStore();
 
 const moment = ref<momentListType | null>(null);
 const MomentRef = ref<HTMLElement | null>(null);
@@ -101,6 +101,7 @@ const sort = ref<boolean>(true); // true:最新 false:最热
 const order = computed(() => (sort.value ? 'create_time' : 'support_count'));
 const isEdit = ref<boolean>(route.query.type === 'edit');
 const formData = ref({});
+const userInfo = computed(() => getters['userInfo']);
 const listParams = computed(() => ({
   momentId: moment.value.id,
   orderBy: order.value,
@@ -165,8 +166,8 @@ const saveSuccess = (data: momentListType) => {
 <style lang="scss" scoped>
 .moment-detail {
   .moment-detail-middle {
+    width: 1000px;
     margin: 0 auto;
-    width: 824px;
 
     .moment-detail-item {
       ::v-deep(.moment-item) {
@@ -184,51 +185,51 @@ const saveSuccess = (data: momentListType) => {
     }
 
     .moment-comment-editor-wrapper {
-      border-radius: 4px;
       padding: 16px 20px;
       background-color: var(--youyu-background1);
+      border-radius: 4px;
 
       .editor-title {
+        padding-bottom: 12px;
         font-size: 16px;
         font-weight: bold;
-        padding-bottom: 12px;
       }
     }
 
     .moment-comment-list {
+      padding: 8px 20px;
       background-color: var(--youyu-background1);
       border-top: 1px solid var(--youyu-border-color);
-      padding: 8px 20px;
       border-radius: 4px;
 
       .comment-list-top {
-        margin-top: 8px;
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
+        margin: 12px 0;
 
         .comment-count {
-          font-size: 16px;
+          font-size: 18px;
           font-weight: bold;
         }
 
         .sort-type {
           display: inline-flex;
           align-items: center;
+          padding: 3px;
           font-size: 14px;
-          color: #4e5969;
           font-weight: 400;
-          cursor: pointer;
+          color: #4e5969;
           background: var(--youyu-body-background-ligth);
           border-radius: 2px;
-          padding: 3px;
+          cursor: pointer;
 
           .sort-item {
             display: flex;
             align-items: center;
             padding: 2px 12px;
-            line-height: 22px;
             font-size: 14px;
+            line-height: 22px;
             color: #8a919f;
 
             ::v-deep(svg) {
@@ -238,8 +239,8 @@ const saveSuccess = (data: momentListType) => {
 
           .active {
             color: #1890ff;
-            border-radius: 2px;
             background: var(--youyu-body-background2);
+            border-radius: 2px;
 
             ::v-deep(svg) {
               margin-right: 4px;
@@ -251,17 +252,6 @@ const saveSuccess = (data: momentListType) => {
       .comment-list {
         span {
           color: #1890ff;
-        }
-
-        ::v-deep(.content-list) {
-          .comment-item {
-            padding: 8px 0;
-
-            &:last-child {
-              border-bottom: none !important;
-              padding-bottom: 0 !important;
-            }
-          }
         }
       }
     }

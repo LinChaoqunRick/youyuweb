@@ -139,7 +139,6 @@ provide('reload', reload);
   box-sizing: border-box;
   flex-direction: column;
   padding-top: 60px;
-  background-color: var(--youyu-body-background);
 
   .header {
     position: fixed;

@@ -1,6 +1,7 @@
 import { createApp } from 'vue';
 
 import { lineNumbers } from '@codemirror/view';
+import row from '@youyu/shared/directives/row';
 import Antd from 'ant-design-vue';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
@@ -10,7 +11,6 @@ import '@/libs/handlers/event-bus-handler';
 
 import focus from '@/libs/directives/focus';
 import login from '@/libs/directives/login';
-import row from '@/libs/directives/row';
 import scrollToEl from '@/libs/directives/scrollToEl.js';
 import slideIn from '@/libs/directives/vSlideIn';
 import IconPark from '@/libs/plugins/iconpark';

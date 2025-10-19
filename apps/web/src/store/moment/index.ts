@@ -52,9 +52,6 @@ export default {
     listMomentCommentPage(context: any, params: object) {
       return http.post(LIST_MOMENT_COMMENT_PAGE, params);
     },
-    listMomentCommentAll(context: any, params: object) {
-      return http.post(LIST_MOMENT_COMMENT_ALL, params);
-    },
     listMomentReplyPage(context: any, params: object) {
       return http.post(LIST_MOMENT_REPLY_PAGE, params);
     },

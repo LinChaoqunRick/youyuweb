@@ -33,7 +33,7 @@ export default {
 
 <script setup lang="ts">
 import { ref, computed, nextTick, onMounted } from 'vue';
-import { uploadToOss } from '@/components/common/utils/upload/utils';
+import { uploadToOss } from '../../../../apps/web/src/components/common/utils/upload/utils';
 
 const props = defineProps({
   modelValue: {
@@ -262,18 +262,18 @@ defineExpose({
 
 <style lang="scss" scoped>
 .editable-div {
-  background: var(--youyu-background5);
-  transition: 0.2s;
-  line-height: 2rem;
   min-height: 2rem;
-  border-radius: 4px;
+  line-height: 2rem;
+  background: var(--youyu-background5);
   border: 1px solid transparent;
+  border-radius: 4px;
+  transition: 0.2s;
 
   &.editor-active {
     border-color: #1890ff !important;
 
     ::v-deep(#box) {
-      &[contenteditable]:empty:before {
+      &[contenteditable]:empty::before {
         color: #adb2bc !important;
       }
     }
@@ -287,26 +287,27 @@ defineExpose({
 
     #box {
       position: relative;
+      box-sizing: content-box;
+      padding: 5px 10px;
       font-size: 14px;
       line-height: 24px;
-      /*min-height: 80px;*/
-      outline: none;
-      padding: 5px 10px;
-      box-sizing: content-box;
       white-space: pre-wrap;
+
+      /* min-height: 80px; */
+      outline: none;
       transition: 0.2s;
 
-      &[contenteditable]:empty:before {
-        content: attr(placeholder);
+      &[contenteditable]:empty::before {
         color: #8a919f;
         cursor: text;
+        content: attr(placeholder);
       }
 
       ::v-deep(img) {
-        vertical-align: sub;
         height: 20px !important;
-        cursor: default;
         margin: 0 2px;
+        vertical-align: sub;
+        cursor: default;
       }
     }
   }
@@ -321,7 +322,7 @@ defineExpose({
       color: var(--youyu-text1);
 
       &.exceed-error {
-        color: #ff0000;
+        color: #f00;
       }
     }
   }

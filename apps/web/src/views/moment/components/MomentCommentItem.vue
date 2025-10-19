@@ -1,19 +1,19 @@
 <template>
-  <div class="moment-comment-item" v-on-click-outside="onClickOutside">
+  <div v-on-click-outside="onClickOutside" class="moment-comment-item">
     <div class="moment-comment-detail">
       <div class="user-avatar">
         <a-popover
-          overlayClassName="user-info-moment-popover"
+          overlay-class-name="user-info-moment-popover"
           placement="top"
-          :mouseEnterDelay="0.6"
-          :mouseLeaveDelay="0.3"
-          @visibleChange="onUserVisibleChange"
+          :mouse-enter-delay="0.6"
+          :mouse-leave-delay="0.3"
+          @visible-change="onUserVisibleChange"
         >
           <template #content>
             <UserCardMoment :user="data.user" />
           </template>
           <RouterLink :to="{ name: 'userHome', params: { userId: data.user.id } }">
-            <img :src="data.user.avatar" />
+            <img :src="data.user.avatar" alt="avatar">
           </RouterLink>
         </a-popover>
       </div>
@@ -21,11 +21,11 @@
         <div class="comment-right-top">
           <div class="user-nickname">
             <a-popover
-              overlayClassName="user-info-moment-popover"
+              overlay-class-name="user-info-moment-popover"
               placement="top"
-              :mouseEnterDelay="0.6"
-              :mouseLeaveDelay="0.3"
-              @visibleChange="onUserVisibleChange"
+              :mouse-enter-delay="0.6"
+              :mouse-leave-delay="0.3"
+              @visible-change="onUserVisibleChange"
             >
               <template #content>
                 <UserCardMoment :user="data.user" />
@@ -34,32 +34,46 @@
                 <span>{{ data.user.nickname }}</span>
               </RouterLink>
             </a-popover>
-            <div class="author-text" v-if="data.user.id === moment.userId">作者</div>
+            <div v-if="data.user.id === moment.userId" class="author-text">
+              作者
+            </div>
           </div>
           <div class="info-data">
             <div class="publish-time" :title="data.createTime">
               {{ $dayjs().to(data.createTime) }}
             </div>
-            <div class="adname" v-if="data.adname">・{{ data.adname }}</div>
+            <div v-if="data.adname" class="adname">
+              ・{{ data.adname }}
+            </div>
           </div>
         </div>
         <div
+          v-row="{ set: set }"
           class="comment-content"
           :class="{ 'content-expand': expand }"
           :style="{ 'max-height': maxRow * 1 + 'rem' }"
-          v-row="{ set: set }"
           v-html="transformTagToHTML(data.content)"
-        ></div>
-        <div class="limit-btn" @click="expand = true" v-show="row > maxRow && !expand">展开</div>
-        <div class="limit-btn" @click="expand = false" v-show="row > maxRow && expand">收起</div>
-        <div class="content-images" v-if="images?.length && !preview">
-          <img :src="item" v-for="(item, index) in images" @click="onPreview(index)" />
+        />
+        <div v-show="row > maxRow && !expand" class="limit-btn" @click="expand = true">
+          展开
         </div>
-        <div class="content-image-preview" v-if="images?.length && preview">
-          <ImagePreviewEmbed :list="images" :current="current" @onClose="onClose" />
+        <div v-show="row > maxRow && expand" class="limit-btn" @click="expand = false">
+          收起
+        </div>
+        <div v-if="images?.length && !preview" class="content-images">
+          <img
+            v-for="(item, index) in images"
+            :key="item"
+            :src="item"
+            alt="图片"
+            @click="onPreview(index)"
+          >
+        </div>
+        <div v-if="images?.length && preview" class="content-image-preview">
+          <ImagePreviewEmbed :list="images" :current="current" @on-close="onClose" />
         </div>
         <div class="comment-operation">
-          <div class="ope-item" :class="{ 'ope-active': data.commentLike }" v-login="onLike">
+          <div v-login="onLike" class="ope-item" :class="{ 'ope-active': data.commentLike }">
             <i-good-two :theme="data.commentLike ? 'filled' : 'outline'" size="14" fill="currentColor" />
             点赞<span v-if="data.supportCount">({{ data.supportCount }})</span>
           </div>
@@ -74,7 +88,12 @@
             cancel-text="否"
             @confirm="onConfirmDelete"
           >
-            <div class="ope-item delete-ope" :class="{ visible: deleteVisible }" v-if="showDelete" @click="onDelete">
+            <div
+              v-if="showDelete"
+              class="ope-item delete-ope"
+              :class="{ visible: deleteVisible }"
+              @click="onDelete"
+            >
               删除
             </div>
           </a-popconfirm>
@@ -83,31 +102,28 @@
     </div>
     <div v-if="active" class="moment-reply">
       <div class="user-avatar">
-        <img v-if="isLogin" :src="userInfo.avatar" />
-        <img v-else src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png" />
+        <img v-if="isLogin" :src="userInfo.avatar">
+        <img v-else src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png">
       </div>
       <div class="reply-box-wrapper">
         <MomentReplyEditor
-          :params="replyParams"
-          @saveSuccess="onReplySuccess"
-          :placeholder="replyEditorPlaceholder"
           ref="MomentReplyEditorRef"
+          :params="replyParams"
+          :placeholder="replyEditorPlaceholder"
+          @save-success="onReplySuccess"
         />
       </div>
     </div>
-    <ContentList
+    <vue-content-page
       v-if="!!data.replyCount"
-      url="listMomentReplyPage"
-      class="reply-list"
-      v-slot="{ list }"
-      :total="data.replyCount"
-      :show-loaded-all="false"
-      :params="params"
-      :immediate="false"
-      foldable
-      unit="条"
-      data-text="回复"
       ref="ContentListRef"
+      mode="manual"
+      action-align="left"
+      unit-text="条"
+      data-text="回复"
+      :url="LIST_MOMENT_REPLY_PAGE"
+      :total="data.replyCount"
+      :params="params"
     >
       <MomentReplyItem
         v-for="item in list"
@@ -115,31 +131,30 @@
         :data="item"
         :root="data"
         :moment="moment"
-        @saveSuccess="saveSuccess"
-        @deleteSuccess="deleteSuccess"
+        @save-success="saveSuccess"
+        @delete-success="deleteSuccess"
       />
-    </ContentList>
+    </vue-content-page>
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'MomentCommentItem',
-};
-</script>
-
 <script setup lang="ts">
-import { ref, computed, inject, nextTick } from 'vue';
-import { useStore } from 'vuex';
-import { RouterLink } from 'vue-router';
-import { message } from 'ant-design-vue';
+import { ref, computed, nextTick } from 'vue';
 import { vOnClickOutside } from '@vueuse/components';
-import { transformTagToHTML } from '@/components/common/utils/emoji/youyu_emoji';
-import ImagePreviewEmbed from '@/components/common/utils/image/ImagePreviceEmbed.vue';
+import { LIST_MOMENT_REPLY_PAGE } from '@youyu/shared/apis';
+import { VueContentPage } from '@youyu/shared/components-vue';
+import { message } from 'ant-design-vue';
+import { RouterLink } from 'vue-router';
+import { useStore } from 'vuex';
 import MomentReplyEditor from '@/views/moment/components/MomentReplyEditor.vue';
 import MomentReplyItem from '@/views/moment/components/MomentReplyItem.vue';
+import { transformTagToHTML } from '../../../../../../packages/shared/components-vue/emoji/youyu_emoji';
+import ImagePreviewEmbed from '../../../../../../packages/shared/components-vue/image/ImagePreviceEmbed.vue';
 import UserCardMoment from '../components/UserCardMoment.vue';
-import ContentList from '@/components/common/system/ContentList.vue';
+
+defineOptions({
+  name: 'CommentItem',
+});
 
 const { getters, dispatch } = useStore();
 const props = defineProps({
@@ -181,7 +196,7 @@ const replyParams = computed(() => {
 });
 
 const MomentReplyEditorRef = ref<InstanceType<typeof MomentReplyEditor>>();
-const ContentListRef = ref<InstanceType<typeof ContentList>>();
+const ContentListRef = ref();
 
 function set(value: number) {
   row.value = value;
@@ -236,7 +251,7 @@ const onClose = () => {
 
 const onClickOutside = () => {
   if (!active.value) return;
-  const reply = MomentReplyEditorRef.value.reply;
+  const { reply } = MomentReplyEditorRef.value;
   if (!reply.content && !reply.images?.length) {
     active.value = false;
   }
@@ -272,26 +287,31 @@ const onUserVisibleChange = (visible: boolean) => {
 
 <style lang="scss" scoped>
 .moment-comment-item {
+  padding: 8px;
+  margin-bottom: 8px;
+  //border: 1px solid var(--youyu-border-color);
+  border-radius: 8px;
+
   .moment-comment-detail {
     display: flex;
 
     .user-avatar {
-      height: 36px;
-      width: 36px;
-      border-radius: 100%;
+      width: 40px;
+      height: 40px;
       overflow: hidden;
       border: var(--youyu-avatar-border);
+      border-radius: 100%;
 
       img {
-        height: 100%;
         width: 100%;
+        height: 100%;
       }
     }
 
     .comment-right {
       flex: 1;
-      margin-left: 8px;
       margin-top: 2px;
+      margin-left: 8px;
 
       .comment-right-top {
         display: flex;
@@ -307,14 +327,14 @@ const onUserVisibleChange = (visible: boolean) => {
 
           .author-text {
             display: inline-block;
+            padding: 0 6px;
+            margin-left: 5px;
             font-size: 12px;
             font-weight: normal;
+            line-height: 18px;
             color: #fff;
-            margin-left: 5px;
             background: linear-gradient(270deg, #30b6ec, #0692ef 95%);
             border-radius: 12px;
-            padding: 0 6px;
-            line-height: 18px;
           }
         }
 
@@ -322,59 +342,59 @@ const onUserVisibleChange = (visible: boolean) => {
           position: relative;
           display: flex;
           align-items: center;
-          font-size: 13px;
-          color: #909090;
           padding-left: 6px;
           margin-left: 6px;
+          font-size: 13px;
+          color: #909090;
 
-          &:before {
+          &::before {
             position: absolute;
             top: 4.5px;
             left: 0;
-            content: '';
-            height: 14px;
             width: 2px;
+            height: 14px;
             background-color: var(--youyu-border-color);
+            content: '';
           }
         }
       }
 
       ::v-deep(.comment-content) {
         margin: 6px 0;
-        white-space: pre-wrap;
         overflow: hidden;
         font-size: 14px;
+        white-space: pre-wrap;
 
         &.content-expand {
           max-height: none !important;
         }
 
         img {
-          vertical-align: sub;
           width: auto;
           height: 20px;
           margin: 0 2px;
+          vertical-align: sub;
         }
       }
 
       .limit-btn {
-        cursor: pointer;
+        margin-right: 20px;
         font-size: 14px;
         line-height: 22px;
         color: #1e80ff;
-        margin-right: 20px;
+        cursor: pointer;
       }
 
       .content-images {
         margin-bottom: 8px;
 
         img {
-          height: 90px;
           width: 90px;
+          height: 90px;
           margin: 0 4px 4px 0;
           object-fit: cover;
-          cursor: zoom-in;
           filter: brightness(0.94);
+          cursor: zoom-in;
         }
       }
 
@@ -384,12 +404,12 @@ const onUserVisibleChange = (visible: boolean) => {
 
         .ope-item {
           display: flex;
-          justify-content: center;
           align-items: center;
-          color: #8a919f;
+          justify-content: center;
           margin-right: 10px;
-          cursor: pointer;
           font-size: 13px;
+          color: #8a919f;
+          cursor: pointer;
 
           &:hover {
             color: #1890ff;
@@ -400,10 +420,10 @@ const onUserVisibleChange = (visible: boolean) => {
           }
 
           &.delete-ope {
-            color: #ff4d4f;
-            margin-left: auto;
             display: none;
             margin-right: 0;
+            margin-left: auto;
+            color: #ff4d4f;
 
             &.visible {
               display: inherit !important;
@@ -423,50 +443,22 @@ const onUserVisibleChange = (visible: boolean) => {
     }
   }
 
-  .reply-list {
-    margin-left: 45px;
-
-    ::v-deep(.bottom-operation) {
-      justify-content: flex-start;
-
-      > div {
-        margin-right: 12px;
-      }
-    }
-
-    ::v-deep(.data-list) {
-      margin-top: 6px;
-      padding: 0 12px;
-      border-radius: 6px;
-      border: 1px solid var(--youyu-border-color);
-
-      .moment-reply-item {
-        border-top: 1px solid var(--youyu-border-color);
-        padding: 10px 0;
-
-        &:first-child {
-          border-top: none;
-        }
-      }
-    }
-  }
-
   .moment-reply {
-    margin-top: 12px;
     display: flex;
     align-items: flex-start;
+    margin-top: 12px;
 
     .user-avatar {
-      height: 36px;
       width: 36px;
-      border-radius: 100%;
-      overflow: hidden;
+      height: 36px;
       margin-right: 8px;
+      overflow: hidden;
       border: var(--youyu-avatar-border);
+      border-radius: 100%;
 
       img {
-        height: 100%;
         width: 100%;
+        height: 100%;
       }
     }
 
@@ -476,8 +468,8 @@ const onUserVisibleChange = (visible: boolean) => {
     }
 
     ::v-deep(.editable-div) {
-      border-radius: 2px;
       border: 1px solid transparent;
+      border-radius: 2px;
       transition: 0.3s;
 
       &.editor-active {
