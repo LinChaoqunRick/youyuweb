@@ -1,11 +1,12 @@
 import { message } from 'ant-design-vue';
 import axios, { AxiosError, type AxiosProgressEvent } from 'axios';
-import dayjs from 'dayjs';
 import { fileTypeFromBuffer, type FileTypeResult } from 'file-type';
 import heic2any from 'heic2any';
 import { merge } from 'lodash';
-import store from '@/store';
-import type { UploadConfig, UploadResult } from './types';
+import moment from 'moment';
+import { OSS_POLICY } from '../../apis';
+import http from '../../network';
+import type { OssPolicy, UploadConfig, UploadResult } from './types';
 
 export const isImageFile = (file: File) => {
   // 检查图片类型
@@ -19,11 +20,10 @@ export const isImageFile = (file: File) => {
 
 /**
  * 创建文件存储路径
- * @param rootDir bucket的根目录
  * @param fileName 文件名
  */
 export function createFileName(fileName: string) {
-  return dayjs(new Date()).format('YYYYMMDDHHmmss') + '_' + fileName;
+  return `${moment(new Date()).format('YYYYMMDDHHmmss')}_${fileName}`;
 }
 
 export async function uploadToOss(files: File[], config?: UploadConfig): Promise<UploadResult[]> {
@@ -31,7 +31,7 @@ export async function uploadToOss(files: File[], config?: UploadConfig): Promise
     accept: '.jpg, .jpeg, .png, .JPG, .PNG',
     maxSize: 20,
     needTip: true,
-    policyPath: 'getOssPolicy',
+    policyPath: OSS_POLICY,
   };
 
   const mergedConfig = merge({}, defaultConfig, config);
@@ -49,30 +49,30 @@ export async function uploadToOss(files: File[], config?: UploadConfig): Promise
     const nameLegal = mergedConfig.accept.indexOf(suffix) > -1;
     if (!nameLegal) {
       message.error(`只能上传${mergedConfig.accept}类型的文件`);
-      return;
+      return [];
     }
     const sizeExceed = file.size / 1024 / 1024 < mergedConfig.maxSize;
     if (!sizeExceed) {
       message.error(`文件大小不能大于${mergedConfig.maxSize}MB`);
-      return;
+      return [];
     }
   }
 
   // 上传步骤1： 获取oss临时凭证
-  let hide: Function;
-  const progressList = Array.from({ length: files.length }).map(item => 0);
+  let hide: () => void;
+  const progressList = Array.from({ length: files.length }).map(_ => 0);
   if (mergedConfig.needTip) {
     hide = message.loading('上传中...', 0);
   }
 
-  const res = await store.dispatch(mergedConfig.policyPath, mergedConfig?.data).catch(console.error);
-  const {data} = res;
+  const res = await http.post<OssPolicy>(mergedConfig.policyPath, mergedConfig?.data);
+  const { data } = res;
   if (!data) {
     throw new Error('签名获取失败');
   }
 
   // 上传步骤2： 上传文件至oss
-  return await Promise.all(
+  return Promise.all(
     files.map(async (file: File, index: number): Promise<UploadResult> => {
       const file_name = createFileName(file.name);
       const form = new FormData();
@@ -92,18 +92,19 @@ export async function uploadToOss(files: File[], config?: UploadConfig): Promise
             'Content-Type': 'multipart/form-data',
           },
           onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-            const progress = Number((((progressEvent.loaded / (progressEvent?.total || 1)) * 100) | 0).toFixed(2));
-            progressList[index] = progress;
+            progressList[index] = Number(((progressEvent.loaded / (progressEvent?.total || 1)) * 100).toFixed(2));
             mergedConfig?.progress?.(progressList);
           },
         });
-        return { url: `${data.host}/${data.dir}${file_name}`, path: `${data.dir}${file_name}`, file: file };
+        return { url: `${data.host}/${data.dir}${file_name}`, path: `${data.dir}${file_name}`, file };
       } catch (error) {
         progressList[index] = -1;
         mergedConfig?.progress?.(progressList);
         return error;
       } finally {
-        hide && hide();
+        if (hide) {
+          hide();
+        }
       }
     }),
   )
@@ -143,7 +144,7 @@ export const convertHEICFileToBlob = async (heicFile: File) => {
 
 export const getUrlImageFormat = (rawUrl: string) => {
   const url = new URL(rawUrl);
-  const {pathname} = url;
+  const { pathname } = url;
   return pathname.substring(pathname.lastIndexOf('.') + 1).toUpperCase();
 };
 
@@ -156,7 +157,7 @@ export const formatSize = (bytes: number, decimals: number = 2) => {
 
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + sizes[i];
+  return parseFloat((bytes / k ** i).toFixed(dm)) + sizes[i];
 };
 
 export const getFileType = async (file: File): Promise<FileTypeResult | undefined> => {

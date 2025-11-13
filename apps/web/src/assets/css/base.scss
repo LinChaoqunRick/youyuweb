@@ -20,8 +20,10 @@ html {
 }
 
 body {
-  background-image: url("/static/images/background/bg.png");
+  //background-image: url("/static/images/background/bg.png");
+  background-image: url("https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/gaoqi_hangpai.jpg?x-oss-process=style/blur");
   background-attachment: fixed;
+  background-size: cover;
 }
 
 * {

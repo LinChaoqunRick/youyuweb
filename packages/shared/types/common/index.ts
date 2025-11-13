@@ -23,6 +23,32 @@ export interface BasicUserInfo {
   signature: string;
 }
 
+export interface Visitor {
+  id: number;
+  nickname: string;
+  avatar: string;
+  email: string;
+  homepage: string;
+  adcode: number;
+  adname: string;
+  createTime: string;
+  updateTime: string;
+  deleted: number;
+}
+
+export interface Actor {
+  id: number;
+  nickname: string;
+  avatar: string;
+  sex: number;
+  level: number;
+  adcode: number;
+  adname: string;
+  signature: string;
+  follow: boolean;
+  type: number;
+}
+
 export interface Area {
   name: string;
   fullName: string;
@@ -64,10 +90,10 @@ export interface Comment {
   createTime: string;
   updateTime: string;
   replyCount: number;
-  adcode?: string;
-  adname?: string;
-  user: BasicUserInfo;
-  userTo: BasicUserInfo;
+  adcode: string;
+  adname: string;
+  actor: Actor;
+  actorTo: Actor;
   commentLike: boolean;
   images: string;
   children: Comment[];

@@ -33,13 +33,10 @@ export default {
 
 <script setup lang="ts">
 import { ref, computed, nextTick, onMounted } from 'vue';
-import { uploadToOss } from '../../../../apps/web/src/components/common/utils/upload/utils';
+
+const model = defineModel({ type: String, default: '' });
 
 const props = defineProps({
-  modelValue: {
-    type: String,
-    default: '',
-  },
   row: {
     type: Number,
     default: 3,
@@ -66,7 +63,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['update:modelValue', 'uploadSuccess']);
+const emit = defineEmits(['uploadSuccess']);
 
 const contenteditable = ref<boolean>(true);
 const box = ref<HTMLElement | null>(null);
@@ -79,7 +76,7 @@ const supportRange = typeof document.createRange === 'function';
 const contentLengthExceed = computed(() => totalStrLength.value > props.maxLength);
 
 onMounted(() => {
-  box.value.innerHTML = props.modelValue;
+  box.value.innerHTML = model.value;
   calcTextAreaLength();
   if (props.autoFocus) {
     box.value.focus();
@@ -142,7 +139,7 @@ const saveSelection = () => {
 };
 
 const updateModelValue = () => {
-  emit('update:modelValue', box.value?.innerHTML);
+  model.value = box.value?.innerHTML ?? '';
 };
 
 const insertHtml = (html: HTMLElement | string) => {
@@ -270,6 +267,7 @@ defineExpose({
   transition: 0.2s;
 
   &.editor-active {
+    background: white;
     border-color: #1890ff !important;
 
     ::v-deep(#box) {
@@ -326,9 +324,5 @@ defineExpose({
       }
     }
   }
-}
-
-.editor-active {
-  background: var(--youyu-background1);
 }
 </style>

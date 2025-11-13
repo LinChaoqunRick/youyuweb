@@ -11,16 +11,14 @@
       :capture="null"
       style="display: none"
       @change="handleChange"
-    >
+    />
     <div class="input-trigger" @click="onTriggerInput">
       <slot :progress="progress">
         <div class="upload-box">
           <div class="progress-box" :style="{ width: `${totalProgress}%` }" />
           <div class="upload-button">
             <i-upload-one theme="outline" size="18" fill="currentColor" />
-            <div class="ant-upload-text">
-              点击上传
-            </div>
+            <div class="ant-upload-text">点击上传</div>
           </div>
         </div>
       </slot>
@@ -33,7 +31,7 @@ import { ref, nextTick } from 'vue';
 import { message } from 'ant-design-vue';
 import { AxiosError } from 'axios';
 import { merge } from 'lodash';
-import { convertHEICFileToBlob, getFileType, uploadToOss } from '@/components/common/utils/upload/utils';
+import { convertHEICFileToBlob, getFileType, uploadToOss } from './utils.ts';
 import type { FileExtend, UploadResult } from './types';
 import type { FileTypeResult } from 'file-type';
 
@@ -43,32 +41,32 @@ const files = defineModel<Array<FileExtend | string>>({ default: [] }); // v-mod
 const props = defineProps({
   config: {
     type: Object,
-    default: () => ({})
+    default: () => ({}),
   },
   disabled: {
     type: Boolean,
-    default: false
+    default: false,
   },
   maxSize: {
     type: Number,
-    default: 20
+    default: 20,
   },
   maxNum: {
     type: Number,
-    default: 0
+    default: 0,
   },
   accept: {
     type: String,
-    default: '.jpg, .jpeg, .png, .JPG, .PNG'
+    default: '.jpg, .jpeg, .png, .JPG, .PNG',
   },
   autoUpload: {
     type: Boolean,
-    default: false
+    default: false,
   },
   autoClear: {
     type: Boolean,
-    default: true
-  }
+    default: true,
+  },
 });
 
 const progress = ref<number[]>([]);
@@ -93,7 +91,7 @@ const handleChange = async (event: Event) => {
       // 校验文件
       const { ext } = typeInfo;
       // 文件格式是否合法
-      const isExtLegal = (props.accept.toLowerCase()).indexOf(ext.toLowerCase()) > -1;
+      const isExtLegal = props.accept.toLowerCase().indexOf(ext.toLowerCase()) > -1;
       if (!isExtLegal) {
         return message.error(`只能上传${props.accept}类型的文件`);
       }
@@ -129,14 +127,14 @@ const onTriggerInput = () => {
 const upload = async () => {
   const uploadFiles = files.value.filter(item => (item as FileExtend).progress < 0);
   if (!uploadFiles.length) {
-    return;
+    return [];
   }
   const defaultConfig = {
     data: { base: 'post/images' },
     needTip: false, // 不需要提示
     progress: uploadProgress,
     accept: props.accept,
-    maxSize: props.maxSize
+    maxSize: props.maxSize,
   };
   const mergedConfig = merge(defaultConfig, props.config);
   const res: UploadResult[] = await uploadToOss(uploadFiles as File[], mergedConfig);
@@ -172,7 +170,7 @@ defineExpose({
   files,
   upload,
   progress,
-  triggerInput: onTriggerInput
+  triggerInput: onTriggerInput,
 });
 </script>
 

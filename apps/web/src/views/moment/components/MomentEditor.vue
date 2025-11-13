@@ -342,7 +342,7 @@ const onUploadProgress = (progress: number[]) => {
 
 <style lang="scss" scoped>
 .moment-editor {
-  width: 824px;
+  width: 100%;
   padding: 20px 20px 0;
   background-color: var(--youyu-background1);
   border-radius: 4px;
@@ -558,7 +558,8 @@ const onUploadProgress = (progress: number[]) => {
   }
 
   ::v-deep(.editor-active) {
-    border-color: transparent !important;
+    //border-color: transparent !important;
+    //background: var(--youyu-background1) !important;
   }
 }
 

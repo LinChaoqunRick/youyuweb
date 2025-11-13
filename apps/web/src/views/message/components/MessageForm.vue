@@ -96,9 +96,9 @@
 
 <script setup lang="ts">
 import { computed, type PropType, reactive, ref } from 'vue';
+import { checkEmail } from '@youyu/shared/utils/antdv-validate';
 import { type FormInstance, type Input, message } from 'ant-design-vue';
 import { useStore } from 'vuex';
-import { checkEmail } from '@/libs/validate/validate';
 import type { Message } from '@youyu/shared/types/vo';
 
 const props = defineProps({

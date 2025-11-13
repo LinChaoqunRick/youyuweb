@@ -56,10 +56,10 @@
 import { inject, reactive, ref } from 'vue';
 import type { PropType } from 'vue';
 import { cleanCookieLocalStorage } from '@youyu/shared/utils';
+import { checkPassword } from '@youyu/shared/utils/antdv-validate';
 import { message } from 'ant-design-vue';
 import { useStore } from 'vuex';
 import smsCode from '@/enums/sms/smsCode';
-import { checkPassword } from '@/libs/validate/validate';
 import type { User } from '@/types/user';
 
 const props = defineProps({

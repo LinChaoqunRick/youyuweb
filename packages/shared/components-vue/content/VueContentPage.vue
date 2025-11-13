@@ -1,7 +1,7 @@
 <template>
   <div :class="['vue-content-page', props.actionAlign === 'center' ? 'action-align-center' : 'action-align-left']">
     <div class="data-list">
-      <slot :list="dataList" />
+      <slot :list="dataList" :unshiftData="unshiftData" :removeById="removeById" />
     </div>
     <div v-if="hideActionFinish ? !isFinish : true" ref="statusRef" class="vue-content-page-status">
       <div v-if="isLoading" class="content-status content-status-loading">
@@ -36,17 +36,18 @@
 </template>
 
 <script lang="ts" generic="T extends BasicVoProps" setup>
-import { computed, type PropType, ref, shallowRef, useTemplateRef } from 'vue';
+import { computed, type PropType, ref, useTemplateRef, type Ref } from 'vue';
 import http from '../../network';
 import type { BasicVoProps, PageResult } from '../../types/common';
 import { PageStatus } from '../../types/components-vue';
 import { Spin } from 'ant-design-vue';
 import { vIntersectionObserver } from '@vueuse/components';
 
-type Mode = 'auto' | 'trigger' | 'manual';
+type Mode = 'auto' | 'trigger' | 'manual' | 'lazy';
 // auto: 每次滑动到底部，自动加载数据
 // trigger: 首次需要点击，后续同auto
 // manual: 每次都需要手动点击才能加载数据
+// lazy: 加载第一页数据，后续手动加载
 
 const props = defineProps({
   presetData: { type: Object as PropType<T[]>, default: () => [] }, // 预设数据
@@ -67,7 +68,7 @@ const props = defineProps({
 
 const pageNum = ref(1);
 const status = ref<PageStatus>(props.total === props.presetData.length ? PageStatus.FINISH : PageStatus.READY);
-const dataList = shallowRef<T[]>([...props.presetData]);
+const dataList = ref<T[]>([...props.presetData]) as Ref<T[]>;
 const total = ref(props.total ?? 0);
 const unLocked = ref(false);
 
@@ -79,6 +80,15 @@ const isFailed = computed(() => status.value === PageStatus.FAILED);
 const readyText = computed(() => (props.readyText ? props.readyText : '加载更多' + props.dataText));
 const finishText = computed(() => (props.readyText ? props.readyText : '已加载全部' + props.dataText));
 const remainCount = computed(() => total.value - dataList.value.length);
+
+function refresh() {
+  status.value = PageStatus.READY;
+  pageNum.value = 1;
+  total.value = props.total ?? 0;
+  unLocked.value = false;
+  dataList.value = [];
+  getPageData();
+}
 
 function getPageData() {
   if (!isReady.value || !props.url) {
@@ -94,12 +104,11 @@ function getPageData() {
       ...params,
     })
     .then(res => {
-      console.log(pageNum.value);
       if (pageNum.value === 1) {
         // 首次直接赋值，避免有presetData影响
         dataList.value = res.data.list;
       } else {
-        dataList.value = [...dataList.value, ...res.data.list];
+        dataList.value.push(...res.data.list);
       }
       total.value = res.data.total;
       pageNum.value = pageNum.value + 1;
@@ -131,11 +140,19 @@ function onIntersectionObserver([entry]: IntersectionObserverEntry[]) {
     if (unLocked.value) {
       getPageData();
     }
+  } else if (mode === 'lazy') {
+    if (!unLocked.value) {
+      getPageData();
+    }
   }
 }
 
 function unshiftData(data: T) {
   dataList.value = [data, ...dataList.value];
+
+  if (dataList.value.length === total.value) {
+    status.value = PageStatus.FINISH;
+  }
 }
 
 function removeById(id: number) {
@@ -149,6 +166,7 @@ defineExpose({
   dataList,
   unshiftData,
   removeById,
+  refresh,
 });
 </script>
 

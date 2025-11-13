@@ -8,11 +8,20 @@
         :mouse-leave-delay="0.3"
       >
         <template #content>
-          <vue-popper-user-card :user="data.user" />
+          <vue-popper-user-card :user="data.actor" />
         </template>
-        <router-link :to="{ name: 'userHome', params: { userId: data.user.id } }">
-          <img :src="props.data.user.avatar" alt="avatar" :style="{ width: props.avatarSize + 'px' }" />
-        </router-link>
+        <div
+          v-if="isActorUser"
+          class="comment-actor-avatar"
+          :style="{ width: props.avatarSize + 'px', height: props.avatarSize + 'px' }"
+        >
+          <router-link :to="{ name: 'userHome', params: { userId: data.actor.id } }">
+            <img :src="props.data.actor.avatar" alt="avatar" />
+          </router-link>
+        </div>
+        <a-avatar v-else :size="props.avatarSize" :style="{ backgroundColor: '#1890ff', verticalAlign: 'middle' }">
+          {{ props.data.actor.nickname.substring(0, 3) }}
+        </a-avatar>
       </a-popover>
     </div>
     <div class="comment-right">
@@ -24,10 +33,10 @@
           :mouse-leave-delay="0.3"
         >
           <template #content>
-            <vue-popper-user-card :user="data.user" />
+            <vue-popper-user-card :user="data.actor" />
           </template>
-          <router-link :to="{ name: 'userHome', params: { userId: data.user.id } }">
-            <span class="user-nickname">{{ data.user.nickname }}</span>
+          <router-link :to="{ name: 'userHome', params: { userId: data.actor.id } }">
+            <span class="user-nickname">{{ data.actor.nickname }}</span>
           </router-link>
         </a-popover>
         <div v-if="isDataAuthor" class="author-text">博主</div>
@@ -37,7 +46,7 @@
         <div v-if="data.adname" class="adname">· {{ data.adname }}</div>
       </div>
       <div class="comment-content">
-        <div v-if="props.data.replyId !== -1" class="comment-content-at">@{{ props.data.userTo?.nickname }}</div>
+        <div v-if="props.data.replyId !== -1" class="comment-content-at">@{{ props.data?.actorTo?.nickname }}</div>
         <div v-html="transformTagToHTML(props.data.content)" class="comment-content-text"></div>
         <div v-if="images.length && !preview" class="content-images">
           <img v-for="(item, index) in images" :key="item" :src="item" alt="图片" @click="onPreview(index)" />
@@ -62,50 +71,24 @@
           cancel-text="否"
           @confirm="onConfirmDelete"
         >
-          <div v-if="isAuthor" class="action-item action-delete" :class="{ visible: deleteVisible }" @click="onDelete">
+          <div v-if="isAuthor || isDataAuthor" class="action-item action-delete" :class="{ visible: deleteVisible }">
             <i-delete theme="outline" size="14" fill="currentColor" title="删除" />
             删除
           </div>
         </a-popconfirm>
       </div>
-      <vue-comment-editor :params="{}" :is-login="false" :auto-focus="false" />
-      <div v-if="props.data.replyCount" class="comment-replies">
-        <vue-content-page
-          :preset-data="props.data.children"
-          :url="LIST_MOMENT_COMMENT_PAGE"
-          :params="replyParams"
-          :total="props.data.replyCount"
-          hide-action-finish
-          mode="manual"
-          action-align="left"
-        >
-          <template v-slot:ready="{ remainCount }">
-            <span class="ready-text">
-              剩下
-              <span class="remain-count">{{ remainCount }}</span>
-              条回复
-            </span>
-            <i-down theme="outline" size="16" fill="currentColor" />
-          </template>
-          <template v-slot:loading="{ remainCount }">
-            <span class="ready-text">
-              剩下
-              <span class="remain-count">{{ remainCount }}</span>
-              条回复
-            </span>
-            <i-loading-four theme="outline" size="14" fill="#1890ff" />
-          </template>
-          <template #default="{ list }">
-            <vue-comment-item
-              v-for="item in list"
-              :data="item"
-              :avatar-size="32"
-              :data-author-id="props.dataAuthorId"
-              :login-user-id="props.loginUserId"
-            />
-          </template>
-        </vue-content-page>
-      </div>
+      <vue-comment-editor
+        v-if="active"
+        :auto-focus="false"
+        :save-url="props.saveUrl"
+        :save-params="props.saveParams"
+        :avatar="props.avatar"
+        :user-mode="props.userMode"
+        :avatar-size="props.avatarSize"
+        :on-success="onSaveSuccess"
+        @on-click-outside="inactiveEditor"
+      />
+      <slot class="comment-replies" name="bottomReply" />
     </div>
   </div>
 </template>
@@ -116,38 +99,40 @@ import type { Comment } from '../../types/common';
 import { RouterLink } from 'vue-router';
 import VuePopperUserCard from '../content/VuePopperUserCard.vue';
 import { transformTagToHTML } from '../emoji/youyu_emoji.ts';
-import { VueContentPage } from '../index.ts';
-import { VueCommentItem } from '../index.ts';
 import { formatSmartDate } from '../../utils';
-import { LIST_MOMENT_COMMENT_PAGE } from '../../apis';
 import { ImagePreviewEmbed } from '../index.ts';
 import VueCommentEditor from './VueCommentEditor.vue';
+import { getCommentActorType } from '../../utils/common-utils.ts';
+import { ActorType } from '../../consts';
+import http from '../../network';
 
 const props = defineProps({
+  userMode: { type: Boolean, default: false },
   data: { type: Object as PropType<Comment>, required: true },
   dataAuthorId: { type: Number }, // 数据的作者，注意不是评论的作者
   loginUserId: { type: Number }, // 当前登录用户
-  avatarSize: { type: Number, default: 40 },
+  avatar: { type: String },
+  avatarSize: { type: Number, default: 36 },
+  saveUrl: { type: String, required: true },
+  removeUrl: { type: String, required: true },
+  saveParams: { type: Object as PropType<Record<string, any>>, default: () => ({}) },
 });
 
-const active = ref<boolean>(false);
+const emit = defineEmits(['onSaveSuccess', 'onRemoveSuccess']);
+
+const active = ref<boolean>(false); // 回复框激活
 const deleteVisible = ref<boolean>(false);
 const preview = ref<boolean>(false);
 const current = ref<number>(0);
 
-const isDataAuthor = computed(() => props.dataAuthorId === props.data.userId); // 是否是发布此时刻、帖子的用户
+const isDataAuthor = computed(() => props.dataAuthorId === props.loginUserId); // 是否是发布此时刻、帖子的用户
 const isAuthor = computed(() => props.loginUserId === props.data.userId); // 是否是发布此评论的用户
-const replyParams = computed(() => ({
-  rootId: props.data.id,
-  pageSize: 5,
-}));
-const images = computed(() => (props.data.images ? props.data.images?.split(',') : []));
+const images = computed(() => (props.data.images ? props.data.images?.split(',') : [])); // 评论附图
+const isActorUser = computed(() => getCommentActorType(props.data) === ActorType.USER); // 是否由用户发送
 
 function onReply() {
   active.value = !active.value;
 }
-
-function onDelete() {}
 
 const onPreview = (index: number) => {
   preview.value = true;
@@ -158,7 +143,32 @@ const onClose = () => {
   preview.value = false;
 };
 
-function onConfirmDelete() {}
+function onConfirmDelete() {
+  http
+    .post(
+      props.removeUrl,
+      {
+        commentId: props.data.id,
+      },
+      { successTip: '删除成功' },
+    )
+    .then(res => {
+      emit('onRemoveSuccess');
+    });
+}
+
+function onSaveSuccess(data: Comment) {
+  active.value = false;
+  emit('onSaveSuccess', data);
+}
+
+function inactiveEditor(isEditorActive: boolean) {
+  setTimeout(() => {
+    if (!isEditorActive) {
+      active.value = false;
+    }
+  });
+}
 </script>
 
 <style lang="scss">
@@ -169,11 +179,16 @@ function onConfirmDelete() {}
   .comment-left {
     padding-right: 10px;
 
-    img {
-      height: auto;
+    .comment-actor-avatar {
       overflow: hidden;
       border: var(--youyu-avatar-border);
       border-radius: 100%;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
   }
 
@@ -220,7 +235,7 @@ function onConfirmDelete() {}
       }
 
       .comment-content-text {
-        margin-bottom: 4px;
+        margin: 2px 0;
 
         img {
           width: auto;
@@ -291,6 +306,10 @@ function onConfirmDelete() {}
           padding-top: 0;
         }
       }
+    }
+
+    .vue-comment-editor {
+      margin-top: 6px;
     }
   }
 }

@@ -12,15 +12,15 @@ export interface Moment {
   location: string;
   adcode: number;
   adname: string;
-  supportCount: string;
-  opposeCount: string;
+  supportCount: number;
+  opposeCount: number;
   createTime: string;
   updateTime: string;
 }
 
-export interface MomentList extends Moment {
+export interface MomentVo extends Moment {
   user: BasicUserInfo;
   commentCount: number;
-  momentLike: number;
+  momentLike: boolean;
   likeUsers: BasicUserInfo[];
 }

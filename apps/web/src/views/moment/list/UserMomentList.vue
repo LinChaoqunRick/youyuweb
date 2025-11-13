@@ -1,7 +1,7 @@
 <template>
   <div class="user-moment-list">
     <div class="moment-list-body mt-8">
-      <!-- @vue-generic {import('@youyu/shared/types/vo/moment').MomentList} -->
+      <!-- @vue-generic {import('@youyu/shared/types/vo/moment').MomentVo} -->
       <vue-content-page
         ref="VueContentPageRef"
         :url="props.url"
@@ -11,9 +11,9 @@
       >
         <template #default="{ list }">
           <MomentItem
-            v-for="item in list"
+            v-for="(item, index) in list"
             :key="item.id"
-            :data="item"
+            v-model:data="list[index]"
             @delete-success="deleteSuccess"
           />
         </template>
@@ -33,7 +33,7 @@ import { ref, provide } from 'vue';
 import { MOMENT_LIST } from '@youyu/shared/apis';
 import { VueContentPage } from '@youyu/shared/components-vue';
 import MomentItem from './MomentItem.vue';
-import type { MomentList } from '@youyu/shared/types/vo/moment';
+import type { MomentVo } from '@youyu/shared/types/vo/moment';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 
 const props = defineProps({
@@ -50,7 +50,7 @@ const props = defineProps({
 const VueContentPageRef = ref<ComponentExposed<typeof VueContentPage> | null>(null);
 const activeId = ref<number>(-1);
 
-const unshiftItem = (data: MomentList) => {
+const unshiftItem = (data: MomentVo) => {
   VueContentPageRef.value!.unshiftData(data);
 };
 
@@ -58,7 +58,7 @@ const updateActiveId = (value: number) => {
   activeId.value = value;
 };
 
-const deleteSuccess = (moment: MomentList) => {
+const deleteSuccess = (moment: MomentVo) => {
   VueContentPageRef.value!.removeById(moment.id);
 };
 

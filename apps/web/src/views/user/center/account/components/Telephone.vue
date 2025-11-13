@@ -3,64 +3,95 @@
     <!-- 如果之前绑定了手机号 -->
     <div v-if="props.user.username && !next">
       <a-form
+        ref="formRef"
         :model="formPrevious"
         :colon="false"
         :rules="rulesRef"
         :label-col="labelCol"
         :wrapper-col="wrapperCol"
-        ref="formRef"
         class="code-form"
       >
-        <div class="user-telephone">原手机号：{{ props.user.username }}</div>
+        <div class="user-telephone">
+          原手机号：{{ props.user.username }}
+        </div>
         <a-form-item label=" " name="code">
-          <a-input v-model:value="formPrevious.code" :maxlength="6" size="large" placeholder="验证码">
-            <template v-slot:suffix>
-              <a-button type="link" class="send-code-btn" :disabled="preBtnProps.disabled" @click="onPreSendCode">
+          <a-input
+            v-model:value="formPrevious.code"
+            :maxlength="6"
+            size="large"
+            placeholder="验证码"
+          >
+            <template #suffix>
+              <a-button
+                type="link"
+                class="send-code-btn"
+                :disabled="preBtnProps.disabled"
+                @click="onPreSendCode"
+              >
                 {{ preBtnProps.text }}
               </a-button>
             </template>
           </a-input>
         </a-form-item>
-        <div class="code-error" v-if="!preBtnProps.correct">验证码错误或已过期，请重试</div>
+        <div v-if="!preBtnProps.correct" class="code-error">
+          验证码错误或已过期，请重试
+        </div>
       </a-form>
     </div>
     <div v-else>
       <a-form
+        ref="formRef"
         :model="formNew"
         :colon="false"
         :rules="rulesRef"
         :label-col="labelCol"
         :wrapper-col="wrapperCol"
-        ref="formRef"
         class="code-form"
       >
         <a-form-item label=" " name="telephone">
-          <a-input v-model:value="formNew.telephone" size="large" :maxlength="11" placeholder="新手机号" />
+          <a-input
+            v-model:value="formNew.telephone"
+            size="large"
+            :maxlength="11"
+            placeholder="新手机号"
+          />
         </a-form-item>
         <a-form-item label=" " name="code">
-          <a-input v-model:value="formNew.code" :maxlength="6" size="large" placeholder="验证码">
-            <template v-slot:suffix>
-              <a-button type="link" class="send-code-btn" :disabled="nextBtnProps.disabled" @click="onNextSendCode">
+          <a-input
+            v-model:value="formNew.code"
+            :maxlength="6"
+            size="large"
+            placeholder="验证码"
+          >
+            <template #suffix>
+              <a-button
+                type="link"
+                class="send-code-btn"
+                :disabled="nextBtnProps.disabled"
+                @click="onNextSendCode"
+              >
                 {{ nextBtnProps.text }}
               </a-button>
             </template>
           </a-input>
         </a-form-item>
-        <div class="code-error" v-if="!nextBtnProps.correct">验证码错误或已过期，请重试</div>
+        <div v-if="!nextBtnProps.correct" class="code-error">
+          验证码错误或已过期，请重试
+        </div>
       </a-form>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, inject } from 'vue';
 import type { PropType } from 'vue';
-import type { User } from '@/types/user';
-import { useStore } from 'vuex';
+import { ref, inject } from 'vue';
 import { reactive } from 'vue';
-import { checkTelephone } from '@/libs/validate/validate';
+import { checkTelephone } from '@youyu/shared/utils/antdv-validate';
 import { message } from 'ant-design-vue';
+import { useStore } from 'vuex';
 import smsCode from '@/enums/sms/smsCode';
+import type { User } from '@/types/user';
 
 const modal = inject('modal');
 const labelCol = { span: 0 };
@@ -215,9 +246,9 @@ defineExpose({
 .change-telephone {
   .code-form {
     .user-telephone {
-      font-weight: bold;
       margin-bottom: 14px;
       margin-left: 2px;
+      font-weight: bold;
     }
 
     .code-error {

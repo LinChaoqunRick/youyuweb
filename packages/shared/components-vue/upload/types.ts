@@ -1,4 +1,5 @@
 export interface FileExtend extends Partial<File> {
+  name: string;
   thumb?: string;
   progress?: number;
   url?: string;
@@ -11,18 +12,18 @@ export interface UploadResult {
   file: FileExtend;
 }
 
-export interface OssType {
-  policy?: string;
-  signature?: string;
-  OSSAccessKeyId?: string;
-  dir?: string;
-  host?: string;
-}
+// export interface OssType {
+//   policy?: string;
+//   signature?: string;
+//   OSSAccessKeyId?: string;
+//   dir?: string;
+//   host?: string;
+// }
 
-export interface Policy {
+export interface OssPolicy {
   policy: string;
   signature: string;
-  accessKeyId: string;
+  OSSAccessKeyId: string;
   key: string;
   dir: string;
   host: string;
@@ -30,9 +31,14 @@ export interface Policy {
 }
 
 export interface UploadConfig {
+  data: UploadConfigData;
   accept?: string;
   maxSize?: number;
   needTip?: boolean;
   base?: string;
-  progress?: Function;
+  progress?: (list: number[]) => void;
+}
+
+export interface UploadConfigData {
+  base: string;
 }
