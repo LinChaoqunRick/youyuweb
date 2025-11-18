@@ -1,4 +1,4 @@
-import type { BasicUserInfo } from '../common';
+import type { UserBasic } from '../common';
 
 export interface Moment {
   id: number;
@@ -19,8 +19,8 @@ export interface Moment {
 }
 
 export interface MomentVo extends Moment {
-  user: BasicUserInfo;
+  user: UserBasic;
   commentCount: number;
   momentLike: boolean;
-  likeUsers: BasicUserInfo[];
+  likeUsers: UserBasic[];
 }

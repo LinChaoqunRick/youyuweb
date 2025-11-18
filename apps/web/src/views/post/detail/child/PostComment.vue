@@ -1,267 +1,187 @@
 <template>
-  <div class="post-comment-container" id="post-comment-id">
-    <a-card title="评论" style="width: 100%" class="ant-card-self write-comment-card">
-      <div class="write-comment" v-if="isLogin">
-        <MdEditorCom
-          v-model="content"
-          :toolbars="toolbars"
-          :footers="footers"
-          :extend="{
-            maxLength: 500,
-            preview: false,
-          }"
-          class="write-comment-editor"
-          ref="commentEditor"
-        />
-        <div class="action-box">
-          <a-button type="primary" :disabled="submittable" :loading="submitLoading" @click="handleSubmit"
-            >发表评论
-          </a-button>
-        </div>
+  <div class="post-comment">
+    <div class="comment-list-top">
+      <div class="comment-count">
+        全部评论（{{ post.commentCount || 0 }}）
       </div>
-      <div class="comment-hint-wrapper" v-else>
-        <CommentHint />
-      </div>
-    </a-card>
-    <a-card style="width: 100%" class="comment-list-card">
-      <template #title>
-        <div class="title-container">
-          <div class="title-text large-font">全部评论({{ post?.commentCount ?? 0 }})</div>
-          <SortSwitch v-model="sort" @onChange="onChange" />
-        </div>
-      </template>
-      <div class="comment-list">
-        <ContentList
-          url="getCommentsPage"
-          auto-load
-          data-text="评论"
-          :params="params"
-          :total="post.commentCount"
-          load-trigger
-          v-if="post.id"
-          ref="ContentListRef"
-        >
-          <template v-slot="{ list }">
-            <CommentItem v-for="item in list" :data="item" :key="item.id" @deleteSuccess="deleteSuccess" />
-          </template>
-          <template v-slot:loadMoreBox="{ loading }">
-            查看全部 {{ post.commentCount }} 条评论
-            <i-down v-show="!loading" theme="outline" size="14" fill="#1890ff" />
-            <i-loading-four v-show="loading" theme="outline" size="14" fill="#1890ff" />
-          </template>
-          <template v-slot:loadedAllBox>
-            <div>已加载全部评论 ~</div>
-          </template>
-        </ContentList>
-      </div>
-    </a-card>
+      <SortSwitch v-model="sort" @on-change="onSortChange" />
+    </div>
+    <div class="comment-list">
+      <!-- @vue-generic {import('@youyu/shared/types/common').Comment} -->
+      <vue-content-page
+        ref="pageRootRef"
+        :url="GET_POST_COMMENTS_PAGE"
+        :params="{
+          postId: post.id,
+          orderBy: order,
+          pageSize: pageSize,
+        }"
+        unit-text="条"
+        data-text="评论"
+        mode="lazy"
+      >
+        <template #default="{ list, removeById }">
+          <vue-comment-item
+            v-for="item in list"
+            :key="item.id"
+            :data="item"
+            :data-author-id="post.userId"
+            :login-user-id="userInfo.id"
+            :save-url="CREATE_POST_COMMENT"
+            :save-params="{
+              postId: post.id,
+              rootId: item.id,
+            }"
+            :remove-url="DELETE_POST_COMMENT"
+            :avatar="userInfo.avatar"
+            :user-mode="isLogin"
+            @on-save-success="data => onSaveCommentSuccess(data, item)"
+            @on-remove-success="() => removeById(item.id)"
+          >
+            <template v-if="item.replyCount" #bottomReply>
+              <div class="comment-replies">
+                <vue-content-page
+                  :ref="(el: any) => setItemRef(el, item.id)"
+                  :preset-data="item.children ?? []"
+                  :url="GET_POST_COMMENTS_PAGE"
+                  :params="{ rootId: item.id, pageSize: 5 }"
+                  :total="item.replyCount"
+                  hide-action-finish
+                  mode="manual"
+                  action-align="left"
+                >
+                  <template #ready="{ remainCount }">
+                    <span class="ready-text">
+                      剩下
+                      <span class="remain-count">{{ remainCount }}</span>
+                      条回复
+                    </span>
+                    <i-down theme="outline" size="16" fill="currentColor" />
+                  </template>
+                  <template #loading="{ remainCount }">
+                    <span class="ready-text">
+                      剩下
+                      <span class="remain-count">{{ remainCount }}</span>
+                      条回复
+                    </span>
+                    <i-loading-four theme="outline" size="14" fill="#1890ff" />
+                  </template>
+                  <template #default="{ list: replies, removeById: subRemoveById }">
+                    <vue-comment-item
+                      v-for="reply in replies"
+                      :key="reply.id"
+                      :data="reply"
+                      :avatar="userInfo.avatar"
+                      :avatar-size="32"
+                      :data-author-id="post.userId"
+                      :login-user-id="userInfo.id"
+                      :save-url="CREATE_POST_COMMENT"
+                      :save-params="{
+                        postId: post.id,
+                        replyId: reply.id,
+                        rootId: item.id,
+                      }"
+                      :remove-url="DELETE_POST_COMMENT"
+                      :user-mode="isLogin"
+                      @on-save-success="data => onSaveCommentSuccess(data, item)"
+                      @on-remove-success="() => subRemoveById(reply.id)"
+                    />
+                  </template>
+                </vue-content-page>
+              </div>
+            </template>
+          </vue-comment-item>
+        </template>
+      </vue-content-page>
+    </div>
   </div>
 </template>
-
 <script setup lang="ts">
+import { computed, ref, nextTick } from 'vue';
+import { CREATE_POST_COMMENT, DELETE_POST_COMMENT, GET_POST_COMMENTS_PAGE } from '@youyu/shared/apis';
+import { VueCommentItem, VueContentPage } from '@youyu/shared/components-vue';
 import { useStore } from 'vuex';
-import { computed, provide, ref, watch, inject, nextTick } from 'vue';
-import { message } from 'ant-design-vue';
-import CommentItem from '@/components/content/comment/CommentItem.vue';
-import MdEditorCom from '@/components/content/mdEditor/MdEditorCom.vue';
-import CommentHint from './CommentHint.vue';
 import SortSwitch from '@/components/common/utils/sortSwitch/SortSwitch.vue';
-import ContentList from '@/components/common/system/ContentList.vue';
-import type { postData } from '@/views/post/detail/types';
+import type { Comment } from '@youyu/shared/types/common';
+import type { PostVo } from '@youyu/shared/types/vo';
+import type { ComponentExposed } from 'vue-component-type-helpers';
 
-const isLogin = computed(() => getters['isLogin']);
+const { getters } = useStore();
 
-const { getters, dispatch } = useStore();
-
-const toolbars = ['bold', 'underline', 'italic', '-', 'codeRow', 'code', 'link', 1, '-', '=', 'preview'];
-const footers = ['markdownTotal', '=', 'scrollSwitch'];
-
-const post = inject<postData>('post');
-const setPostAttribute = inject('setPostAttribute');
-
-const content = ref<string>('');
-const activeId = ref<number>(-1);
+defineProps({
+  pageSize: {
+    type: Number,
+    default: 10,
+  },
+});
+const post = defineModel<PostVo>('post', { required: true });
+const pageRootRef = ref<ComponentExposed<typeof VueContentPage> | null>(null);
+const pageLeafRefs = ref<Record<number, ComponentExposed<typeof VueContentPage>>>({});
 const sort = ref<string>('new'); // true:最新 false:最热
-const text = ref<string>('');
-const submitLoading = ref<boolean>(false);
-const commentEditor = ref(null);
-
-const submittable = computed(() => !content.value);
 const order = computed(() => (sort.value === 'new' ? 'create_time' : 'support_count'));
 const userInfo = computed(() => getters['userInfo']);
-const params = computed(() => ({
-  postId: post.value.id,
-  orderBy: order.value,
-}));
+const isLogin = computed(() => getters['isLogin']);
 
-const ContentListRef = ref<InstanceType<typeof ContentList>>();
-
-const updateActiveId = (value: number) => {
-  activeId.value = value;
-};
-
-provide('active', { activeId, updateActiveId });
-
-function onChange() {
-  nextTick(() => {
-    ContentListRef.value.initData();
-  });
+function setItemRef(el: ComponentExposed<typeof VueContentPage> | null, id: number) {
+  if (el) {
+    pageLeafRefs.value[id] = el;
+  } else {
+    delete pageLeafRefs.value[id]; // 组件销毁时清除
+  }
 }
 
-function handleSubmit() {
-  submitLoading.value = true;
-  dispatch('createComment', {
-    postId: post.value.id,
-    userId: userInfo.value.id,
-    userIdTo: post.value.userId,
-    content: content.value,
-  })
-    .then(res => {
-      message.success('评论成功');
-      content.value = '';
-      ContentListRef.value.list.unshift(res.data);
-      setPostAttribute('commentCount', post.value.commentCount + 1);
-    })
-    .catch(e => {
-      message.error('评论失败');
-    })
-    .finally(() => {
-      submitLoading.value = false;
+/**
+ * 保存评论成功
+ * @param data 评论信息
+ * @param rootComment 所属根评论
+ */
+const onSaveCommentSuccess = (data: Comment, rootComment?: Comment) => {
+  post.value.commentCount++;
+  if (rootComment) {
+    rootComment.replyCount += 1;
+    nextTick(() => {
+      pageLeafRefs.value[rootComment.id].unshiftData(data);
     });
-}
-
-function handleFocus() {
-  commentEditor.value?.handleFocus();
-}
-
-const deleteSuccess = (data: postData) => {
-  ContentListRef.value.list = ContentListRef.value.list.filter(item => item.id !== data.id);
-  setPostAttribute('commentCount', post.value.commentCount - (1 + data.replyCount));
+  } else {
+    pageRootRef.value!.unshiftData(data);
+  }
 };
+
+/**
+ * 排序查询
+ */
+function onSortChange() {
+  pageRootRef.value!.refresh();
+}
 
 defineExpose({
-  handleFocus,
+  onSaveCommentSuccess,
 });
 </script>
 
-<style lang="scss" scoped>
-.post-comment-container {
-  .write-comment-card {
-    border-bottom-right-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;
+<style scoped lang="scss">
+.post-comment {
+  padding: 16px 30px 0;
+  background-color: var(--youyu-background1);
+  border-radius: 4px;
 
-    ::v-deep(.ant-card-body) {
-      padding: 0 24px 10px 24px;
-    }
+  .comment-list-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-    .write-comment {
-      .write-comment-editor {
-        height: 240px !important;
-      }
-
-      .action-box {
-        padding-top: 6px;
-        display: flex;
-        justify-content: flex-end;
-      }
+    .comment-count {
+      font-size: 16px;
+      font-weight: bold;
     }
   }
 
-  .comment-list-card {
-    border-top-left-radius: 0 !important;
-    border-top-right-radius: 0 !important;
+  .comment-list {
+    margin-top: 12px;
 
-    .title-container {
+    .ready-detail-content {
       display: flex;
-      justify-content: space-between;
-
-      .sort-type {
-        display: inline-flex;
-        align-items: center;
-        font-size: 14px;
-        color: #4e5969;
-        font-weight: 400;
-        cursor: pointer;
-        background: var(--youyu-body-background-ligth);
-        border-radius: 2px;
-        padding: 3px;
-
-        .sort-item {
-          display: flex;
-          align-items: center;
-          padding: 2px 12px;
-          line-height: 22px;
-          font-size: 14px;
-          color: #8a919f;
-
-          ::v-deep(svg) {
-            margin-right: 4px;
-          }
-        }
-
-        .active {
-          color: #1890ff;
-          border-radius: 2px;
-          background: var(--youyu-body-background2);
-
-          ::v-deep(svg) {
-            margin-right: 4px;
-          }
-        }
-      }
-    }
-
-    .comment-list {
-      ::v-deep(.comment-item) {
-        padding: 8px 0;
-      }
-    }
-  }
-
-  ::v-deep(.ant-card) {
-    .ant-card-head {
-      border-bottom: none;
-    }
-
-    &:first-child {
-      border-bottom: none;
-      border-radius: 2px 2px 0 0;
-    }
-
-    &:nth-child(n + 2) {
-      border-top: none;
-      border-radius: 0;
-
-      .ant-card-body {
-        padding: 0 24px;
-      }
-    }
-
-    &:last-child {
-      border-radius: 0 0 2px 2px;
-      padding-bottom: 10px;
-    }
-  }
-
-  .operation-tip-box {
-    .failed-box {
-      cursor: pointer;
-      text-align: center;
-      margin: 6px 0;
-    }
-
-    .more-btn {
-      margin-top: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      line-height: 22px;
-      color: #1e80ff;
-      text-align: center;
-    }
-
-    .no-more {
-      margin-top: 6px;
-      text-align: center;
+      align-items: center;
     }
   }
 }

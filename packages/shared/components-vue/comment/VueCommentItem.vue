@@ -125,7 +125,7 @@ const deleteVisible = ref<boolean>(false);
 const preview = ref<boolean>(false);
 const current = ref<number>(0);
 
-const isDataAuthor = computed(() => props.dataAuthorId === props.loginUserId); // 是否是发布此时刻、帖子的用户
+const isDataAuthor = computed(() => props.dataAuthorId === props.data.userId); // 是否是发布此时刻、帖子的用户
 const isAuthor = computed(() => props.loginUserId === props.data.userId); // 是否是发布此评论的用户
 const images = computed(() => (props.data.images ? props.data.images?.split(',') : [])); // 评论附图
 const isActorUser = computed(() => getCommentActorType(props.data) === ActorType.USER); // 是否由用户发送
@@ -309,7 +309,7 @@ function inactiveEditor(isEditorActive: boolean) {
     }
 
     .vue-comment-editor {
-      margin-top: 6px;
+      margin-top: 8px;
     }
   }
 }

@@ -1,4 +1,5 @@
 import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 
 import { lineNumbers } from '@codemirror/view';
 import row from '@youyu/shared/directives/row';
@@ -29,8 +30,9 @@ import 'animate.css';
 import '@youyu/shared/assets/css/shared-base.css';
 
 const app = createApp(App);
+const pinia = createPinia();
 
-app.use(router).use(Antd).use(store);
+app.use(router).use(Antd).use(store).use(pinia);
 IconPark(app);
 
 app.directive('side-fixed', vSideFixed);
@@ -46,21 +48,14 @@ app.config.globalProperties.$dayjs = dayjs;
 dayjs.locale('zh-cn'); // use loaded locale globally
 
 config({
-  markdownItConfig(md) {
-    // some config ...
-  },
-  codeMirrorExtensions(theme, extensions) {
-    return [...extensions, lineNumbers()];
-  },
-  editorExtensions: {
-    highlight: {
-      css: {
-        atom: {
-          light: 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css',
-          dark: 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css',
-        },
+  codeMirrorExtensions(extensions) {
+    return [
+      ...extensions,
+      {
+        type: 'lineNumbers',
+        extension: lineNumbers(),
       },
-    },
+    ];
   },
 });
 

@@ -1,141 +1,150 @@
 <template>
-  <div class="post-detail">
-    <div class="post-aside">
-      <div v-side-fixed class="post-aside-body">
-        <UserInfoPanel :id="post.userId" />
+  <div class="post-detail-wrapper">
+    <div v-if="post" class="post-detail">
+      <div class="post-aside">
+        <div v-side-fixed class="post-aside-body">
+          <PostUserPanel :id="post?.userId" />
+        </div>
       </div>
+      <div id="aside-right" class="post-body">
+        <div class="post-main">
+          <div
+            v-if="userInfo.id === post.userId"
+            :class="['post-status', post.status ? 'post-private' : 'post-public']"
+          >
+            <a-tooltip placement="bottom">
+              <template #title>
+                <span>{{ post.status ? '仅自己可见' : '所有人可见' }}</span>
+              </template>
+              <svg aria-hidden="true" @click="handleHide">
+                <use v-if="post.status" xlink:href="#icon-yincang" />
+                <use v-else xlink:href="#icon-liulan" />
+              </svg>
+            </a-tooltip>
+          </div>
+          <div class="post-title" v-text="post.title" />
+          <div class="post-info">
+            <div class="post-info-detail">
+              <div class="post-category">
+                <div v-if="post.categoryName" class="category-name cp">
+                  {{ post.categoryName }}
+                </div>
+              </div>
+              <div class="author-info">
+                <RouterLink :to="`/user/${post.user?.id}`">
+                  <i-user fill="currentColor" size="15" theme="outline" />
+                  <span>{{ post.user?.nickname }}</span>
+                </RouterLink>
+              </div>
+              <div class="view-count">
+                <i-preview-open fill="currentColor" size="18" theme="outline" />
+                <span>{{ post.viewCount }} 次查看</span>
+              </div>
+              <div class="create-time">
+                <a-tooltip placement="top">
+                  <template #title>
+                    <div>首次发布：{{ post.createTime }}</div>
+                    <div>最近更新：{{ post.updateTime }}</div>
+                  </template>
+                  <i-time fill="currentColor" size="15" theme="outline" />
+                  <span>发布于 {{ post.createTime?.substring(0, 16) }}</span>
+                </a-tooltip>
+              </div>
+              <div class="text-amount">
+                <i-add-text-two fill="currentColor" size="16" theme="outline" />
+                <span>{{ post.content?.length }} 字</span>
+              </div>
+              <div class="operation-btns">
+                <span v-if="userInfo.id === post.userId" class="operation-item edit cp" @click="handleEdit">编辑</span>
+              </div>
+            </div>
+            <div :class="{ unfold: !fold }" class="post-info-copyright">
+              <div v-if="post.createType === '0'" class="copyright-original">
+                <div class="creative-commons">
+                  版权声明：本文为博主原创文章，遵循
+                  <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC 4.0 BY-SA </a>
+                  版权协议，转载请附上原文出处链接和本声明。
+                </div>
+                <div class="creative-commons">
+                  本文链接：
+                  <a :href="'https://www.youyul.com/post/details/' + route.params.postId">
+                    https://www.youyul.com/post/details/{{ route.params.postId }}
+                  </a>
+                </div>
+              </div>
+              <div v-else class="copyright-reprint">
+                <div class="creative-commons">
+                  原文链接：
+                  <a :href="post.originalLink">{{ post.originalLink }}</a>
+                </div>
+              </div>
+            </div>
+            <div :class="{ 'btn-expand': !fold }" class="expand-btn" @click="handleFold">
+              <i-down fill="currentColor" size="14" theme="outline" />
+            </div>
+          </div>
+          <div class="post-main-content">
+            <div v-if="false" class="post-summary">
+              <div class="post-summary-title">
+                摘要
+              </div>
+              <div class="post-summary-summary" v-text="post.summary" />
+            </div>
+            <div class="post-content">
+              <MdPreview :text="post.content" editor-id="post-content" @on-html-changed="onHtmlChanged" />
+            </div>
+            <!--          <a-divider>感谢观看</a-divider>-->
+            <div v-if="tags?.length" class="post-tags">
+              <div v-for="item in tags" :key="item" class="tag-name cp">
+                <i-tag-one fill="currentColor" size="16" theme="outline" />
+                {{ item }}
+              </div>
+            </div>
+            <div v-if="post.columns?.length" class="post-column-list">
+              <div class="include-text">
+                本文已收录至：
+              </div>
+              <PostColumn v-for="(item, index) in post.columns" :key="index" :data="item" />
+            </div>
+          </div>
+        </div>
+        <div class="post-right">
+          <div class="post-category">
+            <MdCatalogPanel editor-id="post-content" />
+          </div>
+          <div class="post-operation">
+            <PostOperation @scroll-to-comment="scrollToComment" />
+          </div>
+        </div>
+        <div id="post-comment-wrapper">
+          <div class="comment-title">
+            评论
+          </div>
+          <vue-comment-editor
+            :auto-focus="false"
+            :save-url="CREATE_POST_COMMENT"
+            :save-params="{
+              postId: post.id,
+            }"
+            :avatar="userInfo.avatar"
+            :user-mode="isLogin"
+            :on-success="onSaveCommentSuccess"
+          />
+          <post-comment ref="postCommentRef" v-model:post="post" />
+        </div>
+      </div>
+      <Teleport to="#header">
+        <PercentCounter />
+      </Teleport>
     </div>
-    <div id="aside-right" class="post-body">
-      <div class="post-main">
-        <div v-if="userInfo.id === post.userId" :class="['post-status', post.status ? 'post-private' : 'post-public']">
-          <a-tooltip placement="bottom">
-            <template #title>
-              <span>{{ post.status ? '仅自己可见' : '所有人可见' }}</span>
-            </template>
-            <svg aria-hidden="true" @click="handleHide">
-              <use v-if="post.status" xlink:href="#icon-yincang" />
-              <use v-else xlink:href="#icon-liulan" />
-            </svg>
-          </a-tooltip>
-        </div>
-        <div class="post-title" v-text="post.title" />
-        <div class="post-info">
-          <div class="post-info-detail">
-            <div class="post-category">
-              <div v-if="post.categoryName" class="category-name cp">
-                {{ post.categoryName }}
-              </div>
-            </div>
-            <div class="author-info">
-              <RouterLink :to="`/user/${post.user?.id}`">
-                <i-user fill="currentColor" size="15" theme="outline" />
-                <span>{{ post.user?.nickname }}</span>
-              </RouterLink>
-            </div>
-            <div class="view-count">
-              <i-preview-open fill="currentColor" size="18" theme="outline" />
-              <span>{{ post.viewCount }} 次查看</span>
-            </div>
-            <div class="create-time">
-              <a-tooltip placement="top">
-                <template #title>
-                  <div>首次发布：{{ post.createTime }}</div>
-                  <div>最近更新：{{ post.updateTime }}</div>
-                </template>
-                <i-time fill="currentColor" size="15" theme="outline" />
-                <span>发布于 {{ post.createTime?.substring(0, 16) }}</span>
-              </a-tooltip>
-            </div>
-            <div class="text-amount">
-              <i-add-text-two fill="currentColor" size="16" theme="outline" />
-              <span>{{ post.content?.length }} 字</span>
-            </div>
-            <div class="operation-btns">
-              <span
-                v-if="userInfo.id === post.userId"
-                class="operation-item edit cp"
-                @click="handleEdit"
-              >编辑</span>
-            </div>
-          </div>
-          <div :class="{ unfold: !fold }" class="post-info-copyright">
-            <div v-if="post.createType === '0'" class="copyright-original">
-              <div class="creative-commons">
-                版权声明：本文为博主原创文章，遵循
-                <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC 4.0 BY-SA </a>
-                版权协议，转载请附上原文出处链接和本声明。
-              </div>
-              <div class="creative-commons">
-                本文链接：
-                <a :href="'https://www.youyul.com/post/details/' + route.params.postId">
-                  https://www.youyul.com/post/details/{{ route.params.postId }}
-                </a>
-              </div>
-            </div>
-            <div v-else class="copyright-reprint">
-              <div class="creative-commons">
-                原文链接：
-                <a :href="post.originalLink">{{ post.originalLink }}</a>
-              </div>
-            </div>
-          </div>
-          <div :class="{ 'btn-expand': !fold }" class="expand-btn" @click="handleFold">
-            <i-down fill="currentColor" size="14" theme="outline" />
-          </div>
-        </div>
-        <div class="post-main-content">
-          <Spin v-if="!post.id" height="500px" />
-          <div v-if="false" class="post-summary">
-            <div class="post-summary-title">
-              摘要
-            </div>
-            <div class="post-summary-summary" v-text="post.summary" />
-          </div>
-          <div class="post-content">
-            <MdPreview
-              :text="post.content"
-              editor-id="post-content"
-              @on-html-changed="onHtmlChanged"
-            />
-          </div>
-          <!--          <a-divider>感谢观看</a-divider>-->
-          <div v-if="tags?.length" class="post-tags">
-            <div v-for="item in tags" :key="item" class="tag-name cp">
-              <i-tag-one fill="currentColor" size="16" theme="outline" />
-              {{ item }}
-            </div>
-          </div>
-          <div v-if="post.columns?.length" class="post-column-list">
-            <div class="include-text">
-              本文已收录至：
-            </div>
-            <PostColumn v-for="(item, index) in post.columns" :key="index" :data="item" />
-          </div>
-        </div>
-      </div>
-      <div class="post-right">
-        <div class="post-category">
-          <MdCatalogPanel editor-id="post-content" />
-        </div>
-        <div class="post-operation">
-          <PostOperation v-if="post" @scroll-to-comment="scrollToComment" />
-        </div>
-      </div>
-      <div class="post-comment">
-        <div ref="commentRef" class="post-comment-list">
-          <PostComment v-if="post" ref="postComment" />
-        </div>
-      </div>
-    </div>
-    <Teleport to="#header">
-      <PercentCounter />
-    </Teleport>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, computed, provide, readonly, watch, inject } from 'vue';
-
+import { CREATE_POST_COMMENT, GET_POST_DETAIL } from '@youyu/shared/apis';
+import { VueCommentEditor } from '@youyu/shared/components-vue';
+import http from '@youyu/shared/network';
 import { Modal, message } from 'ant-design-vue';
 import { debounce } from 'lodash';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
@@ -143,40 +152,44 @@ import { useStore } from 'vuex';
 
 import { scrollToTop, scrollToAnchor } from '@/assets/utils/utils';
 import PercentCounter from '@/components/common/utils/percentCounter/PercentCounter.vue';
-import Spin from '@/components/common/utils/spin/Spin.vue';
 import MdPreview from '@/components/content/mdEditor/MdPreview.vue';
-import type { Post } from '@/views/post/detail/types';
-
+import { useLoadingStore } from '@/store/system';
 import MdCatalogPanel from './child/MdCatalogPanel.vue';
 import PostColumn from './child/PostColumn.vue';
 import PostComment from './child/PostComment.vue';
 import PostOperation from './child/PostOperation.vue';
-import UserInfoPanel from './child/UserInfoPanel.vue';
+import PostUserPanel from './child/PostUserPanel.vue';
+import type { Comment } from '@youyu/shared/types/common';
+import type { PostVo } from '@youyu/shared/types/vo';
 
 defineOptions({
   name: 'PostDetail',
 });
 
-const reload = inject<Function>('reload');
+const reload = inject<() => void>('reload');
 
 const route = useRoute();
 const router = useRouter();
 const { dispatch, getters } = useStore();
-const post = ref<Post>({});
+const post = ref<PostVo | null>(null);
 const fold = ref(true);
 const userInfo = computed(() => getters['userInfo']);
-const tags = computed(() =>
-  post.value?.tags?.length ? (post.value.tags as string).split(',') : [],
-);
-const commentRef = ref<HTMLDivElement | null>(null);
-const postComment = ref<typeof PostComment | null>(null);
+const tags = computed(() => (post.value?.tags?.length ? (post.value.tags as string).split(',') : []));
+const postCommentRef = ref<InstanceType<typeof PostComment> | null>(null);
 const isLogin = computed(() => getters['isLogin']);
+const loadingStore = useLoadingStore();
 
-function getPostDetail() {
-  dispatch('getPostDetail', { postId: route.params.postId }).then(res => {
-    post.value = res.data;
-    document.title = res.data.title;
-  });
+async function getPostDetail() {
+  loadingStore.setContentLoading(true);
+  await http
+    .post<PostVo>(GET_POST_DETAIL, { postId: route.params.postId })
+    .then(res => {
+      post.value = res.data;
+      document.title = res.data.title;
+    })
+    .finally(() => {
+      loadingStore.setContentLoading(false);
+    });
 }
 
 getPostDetail();
@@ -186,18 +199,26 @@ const onHtmlChanged = debounce(scrollToAnchor, 500);
 watch(
   () => route.params.postId,
   newVal => {
-    if (newVal) {
-      reload && reload();
+    if (newVal && reload) {
+      reload();
     }
   },
 );
+
+/**
+ * 保存评论成功
+ * @param data 评论信息
+ */
+const onSaveCommentSuccess = (data: Comment) => {
+  postCommentRef.value!.onSaveCommentSuccess(data);
+};
 
 function handleEdit() {
   router.push({ path: '/editPost', query: { postId: post.value!.id } });
 }
 
 const handleHide = () => {
-  const {status} = (post.value!);
+  const { status } = post.value!;
   Modal.confirm({
     title: status ? '公开文章' : '隐藏文章',
     content: status ? `确定将本文设置为公开?` : '确定将本文设置为私密？',
@@ -215,13 +236,11 @@ function handleFold() {
 }
 
 function scrollToComment() {
-  commentRef.value && scrollToTop(commentRef.value.offsetTop - 100);
-  if (isLogin.value) {
-    postComment.value?.handleFocus();
-  }
+  const commentEl = document.getElementById('post-comment-wrapper');
+  scrollToTop(commentEl.offsetTop - 100);
 }
 
-function setPostAttribute(name: keyof Post, value: any) {
+function setPostAttribute(name: keyof PostVo, value: any) {
   post.value[name] = value;
 }
 
@@ -471,10 +490,31 @@ provide('setPostAttribute', setPostAttribute);
       }
     }
 
-    .post-comment {
+    #post-comment-wrapper {
+      padding: 16px 20px 4px;
       margin-top: 8px;
       overflow: hidden;
-      border-radius: 8px;
+      background-color: var(--youyu-background1);
+      border-radius: 4px;
+
+      .comment-title {
+        padding-bottom: 12px;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      ::v-deep(.vue-comment-editor) {
+        padding: 16px 12px 6px;
+        background: var(--youyu-body-background);
+        border-radius: 4px;
+      }
+
+      ::v-deep(.post-comment) {
+        padding: 0 !important;
+        padding-top: 8px !important;
+        margin-top: 8px;
+        border-top: 1px solid var(--youyu-border-color);
+      }
     }
   }
 
@@ -482,6 +522,14 @@ provide('setPostAttribute', setPostAttribute);
     position: fixed;
     top: 24%;
     right: 20px;
+  }
+
+  &.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: var(--youyu-body-background1);
   }
 }
 </style>

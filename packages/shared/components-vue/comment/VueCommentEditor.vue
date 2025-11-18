@@ -82,7 +82,13 @@
               <span class="action-title">图片</span>
             </div>
           </vue-upload>
-          <a-button :disabled="!currentLength || contentLengthExceed" class="submit-btn" type="link" @click="onSubmit">
+          <a-button
+            :disabled="!currentLength || contentLengthExceed"
+            :loading="submitLoading"
+            class="submit-btn"
+            type="link"
+            @click="onSubmit"
+          >
             发表评论
           </a-button>
         </div>
@@ -148,6 +154,7 @@ type SubmitCommentForm = Omit<CommentForm, 'images'> & {
 const emit = defineEmits(['onClickOutside']);
 const emojiVisible = ref(false);
 const spinning = ref<boolean>(false);
+const submitLoading = ref(false);
 const richEditorRef = ref<InstanceType<typeof VueContentEditor> | null>(null);
 const UploadRef = ref<InstanceType<typeof VueUpload> | null>(null);
 const FormRef = ref<FormInstance>();
@@ -226,6 +233,7 @@ const onSubmit = async () => {
 
   const userModeForm = { content: copyForm.content, images: copyForm.images };
   const params = Object.assign({}, props.saveParams, props.userMode ? userModeForm : copyForm);
+  submitLoading.value = true;
   http
     .post(props.saveUrl, params)
     .then(res => {
@@ -234,9 +242,11 @@ const onSubmit = async () => {
       if (props.onSuccess) {
         props.onSuccess(res.data);
       }
+      saveVisitorData(form);
     })
     .finally(() => {
       spinning.value = false;
+      submitLoading.value = false;
     });
 };
 
@@ -254,7 +264,7 @@ const onFindVisitor = () => {
               // @ts-ignore
               form[key] = data[key] ?? form[key];
             });
-            localStorage.setItem('visitor_data', JSON.stringify(data));
+            saveVisitorData(data);
           }
         })
         .finally(() => {
@@ -263,6 +273,10 @@ const onFindVisitor = () => {
     });
   }
 };
+
+function saveVisitorData(data) {
+  localStorage.setItem('visitor_data', JSON.stringify(data));
+}
 
 function onClickOutside() {
   emit('onClickOutside', isEditorActive.value);

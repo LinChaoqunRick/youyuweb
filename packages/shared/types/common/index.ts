@@ -13,7 +13,7 @@ export interface ResponseResult<T = any> {
   data: T;
 }
 
-export interface BasicUserInfo {
+export interface UserBasic {
   id: number;
   avatar: string;
   follow: boolean;

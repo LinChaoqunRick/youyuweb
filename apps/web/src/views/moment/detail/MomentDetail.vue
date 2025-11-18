@@ -162,7 +162,7 @@ const saveSuccess = (data: MomentVo) => {
         margin: 12px 0;
 
         .comment-count {
-          font-size: 18px;
+          font-size: 16px;
           font-weight: bold;
         }
 

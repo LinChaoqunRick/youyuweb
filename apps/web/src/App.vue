@@ -19,9 +19,11 @@
         <div id="header" class="header">
           <YHeader />
         </div>
-        <div v-if="isRouterAlive" id="main-app" class="main-app">
-          <router-view />
-        </div>
+        <Spin :spinning="loadingStore.contentLoading" wrapper-class-name="content-loading-wrapper" tip="加载中...">
+          <div v-if="isRouterAlive" id="main-app" class="main-app">
+            <router-view />
+          </div>
+        </Spin>
         <YFooter />
       </a-config-provider>
     </div>
@@ -30,21 +32,20 @@
 
 <script lang="ts" setup>
 import { nextTick, ref, provide, computed, watch } from 'vue';
-
-import { theme } from 'ant-design-vue';
+import { theme, Spin } from 'ant-design-vue';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 import { useStore } from 'vuex';
-
 import YFooter from '@/components/common/footer/YFooter.vue';
 import YHeader from '@/components/common/header/YHeader.vue';
+import { useLoadingStore } from '@/store/system';
 import { RouteStatus } from '@/store/system/login/login';
 
 const { getters } = useStore();
-
 const routeStatus = computed(() => getters['getRouteStatus']);
 const isRouterAlive = ref<boolean>(true);
 const currentTheme = computed(() => getters.currentTheme);
 const isLogin = computed(() => getters['isLogin']);
+const loadingStore = useLoadingStore();
 
 /**
  * 获取主题配置算法

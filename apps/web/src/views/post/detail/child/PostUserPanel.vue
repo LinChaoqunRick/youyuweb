@@ -124,12 +124,14 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
+import { GET_POST_USER_DETAIL } from '@youyu/shared/apis';
+import http from '@youyu/shared/network';
 import { message, Modal } from 'ant-design-vue';
 import { useRouter, RouterLink } from 'vue-router';
 import { useStore } from 'vuex';
 import Announcement from '@/components/common/share/announcement/index.vue';
 import ColumnItemMini from '@/components/content/user/column/ColumnItemMini.vue';
-import type { statType, User } from '@/types/user';
+import type { ExtraAtom, PostUser } from '@/views/post/detail/types';
 
 const router = useRouter();
 
@@ -137,9 +139,9 @@ const { getters, commit, dispatch } = useStore();
 
 const props = defineProps({
   id: {
-    type: [String, Number, undefined],
-    required: true
-  }
+    type: [String, Number],
+    required: true,
+  },
 });
 
 const userInfo = computed(() => getters['userInfo']);
@@ -149,37 +151,37 @@ const emit = defineEmits(['onLoaded']);
 const dataItems = [
   {
     value: 'postCount',
-    label: '原创'
+    label: '原创',
   },
   {
     value: 'viewCount',
-    label: '阅读'
+    label: '阅读',
   },
   {
     value: 'likeCount',
-    label: '点赞'
+    label: '点赞',
   },
   {
     value: 'fansCount',
-    label: '粉丝'
-  }
+    label: '粉丝',
+  },
 ];
 
 const isOwn = ref(true);
-const user = ref<User | object>({});
+const user = ref<PostUser | null>({});
+const spinning = ref(true);
 const columnList = ref([]);
-// const hotPosts = ref([]);
 const newPosts = ref([]);
 
-function handleClickStat(item: statType) {
+function handleClickStat(item: ExtraAtom) {
   const { value } = item;
   if (value === 'viewCount') {
     Modal.info({
-      content: `Ta的文章已被阅读${user.value.extraInfo[item.value]}次`
+      content: `Ta的文章已被阅读${user.value!.extraInfo[item.value]}次`,
     });
   } else if (value === 'likeCount') {
     Modal.info({
-      content: `Ta共收获了${user.value.extraInfo[item.value]}个点赞`
+      content: `Ta共收获了${user.value!.extraInfo[item.value]}个点赞`,
     });
   } else if (value === 'postCount') {
     router.push(`/user/${props.id}/post`);
@@ -194,16 +196,17 @@ function handleMessage() {
 }
 
 function handleFollow() {
+  if (!user.value) return;
   const isFollow = user.value.follow;
   dispatch(isFollow ? 'cancelUserFollow' : 'setUserFollow', {
     userId: userInfo.value.id,
-    userIdTo: user.value.id
+    userIdTo: user.value.id,
   }).then(res => {
     if (isFollow) {
-      user.value.follow = false;
+      user.value!.follow = false;
       message.success('已取消关注');
     } else {
-      user.value.follow = true;
+      user.value!.follow = true;
       message.success('已添加关注');
     }
   });
@@ -213,19 +216,16 @@ watch(
   () => props.id,
   val => {
     if (!props.id) return;
-    dispatch('getPostUserById', { userId: val }).then(res => {
+    http.get<PostUser>(GET_POST_USER_DETAIL, { userId: val }).then(res => {
       if (!res.data) {
         router.replace('/404');
         return;
       }
       user.value = res.data;
       isOwn.value = user.value.id === userInfo.value.id;
+      spinning.value = false;
       emit('onLoaded', user.value);
     });
-
-    // dispatch('getLimitPost', { userId: val, orderBy: 'view_count', orderType: 'desc' }).then(res => {
-    //   hotPosts.value = res.data;
-    // });
 
     dispatch('getLimitPost', { userId: val, orderBy: 'create_time', orderType: 'desc' }).then(res => {
       newPosts.value = res.data;
@@ -235,11 +235,11 @@ watch(
       columnList.value = res.data;
     });
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 defineExpose({
-  user
+  user,
 });
 </script>
 

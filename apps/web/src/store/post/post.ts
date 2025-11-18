@@ -2,10 +2,6 @@ import {
   GET_POST_LIST,
   GET_POST_DETAIL,
   CATEGORY_LIST,
-  GET_POST_COMMENTS_PAGE,
-  GET_POST_COMMENTS_ALL,
-  GET_POST_SUB_COMMENTS_ALL,
-  GET_POST_SUB_COMMENTS_PAGE,
   CREATE_POST_COMMENT,
   DELETE_POST_COMMENT,
   IS_POST_LIKE,
@@ -38,18 +34,6 @@ export default {
     },
     getCategoryList(context: any, params: any) {
       return http.get(CATEGORY_LIST, params);
-    },
-    getCommentsPage(context: any, params: any) {
-      return http.get(GET_POST_COMMENTS_PAGE, params);
-    },
-    getCommentsAll(context: any, params: any) {
-      return http.get(GET_POST_COMMENTS_ALL, params);
-    },
-    getPostSubCommentsAll(context: any, params: any) {
-      return http.get(GET_POST_SUB_COMMENTS_ALL, params);
-    },
-    getSubCommentsPage(context: any, params: any) {
-      return http.get(GET_POST_SUB_COMMENTS_PAGE, params);
     },
     createComment(context: any, params: any) {
       return http.post(CREATE_POST_COMMENT, params);

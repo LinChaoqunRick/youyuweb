@@ -194,7 +194,7 @@ defineExpose({
     justify-content: space-between;
 
     .comment-count {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: bold;
     }
   }

@@ -78,7 +78,9 @@ const isReady = computed(() => status.value === PageStatus.READY);
 const isLoading = computed(() => status.value === PageStatus.LOADING);
 const isFailed = computed(() => status.value === PageStatus.FAILED);
 const readyText = computed(() => (props.readyText ? props.readyText : '加载更多' + props.dataText));
-const finishText = computed(() => (props.readyText ? props.readyText : '已加载全部' + props.dataText));
+const finishText = computed(() =>
+  props.readyText ? props.readyText : total.value > 0 ? '已加载全部' + props.dataText : '暂无' + props.dataText,
+);
 const remainCount = computed(() => total.value - dataList.value.length);
 
 function refresh() {
