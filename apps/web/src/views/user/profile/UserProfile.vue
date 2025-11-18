@@ -2,7 +2,7 @@
   <div class="user-profile">
     <div class="user-main">
       <div class="user-left">
-        <UserInfoPanel
+        <PostUserPanel
           :id="userId"
           ref="UserInfoRef"
           v-side-fixed
@@ -48,7 +48,7 @@ import NavLink from '@/components/common/header/menu/child/NavLink.vue';
 import EmptyPage from '@/components/common/system/EmptyPage.vue';
 import openModal from '@/libs/tools/openModal';
 import type { User, statType } from '@/types/user';
-import UserInfoPanel from '@/views/post/detail/child/UserInfoPanel.vue';
+import PostUserPanel from '@/views/post/detail/child/PostUserPanel.vue';
 import type { MenuItem } from '@/views/user/profile/types';
 import MenuSetting from './components/menu/MenuSetting.vue';
 
@@ -64,7 +64,7 @@ const pathPermit = ref<boolean>(false);
 
 provide('user', user);
 
-const {userId} = router.currentRoute.value.params;
+const { userId } = router.currentRoute.value.params;
 const menuItems = ref<Array<MenuItem>>([]);
 const showMenuItems = ref<Array<MenuItem>>([]); // 做展示用的
 const menuPermit = ref({});
@@ -78,7 +78,7 @@ async function getProfileMenu() {
 
 const handlePathPermit = () => {
   // 判读该用户是否开通了这个目录
-  const {name} = route.matched[2];
+  const { name } = route.matched[2];
   if (isOwn.value) {
     return (pathPermit.value = true);
   }
@@ -163,7 +163,7 @@ watch(
   () => route.params.userId,
   () => {
     reload();
-  }
+  },
 );
 </script>
 

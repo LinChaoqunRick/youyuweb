@@ -31,7 +31,7 @@ import {
   UPDATE_FAVORITES,
   DELETE_FAVORITES,
   LIST_FAVORITES,
-  FAVORITES_POST_PAGE,
+  FAVORITES_POST_PAGE, GET_VISITOR_BY_EMAIL,
 } from '@youyu/shared/apis';
 import http from '@youyu/shared/network';
 
@@ -139,6 +139,9 @@ export default {
     },
     favoritesPostPage(context: any, params: object) {
       return http.post(FAVORITES_POST_PAGE, params);
+    },
+    getVisitorByEmail(context: any, params: object) {
+      return http.post(GET_VISITOR_BY_EMAIL, params);
     },
   },
 };

@@ -1,20 +1,30 @@
 <template>
   <div class="bind-email">
     <a-form
+      ref="formRef"
       :model="formValidate"
       :colon="false"
       :rules="rulesRef"
       :label-col="labelCol"
       :wrapper-col="wrapperCol"
-      ref="formRef"
       class="note-form"
     >
       <a-form-item label="" name="email">
-        <a-input v-model:value="formValidate.email" size="large" :maxlength="100" placeholder="新的邮箱" />
+        <a-input
+          v-model:value="formValidate.email"
+          size="large"
+          :maxlength="100"
+          placeholder="新的邮箱"
+        />
       </a-form-item>
       <a-form-item label=" " name="code">
-        <a-input v-model:value="formValidate.code" :maxlength="6" size="large" placeholder="验证码">
-          <template v-slot:suffix>
+        <a-input
+          v-model:value="formValidate.code"
+          :maxlength="6"
+          size="large"
+          placeholder="验证码"
+        >
+          <template #suffix>
             <a-button
               type="link"
               class="send-code-btn"
@@ -27,7 +37,9 @@
           </template>
         </a-input>
       </a-form-item>
-      <div class="code-error" v-if="!sendBtnProps.correct">{{ sendBtnProps.message }}</div>
+      <div v-if="!sendBtnProps.correct" class="code-error">
+        {{ sendBtnProps.message }}
+      </div>
     </a-form>
   </div>
 </template>
@@ -35,9 +47,9 @@
 <script setup lang="ts">
 import { inject, reactive, ref } from 'vue';
 import type { PropType } from 'vue';
-import { useStore } from 'vuex';
+import { checkPassword } from '@youyu/shared/utils/antdv-validate';
 import { message } from 'ant-design-vue';
-import { checkPassword } from '@/libs/validate/validate';
+import { useStore } from 'vuex';
 import type { User } from '@/types/user';
 
 const modal = inject('modal');

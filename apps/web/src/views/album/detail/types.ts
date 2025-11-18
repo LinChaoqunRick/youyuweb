@@ -1,5 +1,5 @@
 import type { UploadResult } from '@/components/common/utils/upload/types';
-import type { BasicUserInfo } from '@youyu/shared/types/common';
+import type { UserBasic } from '@youyu/shared/types/common';
 
 export interface AlbumImageItem extends UploadResult {
   id: number;
@@ -16,7 +16,7 @@ export interface AlbumDetailData {
   name: string;
   open: number;
   authorizedUsers: string;
-  authorizedUserList: BasicUserInfo[] | null;
+  authorizedUserList: UserBasic[] | null;
   content: string;
   cover: string;
   coverImageId: number;
@@ -24,5 +24,5 @@ export interface AlbumDetailData {
   likeCount: number;
   imageCount: number;
   subscribeCount: number;
-  userInfo: BasicUserInfo;
+  userInfo: UserBasic;
 }

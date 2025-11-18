@@ -159,6 +159,9 @@ function UserMessage() {
             deleteUrl={DELETE_MANAGE_MESSAGE}
             showSelection
             showDelete
+            expandable={{
+              showExpandColumn: false, // 隐藏展开按钮
+            }}
             batchButtons={batchButtons}
             columns={columns}
             params={params}

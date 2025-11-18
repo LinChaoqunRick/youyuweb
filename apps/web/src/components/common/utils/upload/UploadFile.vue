@@ -31,10 +31,10 @@
 <script setup lang="ts">
 import { ref, nextTick } from 'vue';
 import { message } from 'ant-design-vue';
+import { AxiosError } from 'axios';
 import { merge } from 'lodash';
 import { convertHEICFileToBlob, getFileType, uploadToOss } from '@/components/common/utils/upload/utils';
 import type { FileExtend, UploadResult } from './types';
-import type { AxiosError } from 'axios';
 import type { FileTypeResult } from 'file-type';
 
 const inputRef = ref<HTMLInputElement | null>(null);

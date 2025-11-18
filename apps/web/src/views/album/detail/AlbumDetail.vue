@@ -1,22 +1,37 @@
 <template>
-  <ContentData url="getAlbumAccessible" :params="{ id: albumId }" v-slot="{ data }" class="content-data-container">
+  <ContentData
+    v-slot="{ data }"
+    url="getAlbumAccessible"
+    :params="{ id: albumId }"
+    class="content-data-container"
+  >
     <div class="album-detail-container">
       <div v-if="data" class="album-detail" :class="{ 'album-detail-collapse': collapse }">
         <div class="album-images-wrapper youyu-scrollbar">
-          <div class="album-detail-top-menu" v-if="userInfo.id === albumDetailData?.userId">
+          <div v-if="userInfo.id === albumDetailData?.userId" class="album-detail-top-menu">
             <a-button type="primary" shape="round" @click="onClickUpload">
               <template #icon>
                 <i-upload-one theme="outline" size="16" fill="currentColor" />
               </template>
               上传
             </a-button>
-            <a-button type="primary" shape="round" v-if="!selection" @click="onSelection">
+            <a-button
+              v-if="!selection"
+              type="primary"
+              shape="round"
+              @click="onSelection"
+            >
               <template #icon>
                 <i-full-selection theme="outline" size="16" fill="currentColor" />
               </template>
               选择
             </a-button>
-            <a-button type="primary" shape="round" v-if="selection" @click="onSelection">
+            <a-button
+              v-if="selection"
+              type="primary"
+              shape="round"
+              @click="onSelection"
+            >
               <template #icon>
                 <i-close theme="outline" size="16" fill="currentColor" />
               </template>
@@ -51,15 +66,15 @@
             </a-button>
           </div>
           <ContentList
+            ref="ContentListRef"
             url="getAlbumImageList"
             :params="params"
             auto-load
             data-text="照片"
             unit="张"
             class="album-content-list"
-            ref="ContentListRef"
           >
-            <template v-slot="{ list }">
+            <template #default="{ list }">
               <div
                 v-for="(item, index) in imageList"
                 :key="item.id"
@@ -72,20 +87,24 @@
                   class="album-cover-tag icon"
                   aria-hidden="true"
                 >
-                  <use xlink:href="#icon-fengmian"></use>
+                  <use xlink:href="#icon-fengmian" />
                 </svg>
-                <img :src="item.url" :alt="item.name" class="cp" />
-                <div class="item-check" v-if="selection && checkedList.includes(item)">
+                <img :src="item.url" :alt="item.name" class="cp">
+                <div v-if="selection && checkedList.includes(item)" class="item-check">
                   <i-check-one theme="filled" size="24" fill="#1677FF" />
                 </div>
                 <div class="image-info-box">
                   <div class="info-data-item">
                     <i-time theme="outline" size="13" fill="currentColor" />
-                    <div class="info-create-time">{{ dayjs(item.createTime).format('YYYY-MM-DD') }}</div>
+                    <div class="info-create-time">
+                      {{ dayjs(item.createTime).format('YYYY-MM-DD') }}
+                    </div>
                   </div>
                   <div class="info-data-item">
                     <i-link-cloud theme="outline" size="13" fill="currentColor" />
-                    <div class="info-create-time">{{ formatSize(item.size) }}</div>
+                    <div class="info-create-time">
+                      {{ formatSize(item.size) }}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -93,39 +112,43 @@
           </ContentList>
         </div>
         <div class="album-info-body">
-          <AlbumDetailInfo :albumId="albumId" ref="AlbumDetailInfoRef" />
+          <AlbumDetailInfo ref="AlbumDetailInfoRef" :album-id="albumId" />
           <div class="collapse-button" @click="onCollapse">
             <i-right theme="outline" size="16" fill="currentColor" />
           </div>
         </div>
       </div>
       <div v-else-if="data === false" class="inaccessible-wrapper">
-        <div class="tip-text">您没有权限访问该相册</div>
-        <a-button type="primary" v-login="onApply">申请访问</a-button>
+        <div class="tip-text">
+          您没有权限访问该相册
+        </div>
+        <a-button v-login="onApply" type="primary">
+          申请访问
+        </a-button>
       </div>
     </div>
   </ContentData>
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from 'vue';
+import { message, Modal } from 'ant-design-vue';
+import dayjs from 'dayjs';
 import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import ContentData from '@/components/common/system/ContentData.vue';
-import AlbumDetailInfo from '@/views/album/detail/AlbumDetailInfo.vue';
 import ContentList from '@/components/common/system/ContentList.vue';
-import { computed, ref } from 'vue';
-import openModal from '@/libs/tools/openModal';
-import UploadImageList from '@/views/album/detail/UploadImageList.vue';
-import openImage from '@/libs/tools/openImage';
-import { message, Modal } from 'ant-design-vue';
-import { convertHEICUrlToBlob, getUrlImageFormat, formatSize } from '@/components/common/utils/upload/utils';
-import dayjs from 'dayjs';
 import type { UploadResult } from '@/components/common/utils/upload/types';
+import { convertHEICUrlToBlob, getUrlImageFormat, formatSize } from '@/components/common/utils/upload/utils';
+import openModal from '@/libs/tools/openModal';
+import AlbumDetailInfo from '@/views/album/detail/AlbumDetailInfo.vue';
 import type { AlbumImageItem } from '@/views/album/detail/types';
+import UploadImageList from '@/views/album/detail/UploadImageList.vue';
+import openImage from '../../../../../../packages/shared/vue-hooks/openImage';
 
 defineOptions({
-  name: 'AlbumDetail'
-})
+  name: 'AlbumDetail',
+});
 
 const { getters, dispatch } = useStore();
 
@@ -193,7 +216,7 @@ const onImageClick = (item: AlbumImageItem, index: number) => {
       list: imageList.value.map(item => item.url),
       current: index,
       originTransfer: (index: number) => {
-        const originUrl = imageList.value[index].originUrl;
+        const {originUrl} = imageList.value[index];
         if (originUrl) {
           return originUrl;
         } else {
@@ -250,7 +273,8 @@ const onDelete = () => {
         .then(res => {
           message.success('删除成功');
           ContentListRef.value &&
-            (ContentListRef.value.list = ContentListRef.value?.list.filter(item => !checkedList.value.includes(item)) ?? []);
+            (ContentListRef.value.list =
+              ContentListRef.value?.list.filter(item => !checkedList.value.includes(item)) ?? []);
           checkedList.value = [];
         })
         .finally(() => {
@@ -275,14 +299,14 @@ $imageWidth: 152px;
 
   .album-detail-container {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     height: calc(100vh - 100px);
 
     .album-detail {
       display: flex;
-      height: 100%;
       width: 100%;
+      height: 100%;
       overflow: hidden;
 
       .album-images-wrapper {
@@ -304,25 +328,25 @@ $imageWidth: 152px;
         .album-detail-top-menu {
           position: sticky;
           top: 0;
-          height: 48px;
+          z-index: 10;
           display: flex;
-          justify-content: flex-end;
           align-items: center;
+          justify-content: flex-end;
+          height: 48px;
+          padding-right: 20px;
           background-color: var(--youyu-body-background2);
           border-bottom: var(--youyu-navigation-border);
-          padding-right: 20px;
-          z-index: 10;
         }
 
         .album-content-list {
           padding: $imageWrapperPadding;
 
           .image-wrapper {
-            height: $imageWidth;
-            width: $imageWidth;
-            overflow: hidden;
             position: relative;
-            background-color: rgba(192, 192, 192, 0.8);
+            width: $imageWidth;
+            height: $imageWidth;
+            overflow: hidden;
+            background-color: rgb(192, 192, 192, 0.8);
 
             &:hover {
               .image-info-box {
@@ -345,19 +369,19 @@ $imageWidth: 152px;
             }
 
             .image-info-box {
-              display: flex;
-              justify-content: space-between;
               position: absolute;
+              right: 0;
               bottom: 0;
               left: 0;
-              right: 0;
-              color: white;
+              display: flex;
+              justify-content: space-between;
               padding: 2px;
               font-size: 11px;
+              color: white;
+              background: linear-gradient(to bottom, rgb(0, 0, 0, 0), rgb(0, 0, 0, 0.42));
               cursor: pointer;
-              transform: translateY(100%);
-              background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.42));
               transition: 0.3s;
+              transform: translateY(100%);
 
               .info-data-item {
                 display: flex;
@@ -371,8 +395,8 @@ $imageWidth: 152px;
           }
 
           img {
-            height: 100%;
             width: 100%;
+            height: 100%;
             object-fit: cover;
             transition: 0.3s;
 
@@ -399,28 +423,28 @@ $imageWidth: 152px;
 
       .album-info-body {
         position: relative;
-        height: 100%;
+        z-index: 1;
         width: $infoBodyWidth;
+        height: 100%;
         overflow: visible;
         border-right: var(--youyu-navigation-border);
-        transform: translateX(0);
         transition: 0.3s;
-        z-index: 1;
+        transform: translateX(0);
 
         .collapse-button {
-          display: flex;
-          align-items: center;
           position: absolute;
           top: calc(50% - 33px);
           left: -16px;
+          display: flex;
+          align-items: center;
           width: 0;
           height: 66px;
+          color: #bebebe;
           border: 8px solid transparent;
-          border-left: 0;
           border-right: 16px solid var(--youyu-background2);
+          border-left: 0;
           cursor: pointer;
           transition: all 0.3s ease-in-out;
-          color: #bebebe;
 
           &:hover {
             color: var(--youyu-text2);
@@ -446,15 +470,15 @@ $imageWidth: 152px;
     }
 
     .inaccessible-wrapper {
-      height: 260px;
-      width: 400px;
-      border-radius: 8px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+      width: 400px;
+      height: 260px;
       font-size: 18px;
       font-weight: bold;
+      border-radius: 8px;
 
       .tip-text {
         margin-bottom: 12px;

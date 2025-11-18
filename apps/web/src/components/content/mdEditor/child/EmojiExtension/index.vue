@@ -1,57 +1,61 @@
 <template>
   <dropdown-toolbar title="emoji" :visible="state.visible" @on-change="onChange">
     <template #overlay>
-      <Emoji @emojiHandler="emojiHandler"/>
+      <Emoji @emoji-handler="emojiHandler" />
     </template>
     <template #trigger>
-      <i-smiling-face theme="outline" size="17" fill="currentColor"
-                      style="padding: 0 3.5px;color:var(--editor-icon-color)"/>
+      <i-smiling-face
+        theme="outline"
+        size="17"
+        fill="currentColor"
+        style="padding: 0 3.5px; color: var(--editor-icon-color)"
+      />
     </template>
   </dropdown-toolbar>
 </template>
 
 <script lang="ts" setup>
-  import {ref, reactive} from 'vue';
-  import type {PropType} from 'vue';
-  import type {InsertContentGenerator} from 'md-editor-v3';
-  import {DropdownToolbar} from 'md-editor-v3';
-  import Emoji from '@/components/common/utils/emoji/index.vue';
+import { ref, reactive } from 'vue';
+import type { PropType } from 'vue';
+import Emoji from '@youyu/shared/components-vue/emoji/index.vue';
+import { DropdownToolbar } from 'md-editor-v3';
+import type { InsertContentGenerator } from 'md-editor-v3';
 
-  const props = defineProps({
-    onInsert: {
-      type: Function as PropType<(generator: InsertContentGenerator) => void>,
-      default: () => () => null
-    }
-  });
+const props = defineProps({
+  onInsert: {
+    type: Function as PropType<(generator: InsertContentGenerator) => void>,
+    default: () => () => null,
+  },
+});
 
-  const emit = defineEmits(['onChange']);
+const emit = defineEmits(['onChange']);
 
-  const state = reactive({
-    visible: false
-  });
+const state = reactive({
+  visible: false,
+});
 
-  const emojiHandler = (emoji: string) => {
-    const generator: InsertContentGenerator = () => {
-      return {
-        targetValue: emoji,
-        select: false,
-        deviationStart: 0,
-        deviationEnd: 0
-      };
+const emojiHandler = (emoji: string) => {
+  const generator: InsertContentGenerator = () => {
+    return {
+      targetValue: emoji,
+      select: false,
+      deviationStart: 0,
+      deviationEnd: 0,
     };
-
-    props.onInsert(generator);
   };
 
-  const onChange = (visible: boolean) => {
-    state.visible = visible;
-  };
+  props.onInsert(generator);
+};
+
+const onChange = (visible: boolean) => {
+  state.visible = visible;
+};
 </script>
 
 <style>
-  .md-toolbar-item {
-    display: flex !important;
-    justify-content: center;
-    align-items: center;
-  }
+.md-toolbar-item {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
 </style>

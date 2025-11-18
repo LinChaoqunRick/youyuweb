@@ -1,12 +1,12 @@
 <template>
   <div class="change-homepage">
     <a-form
+      ref="formRef"
       :model="formValidate"
       :colon="false"
       :rules="rulesRef"
       :label-col="labelCol"
       :wrapper-col="wrapperCol"
-      ref="formRef"
       class="note-form"
     >
       <div class="note-left">
@@ -21,10 +21,10 @@
 <script setup lang="ts">
 import { ref, reactive, inject } from 'vue';
 import type { PropType } from 'vue';
-import type { User } from '@/types/user';
-import { useStore } from 'vuex';
+import { checkDomain } from '@youyu/shared/utils/antdv-validate';
 import { message } from 'ant-design-vue';
-import { checkDomain } from '@/libs/validate/validate';
+import { useStore } from 'vuex';
+import type { User } from '@/types/user';
 
 const modal = inject('modal');
 const labelCol = { span: 4 };

@@ -1,81 +1,68 @@
 <template>
   <div class="user-moment-list">
     <div class="moment-list-body mt-8">
-      <ContentList
+      <!-- @vue-generic {import('@youyu/shared/types/vo/moment').MomentVo} -->
+      <vue-content-page
+        ref="VueContentPageRef"
         :url="props.url"
         :params="params"
-        auto-load
         data-text="时刻"
         class="moment-content-list"
-        ref="ContentListRef"
       >
-        <template v-slot="{ list }">
+        <template #default="{ list }">
           <MomentItem
-            v-for="item in list"
-            :data="item"
+            v-for="(item, index) in list"
             :key="item.id"
-            @deleteSuccess="deleteSuccess"
+            v-model:data="list[index]"
+            @delete-success="deleteSuccess"
           />
         </template>
-        <template v-slot:loadMoreBox="{ restLoading }">
-          <a-spin :spinning="restLoading"></a-spin>
-          <span class="tip-text">加载中...</span>
-        </template>
-      </ContentList>
+      </vue-content-page>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 export default {
-  name: "UserMomentList",
+  name: 'UserMomentList',
 };
 </script>
 
 <script setup lang="ts">
-import {ref, computed, provide} from "vue";
-import {useStore} from "vuex";
-import {useRouter} from "vue-router";
-import type {momentType} from "@/views/moment/types";
-import MomentItem from "./MomentItem.vue";
-import ContentList from "@/components/common/system/ContentList.vue";
-import type {momentListType} from "@/views/moment/types";
-
-const {dispatch} = useStore();
-
-const router = useRouter();
+import { ref, provide } from 'vue';
+import { MOMENT_LIST } from '@youyu/shared/apis';
+import { VueContentPage } from '@youyu/shared/components-vue';
+import MomentItem from './MomentItem.vue';
+import type { MomentVo } from '@youyu/shared/types/vo/moment';
+import type { ComponentExposed } from 'vue-component-type-helpers';
 
 const props = defineProps({
   url: {
     type: String,
-    default: "momentList",
+    default: MOMENT_LIST,
   },
   params: {
     type: Object,
+    default: () => ({}),
   },
 });
 
-const ContentListRef = ref(null);
-const momentList = computed(() => ContentListRef.value.list);
-const loading = ref<boolean>(false);
+const VueContentPageRef = ref<ComponentExposed<typeof VueContentPage> | null>(null);
 const activeId = ref<number>(-1);
 
-const unshiftItem = (data: momentType) => {
-  momentList.value.unshift(data);
+const unshiftItem = (data: MomentVo) => {
+  VueContentPageRef.value!.unshiftData(data);
 };
 
 const updateActiveId = (value: number) => {
   activeId.value = value;
 };
 
-const deleteSuccess = (moment: momentListType) => {
-  const index = momentList.value.findIndex(
-    (item: momentListType) => item.id === moment.id
-  );
-  momentList.value.splice(index, 1);
+const deleteSuccess = (moment: MomentVo) => {
+  VueContentPageRef.value!.removeById(moment.id);
 };
 
-provide("active", {activeId, updateActiveId});
+provide('active', { activeId, updateActiveId });
 
 defineExpose({
   unshiftItem,
@@ -89,8 +76,8 @@ defineExpose({
       &.content-list {
         .moment-item {
           margin-bottom: 8px;
-          border-radius: 4px;
           overflow: hidden;
+          border-radius: 4px;
 
           .bottom-operation {
             min-height: 0;
@@ -101,11 +88,11 @@ defineExpose({
           }
         }
 
-        >.bottom-operation {
+        > .bottom-operation {
           padding: 12px 0;
-          border-radius: 4px;
           overflow: hidden;
           background-color: var(--youyu-background1);
+          border-radius: 4px;
 
           .ant-spin {
             font-size: 0;
@@ -127,7 +114,7 @@ defineExpose({
 
 .momentSpin-enter-from,
 .momentSpin-leave-to {
-  opacity: 0;
   height: 0;
+  opacity: 0;
 }
 </style>

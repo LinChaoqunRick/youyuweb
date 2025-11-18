@@ -28,3 +28,8 @@ export const SMSTypes: Record<number, SMSType> = {
   4: { name: '变更手机号_前置', label: 'changeTelephonePrev' },
   5: { name: '变更手机号_后置', label: 'changeTelephoneNext' },
 };
+
+export enum ActorType {
+  USER = 0, // 用户
+  VISITOR = 1, // 游客
+}

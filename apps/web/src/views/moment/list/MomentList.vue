@@ -1,37 +1,24 @@
 <template>
   <div class="moment-list">
-    <div class="moment-list-left mr-8">
-      <div v-side-fixed class="moment-list-left-menu">
-        <div v-for="menu in menuList" :key="menu.title" class="menu-item">
-          <RouterLink :to="menu.path">
-            <component :is="menu.icon" theme="filled" size="16" fill="currentColor" />
-            <span>{{ menu.title }}</span>
-          </RouterLink>
-        </div>
-      </div>
-    </div>
     <div class="moment-list-center mr-8">
       <MomentEditor @save-success="saveSuccess" />
       <EmptyPage ref="EmptyPageRef" />
     </div>
-    <div class="moment-list-right">
-      <UserPanelMoment v-side-fixed />
+    <div class="moment-list-right mr-8">
+      <div v-side-fixed>
+        <announcement />
+      </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'MomentList',
-};
-</script>
-
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRoute, RouterLink } from 'vue-router';
+import Announcement from '@/components/common/share/announcement/index.vue';
 import EmptyPage from '@/components/common/system/EmptyPage.vue';
+
 import MomentEditor from '../components/MomentEditor.vue';
-import UserPanelMoment from '@/views/moment/components/UserPanelMoment.vue';
 
 const route = useRoute();
 const menuList = [
@@ -71,56 +58,13 @@ const saveSuccess = data => {
   justify-content: center;
   padding: 8px 0;
 
-  .moment-list-left {
+  .moment-list-right {
     position: relative;
-    width: 180px;
-
-    .moment-list-left-menu {
-      width: 180px;
-      background-color: var(--youyu-background1);
-      border-radius: 4px;
-      padding: 8px 8px 35px 8px;
-
-      .menu-item {
-        font-size: 16px;
-
-        span {
-          font-weight: normal !important;
-        }
-
-        a {
-          color: inherit;
-          display: inline-block;
-          height: 100%;
-          width: 100%;
-          padding: 8px 12px;
-          border-radius: 4px;
-
-          &.router-link-active {
-            background-color: var(--youyu-body-background-5);
-            color: #1890ff !important;
-
-            .i-icon {
-              color: #1890ff !important;
-            }
-          }
-        }
-
-        .i-icon {
-          margin-right: 8px;
-          color: #8a919f;
-        }
-      }
-    }
+    width: 290px;
   }
 
   .moment-list-center {
-    width: 824px;
-  }
-
-  .moment-list-right {
-    position: relative;
-    width: 280px;
+    width: 850px;
   }
 }
 </style>

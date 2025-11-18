@@ -1,7 +1,8 @@
-export interface FileExtend extends File {
+export interface FileExtend extends Partial<File> {
   thumb?: string;
-  progress: number;
+  progress?: number;
   url?: string;
+  originFileObj?: File;
 }
 
 export interface UploadResult {

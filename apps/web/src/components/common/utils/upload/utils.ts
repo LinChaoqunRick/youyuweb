@@ -1,11 +1,11 @@
-import axios, { AxiosError, type AxiosProgressEvent } from 'axios';
-import store from '@/store';
 import { message } from 'ant-design-vue';
+import axios, { AxiosError, type AxiosProgressEvent } from 'axios';
 import dayjs from 'dayjs';
-import { merge } from 'lodash';
-import heic2any from 'heic2any';
-import type { UploadConfig, UploadResult } from './types';
 import { fileTypeFromBuffer, type FileTypeResult } from 'file-type';
+import heic2any from 'heic2any';
+import { merge } from 'lodash';
+import store from '@/store';
+import type { UploadConfig, UploadResult } from './types';
 
 export const isImageFile = (file: File) => {
   // 检查图片类型
@@ -31,7 +31,7 @@ export async function uploadToOss(files: File[], config?: UploadConfig): Promise
     accept: '.jpg, .jpeg, .png, .JPG, .PNG',
     maxSize: 20,
     needTip: true,
-    policyPath: 'getOssPolicy'
+    policyPath: 'getOssPolicy',
   };
 
   const mergedConfig = merge({}, defaultConfig, config);
@@ -66,7 +66,7 @@ export async function uploadToOss(files: File[], config?: UploadConfig): Promise
   }
 
   const res = await store.dispatch(mergedConfig.policyPath, mergedConfig?.data).catch(console.error);
-  const data = res.data;
+  const {data} = res;
   if (!data) {
     throw new Error('签名获取失败');
   }
@@ -89,13 +89,13 @@ export async function uploadToOss(files: File[], config?: UploadConfig): Promise
       try {
         const res = await axios.post(data.host, form, {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'multipart/form-data',
           },
           onUploadProgress: (progressEvent: AxiosProgressEvent) => {
             const progress = Number((((progressEvent.loaded / (progressEvent?.total || 1)) * 100) | 0).toFixed(2));
             progressList[index] = progress;
             mergedConfig?.progress?.(progressList);
-          }
+          },
         });
         return { url: `${data.host}/${data.dir}${file_name}`, path: `${data.dir}${file_name}`, file: file };
       } catch (error) {
@@ -105,7 +105,7 @@ export async function uploadToOss(files: File[], config?: UploadConfig): Promise
       } finally {
         hide && hide();
       }
-    })
+    }),
   )
     .then(res => {
       const failedNumber = res.filter(item => item instanceof AxiosError).length;
@@ -136,31 +136,14 @@ export const getXmlTextContent = (xml: string, tag: string) => {
 export const convertHEICFileToBlob = async (heicFile: File) => {
   const blob = await heic2any({
     blob: heicFile,
-    toType: 'image/jpeg'
+    toType: 'image/jpeg',
   });
   return URL.createObjectURL(blob);
 };
 
-export const convertHEICUrlToBlob = async (url: string) => {
-  try {
-    const response = await fetch(url);
-    const HEICBlob = await response.blob();
-
-    const convertedBlob = await heic2any({
-      blob: HEICBlob,
-      toType: 'image/jpeg', // 你也可以选择 'image/png' 等其他格式
-      quality: 0.35
-    });
-
-    return URL.createObjectURL(convertedBlob);
-  } catch (error) {
-    console.error('Error converting HEIC file:', error);
-  }
-};
-
 export const getUrlImageFormat = (rawUrl: string) => {
   const url = new URL(rawUrl);
-  const pathname = url.pathname;
+  const {pathname} = url;
   return pathname.substring(pathname.lastIndexOf('.') + 1).toUpperCase();
 };
 

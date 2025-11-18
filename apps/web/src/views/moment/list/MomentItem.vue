@@ -52,11 +52,11 @@
         >
           <template #content>
             <div class="operation-items">
-              <div v-if="data.userId === userInfo.id" class="operation-item delete-moment" @click="onDelete">
+              <div v-if="isOwn" class="operation-item delete-moment" @click="onDelete">
                 <i-delete theme="outline" size="14" fill="currentColor" />
                 删除
               </div>
-              <div v-if="data.userId === userInfo.id" class="operation-item edit-moment" @click="onEdit">
+              <div v-if="isOwn" class="operation-item edit-moment" @click="onEdit">
                 <i-editor theme="outline" size="14" fill="currentColor" />
                 编辑
               </div>
@@ -64,17 +64,9 @@
                 <i-doc-detail theme="outline" size="14" fill="currentColor" />
                 详情
               </div>
-              <div class="operation-item">
-                <i-people-unknown theme="outline" size="14" fill="currentColor" />
-                屏蔽作者
-              </div>
-              <div class="operation-item">
-                <i-caution theme="outline" size="14" fill="currentColor" />
-                举报
-              </div>
             </div>
           </template>
-          <div class="content-top-operation">
+          <div v-if="isOwn || showDetail" class="content-top-operation">
             <i-more-one theme="outline" size="22" fill="currentColor" />
           </div>
         </a-popover>
@@ -131,22 +123,6 @@
       <a-popover trigger="click" overlay-class-name="share-actions-popover">
         <template #content>
           <div class="share-action-item copy-link" @click="onCopyLink">
-            <svg
-              t="1729582073552"
-              class="icon"
-              viewBox="0 0 1109 1024"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              p-id="5152"
-              width="16"
-              height="16"
-            >
-              <path
-                d="M483.84 560.298667c24.234667 24.149333 24.234667 60.330667 0 84.48s-66.304 30.122667-90.453333 5.973333a229.461333 229.461333 0 0 1 0-325.802667L634.88 83.626667c90.453333-90.538667 235.264-90.538667 325.802667 0s96.512 229.290667 5.973333 319.744l-72.362667 72.448c-24.149333 24.149333-60.330667 24.149333-90.453333-6.058667s-24.149333-60.330667 0-84.48l72.362667-72.362667c42.24-42.24 36.181333-108.629333 0-144.896S767.488 119.808 725.333333 162.133333L483.925333 403.370667a112.981333 112.981333 0 0 0 0 156.928z m90.624-90.538667c-24.149333-24.149333-24.149333-60.330667 5.973333-90.453333s60.330667-24.149333 84.48 0a229.461333 229.461333 0 0 1 0 325.802666L423.594667 946.346667c-90.453333 90.453333-241.408 96.597333-331.946667 5.973333s-84.48-241.322667 6.058667-331.776l72.448-72.448c24.149333-24.149333 66.389333-30.122667 90.453333-5.973333s18.176 66.304-5.973333 90.453333l-72.448 72.448c-42.24 42.24-42.24 114.602667 0 156.842667s108.629333 36.181333 150.869333-5.973334l241.408-241.408c42.154667-42.24 42.154667-102.570667 0-144.810666z"
-                fill="#1890ff"
-                p-id="5153"
-              />
-            </svg>
             <div class="share-action-item-text">
               复制链接
             </div>
@@ -161,7 +137,7 @@
           </div>
         </div>
       </a-popover>
-      <div class="item-operation comment-operation" :class="{ 'action-active': replyShow }" @click="onClickReply">
+      <div class="item-operation comment-operation" :class="{ 'action-active': replyShow }" @click="onComment">
         <div v-if="replyShow" class="pointer-arrow" />
         <div class="item-icon">
           <i-comment :theme="replyShow ? 'filled' : 'outline'" size="14" fill="currentColor" />
@@ -181,95 +157,64 @@
     </div>
     <div v-if="commentListShowVisibleIf" v-show="commentListShowVisibleShow" class="moment-item-bottom">
       <div class="moment-comment-editor">
-        <div class="user-avatar">
-          <img v-if="isLogin" :src="userInfo.avatar" :alt="userInfo.nickname + '的头像'">
-          <img
-            v-else
-            alt="默认头像"
-            src="https://youyu-source.oss-cn-beijing.aliyuncs.com/avatar/default/default_avatar.png"
-          >
-        </div>
         <div class="reply-box-wrapper">
-          <MomentReplyEditor
-            :params="replyParams"
-            :placeholder="replyEditorPlaceholder"
-            @save-success="onCommentSuccess"
+          <vue-comment-editor
+            :auto-focus="false"
+            :save-url="CREATE_MOMENT_COMMENT"
+            :save-params="{
+              momentId: data.id,
+            }"
+            :avatar="userInfo.avatar"
+            :user-mode="isLogin"
+            :on-success="onCommentSuccess"
           />
         </div>
       </div>
-      <div class="moment-comment-list">
-        <div class="comment-list-top">
-          <div class="comment-count">
-            全部评论（{{ data.commentCount || 0 }}）
-          </div>
-          <SortSwitch v-model="sort" @on-change="onChange" />
-        </div>
-        <div class="comment-list">
-          <ContentData
-            v-slot="{ data }"
-            ref="ContentDataRef"
-            url="listMomentCommentPage"
-            :params="listParams"
-          >
-            <MomentCommentItem
-              v-for="item in data?.list"
-              :key="item.id"
-              class="comment-item"
-              :data="item"
-              :moment="props.data"
-              @delete-success="deleteSuccess"
-            />
-            <div v-if="data?.pages > 1" class="comment-load-all">
-              <div class="more-btn" @click="onDetail">
-                查看全部
-                <span class="comment-count">{{ props.data.commentCount }}</span>
-                条评论
-              </div>
-            </div>
-          </ContentData>
-        </div>
-      </div>
+      <moment-comment
+        ref="momentCommentRef"
+        v-model:moment="data"
+        :page-size="5"
+        no-action
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, nextTick } from 'vue';
-import type { PropType } from 'vue';
+import { ref, computed } from 'vue';
+import { CREATE_MOMENT_COMMENT } from '@youyu/shared/apis';
+import { ImagePreviewEmbed } from '@youyu/shared/components-vue';
+import { VueCommentEditor } from '@youyu/shared/components-vue';
+import { transformTagToHTML } from '@youyu/shared/components-vue/emoji/youyu_emoji';
 import { message, Modal } from 'ant-design-vue';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
 import { useStore } from 'vuex';
 import { copyToClipboard } from '@/assets/utils/utils';
-import ContentData from '@/components/common/system/ContentData.vue';
 import LocationPreview from '@/components/common/utils/aMap/LocationPreview.vue';
-import { transformTagToHTML } from '@/components/common/utils/emoji/youyu_emoji';
-import ImagePreviewEmbed from '@/components/common/utils/image/ImagePreviceEmbed.vue';
-import SortSwitch from '@/components/common/utils/sortSwitch/SortSwitch.vue';
 import { DOMAIN } from '@/libs/consts';
 import openModal from '@/libs/tools/openModal';
-import MomentReplyEditor from '@/views/moment/components/MomentReplyEditor.vue';
-import type { momentListType } from '@/views/moment/types';
-import MomentCommentItem from '../components/MomentCommentItem.vue';
+import MomentComment from '@/views/moment/components/MomentComment.vue';
 import UserCardMoment from '../components/UserCardMoment.vue';
+import type { Comment } from '@youyu/shared/types/common';
+import type { MomentVo } from '@youyu/shared/types/vo/moment';
 
 const { getters, dispatch } = useStore();
 
 const route = useRoute();
 const router = useRouter();
 
-const props = defineProps({
-  data: {
-    type: Object as PropType<momentListType>,
-    required: true
-  },
+const data = defineModel<MomentVo>('data', { required: true });
+
+defineProps({
   showDetail: {
     type: Boolean,
-    default: true
-  }
+    default: true,
+  },
 });
 
 const emit = defineEmits(['deleteSuccess', 'onEdit', 'onCommentSaveSuccess', 'onCommentDeleteSuccess']);
 
+const momentCommentRef = ref<InstanceType<typeof MomentComment>>();
 const preview = ref(false);
 const current = ref(0);
 const row = ref<number>(0);
@@ -278,12 +223,9 @@ const replyShow = ref<boolean>(false);
 const commentListShowVisibleIf = ref<boolean>(false);
 const commentListShowVisibleShow = ref<boolean>(false);
 const visible = ref<boolean>(false);
-const sort = ref<string>('new'); // true:最新 false:最热
-const loading = ref<boolean>(false);
 const likeLoading = ref<boolean>(false);
-const order = computed(() => (sort.value === 'new' ? 'create_time' : 'support_count'));
 const images = computed(() => {
-  return props.data.images ? props.data.images.split(',') : [];
+  return data.value.images ? data.value.images.split(',') : [];
 });
 const imageClass = computed(() => {
   const imageLength = images.value?.length ?? 0;
@@ -297,20 +239,8 @@ const imageClass = computed(() => {
 });
 const userInfo = computed(() => getters['userInfo']);
 const isLogin = computed(() => getters['isLogin']);
-const likeActive = computed(() => props.data.momentLike);
-const listParams = computed(() => ({
-  momentId: props.data.id,
-  pageSize: 5,
-  orderBy: order.value
-}));
-const replyEditorPlaceholder = computed(() => (props.data ? '回复@' + props.data.user.nickname : ''));
-const replyParams = computed(() => {
-  return {
-    momentId: props.data.id,
-    userIdTo: props.data.userId
-  };
-});
-const ContentDataRef = ref<InstanceType<typeof ContentData> | null>(null);
+const likeActive = computed(() => data.value.momentLike);
+const isOwn = computed(() => data.value.user.id === userInfo.value.id);
 
 function set(value: number) {
   row.value = value;
@@ -324,12 +254,11 @@ const onClose = () => {
   preview.value = false;
 };
 
-const onCommentSuccess = (data: object) => {
-  ContentDataRef.value?.data.list.unshift(data);
-  props.data.commentCount += 1;
+const onCommentSuccess = (data: Comment) => {
+  momentCommentRef.value?.onSaveCommentSuccess(data);
 };
 
-const onClickReply = () => {
+const onComment = () => {
   replyShow.value = commentListShowVisibleShow.value = !replyShow.value;
   if (replyShow.value) {
     commentListShowVisibleIf.value = true;
@@ -340,16 +269,12 @@ const deleteSuccess = (comment: any) => {
   if (ContentDataRef.value) {
     ContentDataRef.value.data.list = ContentDataRef.value.data.list.filter((item: any) => item.id !== comment.id);
   }
-  props.data.commentCount -= 1 + comment.replyCount;
+  data.value.commentCount -= 1 + comment.replyCount;
   emit('onCommentDeleteSuccess', comment);
 };
 
-const onChange = (value: boolean) => {
-  nextTick(() => ContentDataRef.value?.initData());
-};
-
 const onDetail = () => {
-  router.push(`/moment/details/${props.data.id}`);
+  router.push(`/moment/details/${data.value.id}`);
 };
 
 const onDelete = () => {
@@ -360,14 +285,14 @@ const onDelete = () => {
     content: '确定删除这条时刻吗？',
     onOk() {
       return dispatch('deleteMoment', {
-        momentId: props.data.id
+        momentId: data.value.id,
       })
         .then(res => {
           message.success('删除成功');
-          emit('deleteSuccess', props.data);
+          emit('deleteSuccess', data.value);
         })
         .catch(console.log);
-    }
+    },
   });
 };
 
@@ -377,8 +302,8 @@ const onEdit = () => {
   } else {
     router.push({
       name: 'MomentDetail',
-      params: { momentId: props.data.id },
-      query: { type: 'edit' }
+      params: { momentId: data.value.id },
+      query: { type: 'edit' },
     });
   }
 };
@@ -386,24 +311,24 @@ const onEdit = () => {
 const onLike = () => {
   if (likeLoading.value) return;
   likeLoading.value = true;
-  const isLike = !!props.data.momentLike;
+  const isLike = !!data.value.momentLike;
   dispatch(isLike ? 'cancelMomentLike' : 'setMomentLike', {
-    momentId: props.data.id,
+    momentId: data.value.id,
     userId: userInfo.value.id,
-    userIdTo: props.data.userId
+    userIdTo: data.value.userId,
   })
     .then(res => {
       if (isLike) {
-        props.data.momentLike = null;
-        props.data.supportCount -= 1;
-        props.data.likeUsers = props.data.likeUsers.filter(item => item.id !== userInfo.value.id);
+        data.value.momentLike = false;
+        data.value.supportCount -= 1;
+        data.value.likeUsers = data.value.likeUsers.filter(item => item.id !== userInfo.value.id);
       } else {
-        props.data.momentLike = res.data;
-        props.data.supportCount += 1;
-        if (!props.data.likeUsers) {
-          props.data.likeUsers = [];
+        data.value.momentLike = res.data;
+        data.value.supportCount += 1;
+        if (!data.value.likeUsers) {
+          data.value.likeUsers = [];
         }
-        props.data.likeUsers.unshift(userInfo.value);
+        data.value.likeUsers.unshift(userInfo.value);
       }
     })
     .finally(() => {
@@ -413,45 +338,47 @@ const onLike = () => {
 
 const onUserVisibleChange = (visible: boolean) => {
   if (visible) {
-    dispatch('getMomentUserDetail', { userId: props.data.userId }).then(res => {
-      props.data.user = res.data;
+    dispatch('getMomentUserDetail', { userId: data.value.userId }).then(res => {
+      data.value.user = res.data;
     });
   }
 };
 
 const onLocationPreview = () => {
   const location = {
-    longitude: props.data.longitude,
-    latitude: props.data.latitude,
-    name: props.data.location
+    longitude: data.value.longitude,
+    latitude: data.value.latitude,
+    name: data.value.location,
   };
   openModal({
     component: LocationPreview,
     componentProps: {
-      data: location
+      data: location,
     },
     title: `位置详情`,
     width: '80vw',
     maskClosable: false,
     keyboard: false,
     centered: true,
-    wrapClassName: 'select-position-modal-wrapper'
+    wrapClassName: 'select-position-modal-wrapper',
   });
 };
 
 const onCopyLink = () => {
-  copyToClipboard(DOMAIN + '/moment/details/' + props.data.id);
+  copyToClipboard(DOMAIN + '/moment/details/' + data.value.id);
 };
 
 defineExpose({
   // onCommentSubmit,
-  deleteSuccess
+  deleteSuccess,
 });
 </script>
 
 <style lang="scss" scoped>
 .moment-item {
+  margin-bottom: 8px;
   background-color: var(--youyu-body-background2);
+  border-radius: 4px;
 
   .moment-item-content {
     padding: 16px 16px 10px;
@@ -553,23 +480,23 @@ defineExpose({
         display: grid;
 
         &.col-3 {
-          grid-template-columns: repeat(3, 114px);
+          grid-template-columns: repeat(3, 134px);
         }
 
         &.col-2 {
-          grid-template-columns: repeat(2, 114px);
+          grid-template-columns: repeat(2, 134px);
         }
 
         &.col-1 {
           img {
-            width: 160px;
-            height: 160px;
+            width: 180px;
+            height: 180px;
           }
         }
 
         img {
-          width: 110px;
-          height: 110px;
+          width: 130px;
+          height: 130px;
           margin: 0 4px 4px 0;
           object-fit: cover;
           filter: brightness(0.94);
@@ -722,113 +649,13 @@ defineExpose({
     .moment-comment-editor {
       display: flex;
       align-items: flex-start;
-      padding: 16px 0;
+      padding: 12px 0;
       margin: 0 24px;
       border-top: 1px solid var(--youyu-border-color3);
-
-      .user-avatar {
-        width: 36px;
-        height: 36px;
-        margin: 0 12px 0 4px;
-        overflow: hidden;
-        border: var(--youyu-avatar-border);
-        border-radius: 100%;
-
-        img {
-          width: 100%;
-          height: 100%;
-        }
-      }
+      border-bottom: 1px solid var(--youyu-border-color3);
 
       .reply-box-wrapper {
         flex: 1;
-        overflow: hidden;
-      }
-
-      ::v-deep(.editable-div) {
-        border: 1px solid transparent;
-        border-radius: 2px;
-        transition: 0.3s;
-
-        #box {
-          padding: 6px 12px;
-        }
-      }
-    }
-
-    .moment-comment-list {
-      padding: 8px 24px;
-      border-top: 1px solid var(--youyu-border-color);
-
-      .comment-list-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-top: 8px;
-
-        .comment-count {
-          font-size: 16px;
-          font-weight: bold;
-        }
-
-        .sort-type {
-          display: inline-flex;
-          align-items: center;
-          padding: 3px;
-          font-size: 14px;
-          font-weight: 400;
-          color: #4e5969;
-          background: var(--youyu-body-background-ligth);
-          border-radius: 2px;
-          cursor: pointer;
-
-          .sort-item {
-            display: flex;
-            align-items: center;
-            padding: 2px 12px;
-            font-size: 14px;
-            line-height: 22px;
-            color: #8a919f;
-
-            ::v-deep(svg) {
-              margin-right: 4px;
-            }
-          }
-
-          .active {
-            color: #1890ff;
-            background: var(--youyu-body-background2);
-            border-radius: 2px;
-
-            ::v-deep(svg) {
-              margin-right: 4px;
-            }
-          }
-        }
-      }
-
-      .comment-list {
-        ::v-deep(.content-data) {
-          .comment-item {
-            padding: 8px 0;
-
-            &:last-child {
-              border-bottom: none !important;
-            }
-          }
-        }
-      }
-
-      .comment-load-all {
-        .more-btn {
-          padding: 10px 0 4px;
-          text-align: center;
-          cursor: pointer;
-
-          .comment-count {
-            color: #1890ff;
-          }
-        }
       }
     }
   }

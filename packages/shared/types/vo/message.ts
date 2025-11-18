@@ -1,4 +1,4 @@
-import type { BasicUserInfo } from '../common';
+import type { UserBasic } from '../common';
 
 export interface Barrage {
   id?: number;
@@ -7,10 +7,10 @@ export interface Barrage {
   email?: string;
   home?: string;
   content: string;
-  trackId?: number,
+  trackId?: number;
   y?: number;
   userId?: number;
-  userInfo?: BasicUserInfo;
+  userInfo?: UserBasic;
 }
 
 export interface Message {
@@ -24,10 +24,10 @@ export interface Message {
   content: string;
   adcode: number;
   status: number;
+  homepage: string;
   supportCount: number;
   opposeCount: number;
   createTime: string;
   updateTime: string;
   adname: string;
-  userInfo: BasicUserInfo;
 }
