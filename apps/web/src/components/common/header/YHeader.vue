@@ -55,7 +55,7 @@ header {
 <style lang="scss" scoped>
 .menu-nav {
   .main-logo {
-    margin: 0 20px;
+    margin: 0 16px;
   }
 }
 

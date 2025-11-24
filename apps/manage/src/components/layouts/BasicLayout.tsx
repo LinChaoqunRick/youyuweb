@@ -18,7 +18,9 @@ function BasicLayout() {
   return (
     <div className="main-container">
       <div className="main-menu">
-        <Logo />
+        <div className="logo-wrapper">
+          <Logo />
+        </div>
         <AuthMenu />
       </div>
       <div className="view-wrapper">

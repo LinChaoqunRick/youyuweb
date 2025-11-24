@@ -1,25 +1,23 @@
-import home from './modules/home';
-import post from './modules/post';
-import moment from './modules/moment';
-import note from './modules/note';
-import magazine from './modules/magazine';
+import about from './modules/about';
 import album from './modules/album';
+import column from './modules/column';
+import create from './modules/create';
+import home from './modules/home';
 import lab from './modules/lab';
 import links from './modules/links';
 import message from './modules/message';
-import about from './modules/about';
+import moment from './modules/moment';
+import note from './modules/note';
+import post from './modules/post';
 
-import create from './modules/create';
-import user from './modules/user';
 import search from './modules/search';
-import column from './modules/column';
+import user from './modules/user';
 
 const routes = [
   ...home,
   ...post,
   ...moment,
   ...note,
-  ...magazine,
   ...album,
   ...lab,
   ...links,

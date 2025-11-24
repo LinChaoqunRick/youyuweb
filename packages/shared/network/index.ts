@@ -1,6 +1,4 @@
-import axios, {
-  AxiosError, AxiosRequestConfig, AxiosResponse,
-} from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import qs from 'qs';
 import { ResponseResult } from '../types/common';
@@ -8,6 +6,7 @@ import eventBus from '../utils/event-bus';
 
 interface PostAxiosRequestConfig extends AxiosRequestConfig {
   successTip?: string; // 成功提示
+  errorTip?: string; // 失败提示
 }
 
 const instance = axios.create({
@@ -63,7 +62,8 @@ instance.interceptors.response.use(
       eventBus.emit('showMessage', { type: 'error', text: '请求失败，接口资源不存在' });
     } else if (data && showMessageCode.includes(data.code)) {
       eventBus.emit('showMessage', { type: 'error', text: data.message });
-    } else if (data.code === 'A0002') { // token已被禁止访问
+    } else if (data.code === 'A0002') {
+      // token已被禁止访问
       eventBus.emit('redirectToLogin', { type: 'error', text: data.message });
     } else {
       eventBus.emit('showMessage', { type: 'error', text: '系统异常，请联系管理员' });
