@@ -1,5 +1,4 @@
 import { createApp } from 'vue';
-import { createPinia } from 'pinia';
 
 import { lineNumbers } from '@codemirror/view';
 import row from '@youyu/shared/directives/row';
@@ -10,6 +9,7 @@ import RelativeTime from 'dayjs/plugin/relativeTime';
 import { config } from 'md-editor-v3';
 import '@/libs/handlers/event-bus-handler';
 
+import { createPinia } from 'pinia';
 import focus from '@/libs/directives/focus';
 import login from '@/libs/directives/login';
 import scrollToEl from '@/libs/directives/scrollToEl.js';

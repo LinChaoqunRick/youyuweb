@@ -3,6 +3,13 @@
   height: 100vh;
   overflow: hidden;
 
+  .logo-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+  }
+
   .main-menu {
     display: flex;
     flex-direction: column;

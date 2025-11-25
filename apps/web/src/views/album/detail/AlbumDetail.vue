@@ -1,107 +1,92 @@
 <template>
-  <ContentData
-    v-slot="{ data }"
-    url="getAlbumAccessible"
-    :params="{ id: albumId }"
-    class="content-data-container"
-  >
+  <ContentData v-slot="{ data }" :params="{ id: albumId }" class="content-data-container" url="getAlbumAccessible">
     <div class="album-detail-container">
-      <div v-if="data" class="album-detail" :class="{ 'album-detail-collapse': collapse }">
+      <div v-if="data" :class="{ 'album-detail-collapse': collapse }" class="album-detail">
         <div class="album-images-wrapper youyu-scrollbar">
           <div v-if="userInfo.id === albumDetailData?.userId" class="album-detail-top-menu">
-            <a-button type="primary" shape="round" @click="onClickUpload">
+            <a-button shape="round" type="primary" @click="onClickUpload">
               <template #icon>
-                <i-upload-one theme="outline" size="16" fill="currentColor" />
+                <i-upload-one fill="currentColor" size="16" theme="outline" />
               </template>
               上传
             </a-button>
-            <a-button
-              v-if="!selection"
-              type="primary"
-              shape="round"
-              @click="onSelection"
-            >
+            <a-button v-if="!selection" shape="round" type="primary" @click="onSelection">
               <template #icon>
-                <i-full-selection theme="outline" size="16" fill="currentColor" />
+                <i-full-selection fill="currentColor" size="16" theme="outline" />
               </template>
               选择
             </a-button>
-            <a-button
-              v-if="selection"
-              type="primary"
-              shape="round"
-              @click="onSelection"
-            >
+            <a-button v-if="selection" shape="round" type="primary" @click="onSelection">
               <template #icon>
-                <i-close theme="outline" size="16" fill="currentColor" />
+                <i-close fill="currentColor" size="16" theme="outline" />
               </template>
               取消
             </a-button>
             <a-button
               v-if="selection"
-              :loading="setCoverLoading"
-              type="primary"
-              shape="round"
               :disabled="!(checkedList.length === 1)"
+              :loading="setCoverLoading"
+              shape="round"
+              type="primary"
               @click="onSetCover"
             >
               <template #icon>
-                <i-pic theme="outline" size="16" fill="currentColor" />
+                <i-pic fill="currentColor" size="16" theme="outline" />
               </template>
               设为封面
             </a-button>
             <a-button
               v-if="selection"
+              :disabled="!checkedList.length"
               :loading="deleteLoading"
-              type="primary"
               danger
               shape="round"
-              :disabled="!checkedList.length"
+              type="primary"
               @click="onDelete"
             >
               <template #icon>
-                <i-delete-five theme="outline" size="16" fill="currentColor" />
+                <i-delete-five fill="currentColor" size="16" theme="outline" />
               </template>
               删除
             </a-button>
           </div>
           <ContentList
             ref="ContentListRef"
-            url="getAlbumImageList"
             :params="params"
             auto-load
+            class="album-content-list"
             data-text="照片"
             unit="张"
-            class="album-content-list"
+            url="getAlbumImageList"
           >
             <template #default="{ list }">
               <div
                 v-for="(item, index) in imageList"
                 :key="item.id"
-                class="image-wrapper"
                 :class="{ 'album-cover': item.id === albumDetailData?.coverImageId }"
+                class="image-wrapper"
                 @click="onImageClick(item, index)"
               >
                 <svg
                   v-if="albumDetailData?.coverImageId ? item.id === albumDetailData?.coverImageId : index === 0"
-                  class="album-cover-tag icon"
                   aria-hidden="true"
+                  class="album-cover-tag icon"
                 >
                   <use xlink:href="#icon-fengmian" />
                 </svg>
-                <img :src="item.url" :alt="item.name" class="cp">
+                <img :alt="item.name" :src="item.url" class="cp" />
                 <div v-if="selection && checkedList.includes(item)" class="item-check">
-                  <i-check-one theme="filled" size="24" fill="#1677FF" />
+                  <i-check-one fill="#1677FF" size="24" theme="filled" />
                 </div>
                 <div class="image-info-box">
                   <div class="info-data-item">
-                    <i-time theme="outline" size="13" fill="currentColor" />
+                    <i-time fill="currentColor" size="13" theme="outline" />
                     <div class="info-create-time">
                       {{ dayjs(item.createTime).format('YYYY-MM-DD') }}
                     </div>
                   </div>
                   <div class="info-data-item">
-                    <i-link-cloud theme="outline" size="13" fill="currentColor" />
+                    <i-link-cloud fill="currentColor" size="13" theme="outline" />
                     <div class="info-create-time">
                       {{ formatSize(item.size) }}
                     </div>
@@ -114,23 +99,19 @@
         <div class="album-info-body">
           <AlbumDetailInfo ref="AlbumDetailInfoRef" :album-id="albumId" />
           <div class="collapse-button" @click="onCollapse">
-            <i-right theme="outline" size="16" fill="currentColor" />
+            <i-right fill="currentColor" size="16" theme="outline" />
           </div>
         </div>
       </div>
       <div v-else-if="data === false" class="inaccessible-wrapper">
-        <div class="tip-text">
-          您没有权限访问该相册
-        </div>
-        <a-button v-login="onApply" type="primary">
-          申请访问
-        </a-button>
+        <div class="tip-text">您没有权限访问该相册</div>
+        <a-button v-login="onApply" type="primary"> 申请访问</a-button>
       </div>
     </div>
   </ContentData>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, ref } from 'vue';
 import { message, Modal } from 'ant-design-vue';
 import dayjs from 'dayjs';
@@ -139,12 +120,13 @@ import { useStore } from 'vuex';
 import ContentData from '@/components/common/system/ContentData.vue';
 import ContentList from '@/components/common/system/ContentList.vue';
 import type { UploadResult } from '@/components/common/utils/upload/types';
-import { convertHEICUrlToBlob, getUrlImageFormat, formatSize } from '@/components/common/utils/upload/utils';
+import { getUrlImageFormat, formatSize } from '@/components/common/utils/upload/utils';
 import openModal from '@/libs/tools/openModal';
 import AlbumDetailInfo from '@/views/album/detail/AlbumDetailInfo.vue';
 import type { AlbumImageItem } from '@/views/album/detail/types';
 import UploadImageList from '@/views/album/detail/UploadImageList.vue';
-import openImage from '../../../../../../packages/shared/vue-hooks/openImage';
+import openImage from '@youyu/shared/vue-hooks/openImage';
+import { convertHEICUrlToBlob } from '@youyu/shared/utils';
 
 defineOptions({
   name: 'AlbumDetail',
@@ -216,7 +198,7 @@ const onImageClick = (item: AlbumImageItem, index: number) => {
       list: imageList.value.map(item => item.url),
       current: index,
       originTransfer: (index: number) => {
-        const {originUrl} = imageList.value[index];
+        const { originUrl } = imageList.value[index];
         if (originUrl) {
           return originUrl;
         } else {

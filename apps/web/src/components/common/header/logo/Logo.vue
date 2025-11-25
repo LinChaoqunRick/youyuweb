@@ -1,23 +1,25 @@
 <template>
   <div class="main-logo">
-    YouYu
+    <img src="https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/logo_280x120.png" alt="">
   </div>
 </template>
 
-<script setup>
-
-</script>
+<script setup></script>
 
 <style lang="scss" scoped>
-  .main-logo {
-    width: 98px;
-    height: 46px;
-    background-color: #1890ff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    font-size: 20px;
-    border-radius: 4px;
+.main-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: white;
+  border-radius: 4px;
+
+  img {
+    width: 112px;
+    height: 48px;
+    object-fit: cover;
+    filter: var(--youyu-logo-showdow);
   }
+}
 </style>

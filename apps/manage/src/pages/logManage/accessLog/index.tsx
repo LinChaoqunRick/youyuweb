@@ -67,13 +67,13 @@ const columns: ColumnsType<Logs> = [
     key: 'result',
     width: '10%',
     render: (data: string, row) => {
-      return data
-        ? <Tag color='#87d068'>成功</Tag>
-        : (
-          <Tooltip placement="bottom" title={row.error}>
-            <Tag color='#f50'>失败</Tag>
-          </Tooltip>
-        );
+      return data ? (
+        <Tag color="#87d068">成功</Tag>
+      ) : (
+        <Tooltip placement="bottom" title={row.error}>
+          <Tag color="#f50">失败</Tag>
+        </Tooltip>
+      );
     },
   },
   {

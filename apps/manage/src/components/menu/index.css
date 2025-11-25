@@ -3,7 +3,7 @@
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  height: 50px;
+  height: 54px;
+  object-fit: cover;
   color: var(--text-color);
-  background-color: var(--bg-color);
 }
