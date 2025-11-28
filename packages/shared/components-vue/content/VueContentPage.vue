@@ -66,6 +66,7 @@ const props = defineProps({
   hideActionFinish: { type: Boolean, default: false }, // 加载全部数据后，隐藏action
 });
 
+const emit = defineEmits(['onSuccess']);
 const pageNum = ref(1);
 const status = ref<PageStatus>(props.total === props.presetData.length ? PageStatus.FINISH : PageStatus.READY);
 const dataList = ref<T[]>([...props.presetData]) as Ref<T[]>;
@@ -119,6 +120,7 @@ function getPageData() {
       } else {
         status.value = PageStatus.READY;
       }
+      emit('onSuccess', res, dataList.value);
     })
     .catch(err => {
       status.value = PageStatus.FAILED;
@@ -149,16 +151,18 @@ function onIntersectionObserver([entry]: IntersectionObserverEntry[]) {
   }
 }
 
-function unshiftData(data: T) {
-  dataList.value = [data, ...dataList.value];
+function unshiftData(data: T | T[]) {
+  const itemsToUnshift = Array.isArray(data) ? data : [data];
+  dataList.value = [...itemsToUnshift, ...dataList.value];
 
   if (dataList.value.length === total.value) {
     status.value = PageStatus.FINISH;
   }
 }
 
-function removeById(id: number) {
-  const newList = dataList.value.filter((item: T) => item.id !== id);
+function removeById(id: number | number[]) {
+  const idsToRemove = Array.isArray(id) ? id : [id];
+  const newList = dataList.value.filter((item: T) => !idsToRemove.includes(item.id));
   if (newList.length === dataList.value.length) return false; // 没找到
   dataList.value = newList; // 替换引用 -> 触发更新
   return true;

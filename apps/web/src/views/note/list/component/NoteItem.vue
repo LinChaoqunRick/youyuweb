@@ -1,44 +1,61 @@
 <template>
   <div class="note-item">
-    <div class="note-cover">
+    <div class="note-cover-wrapper">
       <RouterLink :to="{name: 'NoteDetail', params: {noteId: data.id}}">
-        <img :src="data.cover" :alt="data.name">
-        <div class="data-items">
-          <div class="data-item" :title="'阅读数:'+data.viewCount">
-            <i-preview-open theme="outline" size="18" fill="currentColor" :strokeWidth="3"/>
-            {{ data.viewCount }}
+        <img :src="data.cover" :alt="data.name" class="note-cover-img">
+        <div class="cover-hover-layer"></div>
+        <!-- 数据统计徽章 -->
+        <div class="stats-badge">
+          <div class="stat-item">
+            <i-preview-open theme="outline" size="16" fill="currentColor"/>
+            <span>{{ data.viewCount }}</span>
           </div>
-          <div class="data-item" :title="'章节数:'+data.chapterCount">
-            <i-list-view theme="outline" size="15" fill="currentColor" :strokeWidth="3"/>
-            {{ data.chapterCount }}
+          <div class="stat-item">
+            <i-list-view theme="outline" size="16" fill="currentColor"/>
+            <span>{{ data.chapterCount }}</span>
           </div>
-        </div>
-        <div class="operation-btns" v-if="userInfo.id === data.user.id">
-          <a-button type="primary" size="small" @click="onEdit">编辑</a-button>
-          <a-button type="primary" size="small" danger @click="onDelete">删除</a-button>
-        </div>
-        <div class="create-time" :title="'发布于:'+data.createTime">
-          <i-calendar theme="outline" size="14" fill="currentColor" :strokeWidth="3"/>
-          {{ dayjs(data.createTime).format('YYYY-MM-DD') }}
         </div>
       </RouterLink>
+
+      <!-- 发布日期标签 -->
+      <div class="publish-date" :title="'发布于:'+data.createTime">
+        <i-calendar theme="outline" size="13" fill="currentColor"/>
+        <span>{{ dayjs(data.createTime).format('MM-DD') }}</span>
+      </div>
+
+      <!-- 操作按钮组 -->
+      <div class="action-bar" v-if="userInfo.id === data.user.id">
+        <a-button type="primary" size="small" @click="onEdit">编辑</a-button>
+        <a-button type="primary" size="small" danger @click="onDelete">删除</a-button>
+      </div>
     </div>
-    <div class="note-title text-limit" :title="data.name">
-      <RouterLink :to="{name: 'NoteDetail', params: {noteId: data.id}}">
-        {{ data.name }}
-      </RouterLink>
+
+    <!-- 标题区域 -->
+    <div class="note-header">
+      <h3 class="note-title">
+        <RouterLink :to="{name: 'NoteDetail', params: {noteId: data.id}}">
+          {{ data.name }}
+        </RouterLink>
+      </h3>
     </div>
-    <div class="note-caption">
-      <div class="note-user-info">
-        <div class="user-title">作者:</div>
-        <RouterLink :to="{name:'userNote', params: {userId: data.user.id, page: 1}}">
-          <img class="user-avatar" :src="data.user.avatar" alt="头像"/>
-          <div class="user-nickname">{{ data.user.nickname }}</div>
+
+    <!-- 内容区域 -->
+    <div class="note-body">
+      <!-- 作者信息 -->
+      <div class="author-card">
+        <RouterLink :to="{name:'userNote', params: {userId: data.user.id, page: 1}}" class="author-link">
+          <img :src="data.user.avatar" :alt="data.user.nickname" class="avatar"/>
+          <div class="author-info">
+            <div class="author-label">作者</div>
+            <div class="author-name">{{ data.user.nickname }}</div>
+          </div>
         </RouterLink>
       </div>
-      <div class="note-introduce">
-        <div class="introduce-title">简介:</div>
-        <div class="introduce-content">{{ data.introduce }}</div>
+
+      <!-- 简介描述 -->
+      <div class="description">
+        <div class="desc-label">简介</div>
+        <p class="desc-text">{{ data.introduce }}</p>
       </div>
     </div>
   </div>
@@ -107,165 +124,273 @@ const onDelete = (e: Event) => {
 .note-item {
   display: flex;
   flex-direction: column;
-  width: 270px;
-  height: 360px;
-  border-radius: 4px;
+  width: 290px;
+  height: 400px;
+  border-radius: 16px;
   overflow: hidden;
-  background-color: var(--youyu-background1);
-  box-shadow: var(--youyu-shadow2);
+  background: var(--youyu-background1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
   cursor: pointer;
 
-  .note-cover {
-    height: 170px;
-    position: relative;
+  &:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.16);
+    transform: translateY(-12px);
 
-    img {
-      height: 100%;
-      width: 100%;
-      object-fit: cover;
+    .note-cover-wrapper {
+      .note-cover-img {
+        transform: scale(1.1);
+      }
+
+      .cover-hover-layer {
+        opacity: 1;
+      }
+
+      .stats-badge {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .action-bar {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .data-items {
-      position: absolute;
-      right: 0;
-      top: 12px;
+    .note-title a {
       color: #1890ff;
+    }
+  }
 
-      .data-item {
+  // ==================== 封面区域 ====================
+  .note-cover-wrapper {
+    position: relative;
+    height: 160px;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+
+    .note-cover-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .cover-hover-layer {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(24, 144, 255, 0.15) 0%, rgba(64, 186, 238, 0.1) 100%);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+    }
+
+    // 数据统计徽章
+    .stats-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 3;
+
+      .stat-item {
         display: flex;
         align-items: center;
-        background-color: rgba(255, 255, 255, 0.6);
-        margin-bottom: 6px;
-        padding: 0 12px 0 8px;
-        border-radius: 15px 0 0 15px;
-        width: fit-content;
-        float: right;
-        clear: both;
+        gap: 6px;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.92);
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #1890ff;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.98);
+          transform: translateX(4px);
+        }
 
         .i-icon {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 18px;
-          height: 18px;
-          margin-right: 4px;
+          flex-shrink: 0;
         }
       }
     }
 
-    .operation-btns {
+    // 发布日期
+    .publish-date {
       position: absolute;
-      left: 6px;
-      bottom: 6px;
+      bottom: 12px;
+      right: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 10px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #1890ff;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      z-index: 2;
+    }
+
+    // 操作按钮
+    .action-bar {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      display: flex;
+      gap: 6px;
       opacity: 0;
-      transition: .3s;
+      transform: translateY(10px);
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 3;
 
       button {
-        margin-right: 4px;
-        height: auto;
-        font-size: 13px;
-      }
-    }
-
-    .create-time {
-      display: flex;
-      align-items: center;
-      position: absolute;
-      right: 6px;
-      bottom: 6px;
-      border-radius: 2px;
-      padding: 0 4px;
-      color: #1890ff;
-      background-color: rgba(255, 255, 255, 0.6);
-
-      .i-icon {
-        margin-right: 3px;
+        height: 28px;
+        padding: 0 10px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 6px;
       }
     }
   }
 
-  .note-title {
+  // ==================== 标题区域 ====================
+  .note-header {
     flex-shrink: 0;
-    padding: 6px 0 6px 6px;
-    font-size: 16px;
-    border-left: 4px solid #40baee;
-    transition: .1s;
-
-    a {
-      color: var(--youyu-text) !important;
-    }
-  }
-
-  .note-caption {
-    flex: 1;
-    padding: 0 8px;
-    border-bottom: 4px solid #40baee;
-
-    .note-user-info {
-      display: flex;
-      align-items: center;
-      padding: 6px 0;
-      border-bottom: var(--youyu-navigation-border);
-
-      a {
-        display: flex;
-        align-items: center;
-        width: fit-content;
-        color: var(--youyu-text) !important;
-      }
-
-      .user-avatar {
-        height: 24px;
-        width: 24px;
-        border-radius: 50%;
-        margin-right: 6px;
-      }
-
-      .user-nickname {
-        line-height: 0;
-      }
-    }
-
-    .note-introduce {
-      padding: 6px 0;
-      color: var(--youyu-text3);
-      height: 105px;
-      overflow: hidden;
-      line-height: 24px;
-
-      .introduce-content {
-        position: relative;
-        top: -2px;
-      }
-    }
-  }
-
-  .introduce-title, .user-title {
-    background-image: linear-gradient(90deg, #3ca5f6 0%, #1890ff 100%);
-    color: white;
-    float: left;
-    padding: 0 6px;
-    border-radius: 2px;
-    margin-right: 6px;
-    line-height: 20px;
-    font-size: 13px;
-  }
-
-  &:hover {
-    .create-time, .data-item {
-      background-color: rgba(255, 255, 255) !important;
-    }
+    padding: 14px 14px 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 
     .note-title {
-      border-color: #1890ff;
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.5;
+      color: var(--youyu-text1);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+
+      a {
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: #1890ff;
+        }
+      }
+    }
+  }
+
+  // ==================== 内容区域 ====================
+  .note-body {
+    flex: 1;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+
+    // 作者卡片
+    .author-card {
+      .author-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px;
+        border-radius: 10px;
+        background: rgba(24, 144, 255, 0.04);
+        color: inherit;
+        text-decoration: none;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: rgba(24, 144, 255, 0.08);
+
+          .avatar {
+            box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+            transform: scale(1.08);
+          }
+
+          .author-name {
+            color: #1890ff;
+          }
+        }
+      }
+
+      .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+        border: 2px solid rgba(24, 144, 255, 0.2);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .author-info {
+        flex: 1;
+        min-width: 0;
+
+        .author-label {
+          font-size: 11px;
+          font-weight: 600;
+          color: #999;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .author-name {
+          font-size: 13px;
+          font-weight: 700;
+          color: var(--youyu-text1);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          transition: color 0.3s ease;
+        }
+      }
     }
 
-    .note-caption {
-      border-color: #1890ff;
-    }
+    // 描述区域
+    .description {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 0;
 
-    .operation-btns {
-      opacity: 1;
+      .desc-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .desc-text {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--youyu-text2);
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        word-break: break-word;
+      }
     }
   }
 }

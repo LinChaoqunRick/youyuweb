@@ -4,6 +4,7 @@
   --bg-color-view: #f1f3f6;
   --text-color: #000;
   --text-color-gray: #71717a;
+  --text-color-dark-gray: #333;
   --text-color-icon: #323639cc;
   --bg-btn-hover: hsl(240deg 5% 96%);
   --border-color: hsl(240deg 5.9% 90%);
@@ -17,6 +18,7 @@
   --bg-color-view: #14161a;
   --text-color: #eee;
   --text-color-gray: #a1a1aa;
+  --text-color-dark-gray: #fff;
   --text-color-icon: #a1a1aa;
   --bg-btn-hover: hsl(216deg 5% 19%);
   --border-color: hsl(240deg 3.7% 22%);

@@ -1,23 +1,33 @@
 <template>
-  <div class="album-list" v-if="isLogin">
+  <div v-if="isLogin" class="album-list">
     <div class="actions-wrapper">
-      <a-button class="create-btn" shape="round" type="primary" @click="onAdd">
-        <i-folder-plus theme="outline" size="16" fill="#fff" style="margin-right: 4px" />
+      <a-button
+        class="create-btn"
+        shape="round"
+        type="primary"
+        @click="onAdd"
+      >
+        <i-folder-plus
+          theme="outline"
+          size="16"
+          fill="#fff"
+          style="margin-right: 4px"
+        />
         新增
       </a-button>
       <AlbumActions />
     </div>
-    <AlbumCommonList list-url="getMineAlbumList" ref="AlbumCommonListRef" />
+    <AlbumCommonList ref="AlbumCommonListRef" list-url="getMineAlbumList" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { useStore } from 'vuex';
 import openModal from '@/libs/tools/openModal';
 import AlbumAdd from '@/views/album/common/AlbumAdd.vue';
+import AlbumCommonList from '@/views/album/common/AlbumCommonList.vue';
 import AlbumActions from '@/views/album/components/AlbumActions.vue';
-import AlbumCommonList from '@/views/album/list/common/AlbumCommonList.vue';
-import { useStore } from 'vuex';
 
 const { getters } = useStore();
 
@@ -39,9 +49,9 @@ const onAdd = async () => {
 
 <style lang="scss" scoped>
 .album-list {
-  height: 100%;
-  width: 100%;
   display: flex;
+  width: 100%;
+  height: 100%;
   overflow: auto;
 
   .actions-wrapper {
@@ -49,8 +59,8 @@ const onAdd = async () => {
     top: 8px;
     right: 0;
     display: flex;
-    justify-content: flex-end;
     align-items: center;
+    justify-content: flex-end;
     padding-right: 30px;
 
     button {

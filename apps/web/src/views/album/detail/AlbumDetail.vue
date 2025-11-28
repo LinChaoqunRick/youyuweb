@@ -62,6 +62,7 @@
           class="album-content-list"
           data-text="照片"
           unit-text="张"
+          @on-success="onSuccess"
         >
           <template #default="{ list }">
             <vue-image v-for="(item, index) in list" :key="item.id" :url="item.url" @click="onImageClick(item, index)">
@@ -83,7 +84,7 @@
                 <div class="image-info-box">
                   <div class="info-item">
                     <span class="info-label">日期</span>
-                    <span class="info-value">{{ dayjs(item.createTime).format('MM-DD') }}</span>
+                    <span class="info-value">{{ dayjs(item.createTime).format('YYYY-MM-DD') }}</span>
                   </div>
                   <div class="info-item">
                     <span class="info-label">大小</span>
@@ -150,7 +151,7 @@ const setCoverLoading = ref<boolean>(false);
 const deleteLoading = ref<boolean>(false);
 const selection = ref(false);
 const checkedList = ref<AlbumImageVo[]>([]);
-const imageList = computed(() => VueContentPageRef.value?.dataList ?? []);
+const imageList = ref<AlbumImageVo[]>([]);
 
 /**
  * 获取相册详情
@@ -169,6 +170,10 @@ function getAlbumDetail() {
 
 getAlbumDetail();
 
+function onSuccess(_res: any, dataList: AlbumImageVo[]) {
+  imageList.value = dataList;
+}
+
 const onCollapse = () => {
   collapse.value = !collapse.value;
 };
@@ -184,15 +189,17 @@ const onClickUpload = async () => {
     width: '1200px',
     centered: true,
     beforeConfirm: (done: () => void, data: UploadResult[]) => {
+      console.log(222, data);
       if (!data) {
         // data为undefined表示都上传成功了
         done();
       } else {
+        console.log(data);
         const successData = data.map(item => {
           item.file.url = item.file.thumb;
           return item.file;
         });
-        // imageList.value.unshift(...successData);
+        VueContentPageRef.value!.unshiftData(successData as AlbumImageVo[]);
       }
     },
   });
@@ -203,7 +210,6 @@ const onApply = () => {
 };
 
 const onImageClick = (item: AlbumImageVo, index: number) => {
-  console.log(item);
   if (selection.value) {
     if (checkedList.value.includes(item)) {
       const findIndex = checkedList.value.findIndex(i => i === item);
@@ -224,7 +230,7 @@ const onImageClick = (item: AlbumImageVo, index: number) => {
             return dispatch('getAlbumImageOrigin', { id: imageList.value[index].id }).then(async res => {
               const format = getUrlImageFormat(res.data);
               if (format.toLowerCase() === 'heic') {
-                imageList.value[index].originUrl = await convertHEICUrlToBlob(res.data);
+                imageList.value[index].originUrl = (await convertHEICUrlToBlob(res.data)) ?? '';
               } else {
                 imageList.value[index].originUrl = res.data;
               }
@@ -262,7 +268,6 @@ const onSetCover = () => {
 };
 
 const onDelete = () => {
-  deleteLoading.value = true;
   Modal.confirm({
     title: '删除照片',
     content: '确定删除这些照片？',
@@ -270,13 +275,13 @@ const onDelete = () => {
     okType: 'danger',
     cancelText: '取消',
     onOk() {
+      deleteLoading.value = true;
       const ids = checkedList.value.map(item => item.id).join(',');
       dispatch('removeAlbumImage', { ids: ids })
         .then(res => {
           message.success('删除成功');
-          VueContentPageRef.value &&
-            (VueContentPageRef.value.list =
-              VueContentPageRef.value?.list.filter(item => !checkedList.value.includes(item)) ?? []);
+          const removeIds = checkedList.value.map(item => item.id);
+          VueContentPageRef.value!.removeById(removeIds);
           checkedList.value = [];
         })
         .finally(() => {
@@ -292,8 +297,8 @@ const onDelete = () => {
 
 <style lang="scss" scoped>
 $infoBodyWidth: 300px;
-$imageWrapperPadding: 4px;
-$gridGap: 2px;
+$imageWrapperPadding: 8px;
+$gridGap: 8px;
 $imageWidth: 152px;
 
 .album-detail-wrapper {
@@ -329,14 +334,26 @@ $imageWidth: 152px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        height: 48px;
-        padding: 0 20px;
-        background-color: var(--youyu-body-background2);
-        border-bottom: var(--youyu-navigation-border);
+        height: 56px;
+        padding: 0 24px;
+        background: linear-gradient(135deg, var(--youyu-body-background2) 0%, var(--youyu-body-background1) 100%);
+        border-bottom: 1px solid var(--youyu-border-color, rgb(0, 0, 0, 0.06));
+        backdrop-filter: blur(8px);
+        box-shadow: 0 2px 8px rgb(0, 0, 0, 0.04);
+        transition: all 0.3s ease;
+
+        &:hover {
+          box-shadow: 0 4px 12px rgb(0, 0, 0, 0.08);
+        }
 
         .album-name {
-          font-size: 16px;
-          font-weight: bold;
+          font-size: 18px;
+          font-weight: 600;
+          letter-spacing: 0.3px;
+          background: linear-gradient(135deg, var(--youyu-text1) 0%, var(--youyu-text2) 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
       }
 
@@ -369,21 +386,21 @@ $imageWidth: 152px;
           padding: 8px;
           font-size: 12px;
           color: white;
-          background: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.2));
+          background: linear-gradient(to top, rgb(0, 0, 0, 0.6), rgb(0, 0, 0, 0.2));
           cursor: pointer;
           transition: 0.3s;
           transform: translateY(100%);
 
           .info-item {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
             gap: 4px;
+            align-items: center;
+            justify-content: space-between;
 
             .info-label {
               font-size: 10px;
-              opacity: 0.7;
               letter-spacing: 0.5px;
+              opacity: 0.7;
             }
 
             .info-value {
@@ -395,13 +412,26 @@ $imageWidth: 152px;
         }
 
         ::v-deep(.data-list) {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax($imageWidth, 1fr));
+          gap: $gridGap;
           font-size: 0;
 
           .vue-image-wrapper {
-            margin-right: $imageWrapperPadding;
-            margin-bottom: $imageWrapperPadding;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 162px;
+            height: 162px;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgb(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
             &:hover {
+              box-shadow: 0 8px 16px rgb(0, 0, 0, 0.15);
+              transform: translateY(-2px);
+
               .image-info-box {
                 transform: translateY(0);
               }
@@ -411,6 +441,7 @@ $imageWidth: 152px;
 
         ::v-deep(.vue-content-page-status) {
           height: 36px;
+          margin-top: 6px;
           background: none;
         }
       }
@@ -422,9 +453,15 @@ $imageWidth: 152px;
       width: $infoBodyWidth;
       height: 100%;
       overflow: visible;
-      border-right: var(--youyu-navigation-border);
-      transition: 0.3s;
-      transform: translateX(0);
+      background: var(--youyu-body-background1);
+      border-left: 1px solid var(--youyu-border-color, rgb(0, 0, 0, 0.06));
+      transition: all 0.3s ease;
+
+      ::v-deep(> div) {
+        height: 100%;
+        padding: 16px;
+        overflow-y: auto;
+      }
 
       .collapse-button {
         position: absolute;
@@ -432,17 +469,20 @@ $imageWidth: 152px;
         left: -16px;
         display: flex;
         align-items: center;
-        width: 0;
+        justify-content: center;
+        width: 32px;
         height: 66px;
         color: #bebebe;
-        border: 8px solid transparent;
-        border-right: 16px solid var(--youyu-background2);
-        border-left: 0;
+        background: var(--youyu-background2);
+        border-radius: 4px 0 0 4px;
+        box-shadow: -2px 2px 8px rgb(0, 0, 0, 0.08);
         cursor: pointer;
-        transition: all 0.3s ease-in-out;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
         &:hover {
-          color: var(--youyu-text2);
+          color: var(--youyu-text1);
+          background: var(--youyu-body-background2);
+          box-shadow: -4px 4px 12px rgb(0, 0, 0, 0.12);
         }
       }
     }

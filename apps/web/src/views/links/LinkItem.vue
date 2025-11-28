@@ -1,8 +1,6 @@
 <template>
   <a :href="data.address" class="link-item cp" target="_blank">
-    <div class="link-item-avatar">
-      <img :src="data.avatar" alt="">
-    </div>
+    <img :src="data.avatar" alt="">
     <div class="link-item-info">
       <div class="info-name">
         {{ data.name }}
@@ -30,31 +28,31 @@ defineProps({
 .link-item {
   display: inline-flex;
   align-items: center;
-  width: 320px;
-  height: 90px;
-  padding: 0 20px;
+  width: 240px;
+  height: 70px;
+  padding: 0 16px;
   color: var(--youyu-text);
   background-color: var(--youyu-background1);
+  border: 1px solid var(--youyu-border-color);
   border-radius: 8px;
 
   img {
-    width: 50px;
-    height: 50px;
-    border: 2px solid var(--youyu-border-color);
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
   }
 
   .link-item-info {
     display: flex;
     flex-direction: column;
-    margin-left: 20px;
+    margin-left: 12px;
 
     .info-name {
-      font-size: 18px;
-      font-weight: bold;
+      font-size: 16px;
     }
 
     .info-description {
+      font-size: 12px;
       color: var(--youyu-text1);
     }
   }

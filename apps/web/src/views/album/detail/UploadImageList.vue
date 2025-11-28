@@ -1,22 +1,22 @@
 <template>
   <div class="upload-image">
     <UploadFile
+      ref="UploadFileRef"
       v-model="images"
       accept=".JPEG,.JPG,.PNG,.HEIC,.GIF,.WEBP"
       :max-size="maxFileSize"
       multiple
       :auto-clear="false"
       :config="{ policyPath: 'getAlbumOssPolicy', data: { base: '', albumId: props.albumId } }"
-      @onProgress="onUploadProgress"
-      @uploadSuccess="uploadSuccess"
       class="image-item-wrapper"
-      ref="UploadFileRef"
+      @on-progress="onUploadProgress"
+      @upload-success="uploadSuccess"
     >
       <div class="upload-image-lead">
-        <i-plus theme="outline" size="40" fill="currentColor" :strokeWidth="1" />
+        <i-plus theme="outline" size="40" fill="currentColor" :stroke-width="1" />
       </div>
     </UploadFile>
-    <div class="image-item-wrapper" v-for="(item, index) in images" :key="index">
+    <div v-for="(item, index) in images" :key="index" class="image-item-wrapper">
       <ImageItem
         :data="item"
         :height="120"
@@ -29,22 +29,22 @@
 </template>
 
 <script setup lang="ts">
-import { useStore } from 'vuex';
-import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
 import { inject, ref } from 'vue';
+import { useStore } from 'vuex';
 import ImageItem from '@/components/common/utils/upload/components/ImageItem.vue';
 import type { FileExtend, UploadResult } from '@/components/common/utils/upload/types';
+import UploadFile from '@/components/common/utils/upload/UploadFile.vue';
 import type { OpenModal } from '@/libs/tools/openModal/types';
 
 defineOptions({
-  name: 'UploadImageList'
-})
+  name: 'UploadImageList',
+});
 
 const props = defineProps({
   albumId: {
     type: [String, Number],
-    required: true
-  }
+    required: true,
+  },
 });
 
 const { dispatch } = useStore();
@@ -64,27 +64,30 @@ const onImageDelete = (index: number) => {
   images.value.splice(index, 1);
 };
 
-const beforeConfirm = async (done: Function) => {
-  modal && (modal.confirmLoading = true);
-  const res = await UploadFileRef.value?.upload().catch(console.error);
-  done(res);
-  modal && (modal.confirmLoading = false);
-};
-
-const uploadSuccess = (res: UploadResult[]) => {
-  const albumListRes = res.map(item => ({
+const beforeConfirm = async (done: (res: any) => void) => {
+  modal!.confirmLoading = true;
+  const uploadRes = await UploadFileRef.value?.upload().catch(console.error);
+  const albumListRes = uploadRes.map(item => ({
     path: item.path,
     name: item.file.name,
-    size: item.file.size
+    size: item.file.size,
   }));
 
   dispatch('createAlbumImage', { images: albumListRes, albumId: Number(props.albumId) }).then(res => {
+    console.log(res);
+    uploadRes.forEach((item, index) => {
+      item.id = res[index];
+    });
     // message.success('');
+    done(uploadRes);
   });
+  modal!.confirmLoading = false;
 };
 
+const uploadSuccess = (res: UploadResult[]) => {};
+
 defineExpose({
-  beforeConfirm
+  beforeConfirm,
 });
 </script>
 
@@ -92,23 +95,23 @@ defineExpose({
 .upload-image {
   display: flex;
   flex-wrap: wrap;
+  min-height: 65vh;
   margin-top: 10px;
   overflow: auto;
-  min-height: 65vh;
 
   .upload-image-lead {
-    cursor: pointer;
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 120px;
+    justify-content: center;
     width: 120px;
+    height: 120px;
+    background: rgb(248, 248, 249, 0.2);
     border: 1px dashed #c5c5c5;
-    background: rgba(248, 248, 249, 0.2);
+    cursor: pointer;
     transition: 0.3s;
 
     &:hover {
-      background: rgba(248, 248, 249, 0.3);
+      background: rgb(248, 248, 249, 0.3);
     }
   }
 

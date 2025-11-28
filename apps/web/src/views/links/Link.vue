@@ -26,14 +26,13 @@ initData();
 <style lang="scss" scoped>
 .links-wrapper {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 每列最多 4 行 */
+  grid-template-columns: repeat(5, 1fr); /* 每列最多 4 行 */
   grid-auto-rows: 120px;
-  gap: 12px; /* 行列间距 */
+  gap: 8px; /* 行列间距 */
   place-items: center center;
   height: calc(100vh - 100px);
-  padding: 20px 50px 0;
+  padding: 0 5%;
   overflow: auto;
-  background-color: var(--youyu-body-background1);
 }
 </style>
 SHOW STATUS LIKE 'Threads_connected';

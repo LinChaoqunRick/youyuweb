@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 * {
-  font-family: 'PingFangSC-Regular-woff2';
+  font-family: "PingFang SC", 'PingFangSC-Regular-woff2';
 }
 
 #app {

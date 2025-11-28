@@ -25,15 +25,16 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import {useStore} from 'vuex';
+import { useStore } from 'vuex';
 import openModal from '@/libs/tools/openModal';
 import AlbumAdd from '@/views/album/common/AlbumAdd.vue';
+import AlbumCommonList from '@/views/album/common/AlbumCommonList.vue';
 import AlbumActions from '@/views/album/components/AlbumActions.vue';
-import AlbumCommonList from '@/views/album/list/common/AlbumCommonList.vue';
+
 const AlbumCommonListRef = ref<typeof AlbumCommonList | null>(null);
 const route = useRoute();
 
-const {getters} = useStore();
+const { getters } = useStore();
 const userInfo = computed(() => getters['userInfo']);
 const isOwn = computed(() => route.params.userId == userInfo.value.id);
 
@@ -47,7 +48,7 @@ const onAdd = async () => {
     component: AlbumAdd,
     title: '创建相册',
     maskClosable: false,
-    width: '580px'
+    width: '580px',
   }).catch(console.log);
   if (res) {
     AlbumCommonListRef.value?.YTableRef.refreshData();

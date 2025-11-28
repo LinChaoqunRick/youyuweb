@@ -1,0 +1,89 @@
+/* 基本可配置变量（可按需覆盖） */
+.float {
+  --float-distance: 12px; /* 上下移动的距离 */
+  --float-duration: 4s; /* 一个完整往返的时长 */
+  --float-ease: cubic-bezier(.4, .0, .2, 1); /* 缓动函数 */
+
+  display: inline-block;
+  padding: 12px 20px;
+  border-radius: 10px;
+  transform-origin: center;
+  will-change: transform;
+  animation: float-vertical var(--float-duration) var(--float-ease) infinite;
+}
+
+/* 可选：配合阴影缩放（看起来更像漂浮） */
+.float.with-shadow {
+  position: relative;
+}
+
+.float.with-shadow::after {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  width: 60%;
+  height: 8px;
+  background: rgb(0, 0, 0, 0.12);
+  filter: blur(6px);
+  border-radius: 50%;
+  content: "";
+  transition: transform var(--float-duration) var(--float-ease),
+  opacity var(--float-duration) var(--float-ease);
+  transform: translateX(-50%);
+  animation: float-shadow var(--float-duration) var(--float-ease) infinite;
+}
+
+/* 关键帧：上下漂浮（平滑） */
+@keyframes float-vertical {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(calc(-1 * var(--float-distance)));
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* 阴影随高度变化（上升时变小、下降时变大） */
+@keyframes float-shadow {
+  0% {
+    opacity: 0.9;
+    transform: translateX(-50%) scaleX(1);
+  }
+
+  50% {
+    opacity: 0.55;
+    transform: translateX(-50%) scaleX(0.7);
+  }
+
+  100% {
+    opacity: 0.9;
+    transform: translateX(-50%) scaleX(1);
+  }
+}
+
+/* 更自然的相位偏移（如果你有多个漂浮元素，给它们不同动画延迟） */
+.float.delay-1 {
+  animation-delay: 0.15s;
+}
+
+.float.delay-2 {
+  animation-delay: 0.35s;
+}
+
+.float.delay-3 {
+  animation-delay: -0.25s;
+}
+
+/* 无障碍：用户偏好减少动画时禁用 */
+@media (prefers-reduced-motion: reduce) {
+  .float,
+  .float.with-shadow::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}

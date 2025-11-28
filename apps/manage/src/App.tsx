@@ -1,6 +1,4 @@
-import {
-  ConfigProvider, theme as themeConfig,
-} from 'antd';
+import { ConfigProvider, theme as themeConfig } from 'antd';
 import enUs from 'antd/locale/en_US';
 import zhCN from 'antd/locale/zh_CN';
 import React, { useEffect } from 'react';
@@ -9,7 +7,7 @@ import { AuthProvider } from '@/context/AuthContext';
 import { initI18n } from '@/locales';
 import RouterProvider from '@/providers/RouterProvider';
 import '@/assets/css/theme.css';
-import '@youyu/shared/assets/css/shared-base.css';
+import '@youyu/shared/assets/css/shared.css';
 import { useAppSettings } from '@/store/useAppSettings';
 import 'dayjs/locale/zh-cn';
 import { useEventListener } from '@/hooks/useEventListener.tsx';

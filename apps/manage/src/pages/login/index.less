@@ -4,10 +4,16 @@
   background: linear-gradient(135deg, #d7eafd 0%, #b8d8ff 100%);
 
   .image-view {
+    display: flex;
     flex: 9;
+    align-items: center;
+    justify-content: center;
     padding: 10px;
 
     .system-info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
       display: flex;
       align-items: center;
 
@@ -17,6 +23,12 @@
         font-weight: bold;
         color: #1890ff;
       }
+    }
+
+    .view-image {
+      width: 600px;
+      height: 600px;
+      margin-top: 120px;
     }
   }
 
@@ -32,7 +44,7 @@
 
     .welcome-text, .login-text {
       width: 100%;
-      margin-bottom: 20px;
+      margin-bottom: 12px;
       font-size: 30px;
       font-weight: bold;
       text-align: left;
@@ -41,11 +53,11 @@
     .login-text {
       font-size: 18px;
       font-weight: normal;
-      color: var(--text-color-gray);
+      color: var(--text-color-dark-gray);
     }
 
     form {
-      width: 360px;
+      width: 100%;
     }
   }
 }

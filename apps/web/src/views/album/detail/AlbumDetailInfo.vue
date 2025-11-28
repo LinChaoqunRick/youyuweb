@@ -1,5 +1,5 @@
 <template>
-  <div class="album-detail-info" v-if="data">
+  <div v-if="data" class="album-detail-info">
     <div class="header-tip">
       <a-alert type="info" show-icon>
         <template #message>
@@ -7,22 +7,21 @@
           <span class="open-status" :class="{ 'private-album': !data.open }">{{ data.open ? '公开' : '私密' }}</span>
           相册
         </template>
-        <template #action v-if="userInfo.id === data.userId">
-          <a-button type="link" block @click="onEdit">编辑</a-button>
+        <template v-if="userInfo.id === data.userId" #action>
+          <a-button type="link" block @click="onEdit"> 编辑 </a-button>
         </template>
       </a-alert>
     </div>
-    <div class="album-name">
-      <div class="album-name-text">{{ data.name }}</div>
-    </div>
     <div class="owner-info">
       <img :src="data.userInfo?.avatar" alt="" />
-      <div class="owner-info-nickname">{{ data.userInfo?.nickname }}</div>
+      <div class="owner-info-nickname">
+        {{ data.userInfo?.nickname }}
+      </div>
     </div>
-    <div class="authorized-users" v-if="!data.open && userInfo.id === data.userInfo?.id">
+    <div v-if="!data.open && userInfo.id === data.userInfo?.id" class="authorized-users">
       <div>授权用户：</div>
       <div class="authorized-users-list cp">
-        <div class="authorized-users-item" v-for="item in data.authorizedUserList" :key="item.id">
+        <div v-for="item in data.authorizedUserList" :key="item.id" class="authorized-users-item">
           <img :src="item.avatar" :title="item.nickname" alt="" />
         </div>
         <div class="authorized-users-item" title="添加用户">+{{ restAuthUserNumber ? restAuthUserNumber : '' }}</div>
@@ -32,11 +31,11 @@
 </template>
 
 <script setup lang="ts">
-import { useStore } from 'vuex';
 import { computed, reactive, ref } from 'vue';
+import { cloneDeep } from 'lodash';
+import { useStore } from 'vuex';
 import openModal from '@/libs/tools/openModal';
 import AlbumEdit from '@/views/album/common/AlbumEdit.vue';
-import { cloneDeep } from 'lodash';
 import type { AlbumDetailData } from './types';
 
 const props = defineProps({
@@ -52,7 +51,7 @@ const userInfo = computed(() => getters['userInfo']);
 const restAuthUserNumber = computed(() =>
   data.value?.authorizedUsers
     ? data.value.authorizedUsers?.split(',').length - (data.value?.authorizedUserList?.length ?? 0)
-    : 0
+    : 0,
 );
 
 const initData = () => {
@@ -86,16 +85,16 @@ defineExpose({
 
 <style scoped lang="scss">
 .album-detail-info {
-  background-color: var(--youyu-background1);
   height: 100%;
+  padding: 36px 16px 10px;
   margin-left: auto;
-  padding: 36px 16px 10px 16px;
+  background-color: var(--youyu-background1);
 
   .header-tip {
     position: absolute;
-    left: 0;
-    right: 0;
     top: 0;
+    right: 0;
+    left: 0;
     height: 30px;
 
     .open-status {
@@ -108,12 +107,12 @@ defineExpose({
 
     ::v-deep(.ant-alert) {
       padding: 2px 12px;
-      border-radius: 0;
       border: none;
+      border-radius: 0;
 
       button {
-        padding: 0 !important;
         height: fit-content !important;
+        padding: 0 !important;
       }
     }
   }
@@ -128,8 +127,8 @@ defineExpose({
     }
 
     .operation-item {
-      color: #1890ff;
       margin-left: 4px;
+      color: #1890ff;
     }
   }
 
@@ -137,14 +136,14 @@ defineExpose({
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 16px;
+    padding: 36px 16px;
     border-bottom: var(--youyu-border);
 
     img {
-      height: 120px;
       width: 120px;
-      border-radius: 50%;
+      height: 120px;
       border: 4px solid var(--youyu-border-color);
+      border-radius: 50%;
     }
 
     .owner-info-nickname {
@@ -166,28 +165,28 @@ defineExpose({
     }
 
     .authorized-users-item {
-      width: 18px;
       display: flex;
+      width: 18px;
       margin-left: 2px;
 
       &:last-child {
         display: flex;
-        justify-content: center;
         align-items: center;
-        background-color: rgba(200, 200, 200, 0.4);
-        color: var(--youyu-text2);
-        height: 24px;
+        justify-content: center;
         width: 24px;
-        border-radius: 50%;
-        text-align: center;
+        height: 24px;
         font-weight: bold;
+        color: var(--youyu-text2);
+        text-align: center;
+        background-color: rgb(200, 200, 200, 0.4);
+        border-radius: 50%;
       }
 
       img {
-        height: 24px;
         width: 24px;
-        border-radius: 50%;
+        height: 24px;
         background-color: #fff;
+        border-radius: 50%;
       }
     }
   }

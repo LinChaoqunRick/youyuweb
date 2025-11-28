@@ -52,7 +52,7 @@ const route = [
                 meta: {
                   title: '相册列表-全部',
                 },
-                component: () => import('@/views/album/list/all/AlbumListAll.vue'),
+                component: () => import('@/views/album/list/AlbumListAll.vue'),
               },
             ],
           },
@@ -66,7 +66,7 @@ const route = [
               title: '相册列表-我的',
               keepAlive: true,
             },
-            component: () => import('@/views/album/list/mine/AlbumListMine.vue'),
+            component: () => import('@/views/album/list/AlbumListMine.vue'),
             children: [
               {
                 path: 'page',
@@ -87,7 +87,7 @@ const route = [
                       title: '个人中心-相册-列表',
                       keepAlive: true,
                     },
-                    component: () => import('@/views/album/list/mine/AlbumListMinePage.vue'),
+                    component: () => import('@/views/album/list/AlbumListMinePage.vue'),
                   },
                 ],
               },
@@ -98,7 +98,7 @@ const route = [
                   title: '个人中心-相册-回收站',
                   keepAlive: true,
                 },
-                component: () => import('@/views/album/list/mine/AlbumRecycle.vue'),
+                component: () => import('@/views/album/list/AlbumRecycle.vue'),
               },
             ],
           },

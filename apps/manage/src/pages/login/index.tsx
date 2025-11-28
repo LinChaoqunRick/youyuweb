@@ -61,6 +61,11 @@ function Login() {
           <Logo />
           <div className="system-name">有语管理系统</div>
         </div>
+        <img
+          className="view-image float"
+          src="https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/login/data-yield.png"
+          alt=""
+        />
       </div>
       <div className="content-view">
         <div className="welcome-text">Hi! 欢迎回来🏕️</div>
@@ -68,7 +73,6 @@ function Login() {
         <Form
           name="basic"
           layout="vertical"
-          style={{ maxWidth: 600 }}
           initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}

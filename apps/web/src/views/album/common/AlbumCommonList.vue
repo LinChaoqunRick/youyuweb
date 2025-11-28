@@ -3,7 +3,7 @@
     <template #default="{ dataList }">
       <div class="list-wrapper">
         <div v-for="item in dataList" :key="item.id" class="album-item-body">
-          <AlbumItem :data="item" />
+          <AlbumItemCard :album="item" />
         </div>
       </div>
     </template>
@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import YTable from '@/components/common/table/YTable.vue';
-import AlbumItem from '@/views/album/components/AlbumItem.vue';
+import AlbumItemCard from '@/views/album/components/AlbumItemCard.vue';
 
 const YTableRef = ref<typeof YTable | null>(null);
 
@@ -69,14 +69,19 @@ defineExpose({
 
   .list-wrapper {
     display: grid;
-    grid-template-rows: repeat(2, 1fr);
     grid-template-columns: repeat(4, 1fr);
-    place-content: space-evenly flex-start;
-    place-items: center center;
+    gap: 24px;
+    align-content: start;
+    padding: 16px 16px 0;
 
-    ::v-deep(.album-item) {
-      width: 270px;
-      height: 230px;
+    ::v-deep(.album-item-link) {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1 / 0.95;
+    }
+
+    ::v-deep(.album-item-body) {
+      display: flex;
     }
   }
 }
