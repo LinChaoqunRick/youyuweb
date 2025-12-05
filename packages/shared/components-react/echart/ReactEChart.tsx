@@ -1,6 +1,6 @@
 import * as echarts from 'echarts';
-import { debounce, merge, set } from 'lodash';
-import { useEffect, useRef, useState } from 'react';
+import { debounce } from 'lodash';
+import { useEffect, useRef } from 'react';
 import EventBus from '../../utils/event-bus';
 import Loading from '../loading/Loading';
 import type { EChartsOption } from 'echarts';

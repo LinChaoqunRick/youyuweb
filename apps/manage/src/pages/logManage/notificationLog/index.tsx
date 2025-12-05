@@ -1,6 +1,4 @@
-import {
-  Button, Form, DatePicker, Input, Tag, Tooltip, Select,
-} from 'antd';
+import { Button, Form, DatePicker, Input, Tag, Tooltip, Select } from 'antd';
 import dayjs from 'dayjs';
 import React, { useCallback, useEffect, useState } from 'react';
 import { rangePresets } from '@/libs/config/formConfig';
@@ -29,12 +27,22 @@ const columns: ColumnsType<Logs> = [
     dataIndex: 'target',
     key: 'target',
     width: '15%',
+    render: (_data, row) => {
+      const { requestData } = row;
+      const requestDataJSON = JSON.parse(requestData);
+      return requestDataJSON.to;
+    },
   },
   {
     title: '内容',
     dataIndex: 'content',
     key: 'content',
     width: '20%',
+    render: (_data, row) => {
+      const { requestData } = row;
+      const requestDataJSON = JSON.parse(requestData);
+      return requestDataJSON?.templateParams?.content;
+    },
   },
   {
     title: '请求参数',
@@ -45,11 +53,7 @@ const columns: ColumnsType<Logs> = [
       showTitle: false,
     },
     render: data => (
-      <Tooltip
-        placement="bottomLeft"
-        title={data}
-        rootClassName="request-params-tooltip"
-      >
+      <Tooltip placement="bottomLeft" title={data} rootClassName="request-params-tooltip">
         {data}
       </Tooltip>
     ),
@@ -104,10 +108,12 @@ function NotificationLog() {
       const { type, requestData, responseData } = item;
       item.requestDataObject = requestData && JSON.parse(requestData).input;
       item.responseDataObject = responseData && JSON.parse(responseData);
-      if (type === 9) { // 短信通知
+      if (type === 9) {
+        // 短信通知
         item.target = item.requestDataObject?.telephone;
         item.content = item.responseDataObject?.SMSCode;
-      } else if (type === 10) { // 邮件通知
+      } else if (type === 10) {
+        // 邮件通知
         item.target = item.requestDataObject?.userTo?.email;
         item.content = item.requestDataObject?.content;
       }

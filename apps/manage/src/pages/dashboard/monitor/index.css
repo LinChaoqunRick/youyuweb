@@ -7,5 +7,47 @@
   .monitor-content {
     flex: 1;
     overflow: hidden;
+
+    .map-container {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+
+      &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      }
+    }
+
+    .rank-card {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      overflow: hidden;
+
+      &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      }
+
+      .rank-list {
+        overflow-y: auto;
+        max-height: calc(100vh - 280px);
+        padding-right: 8px;
+
+        &::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: rgba(0, 0, 0, 0.2);
+          border-radius: 3px;
+
+          &:hover {
+            background: rgba(0, 0, 0, 0.3);
+          }
+        }
+      }
+    }
   }
 }

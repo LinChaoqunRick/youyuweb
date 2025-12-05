@@ -270,20 +270,57 @@
   align-items: center;
   justify-content: space-between;
   height: 50px;
-  padding: 8px 24px;
-  margin-bottom: 8px;
+  padding: 8px 16px;
+  margin-bottom: 12px;
   border: 1px solid var(--border-color);
-  box-shadow: var(--shadow); /* 内阴影效果 */
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  background-color: var(--bg-color);
+
+  .data-item-bt-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+
+    .data-item-rank-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 24px;
+      padding: 0 6px;
+      font-size: 12px;
+      font-weight: bold;
+      line-height: 1;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+  }
 
   .data-item-bt-title {
     font-size: 14px;
-    font-weight: bold;
+    font-weight: 500;
+    color: var(--text-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .data-item-bt-value {
     font-size: 16px;
     font-weight: bold;
-    color: var(--text-color-gray);
+    color: #1890ff;
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+
+  &:hover {
+    border-color: #1890ff;
+    box-shadow: 0 2px 8px rgba(24, 144, 255, 0.15);
+    transform: translateY(-2px);
   }
 }
 

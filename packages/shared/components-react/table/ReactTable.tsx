@@ -1,11 +1,7 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import {
-  Button, Table, Modal, type TableProps,
-} from 'antd';
+import { Button, Table, Modal, type TableProps } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
-import React, {
-  useState, useEffect, useRef, useMemo, forwardRef, useImperativeHandle,
-} from 'react';
+import React, { useState, useEffect, useRef, useMemo, forwardRef, useImperativeHandle } from 'react';
 import http from '../../network';
 import { ReactTableProps, ReactTableRef, ColumnButton } from '../../types/components-react';
 import type { PageResult } from '../../types/common';
@@ -17,9 +13,7 @@ function ReactTableFooter<T extends AnyObject>(
   selectedRows: T[],
   onDelete: (ids: string) => void,
 ) {
-  const {
-    showAdd, showDelete, batchButtons, onAdd,
-  } = props;
+  const { showAdd, showDelete, batchButtons, onAdd } = props;
   const disabled = useMemo(() => selectedRowKeys.length === 0, [selectedRowKeys]);
   return (
     <div className="react-table-footer">
@@ -140,7 +134,8 @@ function InnerReactTable<T extends AnyObject>(props: ReactTableProps<T>, ref: Re
           }
           // 自定义按钮
           if (column.actions) {
-            const columnActions: ColumnButton<T>[] = typeof column.actions === 'function' ? column.actions(value) : column.actions;
+            const columnActions: ColumnButton<T>[] =
+              typeof column.actions === 'function' ? column.actions(value) : column.actions;
             columnButtons.push(...columnActions);
           }
           return columnButtons.map(button => {
@@ -157,6 +152,8 @@ function InnerReactTable<T extends AnyObject>(props: ReactTableProps<T>, ref: Re
           });
         };
       }
+      // 默认省略超出内容
+      column.ellipsis = true;
       return column;
     });
   }, [columns]);

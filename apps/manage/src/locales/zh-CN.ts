@@ -17,4 +17,17 @@ export default {
     changePassword: '修改密码',
     logout: '退出登录',
   },
+  login: {
+    systemName: '有语管理系统',
+    welcome: 'Hi! 欢迎回来🏕️',
+    loginSubtitle: '登录来管理您的项目',
+    username: '用户名',
+    password: '密码',
+    rememberMe: '记住我',
+    forgotPassword: '忘记密码',
+    loginButton: '登录',
+    usernameRequired: '请输入用户名',
+    passwordRequired: '请输入密码',
+    welcomeBack: '欢迎回来',
+  },
 };

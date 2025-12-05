@@ -11,6 +11,27 @@
   --bg-table-row-odd: #fafafa;
   --bg-table-row-even: #fff;
   --shadow: 0 0 6px rgb(0, 0, 0, 0.03);
+
+  /* 登录页面专用变量 */
+  --login-bg-gradient-start: #e0f2fe;
+  --login-bg-gradient-middle: #bae6fd;
+  --login-bg-gradient-end: #7dd3fc;
+  --login-panel-bg: rgba(255, 255, 255, 0.25);
+  --login-panel-border: rgba(255, 255, 255, 0.3);
+  --login-settings-bg: rgba(255, 255, 255, 0.2);
+  --login-settings-border: rgba(255, 255, 255, 0.3);
+  --login-system-info-bg: rgba(255, 255, 255, 0.15);
+  --login-system-info-border: rgba(255, 255, 255, 0.2);
+  --login-system-name-color: #fff;
+  --login-welcome-color: #2c3e50;
+  --login-subtitle-color: #5a6c7d;
+  --login-input-bg: rgba(255, 255, 255, 0.9);
+  --login-input-border: rgba(255, 255, 255, 0.4);
+  --login-checkbox-color: #5a6c7d;
+  --login-link-color: #3b82f6;
+  --login-link-hover: #2563eb;
+  --login-decoration-light: rgba(255, 255, 255, 0.1);
+  --login-decoration-dark: rgba(255, 255, 255, 0.08);
 }
 
 :root[data-theme='dark'] {
@@ -25,6 +46,27 @@
   --bg-table-row-odd: #040404;
   --bg-table-row-even: #1d1d1d;
   --shadow: 0 1px 2px 0 rgb(0, 0, 0, 0.03), 0 1px 6px -1px rgb(0, 0, 0, 0.02), 0 2px 4px 0 rgb(0, 0, 0, 0.02);
+
+  /* 登录页面专用变量 - 深色主题 */
+  --login-bg-gradient-start: #0f172a;
+  --login-bg-gradient-middle: #1e293b;
+  --login-bg-gradient-end: #334155;
+  --login-panel-bg: rgba(15, 23, 42, 0.6);
+  --login-panel-border: rgba(71, 85, 105, 0.3);
+  --login-settings-bg: rgba(30, 41, 59, 0.4);
+  --login-settings-border: rgba(71, 85, 105, 0.3);
+  --login-system-info-bg: rgba(30, 41, 59, 0.4);
+  --login-system-info-border: rgba(71, 85, 105, 0.3);
+  --login-system-name-color: #e2e8f0;
+  --login-welcome-color: #f8fafc;
+  --login-subtitle-color: #cbd5e1;
+  --login-input-bg: rgba(30, 41, 59, 0.6);
+  --login-input-border: rgba(71, 85, 105, 0.4);
+  --login-checkbox-color: #cbd5e1;
+  --login-link-color: #60a5fa;
+  --login-link-hover: #93c5fd;
+  --login-decoration-light: rgba(100, 116, 139, 0.1);
+  --login-decoration-dark: rgba(51, 65, 85, 0.15);
 }
 
 /* 苹方-简 极细体 */

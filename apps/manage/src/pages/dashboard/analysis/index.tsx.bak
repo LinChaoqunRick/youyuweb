@@ -1,0 +1,49 @@
+import http from '@youyu/shared/network';
+import { GET_ANALYSIS_DATA } from '@youyu/shared/apis/overview.ts';
+import { useEffect, useState } from 'react';
+
+interface RegionData {
+  adName: string;
+  adcode: number;
+  visitCount: number;
+}
+
+interface VisitData {
+  time: string;
+  visitCount: number;
+}
+
+interface CommentData {
+  month: string;
+  postCommentCount: number;
+  momentCommentCount: number;
+}
+
+interface AnalysisData {
+  dailyRegionVisits: RegionData[];
+  dailyVisits: VisitData[];
+  monthlyComments: CommentData[];
+  monthlyRegionVisits: RegionData[];
+  monthlyVisits: VisitData[];
+}
+
+function Analysis() {
+  const [data, setData] = useState<AnalysisData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    http
+      .get<AnalysisData>(GET_ANALYSIS_DATA)
+      .then(res => {
+        setData(res.data);
+        setLoading(false);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  return <div>Analysis Data</div>;
+}
+
+export default Analysis;

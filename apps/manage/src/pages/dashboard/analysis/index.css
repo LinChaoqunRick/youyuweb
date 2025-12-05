@@ -1,0 +1,209 @@
+.analysis-container {
+  .stat-grid {
+    margin-bottom: 24px;
+
+    .stat-card {
+      height: 100%;
+      overflow: hidden;
+      border-left: 4px solid;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+
+      &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        transform: translateY(-2px);
+      }
+
+      .ant-card-body {
+        padding: 16px;
+      }
+
+      .stat-content {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+
+        .stat-icon-wrapper {
+          display: flex;
+          flex-shrink: 0;
+          align-items: center;
+          justify-content: center;
+          width: 48px;
+          height: 48px;
+          font-size: 28px;
+          border-radius: 6px;
+
+          svg {
+            width: 1em;
+            height: 1em;
+          }
+        }
+
+        .stat-info {
+          flex: 1;
+
+          .stat-title {
+            margin-bottom: 4px;
+            font-size: 12px;
+            color: var(--text-color-gray);
+          }
+
+          .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--text-color);
+          }
+        }
+      }
+    }
+  }
+
+  .recent-access-card {
+    margin-top: 16px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+    .ant-card-body {
+      padding: 0 !important;
+    }
+
+    .access-list-scroll {
+      position: relative;
+      height: 400px;
+      overflow: hidden;
+
+      .access-list {
+        padding: 16px;
+        animation: scrollUp 30s linear infinite;
+
+        &:hover {
+          animation-play-state: paused;
+        }
+
+        .access-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 12px 0;
+          border-bottom: 1px solid var(--border-color);
+          transition: all 0.3s ease;
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          &:hover {
+            padding-right: 8px;
+            padding-left: 8px;
+            background-color: var(--bg-color);
+            border-radius: 4px;
+          }
+
+          .access-item-content {
+            display: flex;
+            flex: 1;
+            gap: 12px;
+            align-items: center;
+            min-width: 0;
+
+            .access-location {
+              display: inline-block;
+              padding: 4px 8px;
+              font-size: 12px;
+              font-weight: 500;
+              color: var(--text-color);
+              white-space: nowrap;
+              background-color: #f0f2f5;
+              border-radius: 4px;
+            }
+
+            .access-ip {
+              overflow: hidden;
+              font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+              font-size: 12px;
+              color: var(--text-color-gray);
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+          }
+
+          .access-time {
+            margin-left: 12px;
+            font-size: 12px;
+            color: var(--text-color-gray);
+            white-space: nowrap;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes scrollUp {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+/* 响应式设计 */
+@media (width <= 768px) {
+  .analysis-container {
+    padding: 8px;
+
+    .stat-grid {
+      margin-bottom: 16px;
+
+      .stat-card {
+        .stat-content {
+          flex-direction: column;
+          text-align: center;
+
+          .stat-icon-wrapper {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+          }
+
+          .stat-info {
+            .stat-title {
+              font-size: 11px;
+            }
+
+            .stat-value {
+              font-size: 20px;
+            }
+          }
+        }
+      }
+    }
+
+    .recent-access-card {
+      .access-list-scroll {
+        height: 300px;
+
+        .access-list {
+          animation: scrollUp 20s linear infinite;
+
+          .access-item {
+            padding: 10px 0;
+
+            .access-item-content {
+              flex-direction: column;
+              gap: 4px;
+              align-items: flex-start;
+            }
+
+            .access-time {
+              margin-left: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}

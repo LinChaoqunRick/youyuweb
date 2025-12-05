@@ -1,9 +1,81 @@
 .login-wrapper {
+  position: relative;
   display: flex;
   height: 100vh;
-  background: linear-gradient(135deg, #d7eafd 0%, #b8d8ff 100%);
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    var(--login-bg-gradient-start) 0%,
+    var(--login-bg-gradient-middle) 50%,
+    var(--login-bg-gradient-end) 100%
+  );
+  transition: background 0.3s ease;
+
+  .settings-bar {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+    display: flex;
+    gap: 12px;
+    padding: 8px 12px;
+    background: var(--login-settings-bg);
+    border: 1px solid var(--login-settings-border);
+    border-radius: 50px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+
+    >div {
+      margin-right: 6px;
+
+      &:first-child {
+        margin-left: 6px;
+      }
+    }
+
+    .theme-switch {
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      color: var(--login-system-name-color);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  // 添加背景装饰
+  &::before {
+    position: absolute;
+    top: -250px;
+    left: -250px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--login-decoration-light) 0%, transparent 70%);
+    border-radius: 50%;
+    content: '';
+    animation: float 20s ease-in-out infinite;
+  }
+
+  &::after {
+    position: absolute;
+    right: -200px;
+    bottom: -200px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, var(--login-decoration-dark) 0%, transparent 70%);
+    border-radius: 50%;
+    content: '';
+    animation: float 15s ease-in-out infinite reverse;
+  }
 
   .image-view {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex: 9;
     align-items: center;
@@ -12,16 +84,24 @@
 
     .system-info {
       position: absolute;
-      top: 10px;
-      left: 10px;
+      top: 20px;
+      left: 20px;
       display: flex;
       align-items: center;
+      padding: 8px 20px;
+      background: var(--login-system-info-bg);
+      border: 1px solid var(--login-system-info-border);
+      border-radius: 50px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
 
       .system-name {
         margin-left: 8px;
         font-size: 28px;
         font-weight: bold;
-        color: #1890ff;
+        color: var(--login-system-name-color);
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       }
     }
 
@@ -29,35 +109,74 @@
       width: 600px;
       height: 600px;
       margin-top: 120px;
+      filter: drop-shadow(0 20px 60px rgba(0, 0, 0, 0.3));
+      transition: transform 0.3s ease;
+      animation: float 6s ease-in-out infinite;
+
+      &:hover {
+        transform: scale(1.05);
+      }
     }
   }
 
   .content-view {
+    position: relative;
+    z-index: 2;
     display: flex;
     flex: 3;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 140px;
-    background: var(--bg-color);
-    border-left: 1px solid white;
+    padding: 80px 60px;
+    background: var(--login-panel-bg);
+    border-left: 1px solid var(--login-panel-border);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+    transition: all 0.3s ease;
 
     .welcome-text, .login-text {
       width: 100%;
       margin-bottom: 12px;
-      font-size: 30px;
+      font-size: 32px;
       font-weight: bold;
+      color: var(--login-welcome-color);
       text-align: left;
+      transition: color 0.3s ease;
     }
 
     .login-text {
-      font-size: 18px;
+      margin-bottom: 32px;
+      font-size: 16px;
       font-weight: normal;
-      color: var(--text-color-dark-gray);
+      color: var(--login-subtitle-color);
     }
 
     form {
       width: 100%;
+
+      .ant-btn-primary {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        border: none;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        transition: all 0.3s ease;
+
+        &:hover {
+          box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+          transform: translateY(-2px);
+        }
+      }
     }
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-20px);
   }
 }
