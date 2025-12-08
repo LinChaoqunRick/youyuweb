@@ -1,4 +1,14 @@
 .analysis-container {
+  padding-bottom: 12px;
+
+  .ant-row {
+    margin-bottom: var(--spacing-lg);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
   .stat-grid {
     margin-bottom: 24px;
 
@@ -147,63 +157,5 @@
 
   100% {
     transform: translateY(-100%);
-  }
-}
-
-/* 响应式设计 */
-@media (width <= 768px) {
-  .analysis-container {
-    padding: 8px;
-
-    .stat-grid {
-      margin-bottom: 16px;
-
-      .stat-card {
-        .stat-content {
-          flex-direction: column;
-          text-align: center;
-
-          .stat-icon-wrapper {
-            width: 40px;
-            height: 40px;
-            font-size: 20px;
-          }
-
-          .stat-info {
-            .stat-title {
-              font-size: 11px;
-            }
-
-            .stat-value {
-              font-size: 20px;
-            }
-          }
-        }
-      }
-    }
-
-    .recent-access-card {
-      .access-list-scroll {
-        height: 300px;
-
-        .access-list {
-          animation: scrollUp 20s linear infinite;
-
-          .access-item {
-            padding: 10px 0;
-
-            .access-item-content {
-              flex-direction: column;
-              gap: 4px;
-              align-items: flex-start;
-            }
-
-            .access-time {
-              margin-left: 0;
-            }
-          }
-        }
-      }
-    }
   }
 }

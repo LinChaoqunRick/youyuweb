@@ -13,7 +13,7 @@ function Logo() {
       alt=""
       style={{
         width: menuCollapsed ? '42px' : 'auto',
-        height: menuCollapsed ? '42px' : '54px',
+        height: menuCollapsed ? '42px' : '48px',
         objectFit: 'contain',
       }}
     />

@@ -6,6 +6,7 @@ import http from '../../network';
 import { ReactTableProps, ReactTableRef, ColumnButton } from '../../types/components-react';
 import type { PageResult } from '../../types/common';
 import type { TablePaginationConfig } from 'antd/es/table';
+import './ReactTable.css';
 
 function ReactTableFooter<T extends AnyObject>(
   props: Partial<ReactTableProps<T>>,
@@ -138,18 +139,22 @@ function InnerReactTable<T extends AnyObject>(props: ReactTableProps<T>, ref: Re
               typeof column.actions === 'function' ? column.actions(value) : column.actions;
             columnButtons.push(...columnActions);
           }
-          return columnButtons.map(button => {
-            return (
-              <Button
-                color={button.color}
-                variant="link"
-                key={button.title}
-                onClick={() => button.onClick && button.onClick(value, index)}
-              >
-                {button.title}
-              </Button>
-            );
-          });
+          return (
+            <div className="table-row-actions">
+              {columnButtons.map(button => {
+                return (
+                  <Button
+                    color={button.color}
+                    variant="link"
+                    key={button.title}
+                    onClick={() => button.onClick && button.onClick(value, index)}
+                  >
+                    {button.title}
+                  </Button>
+                );
+              })}
+            </div>
+          );
         };
       }
       // 默认省略超出内容

@@ -1,14 +1,8 @@
-import {
-  Button, Form, DatePicker, Input, Tag, Select,
-} from 'antd';
-import React, {
-  useEffect, useMemo, useRef, useState,
-} from 'react';
+import { Button, Form, DatePicker, Input, Tag, Select } from 'antd';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { rangePresets } from '@/libs/config/formConfig.ts';
 import { getAreaNameByCode } from '@youyu/shared/utils/locate-utils.ts';
-import {
-  ReactTable, ReactTableRef,
-} from '@youyu/shared/components-react';
+import { ReactTable, ReactTableRef } from '@youyu/shared/components-react';
 import { BatchButton, ReactTableColumns } from '@youyu/shared/types/components-react';
 import type { Message } from '@youyu/shared/types/vo';
 import { GET_MANAGE_MESSAGE_PAGE, SET_MANAGE_MESSAGE_STATUS, DELETE_MANAGE_MESSAGE } from '@youyu/shared/apis';
@@ -27,84 +21,90 @@ function UserMessage() {
     });
   }
 
-  const columns: ReactTableColumns<Message> = useMemo(() => [
-    {
-      title: '用户ID',
-      dataIndex: 'userId',
-      key: 'userId',
-      width: '6%',
-      render: data => {
-        return data || '-';
+  const columns: ReactTableColumns<Message> = useMemo(
+    () => [
+      {
+        title: '用户ID',
+        dataIndex: 'userId',
+        key: 'userId',
+        width: '10%',
+        render: data => {
+          return data || '-';
+        },
       },
-    },
-    {
-      title: '昵称',
-      dataIndex: 'nickname',
-      key: 'nickname',
-      width: '15%',
-    },
-    {
-      title: '内容',
-      dataIndex: 'content',
-      key: 'content',
-      width: '25%',
-    },
-    {
-      title: '区域',
-      dataIndex: 'adcode',
-      key: 'adcode',
-      width: '15%',
-      render: data => {
-        return getAreaNameByCode(data);
+      {
+        title: '昵称',
+        dataIndex: 'nickname',
+        key: 'nickname',
+        width: '15%',
       },
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      key: 'status',
-      width: '10%',
-      render: (data: string) => {
-        return data ? <Tag color="#87d068">显示</Tag> : <Tag color="#a000a0">隐藏</Tag>;
+      {
+        title: '内容',
+        dataIndex: 'content',
+        key: 'content',
+        width: '21%',
       },
-    },
-    {
-      title: '留言时间',
-      width: '14%',
-      dataIndex: 'createTime',
-      key: 'createTime',
-    },
-    {
-      title: '操作',
-      key: 'action',
-      width: '15%',
-      actions: data => {
-        return [
-          {
-            title: data.status ? '隐藏' : '显示',
-            color: data.status ? 'purple' : 'green',
-            onClick: value => showHideMessages(`${value.id}`, data.status === 1 ? 0 : 1),
-          },
-        ];
+      {
+        title: '区域',
+        dataIndex: 'adcode',
+        key: 'adcode',
+        width: '15%',
+        render: data => {
+          return getAreaNameByCode(data);
+        },
       },
-    },
-  ], []);
+      {
+        title: '状态',
+        dataIndex: 'status',
+        key: 'status',
+        width: '10%',
+        render: (data: string) => {
+          return data ? <Tag color="#87d068">显示</Tag> : <Tag color="#a000a0">隐藏</Tag>;
+        },
+      },
+      {
+        title: '留言时间',
+        width: '14%',
+        dataIndex: 'createTime',
+        key: 'createTime',
+      },
+      {
+        title: '操作',
+        key: 'action',
+        width: '15%',
+        actions: data => {
+          return [
+            {
+              title: data.status ? '隐藏' : '显示',
+              color: data.status ? 'purple' : 'green',
+              onClick: value => showHideMessages(`${value.id}`, data.status === 1 ? 0 : 1),
+            },
+          ];
+        },
+      },
+    ],
+    [],
+  );
 
-  const batchButtons: BatchButton<Message>[] = useMemo(() => [
-    {
-      title: '显示',
-      color: 'green',
-      onClick: selectedRowKeys => {
-        showHideMessages(selectedRowKeys.join(','), 1);
+  const batchButtons: BatchButton<Message>[] = useMemo(
+    () => [
+      {
+        title: '显示',
+        color: 'green',
+        onClick: selectedRowKeys => {
+          showHideMessages(selectedRowKeys.join(','), 1);
+        },
       },
-    },
-    {
-      title: '隐藏',
-      color: 'purple',
-      onClick: selectedRowKeys => {
-        showHideMessages(selectedRowKeys.join(','), 0);
+      {
+        title: '隐藏',
+        color: 'purple',
+        onClick: selectedRowKeys => {
+          showHideMessages(selectedRowKeys.join(','), 0);
+        },
       },
-    },
-  ], []);
+    ],
+    [],
+  );
 
   const handleSearch = (values: Record<string, any>) => {
     if (values.RangePicker?.length === 2) {

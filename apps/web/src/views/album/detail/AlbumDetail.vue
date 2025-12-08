@@ -40,13 +40,15 @@
               </template>
               上传
             </a-button>
-            <a-button v-if="!selection" shape="round" type="primary" @click="onSelection">
+            <a-button v-if="!selection" shape="round" type="primary"
+@click="onSelection">
               <template #icon>
                 <i-full-selection fill="currentColor" size="16" theme="outline" />
               </template>
               选择
             </a-button>
-            <a-button v-if="selection" shape="round" type="primary" @click="onSelection">
+            <a-button v-if="selection" shape="round" type="primary"
+@click="onSelection">
               <template #icon>
                 <i-close fill="currentColor" size="16" theme="outline" />
               </template>
@@ -57,15 +59,16 @@
         <!-- @vue-generic {import('@youyu/shared/types/vo/album').AlbumImageVo} -->
         <vue-content-page
           ref="VueContentPageRef"
-          :url="GET_ALBUM_IMAGE_PAGE"
           :params="{ id: albumId, pageSize: 25 }"
+          :url="GET_ALBUM_IMAGE_PAGE"
           class="album-content-list"
           data-text="照片"
           unit-text="张"
           @on-success="onSuccess"
         >
           <template #default="{ list }">
-            <vue-image v-for="(item, index) in list" :key="item.id" :url="item.url" @click="onImageClick(item, index)">
+            <vue-image v-for="(item, index) in list" :key="item.id" :url="item.url"
+@click="onImageClick(item, index)">
               <template #top>
                 <div>
                   <svg
@@ -281,6 +284,7 @@ const onDelete = () => {
         .then(res => {
           message.success('删除成功');
           const removeIds = checkedList.value.map(item => item.id);
+          console.log(removeIds);
           VueContentPageRef.value!.removeById(removeIds);
           checkedList.value = [];
         })
@@ -430,7 +434,6 @@ $imageWidth: 152px;
 
             &:hover {
               box-shadow: 0 8px 16px rgb(0, 0, 0, 0.15);
-              transform: translateY(-2px);
 
               .image-info-box {
                 transform: translateY(0);

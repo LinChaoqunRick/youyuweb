@@ -11,19 +11,23 @@ export function useMenu(): MenuItem[] {
   return useMemo(() => {
     const permissionCodes = permissions.map(p => p.code);
 
-    const generateMenu = (routes: RouteObjectMeta[], parentPath = ''): MenuItem[] => routes
-      .filter(route => {
-        return route.path === '/' || (route.meta?.hide !== false && permissionCodes.includes(route.meta.code ?? ''));
-      })
-      .map(route => {
-        const fullPath = route.path.startsWith('/') ? route.path : `${parentPath}/${route.path}`.replace(/\/+/g, '/');
-        return {
-          key: fullPath,
-          label: route.meta.title,
-          icon: route.meta.icon,
-          children: route.children ? generateMenu(route.children, fullPath) : undefined,
-        };
-      });
+    const generateMenu = (routes: RouteObjectMeta[], parentPath = ''): MenuItem[] =>
+      routes
+        .filter(route => {
+          return route.path === '/' || (route.meta?.hide !== false && permissionCodes.includes(route.meta.code ?? ''));
+        })
+        .map(route => {
+          const fullPath = route.path.startsWith('/') ? route.path : `${parentPath}/${route.path}`.replace(/\/+/g, '/');
+          const menu: MenuItem = {
+            key: fullPath,
+            label: route.meta.title,
+            icon: route.meta.icon,
+          };
+          if (route.children) {
+            menu.children = generateMenu(route.children, fullPath);
+          }
+          return menu;
+        });
 
     return generateMenu(authRoutes);
   }, [permissions]);

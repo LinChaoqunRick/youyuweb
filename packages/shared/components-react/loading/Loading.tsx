@@ -1,9 +1,18 @@
-import { Spin } from 'antd';
 import './Loading.css';
+import React from 'react';
 
-function Loading(props: any) {
+interface LoadingProps {
+  spinning?: boolean;
+  children?: React.ReactNode;
+}
+
+function Loading(props: LoadingProps) {
+  const { spinning = true, children } = props;
   return (
-    <Spin {...props} indicator={<div className="spinner-loader" />} />
+    <div className="loader-wrapper">
+      <div className={`s-loader ${spinning ? 'loading' : ''}`} />
+      {children}
+    </div>
   );
 }
 
