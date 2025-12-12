@@ -3,8 +3,14 @@
     <div v-if="album" :class="{ 'album-detail-collapse': collapse }" class="album-detail">
       <div class="album-images-wrapper youyu-scrollbar">
         <div class="album-detail-top">
-          <div class="album-name">
-            {{ album.name }}
+          <div class="album-title-section">
+            <div class="album-name">
+              {{ album.name }}
+            </div>
+            <div class="waterfall-switch">
+              <span class="switch-label">瀑布流</span>
+              <a-switch v-model:checked="isWaterfall" size="small" />
+            </div>
           </div>
           <div v-if="userInfo.id === album?.userId" class="album-detail-top-menu">
             <a-button
@@ -40,15 +46,13 @@
               </template>
               上传
             </a-button>
-            <a-button v-if="!selection" shape="round" type="primary"
-@click="onSelection">
+            <a-button v-if="!selection" shape="round" type="primary" @click="onSelection">
               <template #icon>
                 <i-full-selection fill="currentColor" size="16" theme="outline" />
               </template>
               选择
             </a-button>
-            <a-button v-if="selection" shape="round" type="primary"
-@click="onSelection">
+            <a-button v-if="selection" shape="round" type="primary" @click="onSelection">
               <template #icon>
                 <i-close fill="currentColor" size="16" theme="outline" />
               </template>
@@ -61,14 +65,13 @@
           ref="VueContentPageRef"
           :params="{ id: albumId, pageSize: 25 }"
           :url="GET_ALBUM_IMAGE_PAGE"
-          class="album-content-list"
+          :class="['album-content-list', { 'waterfall-mode': isWaterfall }]"
           data-text="照片"
           unit-text="张"
           @on-success="onSuccess"
         >
           <template #default="{ list }">
-            <vue-image v-for="(item, index) in list" :key="item.id" :url="item.url"
-@click="onImageClick(item, index)">
+            <vue-image v-for="(item, index) in list" :key="item.id" :url="item.url" @click="onImageClick(item, index)">
               <template #top>
                 <div>
                   <svg
@@ -155,6 +158,7 @@ const deleteLoading = ref<boolean>(false);
 const selection = ref(false);
 const checkedList = ref<AlbumImageVo[]>([]);
 const imageList = ref<AlbumImageVo[]>([]);
+const isWaterfall = ref<boolean>(false);
 
 /**
  * 获取相册详情
@@ -350,14 +354,31 @@ $imageWidth: 152px;
           box-shadow: 0 4px 12px rgb(0, 0, 0, 0.08);
         }
 
-        .album-name {
-          font-size: 18px;
-          font-weight: 600;
-          letter-spacing: 0.3px;
-          background: linear-gradient(135deg, var(--youyu-text1) 0%, var(--youyu-text2) 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+        .album-title-section {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+
+          .album-name {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            background: linear-gradient(135deg, var(--youyu-text1) 0%, var(--youyu-text2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+          }
+
+          .waterfall-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .switch-label {
+              font-size: 14px;
+              color: var(--youyu-text2);
+            }
+          }
         }
       }
 
@@ -415,6 +436,7 @@ $imageWidth: 152px;
           }
         }
 
+        // 默认网格布局
         ::v-deep(.data-list) {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax($imageWidth, 1fr));
@@ -437,6 +459,35 @@ $imageWidth: 152px;
 
               .image-info-box {
                 transform: translateY(0);
+              }
+            }
+          }
+        }
+
+        // 瀑布流布局
+        &.waterfall-mode {
+          ::v-deep(.data-list) {
+            display: block;
+            column-count: 5;
+            column-gap: $gridGap;
+
+            .vue-image-wrapper {
+              display: inline-block;
+              width: 100%;
+              height: auto;
+              margin-bottom: $gridGap;
+              break-inside: avoid;
+
+              .image-container {
+                width: 100% !important;
+                height: auto !important;
+              }
+
+              img {
+                width: 100%;
+                height: auto !important;
+                object-fit: contain !important;
+                display: block;
               }
             }
           }
