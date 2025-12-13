@@ -1,7 +1,7 @@
 <template>
   <div class="album-list">
     <div class="album-list-top-menu">
-      <nav-link v-for="route in routes" :route="route" :key="route.title" />
+      <nav-link v-for="route in routes" :key="route.title" :route="route" />
     </div>
     <div class="album-list-content">
       <empty-page />
@@ -10,13 +10,18 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 import NavLink from '@/components/common/header/menu/child/NavLink.vue';
 import EmptyPage from '@/components/common/system/EmptyPage.vue';
 
-const routes = [
-  { path: '/album/list/all', title: '全部相册' },
-  { path: '/album/list/mine', title: '个人中心' },
-];
+const { getters } = useStore();
+const isLogin = computed(() => getters['isLogin']);
+
+const routes = [{ path: '/album/list/all', title: '全部相册' }];
+if (isLogin.value) {
+  routes.push({ path: '/album/list/mine', title: '个人中心' });
+}
 </script>
 
 <style lang="scss" scoped>
@@ -27,12 +32,12 @@ const routes = [
   overflow: hidden;
 
   .album-list-top-menu {
-    height: 48px;
     display: flex;
     align-items: center;
+    height: 48px;
+    padding-left: 121px;
     background-color: var(--youyu-body-background2);
     border-bottom: var(--youyu-navigation-border);
-    padding-left: 121px;
 
     ::v-deep(.nav-link) {
       position: relative;
@@ -40,12 +45,12 @@ const routes = [
       padding: 0 16px;
 
       &::before {
-        content: '';
         position: absolute;
         left: 0;
         width: 1px;
         height: 12px;
         background-color: var(--youyu-text1);
+        content: '';
       }
 
       &:first-child {

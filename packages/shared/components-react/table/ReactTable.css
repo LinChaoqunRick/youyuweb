@@ -1,0 +1,73 @@
+.react-table {
+  height: 100%;
+
+  .table-row-even {
+    background-color: var(--bg-table-row-even); /* 偶数行背景色 */
+  }
+
+  .table-row-odd {
+    background-color: var(--bg-table-row-odd); /* 奇数行背景色 */
+  }
+
+  .ant-table-wrapper {
+    max-height: 100%;
+
+    .ant-table-container, .ant-table-content {
+      max-height: 100%;
+
+      colgroup {
+        .ant-table-selection-col {
+          width: 40px !important;
+        }
+      }
+
+      .ant-table-tbody {
+        background-color: var(--bg-color);
+
+        .ant-tag {
+          margin: 0;
+        }
+      }
+    }
+
+    .ant-table-footer {
+      position: absolute;
+      right: 0;
+      left: 0;
+      height: 56px;
+      background-color: var(--bg-color);
+
+      .react-table-footer {
+        position: absolute;
+        top: 12px;
+        z-index: 2;
+
+        button {
+          margin-right: 8px;
+        }
+      }
+    }
+
+    .ant-pagination {
+      position: sticky;
+      padding: 16px;
+      margin: 0 !important;
+      background-color: var(--bg-color);
+    }
+  }
+
+  .table-row-actions {
+    button {
+      height: 16px;
+    }
+  }
+
+  .ant-checkbox-wrapper {
+    margin-left: 14px;
+    font-size: 10px;
+  }
+
+  .ant-table-body {
+    overflow: auto !important;
+  }
+}

@@ -1,14 +1,15 @@
 import { ACCOUNT_LOGIN } from '@youyu/shared/apis';
 import http from '@youyu/shared/network';
-import {
-  Button, Checkbox, Flex, Form, Input, message,
-} from 'antd';
-import React from 'react';
+import { Button, Checkbox, Flex, Form, Input, message } from 'antd';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { FormProps } from 'antd';
 import './index.less';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import Logo from '@/components/menu/Logo.tsx';
+import Logo from '@/components/common/logo/Logo.tsx';
+import LanguageSwitch from '@/components/header/switch/LanguageSwitch';
+import ThemeSwitch from '@/components/header/switch/ThemeSwitch';
+import intl from 'react-intl-universal';
 
 type FieldType = {
   username?: string;
@@ -18,8 +19,10 @@ type FieldType = {
 
 function Login() {
   const [messageApi, contextHolder] = message.useMessage();
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const onFinish: FormProps<FieldType>['onFinish'] = values => {
+    setLoading(true);
     http
       .post(
         ACCOUNT_LOGIN,
@@ -38,7 +41,7 @@ function Login() {
         const { userInfo, access_token, refresh_token } = res.data;
         messageApi.open({
           type: 'success',
-          content: `欢迎回来，${userInfo.nickname}`,
+          content: `${intl.get('login.welcomeBack')}，${userInfo.nickname}`,
         });
         localStorage.setItem('access_token', access_token);
         localStorage.setItem('refresh_token', refresh_token);
@@ -46,6 +49,9 @@ function Login() {
       })
       .catch(err => {
         console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -56,42 +62,50 @@ function Login() {
   return (
     <div className="login-wrapper">
       {contextHolder}
+      <div className="settings-bar">
+        <ThemeSwitch />
+        <LanguageSwitch />
+      </div>
       <div className="image-view">
         <div className="system-info">
           <Logo />
-          <div className="system-name">有语管理系统</div>
+          <div className="system-name">{intl.get('login.systemName')}</div>
         </div>
+        <img
+          className="view-image float"
+          src="https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/login/data-yield.png"
+          alt=""
+        />
       </div>
       <div className="content-view">
-        <div className="welcome-text">Hi! 欢迎回来🏕️</div>
-        <div className="login-text">登录来管理您的项目</div>
+        <div className="welcome-text">{intl.get('login.welcome')}</div>
+        <div className="login-text">{intl.get('login.loginSubtitle')}</div>
         <Form
           name="basic"
           layout="vertical"
-          style={{ maxWidth: 600 }}
           initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
-          <Form.Item name="username" rules={[{ required: true, message: '请输入用户名' }]}>
-            <Input size="large" prefix={<UserOutlined />} placeholder="用户名" />
+          <Form.Item name="username" rules={[{ required: true, message: intl.get('login.usernameRequired') }]}>
+            <Input size="large" prefix={<UserOutlined />} placeholder={intl.get('login.username')} />
           </Form.Item>
-          <Form.Item name="password" rules={[{ required: true, message: '请输入密码' }]}>
-            <Input size="large" prefix={<LockOutlined />} type="password" placeholder="密码" />
+          <Form.Item name="password" rules={[{ required: true, message: intl.get('login.passwordRequired') }]}>
+            <Input size="large" prefix={<LockOutlined />} type="password" placeholder={intl.get('login.password')} />
           </Form.Item>
           <Form.Item>
             <Flex justify="space-between" align="center">
               <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox>记住我</Checkbox>
+                <Checkbox>{intl.get('login.rememberMe')}</Checkbox>
               </Form.Item>
-              <a href="">忘记密码</a>
+              <a href="">{intl.get('login.forgotPassword')}</a>
             </Flex>
           </Form.Item>
 
           <Form.Item>
-            <Button size="large" block type="primary" htmlType="submit">
-              登录
+            <Button size="large" block type="primary" htmlType="submit" loading={loading}>
+              {intl.get('login.loginButton')}
             </Button>
           </Form.Item>
         </Form>

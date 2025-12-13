@@ -27,7 +27,7 @@ import './assets/css/theme/light.scss';
 import '@icon-park/vue-next/styles/index.css'; //icon-park
 import 'md-editor-v3/lib/style.css';
 import 'animate.css';
-import '@youyu/shared/assets/css/shared-base.css';
+import '@youyu/shared/assets/css/shared.css';
 
 const app = createApp(App);
 const pinia = createPinia();

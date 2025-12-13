@@ -1,0 +1,118 @@
+/* ============================================
+   CSS �ϚI - manage y�q'7
+   ============================================ */
+
+:root {
+  /* ========== �r�� ========== */
+
+  /* ;�r - Ant Design */
+  --color-primary: #1890ff;
+  --color-primary-hover: #40a9ff;
+  --color-primary-dark: #0050b3;
+
+  /* {Uu�r */
+  --login-bg-gradient-start: #e0f2fe;
+  --login-bg-gradient-middle: #bae6fd;
+  --login-bg-gradient-end: #7dd3fc;
+
+  /* ========== ���� ========== */
+
+  /* �@�� */
+  --spacing-xs: 4px;
+  --spacing-sm: 6px;
+  --spacing-md: 8px;
+  --spacing-lg: 12px;
+  --spacing-xl: 16px;
+  --spacing-2xl: 18px;
+  --spacing-3xl: 22px;
+  --spacing-4xl: 24px;
+
+  /* ========== :��� ========== */
+
+  /* �@:� */
+  --size-xs: 24px;
+  --size-sm: 28px;
+  --size-md: 32px;
+  --size-lg: 40px;
+  --size-xl: 48px;
+  --size-2xl: 50px;
+  --size-3xl: 54px;
+  --size-4xl: 56px;
+
+  /* �h:� */
+  --height-header: 50px;
+  --height-logo: 54px;
+  --height-recent-card: 400px;
+  --height-recent-card-mobile: 300px;
+  --height-table-footer: 56px;
+
+  /* ========== ��� ========== */
+
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-full: 50%;
+
+  /* ========== 4q�� ========== */
+
+  /* aG4q */
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --shadow-card-strong: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-card-strong-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --shadow-blue: 0 2px 8px rgba(24, 144, 255, 0.15);
+
+  /* ========== �;/�!�� ========== */
+
+  /* �!�� */
+  --transition-fast: 0.3s;
+  --transition-standard: all 0.3s ease;
+
+  /* �;�p */
+  --animation-duration-scroll: 30s;
+  --animation-duration-scroll-mobile: 20s;
+  --animation-duration-loader: 1.5s;
+  --animation-easing-linear: linear;
+  --animation-easing-ease: ease;
+  --animation-easing-cubic: cubic-bezier(0.3, 1, 0, 1);
+
+  /* ========== ͔�� ========== */
+
+  --breakpoint-mobile: 768px;
+
+  /* ========== WS�� ========== */
+
+  /* WS'I� */
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-base: 14px;
+  --font-size-md: 15px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 28px;
+
+  /* ========== Flex Gap �� ========== */
+
+  --gap-sm: 4px;
+  --gap-md: 8px;
+  --gap-lg: 12px;
+  --gap-xl: 16px;
+}
+
+/* ========== ͔�φ� ========== */
+
+@media (width <= 768px) {
+  :root {
+    /* �����hئt */
+    --height-recent-card: var(--height-recent-card-mobile);
+    --animation-duration-scroll: var(--animation-duration-scroll-mobile);
+
+    /* ����:�t */
+    --size-xl: 40px;
+
+    /* ����WSt */
+    --font-size-xs: 11px;
+    --font-size-2xl: 20px;
+  }
+}

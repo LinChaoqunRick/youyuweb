@@ -1,12 +1,14 @@
 export interface Logs {
   id: number;
   userId: number;
+  clientId: string;
   name: string;
   type: number;
   ip: string;
   path: string;
   method: string;
   adcode: string;
+  adName: string;
   status: number;
   duration: number;
   requestData: string;

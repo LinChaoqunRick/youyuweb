@@ -42,31 +42,16 @@ export async function uploadToOss(files: File[], config?: UploadConfig): Promise
   if (!Array.isArray(files)) {
     files = [files];
   }
-  // 文件校验
-  for (const file of files) {
-    const fileNameArr = file.name.split('.');
-    const suffix = fileNameArr[fileNameArr.length - 1];
-    const nameLegal = mergedConfig.accept.indexOf(suffix) > -1;
-    if (!nameLegal) {
-      message.error(`只能上传${mergedConfig.accept}类型的文件`);
-      return;
-    }
-    const sizeExceed = file.size / 1024 / 1024 < mergedConfig.maxSize;
-    if (!sizeExceed) {
-      message.error(`文件大小不能大于${mergedConfig.maxSize}MB`);
-      return;
-    }
-  }
 
   // 上传步骤1： 获取oss临时凭证
-  let hide: Function;
+  let hide: () => void;
   const progressList = Array.from({ length: files.length }).map(item => 0);
   if (mergedConfig.needTip) {
     hide = message.loading('上传中...', 0);
   }
 
   const res = await store.dispatch(mergedConfig.policyPath, mergedConfig?.data).catch(console.error);
-  const {data} = res;
+  const { data } = res;
   if (!data) {
     throw new Error('签名获取失败');
   }
@@ -143,7 +128,7 @@ export const convertHEICFileToBlob = async (heicFile: File) => {
 
 export const getUrlImageFormat = (rawUrl: string) => {
   const url = new URL(rawUrl);
-  const {pathname} = url;
+  const { pathname } = url;
   return pathname.substring(pathname.lastIndexOf('.') + 1).toUpperCase();
 };
 

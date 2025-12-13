@@ -19,3 +19,20 @@ export function mergeAreaToProvince(data: Array<AreaAccessOutput>) {
     }, {}),
   );
 }
+
+/**
+ * 获取父路径
+ * @param path 路径
+ */
+export function extractMenus(path: string) {
+  const parts = path.split('/').filter(Boolean); // ['user', 'list', 'xxx']
+  const menus = [];
+
+  let current = '';
+  for (let i = 0; i < parts.length && i < 2; i++) {
+    current += `/${parts[i]}`;
+    menus.push(current);
+  }
+
+  return menus;
+}

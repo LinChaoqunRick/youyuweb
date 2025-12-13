@@ -1,27 +1,18 @@
 <template>
-  <ContentData v-slot="{ data }" :params="{ id: albumId }" class="content-data-container" url="getAlbumAccessible">
-    <div class="album-detail-container">
-      <div v-if="data" :class="{ 'album-detail-collapse': collapse }" class="album-detail">
-        <div class="album-images-wrapper youyu-scrollbar">
-          <div v-if="userInfo.id === albumDetailData?.userId" class="album-detail-top-menu">
-            <a-button shape="round" type="primary" @click="onClickUpload">
-              <template #icon>
-                <i-upload-one fill="currentColor" size="16" theme="outline" />
-              </template>
-              上传
-            </a-button>
-            <a-button v-if="!selection" shape="round" type="primary" @click="onSelection">
-              <template #icon>
-                <i-full-selection fill="currentColor" size="16" theme="outline" />
-              </template>
-              选择
-            </a-button>
-            <a-button v-if="selection" shape="round" type="primary" @click="onSelection">
-              <template #icon>
-                <i-close fill="currentColor" size="16" theme="outline" />
-              </template>
-              取消
-            </a-button>
+  <div class="album-detail-wrapper">
+    <div v-if="album" :class="{ 'album-detail-collapse': collapse }" class="album-detail">
+      <div class="album-images-wrapper youyu-scrollbar">
+        <div class="album-detail-top">
+          <div class="album-title-section">
+            <div class="album-name">
+              {{ album.name }}
+            </div>
+            <div class="waterfall-switch">
+              <span class="switch-label">瀑布流</span>
+              <a-switch v-model:checked="isWaterfall" size="small" />
+            </div>
+          </div>
+          <div v-if="userInfo.id === album?.userId" class="album-detail-top-menu">
             <a-button
               v-if="selection"
               :disabled="!(checkedList.length === 1)"
@@ -49,84 +40,105 @@
               </template>
               删除
             </a-button>
+            <a-button shape="round" type="primary" @click="onClickUpload">
+              <template #icon>
+                <i-upload-one fill="currentColor" size="16" theme="outline" />
+              </template>
+              上传
+            </a-button>
+            <a-button v-if="!selection" shape="round" type="primary" @click="onSelection">
+              <template #icon>
+                <i-full-selection fill="currentColor" size="16" theme="outline" />
+              </template>
+              选择
+            </a-button>
+            <a-button v-if="selection" shape="round" type="primary" @click="onSelection">
+              <template #icon>
+                <i-close fill="currentColor" size="16" theme="outline" />
+              </template>
+              取消
+            </a-button>
           </div>
-          <ContentList
-            ref="ContentListRef"
-            :params="params"
-            auto-load
-            class="album-content-list"
-            data-text="照片"
-            unit="张"
-            url="getAlbumImageList"
-          >
-            <template #default="{ list }">
-              <div
-                v-for="(item, index) in imageList"
-                :key="item.id"
-                :class="{ 'album-cover': item.id === albumDetailData?.coverImageId }"
-                class="image-wrapper"
-                @click="onImageClick(item, index)"
-              >
-                <svg
-                  v-if="albumDetailData?.coverImageId ? item.id === albumDetailData?.coverImageId : index === 0"
-                  aria-hidden="true"
-                  class="album-cover-tag icon"
-                >
-                  <use xlink:href="#icon-fengmian" />
-                </svg>
-                <img :alt="item.name" :src="item.url" class="cp" />
-                <div v-if="selection && checkedList.includes(item)" class="item-check">
-                  <i-check-one fill="#1677FF" size="24" theme="filled" />
+        </div>
+        <!-- @vue-generic {import('@youyu/shared/types/vo/album').AlbumImageVo} -->
+        <vue-content-page
+          ref="VueContentPageRef"
+          :params="{ id: albumId, pageSize: 25 }"
+          :url="GET_ALBUM_IMAGE_PAGE"
+          :class="['album-content-list', { 'waterfall-mode': isWaterfall }]"
+          data-text="照片"
+          unit-text="张"
+          @on-success="onSuccess"
+        >
+          <template #default="{ list }">
+            <vue-image v-for="(item, index) in list" :key="item.id" :url="item.url" @click="onImageClick(item, index)">
+              <template #top>
+                <div>
+                  <svg
+                    v-if="album.coverImageId ? item.id === album?.coverImageId : index === 0"
+                    aria-hidden="true"
+                    class="album-cover-tag icon"
+                  >
+                    <use xlink:href="#icon-fengmian" />
+                  </svg>
+                  <div v-if="selection && checkedList.includes(item)" class="item-check">
+                    <i-check-one fill="#1677FF" size="24" theme="filled" />
+                  </div>
                 </div>
+              </template>
+              <template #bottom>
                 <div class="image-info-box">
-                  <div class="info-data-item">
-                    <i-time fill="currentColor" size="13" theme="outline" />
-                    <div class="info-create-time">
-                      {{ dayjs(item.createTime).format('YYYY-MM-DD') }}
-                    </div>
+                  <div class="info-item">
+                    <span class="info-label">日期</span>
+                    <span class="info-value">{{ dayjs(item.createTime).format('YYYY-MM-DD') }}</span>
                   </div>
-                  <div class="info-data-item">
-                    <i-link-cloud fill="currentColor" size="13" theme="outline" />
-                    <div class="info-create-time">
-                      {{ formatSize(item.size) }}
-                    </div>
+                  <div class="info-item">
+                    <span class="info-label">大小</span>
+                    <span class="info-value">{{ formatSize(item.size) }}</span>
                   </div>
                 </div>
-              </div>
-            </template>
-          </ContentList>
-        </div>
-        <div class="album-info-body">
-          <AlbumDetailInfo ref="AlbumDetailInfoRef" :album-id="albumId" />
-          <div class="collapse-button" @click="onCollapse">
-            <i-right fill="currentColor" size="16" theme="outline" />
-          </div>
-        </div>
+              </template>
+            </vue-image>
+          </template>
+        </vue-content-page>
       </div>
-      <div v-else-if="data === false" class="inaccessible-wrapper">
-        <div class="tip-text">您没有权限访问该相册</div>
-        <a-button v-login="onApply" type="primary"> 申请访问</a-button>
+      <div class="album-info-body">
+        <AlbumDetailInfo ref="AlbumDetailInfoRef" :album-id="albumId" />
+        <div class="collapse-button" @click="onCollapse">
+          <i-right fill="currentColor" size="16" theme="outline" />
+        </div>
       </div>
     </div>
-  </ContentData>
+    <div v-else-if="album === false" class="inaccessible-wrapper">
+      <div class="tip-text">您没有权限访问该相册</div>
+      <a-button v-login="onApply" type="primary"> 申请访问 </a-button>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
+import { GET_ALBUM_DETAIL, GET_ALBUM_IMAGE_PAGE } from '@youyu/shared/apis';
+import { VueContentPage } from '@youyu/shared/components-vue';
+import { VueImage } from '@youyu/shared/components-vue';
+import http from '@youyu/shared/network';
+import { convertHEICUrlToBlob } from '@youyu/shared/utils';
+import openImage from '@youyu/shared/vue-hooks/openImage';
 import { message, Modal } from 'ant-design-vue';
 import dayjs from 'dayjs';
 import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
-import ContentData from '@/components/common/system/ContentData.vue';
-import ContentList from '@/components/common/system/ContentList.vue';
 import type { UploadResult } from '@/components/common/utils/upload/types';
 import { getUrlImageFormat, formatSize } from '@/components/common/utils/upload/utils';
 import openModal from '@/libs/tools/openModal';
+import { useLoadingStore } from '@/store/system';
 import AlbumDetailInfo from '@/views/album/detail/AlbumDetailInfo.vue';
-import type { AlbumImageItem } from '@/views/album/detail/types';
 import UploadImageList from '@/views/album/detail/UploadImageList.vue';
-import openImage from '@youyu/shared/vue-hooks/openImage';
-import { convertHEICUrlToBlob } from '@youyu/shared/utils';
+import type { AlbumImageVo } from '@youyu/shared/types/vo/album';
+import type { AlbumVo } from '@youyu/shared/types/vo/album';
+import type { ComponentExposed } from 'vue-component-type-helpers';
+
+const loadingStore = useLoadingStore();
 
 defineOptions({
   name: 'AlbumDetail',
@@ -136,19 +148,38 @@ const { getters, dispatch } = useStore();
 
 const route = useRoute();
 const userInfo = computed(() => getters['userInfo']);
-
 const collapse = ref<boolean>(false);
 const albumId: string = route.params.albumId as string;
-const ContentListRef = ref<InstanceType<typeof ContentList> | null>(null);
+const album = ref<AlbumVo | null>(null);
+const VueContentPageRef = ref<ComponentExposed<typeof VueContentPage> | null>(null);
 const AlbumDetailInfoRef = ref<InstanceType<typeof AlbumDetailInfo> | null>(null);
-const imageList = computed<Array<AlbumImageItem>>(() => ContentListRef.value?.list as Array<AlbumImageItem>);
 const setCoverLoading = ref<boolean>(false);
 const deleteLoading = ref<boolean>(false);
-
-const params = computed(() => ({ id: albumId, pageSize: 25 }));
-const albumDetailData = computed(() => AlbumDetailInfoRef.value?.data);
 const selection = ref(false);
-const checkedList = ref<Array<AlbumImageItem>>([]);
+const checkedList = ref<AlbumImageVo[]>([]);
+const imageList = ref<AlbumImageVo[]>([]);
+const isWaterfall = ref<boolean>(false);
+
+/**
+ * 获取相册详情
+ */
+function getAlbumDetail() {
+  loadingStore.setContentLoading(true);
+  http
+    .post<AlbumVo>(GET_ALBUM_DETAIL, { id: albumId })
+    .then(res => {
+      album.value = res.data;
+    })
+    .finally(() => {
+      loadingStore.setContentLoading(false);
+    });
+}
+
+getAlbumDetail();
+
+function onSuccess(_res: any, dataList: AlbumImageVo[]) {
+  imageList.value = dataList;
+}
 
 const onCollapse = () => {
   collapse.value = !collapse.value;
@@ -164,16 +195,18 @@ const onClickUpload = async () => {
     title: '上传照片',
     width: '1200px',
     centered: true,
-    beforeConfirm: (done: Function, data: UploadResult[]) => {
+    beforeConfirm: (done: () => void, data: UploadResult[]) => {
+      console.log(222, data);
       if (!data) {
         // data为undefined表示都上传成功了
         done();
       } else {
+        console.log(data);
         const successData = data.map(item => {
           item.file.url = item.file.thumb;
           return item.file;
         });
-        imageList.value.unshift(...successData);
+        VueContentPageRef.value!.unshiftData(successData as AlbumImageVo[]);
       }
     },
   });
@@ -183,7 +216,7 @@ const onApply = () => {
   console.log('onApply');
 };
 
-const onImageClick = (item: AlbumImageItem, index: number) => {
+const onImageClick = (item: AlbumImageVo, index: number) => {
   if (selection.value) {
     if (checkedList.value.includes(item)) {
       const findIndex = checkedList.value.findIndex(i => i === item);
@@ -191,30 +224,30 @@ const onImageClick = (item: AlbumImageItem, index: number) => {
     } else {
       checkedList.value.push(item);
     }
-    return;
-  }
-  openImage({
-    componentProps: {
-      list: imageList.value.map(item => item.url),
-      current: index,
-      originTransfer: (index: number) => {
-        const { originUrl } = imageList.value[index];
-        if (originUrl) {
-          return originUrl;
-        } else {
-          return dispatch('getAlbumImageOrigin', { id: imageList.value[index].id }).then(async res => {
-            const format = getUrlImageFormat(res.data);
-            if (format.toLowerCase() === 'heic') {
-              imageList.value[index].originUrl = await convertHEICUrlToBlob(res.data);
-            } else {
-              imageList.value[index].originUrl = res.data;
-            }
-            return imageList.value[index].originUrl;
-          });
-        }
+  } else {
+    openImage({
+      componentProps: {
+        list: imageList.value.map(item => item.url),
+        current: index,
+        originTransfer: (index: number) => {
+          const { originUrl } = imageList.value[index];
+          if (originUrl) {
+            return originUrl;
+          } else {
+            return dispatch('getAlbumImageOrigin', { id: imageList.value[index].id }).then(async res => {
+              const format = getUrlImageFormat(res.data);
+              if (format.toLowerCase() === 'heic') {
+                imageList.value[index].originUrl = (await convertHEICUrlToBlob(res.data)) ?? '';
+              } else {
+                imageList.value[index].originUrl = res.data;
+              }
+              return imageList.value[index].originUrl;
+            });
+          }
+        },
       },
-    },
-  });
+    });
+  }
 };
 
 const onSelection = () => {
@@ -228,12 +261,12 @@ const onSetCover = () => {
   setCoverLoading.value = true;
   const newCoverId = checkedList.value[0].id;
   dispatch('setAlbumCover', {
-    id: albumDetailData.value?.id,
+    id: album.value?.id,
     coverImageId: newCoverId,
   })
     .then(res => {
       message.success('设置成功');
-      albumDetailData.value!.coverImageId = newCoverId;
+      album.value!.coverImageId = newCoverId;
       selection.value = false;
     })
     .finally(() => {
@@ -242,7 +275,6 @@ const onSetCover = () => {
 };
 
 const onDelete = () => {
-  deleteLoading.value = true;
   Modal.confirm({
     title: '删除照片',
     content: '确定删除这些照片？',
@@ -250,13 +282,14 @@ const onDelete = () => {
     okType: 'danger',
     cancelText: '取消',
     onOk() {
+      deleteLoading.value = true;
       const ids = checkedList.value.map(item => item.id).join(',');
       dispatch('removeAlbumImage', { ids: ids })
         .then(res => {
           message.success('删除成功');
-          ContentListRef.value &&
-            (ContentListRef.value.list =
-              ContentListRef.value?.list.filter(item => !checkedList.value.includes(item)) ?? []);
+          const removeIds = checkedList.value.map(item => item.id);
+          console.log(removeIds);
+          VueContentPageRef.value!.removeById(removeIds);
           checkedList.value = [];
         })
         .finally(() => {
@@ -272,199 +305,272 @@ const onDelete = () => {
 
 <style lang="scss" scoped>
 $infoBodyWidth: 300px;
-$imageWrapperPadding: 2px;
-$gridGap: 2px;
+$imageWrapperPadding: 8px;
+$gridGap: 8px;
 $imageWidth: 152px;
 
-.content-data-container {
+.album-detail-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: calc(100vh - 100px);
 
-  .album-detail-container {
+  .album-detail {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    height: calc(100vh - 100px);
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 
-    .album-detail {
-      display: flex;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
+    .album-images-wrapper {
+      flex: 1;
+      overflow-y: auto;
 
-      .album-images-wrapper {
-        flex: 1;
-        overflow-y: auto;
+      button {
+        margin-right: 6px;
+      }
 
-        button {
-          &:nth-child(n + 2) {
-            margin-left: 6px;
+      ::v-deep(.i-icon) {
+        position: relative;
+        top: 1px;
+        margin-right: 3px;
+      }
+
+      .album-detail-top {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 56px;
+        padding: 0 24px;
+        background: linear-gradient(135deg, var(--youyu-body-background2) 0%, var(--youyu-body-background1) 100%);
+        border-bottom: 1px solid var(--youyu-border-color, rgb(0, 0, 0, 0.06));
+        backdrop-filter: blur(8px);
+        box-shadow: 0 2px 8px rgb(0, 0, 0, 0.04);
+        transition: all 0.3s ease;
+
+        &:hover {
+          box-shadow: 0 4px 12px rgb(0, 0, 0, 0.08);
+        }
+
+        .album-title-section {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+
+          .album-name {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            background: linear-gradient(135deg, var(--youyu-text1) 0%, var(--youyu-text2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+          }
+
+          .waterfall-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .switch-label {
+              font-size: 14px;
+              color: var(--youyu-text2);
+            }
+          }
+        }
+      }
+
+      .album-content-list {
+        padding: $imageWrapperPadding;
+
+        .album-cover-tag {
+          position: absolute;
+          top: 0;
+          left: 0;
+          z-index: 1;
+          font-size: 48px;
+        }
+
+        .item-check {
+          position: absolute;
+          top: 6px;
+          right: 6px;
+          z-index: 1;
+        }
+
+        .image-info-box {
+          position: absolute;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          padding: 8px;
+          font-size: 12px;
+          color: white;
+          background: linear-gradient(to top, rgb(0, 0, 0, 0.6), rgb(0, 0, 0, 0.2));
+          cursor: pointer;
+          transition: 0.3s;
+          transform: translateY(100%);
+
+          .info-item {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            justify-content: space-between;
+
+            .info-label {
+              font-size: 10px;
+              letter-spacing: 0.5px;
+              opacity: 0.7;
+            }
+
+            .info-value {
+              font-size: 12px;
+              font-weight: 500;
+              letter-spacing: 0.3px;
+            }
           }
         }
 
-        ::v-deep(.i-icon) {
-          position: relative;
-          top: 1px;
-          margin-right: 3px;
-        }
+        // 默认网格布局
+        ::v-deep(.data-list) {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax($imageWidth, 1fr));
+          gap: $gridGap;
+          font-size: 0;
 
-        .album-detail-top-menu {
-          position: sticky;
-          top: 0;
-          z-index: 10;
-          display: flex;
-          align-items: center;
-          justify-content: flex-end;
-          height: 48px;
-          padding-right: 20px;
-          background-color: var(--youyu-body-background2);
-          border-bottom: var(--youyu-navigation-border);
-        }
-
-        .album-content-list {
-          padding: $imageWrapperPadding;
-
-          .image-wrapper {
-            position: relative;
-            width: $imageWidth;
-            height: $imageWidth;
+          .vue-image-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 162px;
+            height: 162px;
             overflow: hidden;
-            background-color: rgb(192, 192, 192, 0.8);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgb(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
             &:hover {
+              box-shadow: 0 8px 16px rgb(0, 0, 0, 0.15);
+
               .image-info-box {
                 transform: translateY(0);
               }
             }
+          }
+        }
 
-            .album-cover-tag {
-              position: absolute;
-              top: 0;
-              left: 0;
-              z-index: 1;
-              font-size: 48px;
-            }
+        // 瀑布流布局
+        &.waterfall-mode {
+          ::v-deep(.data-list) {
+            display: block;
+            column-count: 5;
+            column-gap: $gridGap;
 
-            .item-check {
-              position: absolute;
-              top: 6px;
-              right: 6px;
-            }
+            .vue-image-wrapper {
+              display: inline-block;
+              width: 100%;
+              height: auto;
+              margin-bottom: $gridGap;
+              break-inside: avoid;
 
-            .image-info-box {
-              position: absolute;
-              right: 0;
-              bottom: 0;
-              left: 0;
-              display: flex;
-              justify-content: space-between;
-              padding: 2px;
-              font-size: 11px;
-              color: white;
-              background: linear-gradient(to bottom, rgb(0, 0, 0, 0), rgb(0, 0, 0, 0.42));
-              cursor: pointer;
-              transition: 0.3s;
-              transform: translateY(100%);
+              .image-container {
+                width: 100% !important;
+                height: auto !important;
+              }
 
-              .info-data-item {
-                display: flex;
-                align-items: center;
-
-                ::v-deep(.i-icon) {
-                  margin-right: 2px;
-                }
+              img {
+                width: 100%;
+                height: auto !important;
+                object-fit: contain !important;
+                display: block;
               }
             }
           }
-
-          img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: 0.3s;
-
-            &:hover {
-              transform: scale(1.05);
-            }
-          }
-
-          ::v-deep(.data-list-wrapper) {
-            margin-top: 0;
-
-            .data-list {
-              display: grid;
-              grid-template-columns: repeat(auto-fill, $imageWidth);
-              grid-gap: $gridGap;
-            }
-          }
-
-          ::v-deep(.bottom-operation) {
-            height: 42px;
-          }
-        }
-      }
-
-      .album-info-body {
-        position: relative;
-        z-index: 1;
-        width: $infoBodyWidth;
-        height: 100%;
-        overflow: visible;
-        border-right: var(--youyu-navigation-border);
-        transition: 0.3s;
-        transform: translateX(0);
-
-        .collapse-button {
-          position: absolute;
-          top: calc(50% - 33px);
-          left: -16px;
-          display: flex;
-          align-items: center;
-          width: 0;
-          height: 66px;
-          color: #bebebe;
-          border: 8px solid transparent;
-          border-right: 16px solid var(--youyu-background2);
-          border-left: 0;
-          cursor: pointer;
-          transition: all 0.3s ease-in-out;
-
-          &:hover {
-            color: var(--youyu-text2);
-          }
-        }
-      }
-
-      &.album-detail-collapse {
-        .upload-btn {
-          transform: translateX(-50%);
         }
 
-        .album-info-body {
-          margin-right: -$infoBodyWidth !important;
-
-          .collapse-button {
-            .i-icon {
-              transform: rotateY(180deg) !important;
-            }
-          }
+        ::v-deep(.vue-content-page-status) {
+          height: 36px;
+          margin-top: 6px;
+          background: none;
         }
       }
     }
 
-    .inaccessible-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 400px;
-      height: 260px;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 8px;
+    .album-info-body {
+      position: relative;
+      z-index: 1;
+      width: $infoBodyWidth;
+      height: 100%;
+      overflow: visible;
+      background: var(--youyu-body-background1);
+      border-left: 1px solid var(--youyu-border-color, rgb(0, 0, 0, 0.06));
+      transition: all 0.3s ease;
 
-      .tip-text {
-        margin-bottom: 12px;
+      ::v-deep(> div) {
+        height: 100%;
+        padding: 16px;
+        overflow-y: auto;
       }
+
+      .collapse-button {
+        position: absolute;
+        top: calc(50% - 33px);
+        left: -16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 66px;
+        color: #bebebe;
+        background: var(--youyu-background2);
+        border-radius: 4px 0 0 4px;
+        box-shadow: -2px 2px 8px rgb(0, 0, 0, 0.08);
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        &:hover {
+          color: var(--youyu-text1);
+          background: var(--youyu-body-background2);
+          box-shadow: -4px 4px 12px rgb(0, 0, 0, 0.12);
+        }
+      }
+    }
+
+    &.album-detail-collapse {
+      .upload-btn {
+        transform: translateX(-50%);
+      }
+
+      .album-info-body {
+        margin-right: -$infoBodyWidth !important;
+
+        .collapse-button {
+          .i-icon {
+            transform: rotateY(180deg) !important;
+          }
+        }
+      }
+    }
+  }
+
+  .inaccessible-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 400px;
+    height: 260px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 8px;
+
+    .tip-text {
+      margin-bottom: 12px;
     }
   }
 }

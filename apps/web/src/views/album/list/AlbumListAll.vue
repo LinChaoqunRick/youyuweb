@@ -8,8 +8,8 @@
 </template>
 
 <script setup lang="ts">
+import AlbumCommonList from '@/views/album/common/AlbumCommonList.vue';
 import AlbumActions from '@/views/album/components/AlbumActions.vue';
-import AlbumCommonList from '@/views/album/list/common/AlbumCommonList.vue';
 
 const tableParams = {
   pageSize: 10,
@@ -25,8 +25,8 @@ const tableParams = {
     top: 8px;
     right: 0;
     display: flex;
-    justify-content: flex-end;
     align-items: center;
+    justify-content: flex-end;
     padding-right: 30px;
 
     ::v-deep(.ant-input-affix-wrapper) {

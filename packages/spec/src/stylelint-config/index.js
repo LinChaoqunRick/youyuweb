@@ -36,6 +36,7 @@ module.exports = {
     'no-empty-source': null,
     'font-family-no-missing-generic-family-keyword': null,
     'declaration-block-single-line-max-declarations': null,
+    'color-function-alias-notation': null,
     'declaration-block-no-duplicate-properties': [
       true,
       {

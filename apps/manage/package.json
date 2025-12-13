@@ -14,7 +14,7 @@
     "@tailwindcss/vite": "^4.1.11",
     "@youyu/shared": "workspace:^",
     "ahooks": "^3.9.0",
-    "antd": "^5.26.2",
+    "antd": "^6.0.1",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.5",
     "echarts": "^6.0.0",

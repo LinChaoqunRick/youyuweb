@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import Header from '@/components/header/Header';
-import AuthMenu from '@/components/menu/AuthMenu';
-import Logo from '@/components/menu/Logo';
+import AuthMenu from '@/components/menu';
+import Logo from '@/components/common/logo/Logo.tsx';
 
 import './css/bacisLayout.css';
 

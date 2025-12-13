@@ -26,7 +26,7 @@ function ThemeSwitch() {
         onClick: ({ key }: { key: Language }) => {
           setLanguage(key);
           initI18n(key).then(() => {
-            window.location.reload(); // 刷新页面让语言生效
+            // window.location.reload(); // 刷新页面让语言生效
           });
         },
       }}

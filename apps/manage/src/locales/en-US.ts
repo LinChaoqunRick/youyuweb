@@ -17,4 +17,17 @@ export default {
     changePassword: 'Change Password',
     logout: 'Logout',
   },
+  login: {
+    systemName: 'YouYu Management System',
+    welcome: 'Hi! Welcome Back🏕️',
+    loginSubtitle: 'Login to manage your projects',
+    username: 'Username',
+    password: 'Password',
+    rememberMe: 'Remember me',
+    forgotPassword: 'Forgot password',
+    loginButton: 'Login',
+    usernameRequired: 'Please enter username',
+    passwordRequired: 'Please enter password',
+    welcomeBack: 'Welcome back',
+  },
 };

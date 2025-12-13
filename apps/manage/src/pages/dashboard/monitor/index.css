@@ -1,11 +1,264 @@
 .overview-monitor {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-
-  .monitor-content {
-    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     overflow: hidden;
-  }
+
+    .monitor-content {
+        display: flex;
+        flex: 1;
+        gap: 12px;
+        overflow: hidden;
+
+        /* 左侧面板：统计卡片 */
+
+        .left-panel {
+            display: flex;
+            flex: 4;
+            flex-direction: column;
+            overflow: hidden;
+
+            .server-card, .stat-card {
+                flex: 1;
+                overflow: hidden;
+            }
+
+            .server-card {
+                margin-bottom: 12px;
+
+                .ant-card-body {
+                    height: 100%;
+                    padding: 16px;
+                }
+
+                .server-info {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 12px;
+                    height: 100%;
+                }
+
+                .server-item {
+                    padding: 16px;
+                    background: linear-gradient(135deg, #f6f8fa 0%, #fff 100%);
+                    border: 1px solid #e8e8e8;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+                    transition: all 0.3s ease;
+
+                    &:hover {
+                        border-color: #d9d9d9;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                    }
+
+                    .server-item-header {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        margin-bottom: 12px;
+
+                        .server-item-title {
+                            position: relative;
+                            padding-left: 12px;
+                            font-size: 14px;
+                            font-weight: 600;
+                            color: #333;
+
+                            &::before {
+                                position: absolute;
+                                top: 50%;
+                                left: 0;
+                                width: 4px;
+                                height: 16px;
+                                background: linear-gradient(180deg, #1890ff 0%, #096dd9 100%);
+                                border-radius: 2px;
+                                content: '';
+                                transform: translateY(-50%);
+                            }
+                        }
+
+                        .server-item-value {
+                            font-family: 'Monaco', 'Courier New', monospace;
+                            font-size: 11px;
+                            color: #999;
+                        }
+                    }
+
+                    .server-progress {
+                        width: 100%;
+                        height: 10px;
+                        margin-bottom: 8px;
+                        overflow: hidden;
+                        background: #f0f0f0;
+                        border-radius: 5px;
+                        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+
+                        .server-progress-bar {
+                            height: 100%;
+                            border-radius: 5px;
+                            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+                            transition: width 0.3s ease, background-color 0.3s ease;
+                        }
+                    }
+
+                    .server-item-footer {
+                        font-family: 'Monaco', 'Courier New', monospace;
+                        font-size: 13px;
+                        font-weight: 700;
+                        color: #333;
+                        text-align: right;
+                    }
+                }
+            }
+
+            .stat-card {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+
+                .ant-card-body {
+                    height: 100%;
+                    overflow-y: auto;
+                }
+            }
+
+            .stat-items {
+                display: grid;
+                grid-template-columns: repeat(6, 1fr);
+                grid-gap: 12px;
+            }
+
+            .stat-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-width: 100px;
+                padding: 6px 0;
+                background: #fafafa;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: .3s;
+
+                &:hover {
+                    background: #f0f0f0;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                }
+
+                .stat-icon {
+                    flex-shrink: 0;
+                    margin-bottom: 2px;
+                    font-size: 28px;
+                }
+
+                .stat-details {
+                    width: 100%;
+                    text-align: center;
+                }
+
+                .stat-title {
+                    margin-bottom: 6px;
+                    font-size: 12px;
+                    color: #666;
+                    white-space: nowrap;
+                }
+
+                .stat-value {
+                    font-size: 20px;
+                    font-weight: bold;
+                    color: #333;
+                }
+            }
+        }
+
+
+        /* 右侧面板：最近访问 */
+
+        .right-panel {
+            display: flex;
+            flex: 3;
+            flex-direction: column;
+
+            .ant-card-body {
+                height: 100%;
+            }
+
+            .area-access-card {
+                flex: 4;
+                margin-bottom: 12px;
+                overflow: hidden;
+
+                .header-search {
+                    position: absolute;
+                    z-index: 9;
+                    padding: 0;
+                    background: transparent;
+                }
+
+                .map-container {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+
+            .recent-access-card {
+                display: flex;
+                flex: 2;
+                flex-direction: column;
+                height: 100%;
+                overflow: hidden;
+
+                .ant-card-body {
+                    flex: 1;
+                    padding: 0;
+                }
+            }
+
+            .access-list-container {
+                position: relative;
+                height: 100%;
+            }
+
+            .access-list-scroll {
+                display: flex;
+                flex-direction: column;
+                animation: scroll-up linear infinite;
+
+                &:hover {
+                    animation-play-state: paused;
+                }
+            }
+
+            .access-item {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 12px 16px;
+                border-bottom: 1px solid #f0f0f0;
+                transition: background-color 0.2s ease;
+
+                &:hover {
+                    background-color: #fafafa;
+                }
+
+                &:last-child {
+                    border-bottom: none;
+                }
+
+                .access-location {
+                    flex-shrink: 0;
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #333;
+                }
+
+                .access-time {
+                    margin-left: 12px;
+                    font-family: 'Monaco', 'Courier New', monospace;
+                    font-size: 12px;
+                    color: #999;
+                }
+            }
+        }
+    }
 }

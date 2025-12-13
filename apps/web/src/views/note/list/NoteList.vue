@@ -4,15 +4,8 @@
     <div class="note-list-items">
       <YTable listUrl="listNote" ref="YTableRef">
         <template #default="{dataList}">
-          <div class="list-wrapper">
-            <div v-for="(item) in dataList.slice(0,5)" class="note-body" :key="item.id" ref="postItem">
-              <NoteItem :data="item" @onEditSuccess="onEditSuccess"/>
-            </div>
-          </div>
-          <div class="list-wrapper">
-            <div v-for="(item) in dataList.slice(5)" class="note-body" :key="item.id" ref="postItem">
-              <NoteItem :data="item" @onEditSuccess="onEditSuccess"/>
-            </div>
+          <div v-for="(item) in dataList" :key="item.id" class="note-item">
+            <NoteItem :data="item" @onEditSuccess="onEditSuccess"/>
           </div>
         </template>
       </YTable>
@@ -70,23 +63,39 @@ const onEditSuccess = (data: note) => {
 
   .note-list-items {
     ::v-deep(.ant-spin-container) {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      justify-items: flex-start;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding-top: 10px;
 
-      .note-item {
-        margin: 8px;
+      @media (max-width: 1600px) {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+      }
+
+      @media (max-width: 1300px) {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+
+      @media (max-width: 900px) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+
+      @media (max-width: 600px) {
+        grid-template-columns: 1fr;
+        gap: 12px;
       }
     }
 
     .list-wrapper {
-      display: flex;
-      align-items: center;
-      margin-top: 10px;
+      display: contents;
 
-      &:last-child {
-        margin-bottom: 20px;
+      .note-body {
+        display: contents;
       }
     }
   }

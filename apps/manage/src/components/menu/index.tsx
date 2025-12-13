@@ -1,9 +1,10 @@
-import { Menu } from 'antd';
-import React, { useState, useEffect, useMemo } from 'react';
+import { Menu, MenuProps } from 'antd';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMenu } from '@/hooks/useMenu';
 import { useAppSettings } from '@/store/useAppSettings';
 import type { MenuItem } from '@youyu/shared/types/common';
+import { extractMenus } from '@/utils/dataUtils.ts';
 
 function App() {
   const navigate = useNavigate();
@@ -17,14 +18,13 @@ function App() {
     return authMenus[0]?.children ?? [];
   }, [authMenus]);
 
-  const selectedKeys = [location.pathname];
+  // 使用 useMemo 缓存 selectedKeys
+  const selectedKeys = useMemo(() => [location.pathname], [location.pathname]);
 
+  // 当路由变化时，自动更新展开的菜单
   useEffect(() => {
-    const newOpenKeys = items
-      .filter(item => item.children?.some(child => location.pathname.startsWith(child.key)))
-      .map(item => item.key);
-    setOpenKeys(newOpenKeys);
-  }, [location.pathname, items]);
+    setOpenKeys(extractMenus(location.pathname));
+  }, [location.pathname]);
 
   const onClick = ({ key }: { key: string }) => {
     if (menuCollapsed) {
@@ -33,6 +33,7 @@ function App() {
     navigate(key);
   };
 
+  // 监听菜单展开/折叠变化
   const onOpenChange = (keys: string[]) => {
     setOpenKeys(keys);
   };
@@ -41,12 +42,12 @@ function App() {
     <Menu
       onClick={onClick}
       style={{ width: 220 }}
-      selectedKeys={selectedKeys}
-      openKeys={menuCollapsed ? [] : openKeys}
-      onOpenChange={onOpenChange}
       mode="inline"
       inlineCollapsed={menuCollapsed}
-      items={items}
+      items={items as MenuProps['items']}
+      selectedKeys={selectedKeys}
+      openKeys={openKeys}
+      onOpenChange={onOpenChange}
     />
   );
 }

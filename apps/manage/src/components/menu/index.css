@@ -1,9 +1,25 @@
-.logo {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  height: 54px;
-  object-fit: cover;
-  color: var(--text-color);
+.main-menu {
+  .logo {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    height: 54px;
+    object-fit: cover;
+    color: var(--text-color);
+  }
+
+  .ant-menu {
+    .ant-menu-item {
+      padding-left: 40px !important;
+      border-left: 4px solid transparent;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+
+      &.ant-menu-item-selected {
+        border-left: 4px solid #1890ff;
+      }
+    }
+  }
 }
+

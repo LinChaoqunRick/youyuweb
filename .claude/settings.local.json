@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm exec tsc:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(pnpm -C apps/manage build:*)",
+      "WebFetch(domain:ant-design.antgroup.com)",
+      "Bash(pnpm exec prettier:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
