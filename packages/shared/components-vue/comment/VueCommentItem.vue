@@ -60,10 +60,6 @@
           <i-comment :theme="active ? 'filled' : 'outline'" size="14" fill="currentColor" />
           {{ active ? '取消回复' : '回复' }}<span v-if="data.replyCount && !active">({{ data.replyCount }})</span>
         </div>
-        <div class="action-item" :class="{ 'action-active': data.commentLike }">
-          <i-good-two :theme="data.commentLike ? 'filled' : 'outline'" size="14" fill="currentColor" />
-          点赞<span v-if="data.supportCount">({{ data.supportCount }})</span>
-        </div>
         <a-popconfirm
           v-model:open="deleteVisible"
           title="确认删除此评论?"
@@ -125,8 +121,8 @@ const deleteVisible = ref<boolean>(false);
 const preview = ref<boolean>(false);
 const current = ref<number>(0);
 
-const isDataAuthor = computed(() => props.dataAuthorId === props.data.userId); // 是否是发布此时刻、帖子的用户
-const isAuthor = computed(() => props.loginUserId === props.data.userId); // 是否是发布此评论的用户
+const isDataAuthor = computed(() => props.dataAuthorId === props.loginUserId); // 当前登录用户，是否是发布此时刻、帖子的用户
+const isAuthor = computed(() => props.loginUserId === props.data.userId); // 当前登录用户，是否是发布此评论的用户
 const images = computed(() => (props.data.images ? props.data.images?.split(',') : [])); // 评论附图
 const isActorUser = computed(() => getCommentActorType(props.data) === ActorType.USER); // 是否由用户发送
 

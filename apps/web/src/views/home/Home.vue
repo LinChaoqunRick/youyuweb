@@ -15,11 +15,11 @@
 
           <div class="text-second">
             有语是一个博客及记录类的网站，在这里你可以浏览
-            <RouterLink to="/post">技术文章</RouterLink>
+            <RouterLink to="/post"> 技术文章 </RouterLink>
             、分享
-            <RouterLink to="/moment"> 日常生活</RouterLink>
+            <RouterLink to="/moment"> 日常生活 </RouterLink>
             、撰写
-            <RouterLink to="/note"> 学习笔记</RouterLink>
+            <RouterLink to="/note"> 学习笔记 </RouterLink>
             ，同时还可以参与讨论，希望对你有所帮助。
           </div>
           <div class="text-three">
@@ -36,7 +36,7 @@
         <img class="welcome-image" src="/static/images/background/home-image.svg" alt="" />
       </div>
       <div>
-        <div></div>
+        <div />
       </div>
     </div>
 
@@ -45,18 +45,22 @@
         <div class="introduce-title">功能介绍</div>
         <RouterLink
           v-for="item in featureList"
-          :to="item.path"
           :key="item.path"
+          :to="item.path"
           class="feature-item"
           @mouseenter="onLottieAnimate(item, 'play')"
           @mouseleave="onLottieAnimate(item, 'pause')"
         >
           <div class="feature-item-wrapper">
             <div class="feature-introduce">
-              <div class="feature-name">{{ item.name }}</div>
-              <div class="feature-introduction">{{ item.introduction }}</div>
+              <div class="feature-name">
+                {{ item.name }}
+              </div>
+              <div class="feature-introduction">
+                {{ item.introduction }}
+              </div>
             </div>
-            <div class="feature-lottie" :class="[item.lottieClass]" :ref="item.ref"></div>
+            <div :ref="item.ref" class="feature-lottie" :class="[item.lottieClass]" />
           </div>
         </RouterLink>
       </div>
@@ -86,12 +90,12 @@
 </template>
 
 <script setup lang="ts">
-import { useStore } from 'vuex';
 import { computed, onMounted, reactive, ref } from 'vue';
 import lottie from 'lottie-web';
-import TechnologyList from '@/views/home/components/TechnologyList.vue';
-import MoreList from '@/views/home/components/MoreList.vue';
+import { useStore } from 'vuex';
 import AboutSiteHome from '@/views/home/components/AboutSiteHome.vue';
+import MoreList from '@/views/home/components/MoreList.vue';
+import TechnologyList from '@/views/home/components/TechnologyList.vue';
 
 const { getters, dispatch } = useStore();
 const authorId = computed(() => getters['getAuthorId']);
@@ -108,7 +112,7 @@ const featureList = [
     introduction: '日常的学习记录，包括新知识的分享，旧知识的巩固、一些实用资源的分享以及BUG记录等',
     path: '/post',
     lottieClass: 'post-lottie',
-    lottieData: ' https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/lottie/post.json',
+    lottieData: 'https://youyu-source.youyul.com/youyu/lottie/post.json',
     ref: postLottie,
     animation: null,
   },
@@ -117,7 +121,7 @@ const featureList = [
     introduction: '用于记录日常生活，旅游见闻，在此可以发布动态，这里有很多很多有趣的内容，就像一个朋友圈',
     path: '/moment',
     lottieClass: 'moment-lottie',
-    lottieData: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/lottie/travel.json',
+    lottieData: 'https://youyu-source.youyul.com/youyu/lottie/travel.json',
     ref: momentLottie,
     animation: null,
   },
@@ -126,7 +130,7 @@ const featureList = [
     introduction: '用于记录所学习的新知识的的内容，按章节划分，持续更新中...',
     path: '/note',
     lottieClass: 'note-lottie',
-    lottieData: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/lottie/draw.json',
+    lottieData: 'https://youyu-source.youyul.com/youyu/lottie/draw.json',
     ref: noteLottie,
     animation: null,
   },
@@ -135,7 +139,7 @@ const featureList = [
     introduction: '爱好摄影？哦不！是终于以可清空手机相册啦！！！',
     path: '/album',
     lottieClass: 'album-lottie',
-    lottieData: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/lottie/album.json',
+    lottieData: 'https://youyu-source.youyul.com/youyu/lottie/album.json',
     ref: albumLottie,
     animation: null,
   },
@@ -144,7 +148,7 @@ const featureList = [
     introduction: '千奇百怪的内容，这里都是一些练手的内容，来看看站长平时都在学些什么！',
     path: '/lab',
     lottieClass: 'lab-lottie',
-    lottieData: 'https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/lottie/lab.json',
+    lottieData: 'https://youyu-source.youyul.com/youyu/lottie/lab.json',
     ref: labLottie,
     animation: null,
   },
@@ -191,23 +195,23 @@ onMounted(() => {
 <style lang="scss" scoped>
 .home {
   .home-welcome {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 60px);
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 60px);
     //background-color: rgba(255, 255, 255, 0.2) !important;
     //backdrop-filter: blur(10px) !important;
     background-image: url('/static/images/background/Pattern-Half-Circle.svg');
+    background-repeat: no-repeat;
     background-position: 100% 50%;
     background-size: contain;
-    background-repeat: no-repeat;
     //filter: drop-shadow(0 0 5px #ffffff);
 
     .welcome-lead {
       display: flex;
-      justify-content: space-around;
       align-items: center;
+      justify-content: space-around;
       width: 100%;
       height: 500px;
 
@@ -222,31 +226,31 @@ onMounted(() => {
           animation: bounceInUpMe 0.8s ease-in-out;
 
           img {
-            height: 42px;
             width: 42px;
+            height: 42px;
             border-radius: 50%;
           }
 
           .author-nickname {
-            color: #1890ff;
-            font-size: 20px;
             margin-left: 10px;
+            font-size: 20px;
             font-weight: bold;
+            color: #1890ff;
           }
         }
 
         .text_first {
           display: flex;
           align-items: center;
+          margin: 20px 0;
           font-size: 52px;
           font-weight: 600;
           color: var(--youyu-text5);
-          margin: 20px 0;
           animation: bounceInUpMe 0.8s ease-in-out 0.2s backwards;
 
           .site-name {
-            color: #1890ff;
             margin-left: 6px;
+            color: #1890ff;
           }
         }
 
@@ -268,23 +272,23 @@ onMounted(() => {
             display: flex;
             //justify-content: center;
             align-items: center;
-            background: linear-gradient(270deg, #30b6ec, #0692ef 95%);
-            height: 50px;
             width: 80px;
+            height: 50px;
+            padding: 0 26px;
+            background: linear-gradient(270deg, #30b6ec, #0692ef 95%);
             border-radius: 8px;
             cursor: pointer;
             transition: 0.3s;
-            padding: 0 26px;
 
             img {
               transition: 0.3s;
             }
 
             .text-content {
-              color: white;
               font-size: 0;
-              transition: 0.3s;
+              color: white;
               opacity: 0;
+              transition: 0.3s;
             }
 
             &:hover {
@@ -295,8 +299,8 @@ onMounted(() => {
               }
 
               .text-content {
-                transform: translateX(45%);
                 opacity: 1;
+                transform: translateX(45%);
               }
             }
           }
@@ -305,13 +309,13 @@ onMounted(() => {
 
       .welcome-image {
         display: inline-block;
-        height: 357px;
         width: 540px;
+        height: 357px;
         filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0));
         transition: 0.3s;
 
         &:hover {
-          filter: drop-shadow(0 0 5px #ffffff);
+          filter: drop-shadow(0 0 5px #fff);
         }
       }
     }
@@ -328,43 +332,43 @@ onMounted(() => {
 
       .feature-item {
         position: relative;
-        height: 300px;
         width: 80%;
+        height: 300px;
         margin-bottom: 40px;
-        transition: 0.3s;
+        overflow: hidden;
         border: 1px solid var(--youyu-border-color);
         border-radius: 16px;
         cursor: pointer;
-        overflow: hidden;
+        transition: 0.3s;
 
-        &:before {
+        &::before {
           position: absolute;
-          left: -40px;
           top: -130px;
-          content: '';
-          height: 300px;
+          left: -40px;
+          z-index: 0;
           width: 300px;
-          border-radius: 50%;
+          height: 300px;
           background: linear-gradient(270deg, #30b6ec, #0692ef 95%);
+          border-radius: 50%;
+          content: '';
           transition: 0.4s;
           transform: translate(-300px, -300px);
-          z-index: 0;
         }
 
         .feature-item-wrapper {
           display: flex;
-          justify-content: space-between;
           align-items: center;
-          background-color: rgba(255, 255, 255, 0.2) !important;
-          backdrop-filter: blur(4px) !important;
-          padding: 18px 36px;
+          justify-content: space-between;
           width: 100%;
           height: 100%;
+          padding: 18px 36px;
+          background-color: rgba(255, 255, 255, 0.2) !important;
           border-radius: 16px;
+          backdrop-filter: blur(4px) !important;
 
           .feature-introduce {
-            height: 100%;
             max-width: 440px;
+            height: 100%;
             text-align: left;
 
             .feature-name {
@@ -386,19 +390,19 @@ onMounted(() => {
             height: 262px;
 
             &.moment-lottie {
-              height: 320px;
               width: 320px;
+              height: 320px;
             }
 
             &.album-lottie {
               top: -20px;
-              height: 330px;
               width: 330px;
+              height: 330px;
             }
 
             &.lab-lottie {
-              height: 360px;
               width: 360px;
+              height: 360px;
             }
           }
         }
@@ -407,7 +411,7 @@ onMounted(() => {
           box-shadow: var(--youyu-shadow2);
           //background-color: #1890ff;
 
-          &:before {
+          &::before {
             transform: translate(0, 0) !important;
           }
         }
@@ -422,9 +426,9 @@ onMounted(() => {
             }
           }
 
-          &:before {
-            left: auto;
+          &::before {
             right: -40px;
+            left: auto;
             transform: translate(300px, -300px);
           }
         }
@@ -433,9 +437,9 @@ onMounted(() => {
 
     .technology-container {
       .list-wrapper {
-        margin: 30px 0;
         display: flex;
         justify-content: center;
+        margin: 30px 0;
       }
     }
 
@@ -452,26 +456,26 @@ onMounted(() => {
   }
 
   .introduce-title {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    position: relative;
-    font-size: 22px;
-    color: var(--youyu-text5);
-    font-weight: bold;
     padding: 50px 0;
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--youyu-text5);
 
-    &:before,
-    &:after {
+    &::before,
+    &::after {
       position: relative;
       top: 50%;
-      content: '';
-      height: 3px;
-      width: 100px;
-      background-color: var(--youyu-text5);
       left: 5%;
+      width: 100px;
+      height: 3px;
+      background-color: var(--youyu-text5);
+      content: '';
     }
 
-    &:before {
+    &::before {
       left: -5%;
     }
   }

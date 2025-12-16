@@ -70,6 +70,7 @@
             </div>
           </a-popover>
           <vue-upload
+            v-if="userMode"
             ref="UploadRef"
             v-model="form.images"
             :config="{ data: { base: 'moment/images' } }"

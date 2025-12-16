@@ -71,11 +71,7 @@ function Login() {
           <Logo />
           <div className="system-name">{intl.get('login.systemName')}</div>
         </div>
-        <img
-          className="view-image float"
-          src="https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/login/data-yield.png"
-          alt=""
-        />
+        <img className="view-image float" src="https://youyu-source.youyul.com/youyu/login/data-yield.png" alt="" />
       </div>
       <div className="content-view">
         <div className="welcome-text">{intl.get('login.welcome')}</div>

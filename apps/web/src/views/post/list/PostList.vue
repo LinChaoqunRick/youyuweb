@@ -1,9 +1,9 @@
 <template>
   <div class="post-list">
     <div class="article-list">
-      <YTable listUrl="getPostList" :params="{ pageSize: 15 }">
+      <YTable list-url="getPostList" :params="{ pageSize: 15 }">
         <template #default="{ dataList }">
-          <div v-for="(item, index) in dataList" v-slide-in class="article-body" :key="item.id" ref="postItem">
+          <div v-for="(item, index) in dataList" :key="item.id" ref="postItem" v-slide-in class="article-body">
             <PostItem :data="item" :index="index" />
           </div>
         </template>
@@ -46,9 +46,9 @@ const postItem = ref([]);
   }
 
   .article-right {
+    position: relative;
     width: 300px;
     margin-left: 8px;
-    position: relative;
   }
 }
 </style>

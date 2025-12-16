@@ -27,10 +27,7 @@ const createProxy = (list: ProxyList = []): ProxyTargetList => {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-  ],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
@@ -43,6 +40,7 @@ export default defineConfig({
     // proxy: createProxy([['/plat', 'https://v2.youyul.com' || '']]),
     proxy: createProxy([
       ['/plat', 'http://localhost:8080' || ''],
+      // ['/plat', 'https://v2.youyul.com' || ''],
       ['/ws', 'https://apis.map.qq.com'],
     ]),
   },
