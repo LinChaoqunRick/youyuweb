@@ -4,7 +4,7 @@ module.exports = {
   overrides: [
     {
       files: ['*.jsx', '*.js'],
-      extends: ['airbnb', 'airbnb/hooks'],
+      extends: ['airbnb', 'airbnb/hooks', 'plugin:prettier/recommended'],
       parserOptions: {
         ecmaFeatures: {
           impliedStrict: true,
@@ -23,7 +23,7 @@ module.exports = {
     },
     {
       files: ['*.ts', '*.tsx'],
-      extends: ['airbnb', 'airbnb-base', 'airbnb/hooks', 'plugin:@typescript-eslint/recommended'],
+      extends: ['airbnb', 'airbnb-base', 'airbnb/hooks', 'plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
       parser: '@typescript-eslint/parser',
       parserOptions: {
         ecmaFeatures: {
