@@ -85,9 +85,7 @@
           </div>
           <div class="post-main-content">
             <div v-if="false" class="post-summary">
-              <div class="post-summary-title">
-                摘要
-              </div>
+              <div class="post-summary-title">摘要</div>
               <div class="post-summary-summary" v-text="post.summary" />
             </div>
             <div class="post-content">
@@ -101,25 +99,21 @@
               </div>
             </div>
             <div v-if="post.columns?.length" class="post-column-list">
-              <div class="include-text">
-                本文已收录至：
-              </div>
+              <div class="include-text">本文已收录至：</div>
               <PostColumn v-for="(item, index) in post.columns" :key="index" :data="item" />
             </div>
           </div>
         </div>
         <div class="post-right">
-          <div class="post-category">
+          <!--          <div class="post-category">
             <MdCatalogPanel editor-id="post-content" />
-          </div>
+          </div>-->
           <div class="post-operation">
             <PostOperation @scroll-to-comment="scrollToComment" />
           </div>
         </div>
         <div id="post-comment-wrapper">
-          <div class="comment-title">
-            评论
-          </div>
+          <div class="comment-title">评论</div>
           <vue-comment-editor
             :auto-focus="false"
             :save-url="CREATE_POST_COMMENT"
@@ -141,7 +135,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, provide, readonly, watch, inject } from 'vue';
+import { ref, computed, provide, readonly, watch, inject, onMounted } from 'vue';
 import { CREATE_POST_COMMENT, GET_POST_DETAIL } from '@youyu/shared/apis';
 import { VueCommentEditor } from '@youyu/shared/components-vue';
 import http from '@youyu/shared/network';
@@ -159,8 +153,8 @@ import PostColumn from './child/PostColumn.vue';
 import PostComment from './child/PostComment.vue';
 import PostOperation from './child/PostOperation.vue';
 import PostUserPanel from './child/PostUserPanel.vue';
-import type { Comment } from '@youyu/shared/types/common';
 import type { PostVo } from '@youyu/shared/types/vo';
+import type { Comment } from '@youyu/shared/types/vo/common';
 
 defineOptions({
   name: 'PostDetail',

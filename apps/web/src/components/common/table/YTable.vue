@@ -2,19 +2,19 @@
   <div class="y-table">
     <a-spin :spinning="loading">
       <div class="table-body">
-        <slot :dataList="dataList">
-          <div v-if="failed" @click="initData" class="retry-load">
+        <slot :data-list="dataList">
+          <div v-if="failed" class="retry-load" @click="initData">
             <i-refresh theme="outline" size="15" fill="#1890ff" />
             <span class="loading-text">加载失败，重新加载</span>
           </div>
-          <div class="table-no-data" v-else-if="!loading && !dataList.length">暂无数据</div>
-          <a-skeleton active v-else></a-skeleton>
+          <div v-else-if="!loading && !dataList.length" class="table-no-data">暂无数据</div>
+          <a-skeleton v-else active></a-skeleton>
         </slot>
       </div>
-      <div class="table-pagination" v-if="!!total">
+      <div v-if="!!total" class="table-pagination">
         <a-pagination
           v-model:current="current"
-          v-model:pageSize="size"
+          v-model:page-size="size"
           v-bind="paginationConfig"
           :total="total"
           :show-total="() => `共${total}条`"
@@ -33,9 +33,9 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { useStore } from 'vuex';
-import { useRoute, useRouter } from 'vue-router';
 import { useEventListener } from '@vueuse/core';
+import { useRoute, useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 const emit = defineEmits(['onLoaded']);
 
@@ -81,8 +81,8 @@ const paginationConfig = computed(() =>
     {
       showSizeChanger: false,
     },
-    props.paginationProps
-  )
+    props.paginationProps,
+  ),
 );
 
 const initData = async () => {
@@ -123,8 +123,8 @@ const refreshData = () => {
         pageNum: current.value,
         pageSize: size.value,
       },
-      props.params
-    )
+      props.params,
+    ),
   ).then(res => {
     total.value = res.data.total;
     dataList.value = res.data.list;
@@ -171,11 +171,11 @@ defineExpose({
 
     .table-no-data,
     .retry-load {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 100%;
       min-height: 200px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
 
       .loading-text {
         margin-left: 4px;
@@ -184,7 +184,8 @@ defineExpose({
 
     .table-skeleton {
       padding: 16px 24px;
-      /*background-color: var(--youyu-body-background1);*/
+
+      /* background-color: var(--youyu-body-background1); */
       border-radius: 8px;
 
       ::v-deep(.ant-skeleton) {
@@ -228,16 +229,16 @@ defineExpose({
       .ant-pagination-next,
       .ant-select-selector {
         padding: 0 6px;
+        color: var(--pagination-text);
         background-color: var(--youyu-body-background2);
         border: var(--pagination-border);
-        color: var(--pagination-text);
       }
 
       .ant-pagination-options {
         .ant-pagination-options-quick-jumper {
           input {
-            text-align: center;
             padding: 4px;
+            text-align: center;
           }
         }
       }

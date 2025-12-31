@@ -1,4 +1,4 @@
-import type { UserBasic } from '../common';
+import type { UserBasic } from './common.ts';
 
 export interface Barrage {
   id?: number;

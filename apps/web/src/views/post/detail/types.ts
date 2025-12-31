@@ -1,4 +1,4 @@
-import type { UserBasic } from '@youyu/shared/types/common';
+import type { UserBasic } from '@youyu/shared/types/vo/common';
 
 export interface PostCollect {
   postId: number;

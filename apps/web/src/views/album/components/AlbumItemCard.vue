@@ -3,13 +3,13 @@
     <div class="album-item-card">
       <!-- 相册封面 -->
       <div class="album-cover-wrapper">
-        <img :src="album.cover || '/static/images/common/no_img_top.png'" :alt="album.name" class="album-cover">
+        <img :src="album.cover || '/static/images/common/no_img_top.png'" :alt="album.name" class="album-cover" />
 
         <!-- 封面叠加层 -->
         <div class="cover-overlay">
           <!-- 用户信息 -->
           <div class="user-info">
-            <img :src="album.userInfo?.avatar" :alt="album.userInfo?.nickname" class="user-avatar">
+            <img :src="album.userInfo?.avatar" :alt="album.userInfo?.nickname" class="user-avatar" />
             <span class="user-name">{{ album.userInfo?.nickname }}</span>
           </div>
 
@@ -54,8 +54,6 @@ const props = defineProps({
     required: true,
   },
 });
-
-console.log(props.album);
 
 const formatDate = (date?: string) => {
   if (!date) return '';

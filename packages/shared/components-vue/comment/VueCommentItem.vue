@@ -11,13 +11,16 @@
           <vue-popper-user-card :user="data.actor" />
         </template>
         <div
-          v-if="isActorUser"
+          v-if="props.data.actor.avatar"
           class="comment-actor-avatar"
           :style="{ width: props.avatarSize + 'px', height: props.avatarSize + 'px' }"
         >
-          <router-link :to="{ name: 'userHome', params: { userId: data.actor.id } }">
+          <router-link v-if="isActorUser" :to="{ name: 'userHome', params: { userId: data.actor.id } }">
             <img :src="props.data.actor.avatar" alt="avatar" />
           </router-link>
+          <a v-else :href="data.actor.homepage || 'javascript:void(0)'" target="_blank" rel="noopener noreferrer">
+            <img :src="props.data.actor.avatar" alt="avatar" />
+          </a>
         </div>
         <a-avatar v-else :size="props.avatarSize" :style="{ backgroundColor: '#1890ff', verticalAlign: 'middle' }">
           {{ props.data.actor.nickname.substring(0, 3) }}
@@ -35,9 +38,17 @@
           <template #content>
             <vue-popper-user-card :user="data.actor" />
           </template>
-          <router-link :to="{ name: 'userHome', params: { userId: data.actor.id } }">
+          <router-link v-if="isActorUser" :to="{ name: 'userHome', params: { userId: data.actor.id } }">
             <span class="user-nickname">{{ data.actor.nickname }}</span>
           </router-link>
+          <a
+            v-else
+            :href="data.actor.homepage || 'javascript:void(0)'"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="user-nickname"
+            >{{ data.actor.nickname }}</a
+          >
         </a-popover>
         <div v-if="isDataAuthor" class="author-text">博主</div>
       </div>
@@ -91,7 +102,7 @@
 
 <script setup lang="ts">
 import { computed, PropType, ref } from 'vue';
-import type { Comment } from '../../types/common';
+import type { Comment } from '../../types/vo/common.ts';
 import { RouterLink } from 'vue-router';
 import VuePopperUserCard from '../content/VuePopperUserCard.vue';
 import { transformTagToHTML } from '../emoji/youyu_emoji.ts';

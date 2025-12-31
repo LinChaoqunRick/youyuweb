@@ -47,6 +47,7 @@ export interface Actor {
   signature: string;
   follow: boolean;
   type: number;
+  homepage: string;
 }
 
 export interface Area {
@@ -97,4 +98,10 @@ export interface Comment {
   commentLike: boolean;
   images: string;
   children: Comment[];
+}
+
+export interface OAuthResult {
+  userInfo: UserBasic;
+  access_token: string;
+  refresh_token: string;
 }

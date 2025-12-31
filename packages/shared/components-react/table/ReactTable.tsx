@@ -4,7 +4,7 @@ import { AnyObject } from 'antd/es/_util/type';
 import React, { useState, useEffect, useRef, useMemo, forwardRef, useImperativeHandle } from 'react';
 import http from '../../network';
 import { ReactTableProps, ReactTableRef, ColumnButton } from '../../types/components-react';
-import type { PageResult } from '../../types/common';
+import type { PageResult } from '../../types/vo/common.ts';
 import type { TablePaginationConfig } from 'antd/es/table';
 import './ReactTable.css';
 
@@ -218,11 +218,11 @@ function InnerReactTable<T extends AnyObject>(props: ReactTableProps<T>, ref: Re
 
   // 依赖驱动请求, 当 params 改变时，重置到第一页
   useEffect(() => {
-    getTableData();
     setPagination(prev => ({
       ...prev,
       current: 1,
     }));
+    getTableData({ pageNum: 1 });
   }, [params]);
 
   // 处理分页变化

@@ -3,6 +3,13 @@
     <div class="vue-comment-editor" v-on-click-outside="onClickOutside">
       <div class="comment-editor-left">
         <a-avatar v-if="props.userMode" :size="props.avatarSize" :src="props.avatar" />
+        <div
+          v-else-if="!props.userMode && form.avatar"
+          class="comment-visitor-avatar"
+          :style="{ width: props.avatarSize + 'px', height: props.avatarSize + 'px' }"
+        >
+          <img :src="form.avatar" alt="avatar" />
+        </div>
         <a-avatar v-else :size="props.avatarSize" :style="{ backgroundColor: '#1890ff', verticalAlign: 'middle' }">
           {{ form.nickname ? form.nickname?.substring(0, 3) : '游客' }}
         </a-avatar>
@@ -42,7 +49,7 @@
           :placeholder="placeholder"
           @on-paste-image="onPasteImage"
         />
-        <div v-if="form.images.length" class="comment-images">
+        <div v-if="form.images?.length" class="comment-images">
           <div v-for="(item, index) in form.images" :key="item.thumb" class="image-item">
             <img :alt="item.name" :src="(item.thumb || item) as string" />
             <div class="image-delete" @click="onImageDelete(index)">
@@ -112,7 +119,7 @@ import { GET_VISITOR_BY_EMAIL } from '../../apis';
 import http from '../../network';
 import { checkEmail } from '../../utils/antdv-validate.ts';
 import EventBus from '../../utils/event-bus.ts';
-import type { Visitor } from '../../types/common';
+import type { Visitor } from '../../types/vo/common.ts';
 
 const props = defineProps({
   userMode: { type: Boolean, default: false },
@@ -145,6 +152,7 @@ interface CommentForm {
   email: string;
   nickname: string;
   homepage: string;
+  avatar?: string;
   images: FileExtend[];
 }
 
@@ -164,6 +172,7 @@ const form = reactive<CommentForm>({
   email: VISITOR_DATA.email,
   nickname: VISITOR_DATA.nickname,
   homepage: VISITOR_DATA.homepage,
+  avatar: VISITOR_DATA.avatar,
   images: [],
 });
 const currentLength = computed(() => richEditorRef.value?.totalStrLength);
@@ -222,12 +231,12 @@ const onSubmit = async () => {
     const valid = await FormRef.value!.validate();
     if (!valid) return;
   }
-  const imagesListRes = await UploadRef.value!.upload();
+  const imagesListRes = await UploadRef.value?.upload();
   const copyForm: SubmitCommentForm = {
     ...cloneDeep(form),
     images: '',
   };
-  copyForm.images = imagesListRes!.map(item => item.url);
+  copyForm.images = imagesListRes?.map(item => item.url) || [];
   copyForm.images = copyForm.images.length ? copyForm.images.join(',') : '';
   copyForm.content = transformHTMLToTag(copyForm.content);
   spinning.value = true;
@@ -263,9 +272,14 @@ const onFindVisitor = () => {
           if (data) {
             Object.keys(form).forEach(key => {
               // @ts-ignore
-              form[key] = data[key] ?? form[key];
+              form[key] = data[key];
             });
             saveVisitorData(data);
+          } else {
+            // 查询不到数据时，清空除邮箱外的其他字段
+            form.nickname = '';
+            form.homepage = '';
+            form.avatar = '';
           }
         })
         .finally(() => {
@@ -298,6 +312,18 @@ function onClickOutside() {
 
     .ant-avatar {
       border: var(--youyu-avatar-border);
+    }
+
+    .comment-visitor-avatar {
+      overflow: hidden;
+      border: var(--youyu-avatar-border);
+      border-radius: 100%;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
     }
   }
 

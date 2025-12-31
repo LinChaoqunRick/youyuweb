@@ -1,5 +1,5 @@
 import { SMSTypes } from '../consts';
-import type { Comment } from '../types/common';
+import type { Comment } from '../types/vo/common.ts';
 
 export function getSMSTitle(code: number) {
   const item = SMSTypes[code];

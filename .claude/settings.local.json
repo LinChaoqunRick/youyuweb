@@ -6,7 +6,8 @@
       "Bash(grep:*)",
       "Bash(pnpm -C apps/manage build:*)",
       "WebFetch(domain:ant-design.antgroup.com)",
-      "Bash(pnpm exec prettier:*)"
+      "Bash(pnpm exec prettier:*)",
+      "Bash(pnpm exec eslint:*)"
     ],
     "deny": [],
     "ask": []

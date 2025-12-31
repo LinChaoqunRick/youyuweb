@@ -4,8 +4,8 @@ import { useAppSettings } from '@/store/useAppSettings.ts';
 function Logo() {
   const { menuCollapsed } = useAppSettings();
   const logoPath = menuCollapsed
-    ? 'https://1youyu-source.youyul.com/youyu/favicon.ico'
-    : 'https://1youyu-source.oss-cn-beijing.aliyuncs.com/youyu/logo_280x120.png';
+    ? 'https://youyu-source.youyul.com/youyu/favicon.ico'
+    : 'https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/logo_280x120.png';
   return (
     <img
       src={logoPath}

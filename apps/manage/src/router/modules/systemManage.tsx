@@ -1,10 +1,11 @@
-import { ControlOutlined, SettingOutlined } from '@ant-design/icons';
-import intl from 'react-intl-universal';
+import { ControlOutlined, SettingOutlined, ToolOutlined } from '@ant-design/icons';
+// import intl from 'react-intl-universal';
 import { lazyLoad } from '@/components/enhance/lazyLoad';
 import { RouteObjectMeta } from '@/types/login';
 
 const OutletLayout = lazyLoad(() => import('@/components/layouts/OutletLayout'));
 const Maintenance = lazyLoad(() => import('@/pages/systemManage/maintenance'));
+const SystemSetting = lazyLoad(() => import('@/pages/systemManage/setting'));
 
 const systemRoutes: RouteObjectMeta[] = [
   {
@@ -27,6 +28,17 @@ const systemRoutes: RouteObjectMeta[] = [
           },
           icon: <ControlOutlined />,
           code: 'system:maintenance',
+        },
+      },
+      {
+        path: 'setting',
+        element: <SystemSetting />,
+        meta: {
+          get title() {
+            return '系统设置';
+          },
+          icon: <ToolOutlined />,
+          code: 'system:setting',
         },
       },
     ],

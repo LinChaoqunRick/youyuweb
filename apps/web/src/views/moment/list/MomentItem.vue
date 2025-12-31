@@ -161,7 +161,7 @@ import { DOMAIN } from '@/libs/consts';
 import openModal from '@/libs/tools/openModal';
 import MomentComment from '@/views/moment/components/MomentComment.vue';
 import UserCardMoment from '../components/UserCardMoment.vue';
-import type { Comment } from '@youyu/shared/types/common';
+import type { Comment } from '@youyu/shared/types/vo/common';
 import type { MomentVo } from '@youyu/shared/types/vo/moment';
 
 const { getters, dispatch } = useStore();
@@ -482,7 +482,7 @@ const onCopyLink = () => {
         align-items: center;
         height: 24px;
         padding: 1px 4px;
-        margin-top: 4px;
+        margin-top: 6px;
         border: 1.8px solid var(--youyu-border-color2);
         border-radius: 30px;
         cursor: pointer;

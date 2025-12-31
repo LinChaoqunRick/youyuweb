@@ -1,4 +1,4 @@
-import type { MenuItem } from '@youyu/shared/types/common';
+import type { MenuItem } from '@youyu/shared/types/vo/common.ts';
 import { useMemo } from 'react';
 
 import { useAuth } from '@/context/AuthContext';

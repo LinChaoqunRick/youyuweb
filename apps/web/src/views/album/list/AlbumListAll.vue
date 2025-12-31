@@ -11,6 +11,10 @@
 import AlbumCommonList from '@/views/album/common/AlbumCommonList.vue';
 import AlbumActions from '@/views/album/components/AlbumActions.vue';
 
+defineOptions({
+  name: 'AlbumListAll',
+});
+
 const tableParams = {
   pageSize: 10,
 };

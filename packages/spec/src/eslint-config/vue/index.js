@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   plugins: ['import', 'vue'],
-  extends: ['plugin:vue/vue3-recommended', '@vue/eslint-config-prettier'],
+  extends: ['plugin:vue/vue3-recommended', 'prettier'],
   parser: 'vue-eslint-parser',
   parserOptions: {
     parser: '@typescript-eslint/parser',

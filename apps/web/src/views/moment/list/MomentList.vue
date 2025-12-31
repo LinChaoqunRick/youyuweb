@@ -1,8 +1,8 @@
 <template>
   <div class="moment-list">
     <div class="moment-list-center mr-8">
-      <MomentEditor @save-success="saveSuccess" />
-      <EmptyPage ref="EmptyPageRef" />
+      <moment-editor class="mb-8" @save-success="saveSuccess" />
+      <base-layout ref="baseLayoutRef" />
     </div>
     <div class="moment-list-right mr-8">
       <div v-side-fixed>
@@ -14,40 +14,18 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useRoute, RouterLink } from 'vue-router';
+import { useRoute } from 'vue-router';
 import Announcement from '@/components/common/share/announcement/index.vue';
-import EmptyPage from '@/components/common/system/EmptyPage.vue';
-
+import BaseLayout from '@/components/common/system/BaseLayout.vue';
 import MomentEditor from '../components/MomentEditor.vue';
+import type { MomentVo } from '@youyu/shared/types/vo';
 
 const route = useRoute();
-const menuList = [
-  {
-    title: '最新',
-    path: '/moment/list/new',
-    icon: 'i-time',
-  },
-  /*{
-    title: '热门',
-    path: '/moment/list/hot',
-    icon: 'i-fire',
-  },*/
-  {
-    title: '关注',
-    path: '/moment/list/follow',
-    icon: 'i-concern',
-  },
-  {
-    title: '我的',
-    path: '/moment/list/me',
-    icon: 'i-user',
-  },
-];
-const EmptyPageRef = ref<typeof EmptyPage>(null);
+const baseLayoutRef = ref<InstanceType<typeof BaseLayout> | null>(null);
 
-const saveSuccess = data => {
+const saveSuccess = (data: MomentVo) => {
   if (route.name === 'MomentListNew') {
-    EmptyPageRef.value.Component.unshiftItem(data);
+    baseLayoutRef.value.Component.unshiftItem(data);
   }
 };
 </script>

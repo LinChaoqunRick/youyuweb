@@ -90,7 +90,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import lottie from 'lottie-web';
 import { useStore } from 'vuex';
 import AboutSiteHome from '@/views/home/components/AboutSiteHome.vue';

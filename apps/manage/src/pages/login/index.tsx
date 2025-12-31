@@ -10,6 +10,7 @@ import Logo from '@/components/common/logo/Logo.tsx';
 import LanguageSwitch from '@/components/header/switch/LanguageSwitch';
 import ThemeSwitch from '@/components/header/switch/ThemeSwitch';
 import intl from 'react-intl-universal';
+import type { OAuthResult } from '@youyu/shared/types/vo/common.ts';
 
 type FieldType = {
   username?: string;
@@ -24,7 +25,7 @@ function Login() {
   const onFinish: FormProps<FieldType>['onFinish'] = values => {
     setLoading(true);
     http
-      .post(
+      .post<OAuthResult>(
         ACCOUNT_LOGIN,
         {
           grant_type: 'password', // oauth认证方式

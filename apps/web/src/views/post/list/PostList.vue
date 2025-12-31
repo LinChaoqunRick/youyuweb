@@ -15,20 +15,22 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'PostList',
-};
-</script>
-
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 import YTable from '@/components/common/table/YTable.vue';
 import PostItem from '@/components/content/post/PostItem.vue';
 import PostAside from '../aside/PostAside.vue';
 
+defineOptions({
+  name: 'PostList',
+});
+
 const postItem = ref([]);
+
+onMounted(() => {
+  console.log('PostList');
+});
 </script>
 
 <style lang="scss" scoped>

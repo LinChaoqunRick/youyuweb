@@ -1,6 +1,6 @@
 <template>
   <div class="user-moment-list">
-    <div class="moment-list-body mt-8">
+    <div class="moment-list-body">
       <!-- @vue-generic {import('@youyu/shared/types/vo/moment').MomentVo} -->
       <vue-content-page
         ref="VueContentPageRef"

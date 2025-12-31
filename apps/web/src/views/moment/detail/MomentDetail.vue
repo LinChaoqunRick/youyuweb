@@ -11,23 +11,14 @@
             @delete-success="onMomentDeleteSuccess"
             @on-edit="onEdit"
           />
-          <MomentEditor
-            v-else
-            is-edit
-            :form="formData"
-            @save-success="saveSuccess"
-          >
+          <MomentEditor v-else is-edit :form="formData" @save-success="saveSuccess">
             <template #bottom>
-              <a-button type="link" class="cancel-btn" @click="onEditCancel">
-                取消
-              </a-button>
+              <a-button type="link" class="cancel-btn" @click="onEditCancel"> 取消 </a-button>
             </template>
           </MomentEditor>
         </div>
         <div class="moment-comment-editor-wrapper mt-8 mb-8">
-          <div class="editor-title">
-            评论
-          </div>
+          <div class="editor-title">评论</div>
           <vue-comment-editor
             :auto-focus="false"
             :save-url="CREATE_MOMENT_COMMENT"
@@ -56,7 +47,7 @@ import { useStore } from 'vuex';
 import MomentComment from '@/views/moment/components/MomentComment.vue';
 import MomentEditor from '../components/MomentEditor.vue';
 import MomentItem from '../list/MomentItem.vue';
-import type { Comment } from '@youyu/shared/types/common';
+import type { Comment } from '@youyu/shared/types/vo/common';
 import type { MomentVo } from '@youyu/shared/types/vo/moment';
 
 const route = useRoute();

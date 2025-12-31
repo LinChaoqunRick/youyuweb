@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import qs from 'qs';
-import { ResponseResult } from '../types/common';
+import { ResponseResult } from '../types/vo/common.ts';
 import eventBus from '../utils/event-bus';
 
 interface PostAxiosRequestConfig extends AxiosRequestConfig {

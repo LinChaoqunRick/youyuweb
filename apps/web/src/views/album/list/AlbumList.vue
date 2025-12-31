@@ -4,7 +4,7 @@
       <nav-link v-for="route in routes" :key="route.title" :route="route" />
     </div>
     <div class="album-list-content">
-      <empty-page />
+      <base-layout />
     </div>
   </div>
 </template>
@@ -13,14 +13,18 @@
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 import NavLink from '@/components/common/header/menu/child/NavLink.vue';
-import EmptyPage from '@/components/common/system/EmptyPage.vue';
+import BaseLayout from '@/components/common/system/BaseLayout.vue';
+
+defineOptions({
+  name: 'AlbumList',
+});
 
 const { getters } = useStore();
 const isLogin = computed(() => getters['isLogin']);
 
-const routes = [{ path: '/album/list/all', title: '全部相册' }];
+const routes = [{ path: '/album/list/all', title: '全部相册', exact: false }];
 if (isLogin.value) {
-  routes.push({ path: '/album/list/mine', title: '个人中心' });
+  routes.push({ path: '/album/list/mine', title: '个人中心', exact: false });
 }
 </script>
 

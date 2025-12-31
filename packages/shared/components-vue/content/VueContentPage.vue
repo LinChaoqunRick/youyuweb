@@ -38,7 +38,7 @@
 <script lang="ts" generic="T extends BasicVoProps" setup>
 import { computed, type PropType, ref, useTemplateRef, type Ref } from 'vue';
 import http from '../../network';
-import type { BasicVoProps, PageResult } from '../../types/common';
+import type { BasicVoProps, PageResult } from '../../types/vo/common.ts';
 import { PageStatus } from '../../types/components-vue';
 import { Spin } from 'ant-design-vue';
 import { vIntersectionObserver } from '@vueuse/components';
