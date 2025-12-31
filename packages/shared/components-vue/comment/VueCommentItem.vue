@@ -11,13 +11,16 @@
           <vue-popper-user-card :user="data.actor" />
         </template>
         <div
-          v-if="isActorUser"
+          v-if="props.data.actor.avatar"
           class="comment-actor-avatar"
           :style="{ width: props.avatarSize + 'px', height: props.avatarSize + 'px' }"
         >
-          <router-link :to="{ name: 'userHome', params: { userId: data.actor.id } }">
+          <router-link v-if="isActorUser" :to="{ name: 'userHome', params: { userId: data.actor.id } }">
             <img :src="props.data.actor.avatar" alt="avatar" />
           </router-link>
+          <a v-else :href="data.actor.homepage || 'javascript:void(0)'" target="_blank" rel="noopener noreferrer">
+            <img :src="props.data.actor.avatar" alt="avatar" />
+          </a>
         </div>
         <a-avatar v-else :size="props.avatarSize" :style="{ backgroundColor: '#1890ff', verticalAlign: 'middle' }">
           {{ props.data.actor.nickname.substring(0, 3) }}
@@ -35,9 +38,17 @@
           <template #content>
             <vue-popper-user-card :user="data.actor" />
           </template>
-          <router-link :to="{ name: 'userHome', params: { userId: data.actor.id } }">
+          <router-link v-if="isActorUser" :to="{ name: 'userHome', params: { userId: data.actor.id } }">
             <span class="user-nickname">{{ data.actor.nickname }}</span>
           </router-link>
+          <a
+            v-else
+            :href="data.actor.homepage || 'javascript:void(0)'"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="user-nickname"
+            >{{ data.actor.nickname }}</a
+          >
         </a-popover>
         <div v-if="isDataAuthor" class="author-text">博主</div>
       </div>
@@ -59,10 +70,6 @@
         <div class="action-item action-reply" :class="{ 'action-active': active }" @click="onReply">
           <i-comment :theme="active ? 'filled' : 'outline'" size="14" fill="currentColor" />
           {{ active ? '取消回复' : '回复' }}<span v-if="data.replyCount && !active">({{ data.replyCount }})</span>
-        </div>
-        <div class="action-item" :class="{ 'action-active': data.commentLike }">
-          <i-good-two :theme="data.commentLike ? 'filled' : 'outline'" size="14" fill="currentColor" />
-          点赞<span v-if="data.supportCount">({{ data.supportCount }})</span>
         </div>
         <a-popconfirm
           v-model:open="deleteVisible"
@@ -95,7 +102,7 @@
 
 <script setup lang="ts">
 import { computed, PropType, ref } from 'vue';
-import type { Comment } from '../../types/common';
+import type { Comment } from '../../types/vo/common.ts';
 import { RouterLink } from 'vue-router';
 import VuePopperUserCard from '../content/VuePopperUserCard.vue';
 import { transformTagToHTML } from '../emoji/youyu_emoji.ts';
@@ -125,8 +132,8 @@ const deleteVisible = ref<boolean>(false);
 const preview = ref<boolean>(false);
 const current = ref<number>(0);
 
-const isDataAuthor = computed(() => props.dataAuthorId === props.data.userId); // 是否是发布此时刻、帖子的用户
-const isAuthor = computed(() => props.loginUserId === props.data.userId); // 是否是发布此评论的用户
+const isDataAuthor = computed(() => props.dataAuthorId === props.loginUserId); // 当前登录用户，是否是发布此时刻、帖子的用户
+const isAuthor = computed(() => props.loginUserId === props.data.userId); // 当前登录用户，是否是发布此评论的用户
 const images = computed(() => (props.data.images ? props.data.images?.split(',') : [])); // 评论附图
 const isActorUser = computed(() => getCommentActorType(props.data) === ActorType.USER); // 是否由用户发送
 

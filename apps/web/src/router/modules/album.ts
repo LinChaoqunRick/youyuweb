@@ -9,7 +9,7 @@ const route = [
       title: '相册',
       code: 'ALBUM',
     },
-    component: () => import('@/components/common/system/EmptyPage.vue'),
+    component: () => import('@/components/common/system/BaseLayout.vue'),
     children: [
       {
         path: 'detail/:albumId(\\d+)',
@@ -44,7 +44,7 @@ const route = [
               title: '相册列表-全部',
               keepAlive: true,
             },
-            component: () => import('@/components/common/system/EmptyPage.vue'),
+            component: () => import('@/components/common/system/BaseLayout.vue'),
             children: [
               {
                 path: ':page(\\d+)',
@@ -78,7 +78,7 @@ const route = [
                   title: '个人中心-相册-列表',
                   keepAlive: true,
                 },
-                component: () => import('@/components/common/system/EmptyPage.vue'),
+                component: () => import('@/components/common/system/BaseLayout.vue'),
                 children: [
                   {
                     path: ':page(\\d+)',

@@ -2,12 +2,7 @@
   <div class="user-profile">
     <div class="user-main">
       <div class="user-left">
-        <PostUserPanel
-          :id="userId"
-          ref="UserInfoRef"
-          v-side-fixed
-          @on-loaded="onLoaded"
-        />
+        <PostUserPanel :id="userId" ref="UserInfoRef" v-side-fixed @on-loaded="onLoaded" />
       </div>
       <div class="user-content">
         <div class="user-menu-content">
@@ -20,18 +15,12 @@
             </nav-link>
             <div class="menu-right">
               <div v-if="isOwn" class="menu-setting">
-                <i-setting-two
-                  theme="outline"
-                  size="18"
-                  fill="currentColor"
-                  title="设置"
-                  @click="onSetting"
-                />
+                <i-setting-two theme="outline" size="18" fill="currentColor" title="设置" @click="onSetting" />
               </div>
             </div>
           </div>
           <div class="content-component">
-            <EmptyPage v-if="user && pathPermit" />
+            <BaseLayout v-if="user && pathPermit" />
           </div>
         </div>
       </div>
@@ -45,7 +34,7 @@ import { message, Modal } from 'ant-design-vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import NavLink from '@/components/common/header/menu/child/NavLink.vue';
-import EmptyPage from '@/components/common/system/EmptyPage.vue';
+import BaseLayout from '@/components/common/system/BaseLayout.vue';
 import openModal from '@/libs/tools/openModal';
 import type { User, statType } from '@/types/user';
 import PostUserPanel from '@/views/post/detail/child/PostUserPanel.vue';

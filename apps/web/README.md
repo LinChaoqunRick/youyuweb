@@ -19,21 +19,21 @@ vite build
 ```
 ## 功能
 #### 首页
-![](https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2024/0808/20240808221942_image.png?x-oss-process=style/highThumb)
+![](https://youyu-source.youyul.com/post/images/2024/0808/20240808221942_image.png?x-oss-process=style/highThumb)
 #### 文章
-![](https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2024/0808/20240808222149_image.png?x-oss-process=style/highThumb)
+![](https://youyu-source.youyul.com/post/images/2024/0808/20240808222149_image.png?x-oss-process=style/highThumb)
 #### 时刻
-![](https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2024/0808/20240808222219_image.png?x-oss-process=style/highThumb)
+![](https://youyu-source.youyul.com/post/images/2024/0808/20240808222219_image.png?x-oss-process=style/highThumb)
 #### 笔记
-![](https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2024/0808/20240808222355_image.png?x-oss-process=style/highThumb)
+![](https://youyu-source.youyul.com/post/images/2024/0808/20240808222355_image.png?x-oss-process=style/highThumb)
 #### 相册
-![](https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2024/0808/20240808222629_image.png?x-oss-process=style/highThumb)
+![](https://youyu-source.youyul.com/post/images/2024/0808/20240808222629_image.png?x-oss-process=style/highThumb)
 #### 期刊
 开发中...
 #### 代办
 开发中...
 #### 实验室
-![](https://youyu-source.oss-cn-beijing.aliyuncs.com/post/images/2024/0808/20240808222712_image.png?x-oss-process=style/highThumb)
+![](https://youyu-source.youyul.com/post/images/2024/0808/20240808222712_image.png?x-oss-process=style/highThumb)
 
 ## 关于开发者
 联系方式：harunayouyu@163.com

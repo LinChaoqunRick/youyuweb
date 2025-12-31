@@ -21,7 +21,7 @@
         </div>
         <Spin :spinning="loadingStore.contentLoading" wrapper-class-name="content-loading-wrapper" tip="加载中...">
           <div v-if="isRouterAlive" id="main-app" class="main-app">
-            <router-view />
+            <base-layout />
           </div>
         </Spin>
         <YFooter />
@@ -37,6 +37,7 @@ import zhCN from 'ant-design-vue/es/locale/zh_CN';
 import { useStore } from 'vuex';
 import YFooter from '@/components/common/footer/YFooter.vue';
 import YHeader from '@/components/common/header/YHeader.vue';
+import BaseLayout from '@/components/common/system/BaseLayout.vue';
 import { useLoadingStore } from '@/store/system';
 import { RouteStatus } from '@/store/system/login/login';
 

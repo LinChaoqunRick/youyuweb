@@ -7,23 +7,24 @@ import lab from './modules/lab';
 import links from './modules/links';
 import message from './modules/message';
 import moment from './modules/moment';
-import note from './modules/note';
+// import note from './modules/note';
 import post from './modules/post';
 
 import search from './modules/search';
 import user from './modules/user';
 
 const routes = [
+  // 顶部菜单
   ...home,
   ...post,
   ...moment,
-  ...note,
+  // ...note,
   ...album,
   ...lab,
   ...links,
   ...message,
   ...about,
-
+  // 隐藏菜单
   ...create,
   ...user,
   ...search,

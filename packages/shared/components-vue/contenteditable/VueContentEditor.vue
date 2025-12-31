@@ -268,7 +268,7 @@ defineExpose({
 
   &.editor-active {
     background: white;
-    border-color: #1890ff !important;
+    //border-color: #1890ff !important;
 
     ::v-deep(#box) {
       &[contenteditable]:empty::before {

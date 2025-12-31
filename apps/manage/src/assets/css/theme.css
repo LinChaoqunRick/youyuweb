@@ -2,6 +2,8 @@
 :root[data-theme='light'] {
   --bg-color: #fff;
   --bg-color-view: #f1f3f6;
+  --bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #fff 50%, #f1f3f5 100%);
+  --bg-gradient-lighter: linear-gradient(135deg, #f9fafb 0%, #fff 50%, #f1f3f5 100%);
   --text-color: #000;
   --text-color-gray: #71717a;
   --text-color-dark-gray: #333;
@@ -37,6 +39,8 @@
 :root[data-theme='dark'] {
   --bg-color: #040404;
   --bg-color-view: #14161a;
+  --bg-gradient: linear-gradient(135deg, #1f1f1f 0%, #0f0f0f 50%, #262626 100%);
+  --bg-gradient-lighter: linear-gradient(135deg, #1f1f1f 0%, #0f0f0f 50%, #262626 100%);
   --text-color: #eee;
   --text-color-gray: #a1a1aa;
   --text-color-dark-gray: #fff;

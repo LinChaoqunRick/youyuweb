@@ -1,18 +1,8 @@
 <template>
   <div v-if="isLogin" class="album-list">
     <div class="actions-wrapper">
-      <a-button
-        class="create-btn"
-        shape="round"
-        type="primary"
-        @click="onAdd"
-      >
-        <i-folder-plus
-          theme="outline"
-          size="16"
-          fill="#fff"
-          style="margin-right: 4px"
-        />
+      <a-button class="create-btn" shape="round" type="primary" @click="onAdd">
+        <i-folder-plus theme="outline" size="16" fill="#fff" style="margin-right: 4px" />
         新增
       </a-button>
       <AlbumActions />
@@ -28,6 +18,10 @@ import openModal from '@/libs/tools/openModal';
 import AlbumAdd from '@/views/album/common/AlbumAdd.vue';
 import AlbumCommonList from '@/views/album/common/AlbumCommonList.vue';
 import AlbumActions from '@/views/album/components/AlbumActions.vue';
+
+defineOptions({
+  name: 'AlbumListMinePage',
+});
 
 const { getters } = useStore();
 

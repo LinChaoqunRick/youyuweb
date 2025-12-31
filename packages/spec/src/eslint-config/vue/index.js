@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   plugins: ['import', 'vue'],
-  extends: ['plugin:vue/vue3-recommended'],
+  extends: ['plugin:vue/vue3-recommended', 'prettier'],
   parser: 'vue-eslint-parser',
   parserOptions: {
     parser: '@typescript-eslint/parser',
@@ -15,13 +15,6 @@ module.exports = {
     // 可自定义规则
     '@typescript-eslint/no-unused-vars': ['warn'],
     'vue/multi-word-component-names': 'off',
-    'vue/max-attributes-per-line': [
-      'warn',
-      {
-        singleline: 3, // 允许单行最多 3 个属性
-        multiline: 1,
-      },
-    ],
     // 导入顺序规则
     'import/order': [
       'error',

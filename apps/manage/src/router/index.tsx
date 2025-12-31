@@ -5,6 +5,7 @@ import dashboardRoutes from '@/router/modules/dashboard';
 import contentRoutes from '@/router/modules/contentManage';
 import userRoutes from '@/router/modules/userManage';
 import logRoutes from '@/router/modules/logManage';
+import systemRoutes from '@/router/modules/systemManage';
 import { RouteObjectMeta } from '@/types/login';
 
 // 页面组件动态导入
@@ -49,6 +50,8 @@ export const authRoutes: RouteObjectMeta[] = [
       ...userRoutes,
       // 日志管理路由组
       ...logRoutes,
+      // 系统管理路由组
+      ...systemRoutes,
     ],
   },
 ];

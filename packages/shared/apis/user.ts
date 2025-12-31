@@ -15,7 +15,7 @@ export const SAVE_PASSWORD = `${ApiBase}/user/savePassword`; // 修改密码
 export const SAVE_EMAIL = `${ApiBase}/user/saveEmail`; // 修改邮箱
 export const GET_PROFILE_MENU = `${ApiBase}/user/open/getProfileMenu`; // 获取主页菜单信息
 export const SET_PROFILE_MENU = `${ApiBase}/user/setProfileMenu`; // 设置主页菜单信息
-export const GET_USER_DYNAMICS = `${ApiBase}/user/open/listUserActivities`; // 获取用户动态
+export const GET_USER_DYNAMICS = `${ApiBase}/activity/open/listUserActivities`; // 获取用户动态
 export const GET_USER_DETAIL_BASIC = `${ApiBase}/user/open/getUserBasicById`; // 获取用户开放信息
 export const CREATE_MESSAGE = `${ApiBase}/message/open/create`; // 发布留言
 export const DELETE_MESSAGE = `${ApiBase}/message/open/delete`; // 删除留言
@@ -26,6 +26,8 @@ export const DELETE_FAVORITES = `${ApiBase}/favorites/delete`; // 删除收藏�
 export const LIST_FAVORITES = `${ApiBase}/favorites/open/list`; // 收藏夹列表
 export const FAVORITES_POST_PAGE = `${ApiBase}/favorites/open/postPage`; // 收藏夹文章列表
 export const GET_VISITOR_BY_EMAIL = `${ApiBase}/message/open/getVisitorByEmail`;
+export const GET_USER_PAGE = `${ApiBase}/user/page`; // 用户列表
+export const GET_VISITOR_PAGE = `${ApiBase}/visitor/page`; // 游客列表
 
 // manage用户
 export const GET_MANAGE_AUTH_ROUTES = `${ApiBase}/manage/user/getAuthRoutes`; // 获取权限路由

@@ -26,9 +26,7 @@
       </div>
     </div>
     <div class="user-info-body">
-      <div class="user-signature">
-        <span style="font-weight: bold">简介：</span>{{ user.signature }}
-      </div>
+      <div class="user-signature"><span style="font-weight: bold">简介：</span>{{ user.signature }}</div>
       <div class="user-signature">
         <span style="font-weight: bold">主页：</span>
         <a v-if="user.homepage" :href="user.homepage" target="_blank">
@@ -53,10 +51,10 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { useStore } from 'vuex';
-import { useRouter, RouterLink } from 'vue-router';
-import { message, Modal } from 'ant-design-vue';
 import { computed, ref } from 'vue';
+import { message, Modal } from 'ant-design-vue';
+import { useRouter, RouterLink } from 'vue-router';
+import { useStore } from 'vuex';
 
 const props = defineProps({
   user: {
@@ -122,11 +120,11 @@ const onMessage = () => {
   width: 320px;
 
   .user-info-banner {
-    background: url('https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/background/flower.jpg?x-oss-process=style/blur');
     //background-image: linear-gradient(to top, #355c7d, #6c5b7b, #c06c84);
     height: 90px;
-    background-size: cover;
     margin-bottom: 30px;
+    background: url('https://youyu-source.youyul.com/youyu/background/flower.jpg?x-oss-process=style/blur');
+    background-size: cover;
     border-radius: 4px 4px 0 0;
   }
 
@@ -141,8 +139,9 @@ const onMessage = () => {
   .user-info {
     position: relative;
     top: 61px;
-    padding-left: 12px;
+    display: flex;
     padding-bottom: 8px;
+    padding-left: 12px;
 
     .user-avatar-wrapper {
       position: relative;
@@ -150,33 +149,33 @@ const onMessage = () => {
     }
 
     .user-avatar {
-      height: 58px;
       width: 58px;
-      border-radius: 50%;
+      height: 58px;
       border: 2px solid whitesmoke;
+      border-radius: 50%;
     }
 
     .user-gender {
-      height: 18px;
-      width: 18px;
       position: absolute;
       top: 0;
       right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      text-align: center;
+      background-color: var(--youyu-body-background2);
       border: 1px solid var(--youyu-border-color);
       border-radius: 50%;
-      text-align: center;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: var(--youyu-body-background2);
     }
 
     .user-info-basic {
-      flex: 1;
-      margin-left: 8px;
       display: flex;
+      flex: 1;
       flex-direction: column;
       justify-content: center;
+      margin-left: 8px;
 
       a {
         color: inherit;
@@ -184,22 +183,22 @@ const onMessage = () => {
 
       .user-nickname {
         flex: 1;
-        font-weight: bold;
-        cursor: pointer;
         font-size: 18px;
+        font-weight: bold;
         color: black !important;
+        cursor: pointer;
       }
 
       .user-info-data {
-        width: 100%;
-        flex: 1;
         display: flex;
+        flex: 1;
         align-items: center;
+        width: 100%;
         overflow: hidden;
+        font-size: 13px;
+        color: var(--youyu-body-text2);
         text-overflow: ellipsis;
         white-space: nowrap;
-        color: var(--youyu-body-text2);
-        font-size: 13px;
 
         span {
           position: relative;
@@ -208,21 +207,19 @@ const onMessage = () => {
           &:nth-child(n + 2) {
             padding-left: 8px;
 
-            &:before {
-              content: '';
-              display: block;
-              height: 12px;
+            &::before {
               position: absolute;
               bottom: 5px;
               left: 0;
+              display: block;
+              height: 12px;
               border-left: 1px solid var(--youyu-body-text1);
+              content: '';
             }
           }
         }
       }
     }
-
-    display: flex;
   }
 
   .action-button {
@@ -240,26 +237,26 @@ const onMessage = () => {
 
   .user-data {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     width: 100%;
-    padding: 8px 0 2px 0;
+    padding: 8px 0 2px;
     border-top: var(--youyu-border);
 
     .statis-data {
-      flex: 1;
       position: relative;
+      flex: 1;
       text-align: center;
       cursor: pointer;
 
       &:nth-child(n + 2) {
-        &:before {
+        &::before {
           position: absolute;
-          content: '';
-          border-left: 1px solid #ebebeb;
-          height: 20px;
           top: calc(60% - 10px);
           left: 0;
+          height: 20px;
+          border-left: 1px solid #ebebeb;
+          content: '';
         }
       }
 

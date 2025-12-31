@@ -2,7 +2,7 @@ import { message, Modal } from 'antd';
 import React, { useEffect } from 'react';
 import EventBus from '@youyu/shared/utils/event-bus.ts';
 import type { AxiosError } from 'axios';
-import type { ResponseResult } from '@youyu/shared/types/common';
+import type { ResponseResult } from '@youyu/shared/types/vo/common.ts';
 import http from '@youyu/shared/network';
 import { ACCOUNT_LOGIN } from '@youyu/shared/apis';
 import { cleanCookieLocalStorage } from '@youyu/shared/utils';
@@ -21,14 +21,18 @@ export function useEventListener() {
   const refreshToken = async (failedRequest: AxiosError) => {
     const refresh_token = localStorage.getItem('refresh_token');
     try {
-      const tokenRefreshResponse: ResponseResult = await http.post(ACCOUNT_LOGIN, {
-        grant_type: 'refresh_token',
-        refresh_token,
-      }, {
-        headers: {
-          Authorization: `Basic ${btoa('youyu-manage:12345666666')}`,
+      const tokenRefreshResponse: ResponseResult = await http.post(
+        ACCOUNT_LOGIN,
+        {
+          grant_type: 'refresh_token',
+          refresh_token,
         },
-      });
+        {
+          headers: {
+            Authorization: `Basic ${btoa('youyu-manage:12345666666')}`,
+          },
+        },
+      );
       const { access_token: res_access_token, refresh_token: res_refresh_token } = tokenRefreshResponse.data;
       localStorage.setItem('access_token', res_access_token);
       localStorage.setItem('refresh_token', res_refresh_token);

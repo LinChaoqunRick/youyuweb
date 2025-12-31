@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMenu } from '@/hooks/useMenu';
 import { useAppSettings } from '@/store/useAppSettings';
-import type { MenuItem } from '@youyu/shared/types/common';
+import type { MenuItem } from '@youyu/shared/types/vo/common.ts';
 import { extractMenus } from '@/utils/dataUtils.ts';
 
 function App() {

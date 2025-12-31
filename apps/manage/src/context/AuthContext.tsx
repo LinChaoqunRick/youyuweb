@@ -1,8 +1,6 @@
 import { GET_MANAGE_AUTH_ROUTES, GET_CURRENT_MANAGE_USER } from '@youyu/shared/apis';
 import http from '@youyu/shared/network';
-import React, {
-  createContext, useState, useContext, useEffect, useMemo, ReactNode,
-} from 'react';
+import React, { createContext, useState, useContext, useEffect, useMemo, ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useUser } from '@/store/useUser';
 
@@ -21,7 +19,7 @@ export function useAuth() {
  * 获取当前用户权限路由
  */
 async function getAuthRoutes(): Promise<Permission[]> {
-  const res = await http.get(GET_MANAGE_AUTH_ROUTES);
+  const res = await http.get<Permission[]>(GET_MANAGE_AUTH_ROUTES);
   return res.data;
 }
 
@@ -29,7 +27,7 @@ async function getAuthRoutes(): Promise<Permission[]> {
  * 获取当前用户信息
  */
 async function getCurrentUser(): Promise<ManageUser> {
-  const res = await http.get(GET_CURRENT_MANAGE_USER);
+  const res = await http.get<ManageUser>(GET_CURRENT_MANAGE_USER);
   return res.data;
 }
 

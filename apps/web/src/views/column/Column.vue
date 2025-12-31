@@ -1,11 +1,9 @@
 <template>
-  <EmptyPage/>
+  <BaseLayout />
 </template>
 
 <script setup lang="ts">
-  import EmptyPage from '@/components/common/system/EmptyPage.vue';
+import BaseLayout from '@/components/common/system/BaseLayout.vue';
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

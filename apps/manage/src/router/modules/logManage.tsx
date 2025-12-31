@@ -1,5 +1,9 @@
 import {
-  FileSearchOutlined, LaptopOutlined, NotificationOutlined, SolutionOutlined, ToolOutlined,
+  FileSearchOutlined,
+  LaptopOutlined,
+  NotificationOutlined,
+  SolutionOutlined,
+  ToolOutlined,
 } from '@ant-design/icons';
 import intl from 'react-intl-universal';
 import { lazyLoad } from '@/components/enhance/lazyLoad';
@@ -20,7 +24,7 @@ const userRoutes: RouteObjectMeta[] = [
         return intl.get('menu.logManage');
       },
       icon: <FileSearchOutlined />,
-      code: 'user',
+      code: 'log',
     },
     children: [
       {

@@ -1,19 +1,8 @@
 <template>
   <div class="album-list">
     <div class="actions-wrapper">
-      <a-button
-        v-if="isOwn"
-        class="create-btn"
-        shape="round"
-        type="primary"
-        @click="onAdd"
-      >
-        <i-folder-plus
-          theme="outline"
-          size="16"
-          fill="#fff"
-          style="margin-right: 4px"
-        />
+      <a-button v-if="isOwn" class="create-btn" shape="round" type="primary" @click="onAdd">
+        <i-folder-plus theme="outline" size="16" fill="#fff" style="margin-right: 4px" />
         新增
       </a-button>
       <AlbumActions />
@@ -88,7 +77,6 @@ const onAdd = async () => {
   ::v-deep(.y-table) {
     .list-wrapper {
       grid-template-columns: repeat(3, 1fr);
-      grid-gap: 30px 0;
     }
   }
 }

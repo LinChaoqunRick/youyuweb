@@ -1,6 +1,6 @@
 <template>
   <div class="main-logo">
-    <img src="https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/logo_280x120.png" alt="">
+    <img src="https://youyu-source.youyul.com/youyu/logo_280x120.png" alt="" />
   </div>
 </template>
 

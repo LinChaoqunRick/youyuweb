@@ -14,7 +14,7 @@
           </template>
           <div class="user-avatar cp">
             <RouterLink :to="`/user/${data.user.id}/moment`">
-              <img :src="data.user.avatar" alt="">
+              <img :src="data.user.avatar" alt="" />
             </RouterLink>
           </div>
         </a-popover>
@@ -39,9 +39,7 @@
             <div class="publish-time" :title="data.createTime">
               {{ $dayjs().to(data.createTime) }}
             </div>
-            <div v-if="data.adname" class="adname">
-              ・{{ data.adname }}
-            </div>
+            <div v-if="data.adname" class="adname">・{{ data.adname }}</div>
           </div>
         </div>
         <a-popover
@@ -78,20 +76,10 @@
           :class="{ 'content-expand': expand }"
           v-html="transformTagToHTML(data.content)"
         />
-        <div v-show="row > 10 && !expand" class="limit-btn" @click="expand = true">
-          展开
-        </div>
-        <div v-show="row > 10 && expand" class="limit-btn" @click="expand = false">
-          收起
-        </div>
+        <div v-show="row > 10 && !expand" class="limit-btn" @click="expand = true">展开</div>
+        <div v-show="row > 10 && expand" class="limit-btn" @click="expand = false">收起</div>
         <div v-if="images?.length && !preview" class="content-images" :class="[imageClass]">
-          <img
-            v-for="(item, index) in images"
-            :key="index"
-            :src="item"
-            alt=""
-            @click="onPreview(index)"
-          >
+          <vue-image v-for="(item, index) in images" :key="index" :url="item" :width="140" @click="onPreview(index)" />
         </div>
         <div v-if="images?.length && preview" class="content-image-preview">
           <ImagePreviewEmbed :list="images" :current="current" @on-close="onClose" />
@@ -104,37 +92,20 @@
           </div>
           <span class="position-text">{{ data?.location }}</span>
         </div>
-        <div v-if="data.likeUsers?.length" class="like-users">
-          <div class="user-avatars">
-            <img
-              v-for="(item, index) in data.likeUsers"
-              :key="item.id"
-              :src="item.avatar"
-              :style="{ 'z-index': index }"
-            >
-          </div>
-          <div class="like-text">
-            <span v-if="data.supportCount > 3">等人</span>赞过
-          </div>
-        </div>
       </div>
     </div>
     <div class="moment-item-actions">
       <a-popover trigger="click" overlay-class-name="share-actions-popover">
         <template #content>
           <div class="share-action-item copy-link" @click="onCopyLink">
-            <div class="share-action-item-text">
-              复制链接
-            </div>
+            <div class="share-action-item-text">复制链接</div>
           </div>
         </template>
         <div class="item-operation">
           <div class="item-icon">
             <i-share-one theme="outline" size="14" fill="currentColor" />
           </div>
-          <div class="item-text">
-            分享
-          </div>
+          <div class="item-text">分享</div>
         </div>
       </a-popover>
       <div class="item-operation comment-operation" :class="{ 'action-active': replyShow }" @click="onComment">
@@ -170,12 +141,7 @@
           />
         </div>
       </div>
-      <moment-comment
-        ref="momentCommentRef"
-        v-model:moment="data"
-        :page-size="5"
-        no-action
-      />
+      <moment-comment ref="momentCommentRef" v-model:moment="data" :page-size="5" no-action />
     </div>
   </div>
 </template>
@@ -183,7 +149,7 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue';
 import { CREATE_MOMENT_COMMENT } from '@youyu/shared/apis';
-import { ImagePreviewEmbed } from '@youyu/shared/components-vue';
+import { ImagePreviewEmbed, VueImage } from '@youyu/shared/components-vue';
 import { VueCommentEditor } from '@youyu/shared/components-vue';
 import { transformTagToHTML } from '@youyu/shared/components-vue/emoji/youyu_emoji';
 import { message, Modal } from 'ant-design-vue';
@@ -195,7 +161,7 @@ import { DOMAIN } from '@/libs/consts';
 import openModal from '@/libs/tools/openModal';
 import MomentComment from '@/views/moment/components/MomentComment.vue';
 import UserCardMoment from '../components/UserCardMoment.vue';
-import type { Comment } from '@youyu/shared/types/common';
+import type { Comment } from '@youyu/shared/types/vo/common';
 import type { MomentVo } from '@youyu/shared/types/vo/moment';
 
 const { getters, dispatch } = useStore();
@@ -212,7 +178,7 @@ defineProps({
   },
 });
 
-const emit = defineEmits(['deleteSuccess', 'onEdit', 'onCommentSaveSuccess', 'onCommentDeleteSuccess']);
+const emit = defineEmits(['deleteSuccess', 'onEdit']);
 
 const momentCommentRef = ref<InstanceType<typeof MomentComment>>();
 const preview = ref(false);
@@ -265,14 +231,6 @@ const onComment = () => {
   }
 };
 
-const deleteSuccess = (comment: any) => {
-  if (ContentDataRef.value) {
-    ContentDataRef.value.data.list = ContentDataRef.value.data.list.filter((item: any) => item.id !== comment.id);
-  }
-  data.value.commentCount -= 1 + comment.replyCount;
-  emit('onCommentDeleteSuccess', comment);
-};
-
 const onDetail = () => {
   router.push(`/moment/details/${data.value.id}`);
 };
@@ -309,6 +267,7 @@ const onEdit = () => {
 };
 
 const onLike = () => {
+  return;
   if (likeLoading.value) return;
   likeLoading.value = true;
   const isLike = !!data.value.momentLike;
@@ -367,11 +326,6 @@ const onLocationPreview = () => {
 const onCopyLink = () => {
   copyToClipboard(DOMAIN + '/moment/details/' + data.value.id);
 };
-
-defineExpose({
-  // onCommentSubmit,
-  deleteSuccess,
-});
 </script>
 
 <style lang="scss" scoped>
@@ -478,29 +432,31 @@ defineExpose({
 
       .content-images {
         display: grid;
+        grid-gap: 4px;
 
         &.col-3 {
-          grid-template-columns: repeat(3, 134px);
+          grid-template-columns: repeat(3, 140px);
         }
 
         &.col-2 {
-          grid-template-columns: repeat(2, 134px);
+          grid-template-columns: repeat(2, 140px);
         }
 
         &.col-1 {
-          img {
-            width: 180px;
-            height: 180px;
+          ::v-deep(.image-container) {
+            width: 180px !important;
+            height: 180px !important;
           }
         }
 
-        img {
+        ::v-deep(.image-container) {
           width: 130px;
           height: 130px;
-          margin: 0 4px 4px 0;
-          object-fit: cover;
-          filter: brightness(0.94);
-          cursor: zoom-in;
+
+          img {
+            filter: brightness(0.94);
+            cursor: zoom-in;
+          }
         }
       }
 
@@ -526,7 +482,7 @@ defineExpose({
         align-items: center;
         height: 24px;
         padding: 1px 4px;
-        margin-top: 4px;
+        margin-top: 6px;
         border: 1.8px solid var(--youyu-border-color2);
         border-radius: 30px;
         cursor: pointer;

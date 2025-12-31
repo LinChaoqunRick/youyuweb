@@ -9,7 +9,7 @@ const route = [
       title: '文章',
       code: 'POST',
     },
-    component: () => import('@/components/common/system/EmptyPage.vue'),
+    component: () => import('@/components/common/system/BaseLayout.vue'),
     children: [
       {
         path: 'list/:page(\\d+)?',

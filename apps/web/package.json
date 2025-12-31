@@ -31,7 +31,7 @@
     "markdown-it-implicit-figures": "^0.12.0",
     "markdown-it-mark": "^3.0.1",
     "marked": "^4.1.1",
-    "md-editor-v3": "^6.1.1",
+    "md-editor-v3": "^6.3.0",
     "nprogress": "^0.2.0",
     "pinia": "^3.0.4",
     "stats.js": "^0.17.0",

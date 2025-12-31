@@ -7,7 +7,7 @@ const route = [
       title: '时刻',
       code: 'MOMENT',
     },
-    component: () => import('@/views/moment/Moment.vue'),
+    component: () => import('@/components/common/system/BaseLayout.vue'),
     children: [
       {
         path: '/list',

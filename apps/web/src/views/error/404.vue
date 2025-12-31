@@ -1,9 +1,9 @@
 <template>
   <div class="not-found">
-    <img src="https://youyu-source.oss-cn-beijing.aliyuncs.com/youyu/error/404Error.png" alt="404" />
+    <img src="https://youyu-source.youyul.com/youyu/error/404Error.png" alt="404" />
     <p class="error-text text1">哎呀，你访问的页面不存在！{{ time }} 秒后返回上一页</p>
     <p class="error-text text2">你输入的网址有误或链接已经过期</p>
-    <a-button type="primary" size="large" @click="router.replace('/')">返回首页</a-button>
+    <a-button type="primary" size="large" @click="router.replace('/')"> 返回首页 </a-button>
   </div>
 </template>
 
@@ -34,8 +34,8 @@ onUnmounted(() => {
 .not-found {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   height: calc(100vh - 100px);
   background-color: var(--youyu-background1);
 
@@ -50,8 +50,8 @@ onUnmounted(() => {
   }
 
   .text1 {
-    font-size: 28px;
     margin-bottom: 0;
+    font-size: 28px;
   }
 
   .text2 {
@@ -59,15 +59,15 @@ onUnmounted(() => {
   }
 
   button {
-    margin-top: 40px;
     width: 200px;
+    margin-top: 40px;
     font-weight: bold;
     letter-spacing: 1px;
     border-radius: 2px;
 
     &:hover {
+      color: #fff;
       background-color: #1890ff;
-      color: #ffffff;
     }
   }
 }

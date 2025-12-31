@@ -1,9 +1,7 @@
 <template>
   <div class="moment-comment mb-8">
     <div class="comment-list-top">
-      <div class="comment-count">
-        全部评论（{{ moment.commentCount || 0 }}）
-      </div>
+      <div class="comment-count">全部评论（{{ moment.commentCount || 0 }}）</div>
       <SortSwitch v-model="sort" @on-change="onSortChange" />
     </div>
     <div class="comment-list">
@@ -113,7 +111,7 @@ import { VueCommentItem, VueContentPage } from '@youyu/shared/components-vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import SortSwitch from '@/components/common/utils/sortSwitch/SortSwitch.vue';
-import type { Comment } from '@youyu/shared/types/common';
+import type { Comment } from '@youyu/shared/types/vo/common';
 import type { MomentVo } from '@youyu/shared/types/vo/moment';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 

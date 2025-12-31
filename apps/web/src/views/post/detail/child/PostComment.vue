@@ -1,9 +1,7 @@
 <template>
   <div class="post-comment">
     <div class="comment-list-top">
-      <div class="comment-count">
-        全部评论（{{ post.commentCount || 0 }}）
-      </div>
+      <div class="comment-count">全部评论（{{ post.commentCount || 0 }}）</div>
       <SortSwitch v-model="sort" @on-change="onSortChange" />
     </div>
     <div class="comment-list">
@@ -102,8 +100,8 @@ import { CREATE_POST_COMMENT, DELETE_POST_COMMENT, GET_POST_COMMENTS_PAGE } from
 import { VueCommentItem, VueContentPage } from '@youyu/shared/components-vue';
 import { useStore } from 'vuex';
 import SortSwitch from '@/components/common/utils/sortSwitch/SortSwitch.vue';
-import type { Comment } from '@youyu/shared/types/common';
 import type { PostVo } from '@youyu/shared/types/vo';
+import type { Comment } from '@youyu/shared/types/vo/common';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 
 const { getters } = useStore();

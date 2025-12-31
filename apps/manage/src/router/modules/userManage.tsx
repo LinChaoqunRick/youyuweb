@@ -4,29 +4,41 @@ import { lazyLoad } from '@/components/enhance/lazyLoad';
 import { RouteObjectMeta } from '@/types/login';
 
 const OutletLayout = lazyLoad(() => import('@/components/layouts/OutletLayout'));
-const UserList = lazyLoad(() => import('@/pages/userManage/list'));
+const UserList = lazyLoad(() => import('@/pages/userManage/userList'));
+const VisitorList = lazyLoad(() => import('@/pages/userManage/visitorList'));
 
 const userRoutes: RouteObjectMeta[] = [
   {
-    path: 'user',
+    path: 'member',
     element: <OutletLayout />,
     meta: {
       get title() {
-        return intl.get('menu.userManage');
+        return '会员管理';
       },
       icon: <UserOutlined />,
-      code: 'user',
+      code: 'member',
     },
     children: [
       {
-        path: 'list',
+        path: 'user',
         element: <UserList />,
         meta: {
           get title() {
-            return intl.get('menu.userList');
+            return '用户管理';
           },
           icon: <UserSwitchOutlined />,
-          code: 'user:list',
+          code: 'member:user',
+        },
+      },
+      {
+        path: 'visitor',
+        element: <VisitorList />,
+        meta: {
+          get title() {
+            return '游客管理';
+          },
+          icon: <UserSwitchOutlined />,
+          code: 'member:user',
         },
       },
     ],

@@ -1,28 +1,34 @@
 <template>
   <div class="user-home">
-    <ContentList url="getUserDynamics" :params="params" auto-load ref="ContentListRef">
-      <template v-slot="{ list }">
+    <VueContentPage ref="ContentListRef" :params="params" :url="GET_USER_DYNAMICS" mode="auto">
+      <template #default="{ list }">
         <div v-for="item in list" :key="item.id" class="dynamic-item">
           <div class="dynamic-item-title">{{ $dayjs().to(item.createTime) }} {{ getItemType(item) }}</div>
-          <Component :is="isComponent(item)" :data="item" @deleteSuccess="deleteSuccess" class="dynamic-item-component" />
+          <Component
+            :is="isComponent(item)"
+            :data="item"
+            class="dynamic-item-component"
+            @delete-success="deleteSuccess"
+          />
         </div>
       </template>
-      <template v-slot:loadMoreBox="{ loading }">
-        <a-spin :spinning="loading"></a-spin>
+      <template #loading>
+        <a-spin />
         <span class="tip-text">加载中...</span>
       </template>
-    </ContentList>
+    </VueContentPage>
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, inject, ref } from 'vue';
-import ContentList from '@/components/common/system/ContentList.vue';
+import { GET_USER_DYNAMICS } from '@youyu/shared/apis';
+import { VueContentPage } from '@youyu/shared/components-vue';
 import type { User } from '@/types/user';
-import PostItem from '../post/PostItem.vue';
 import MomentItem from '@/views/moment/list/MomentItem.vue';
-import NoteItem from '@/views/user/profile/home/component/NoteItem.vue';
 import ChapterItem from '@/views/user/profile/home/component/ChapterItem.vue';
+import NoteItem from '@/views/user/profile/home/component/NoteItem.vue';
+import PostItem from '../post/PostItem.vue';
 
 const user = inject<User>('user');
 const ContentListRef = ref();
@@ -59,8 +65,8 @@ const getItemType = (item: any) => {
 const deleteSuccess = data => {
   if (data.hasOwnProperty('momentLike')) {
     // 删除的是一个时刻
-    ContentListRef.value.list = ContentListRef.value.list.filter(
-      item => item.hasOwnProperty('momentLike') && item.id !== data.id
+    ContentListRef.value.dataList = ContentListRef.value.dataList.filter(
+      item => item.hasOwnProperty('momentLike') && item.id !== data.id,
     );
   }
 };
@@ -68,7 +74,9 @@ const deleteSuccess = data => {
 
 <style lang="scss" scoped>
 .user-home {
-  ::v-deep(.content-list) {
+  margin-top: 8px;
+
+  ::v-deep(.vue-content-page) {
     .data-list {
       > div {
         margin-top: 8px;
@@ -80,9 +88,9 @@ const deleteSuccess = data => {
       }
     }
 
-    .bottom-operation {
-      background-color: var(--youyu-body-background2);
+    .vue-content-page-status {
       padding: 12px 0;
+      background-color: var(--youyu-body-background2);
     }
   }
 
@@ -91,9 +99,9 @@ const deleteSuccess = data => {
 
     .dynamic-item-title {
       padding: 8px 16px;
-      border-bottom: var(--youyu-border);
-      color: var(--youyu-text1);
       font-size: 14px;
+      color: var(--youyu-text1);
+      border-bottom: var(--youyu-border);
     }
 
     .dynamic-item-component {
