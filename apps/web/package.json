@@ -18,7 +18,7 @@
     "@vueuse/core": "^13.1.0",
     "@youyu/shared": "workspace:^",
     "animate.css": "^4.1.1",
-    "ant-design-vue": "^4.2.1",
+    "ant-design-vue": "^4.2.6",
     "dat.gui": "^0.7.9",
     "dayjs": "^1.11.5",
     "file-type": "^20.4.1",

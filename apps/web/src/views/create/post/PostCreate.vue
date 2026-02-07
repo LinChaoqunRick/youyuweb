@@ -19,7 +19,7 @@ const formValidate = ref<postData>({
   id: null,
   title: '',
   content: '',
-  categoryId: null,
+  categoryId: '',
   tags: [],
   thumbnail: ['https://youyu-source.youyul.com/firstImages/default/defaultFirstPic.png'],
   summary: '',
